@@ -1,0 +1,108 @@
+@page
+@model NewsletterModel
+@{
+    ViewData["Title"] = "Newsletter Personnalisée";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="h3 mb-0">
+                        <i class="bi bi-envelope-heart"></i> Newsletter Personnalisée .NET
+                    </h1>
+                </div>
+                <div class="card-body p-4">
+                    @if (Model.ShowSuccess)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="bi bi-check-circle"></i> 
+                            <strong>Succès!</strong> Vous êtes maintenant inscrit à notre newsletter.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    @if (Model.ShowError)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-triangle"></i> 
+                            <strong>Erreur!</strong> @Model.ErrorMessage
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    <p class="lead mb-4">
+                        Restez informé des dernières actualités de l'écosystème .NET en choisissant les sujets qui vous intéressent.
+                    </p>
+
+                    <form method="post">
+                        <div class="mb-4">
+                            <label for="email" class="form-label fw-bold">
+                                <i class="bi bi-envelope"></i> Adresse Email
+                            </label>
+                            <input type="email" 
+                                   class="form-control form-control-lg" 
+                                   id="email" 
+                                   name="Email"
+                                   asp-for="Email"
+                                   placeholder="votre.email@example.com" 
+                                   required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold mb-3">
+                                <i class="bi bi-tags"></i> Sujets d'intérêt
+                            </label>
+                            <div class="row">
+                                @for (int i = 0; i < Model.AvailableTopics.Count; i++)
+                                {
+                                    var topic = Model.AvailableTopics[i];
+                                    <div class="col-md-6 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" 
+                                                   type="checkbox" 
+                                                   name="SelectedTopics" 
+                                                   value="@topic" 
+                                                   id="topic-@i"
+                                                   @(Model.SelectedTopics.Contains(topic) ? "checked" : "")>
+                                            <label class="form-check-label" for="topic-@i">
+                                                @topic
+                                            </label>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mb-3">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-check-circle"></i> S'abonner à la Newsletter
+                            </button>
+                        </div>
+
+                        <div class="text-center">
+                            <a href="/" class="btn btn-link">
+                                <i class="bi bi-arrow-left"></i> Retour au Dashboard
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mt-4 bg-light">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-info-circle"></i> À propos de la Newsletter
+                    </h5>
+                    <ul class="mb-0">
+                        <li>Recevez les dernières actualités .NET directement dans votre boîte mail</li>
+                        <li>Contenu personnalisé selon vos intérêts</li>
+                        <li>Nouveautés des releases, articles de blog, et projets GitHub tendance</li>
+                        <li>Fréquence: hebdomadaire</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
