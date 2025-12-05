@@ -73,7 +73,7 @@ public class WinFormNewsService : IWinFormNewsService
             foreach (var item in feed.Items.Take(10))
             {
                 var title = item.Title?.Text ?? "No title";
-                var summary = item.Summary?.Text ?? "";
+                var summary = HtmlSanitizer.StripHtml(item.Summary?.Text);
                 
                 // Filter for WinForm-related content based on keywords
                 if (IsWinFormRelated(title, summary))

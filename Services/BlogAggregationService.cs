@@ -77,7 +77,7 @@ public class BlogAggregationService : IBlogAggregationService
                 {
                     Title = item.Title?.Text ?? "No title",
                     Url = item.Links.FirstOrDefault()?.Uri.ToString() ?? "",
-                    Summary = item.Summary?.Text ?? "",
+                    Summary = HtmlSanitizer.StripHtml(item.Summary?.Text),
                     PublishedDate = item.PublishDate.DateTime,
                     Author = item.Authors.FirstOrDefault()?.Name ?? "Unknown",
                     Source = source

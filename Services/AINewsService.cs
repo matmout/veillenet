@@ -76,7 +76,7 @@ public class AINewsService : IAINewsService
             foreach (var item in feed.Items.Take(10))
             {
                 var title = item.Title?.Text ?? "No title";
-                var summary = item.Summary?.Text ?? "";
+                var summary = HtmlSanitizer.StripHtml(item.Summary?.Text);
                 
                 // Filter for AI-related content based on keywords
                 if (IsAIRelated(title, summary))
