@@ -32,6 +32,9 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// Activer les fichiers statiques (nécessaire pour wwwroot)
+app.UseStaticFiles();
+
 app.UseRouting();
 
 app.UseAuthorization();
