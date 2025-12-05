@@ -9,19 +9,23 @@ public class IndexModel : PageModel
     private readonly IBlogAggregationService _blogService;
     private readonly IGitHubService _gitHubService;
     private readonly IReleaseNewsService _releaseService;
+    private readonly IAINewsService _aiNewsService;
 
     public List<BlogPost> BlogPosts { get; set; } = new();
     public List<GitHubProject> TrendingProjects { get; set; } = new();
     public List<ReleaseNews> ReleaseNews { get; set; } = new();
+    public List<AINews> AINews { get; set; } = new();
 
     public IndexModel(
         IBlogAggregationService blogService,
         IGitHubService gitHubService,
-        IReleaseNewsService releaseService)
+        IReleaseNewsService releaseService,
+        IAINewsService aiNewsService)
     {
         _blogService = blogService;
         _gitHubService = gitHubService;
         _releaseService = releaseService;
+        _aiNewsService = aiNewsService;
     }
 
     public async Task OnGetAsync()
@@ -30,11 +34,13 @@ public class IndexModel : PageModel
         var blogTask = _blogService.GetLatestPostsAsync();
         var githubTask = _gitHubService.GetTrendingCSharpProjectsAsync();
         var releaseTask = _releaseService.GetLatestReleasesAsync();
+        var aiNewsTask = _aiNewsService.GetLatestAINewsAsync();
 
-        await Task.WhenAll(blogTask, githubTask, releaseTask);
+        await Task.WhenAll(blogTask, githubTask, releaseTask, aiNewsTask);
 
         BlogPosts = await blogTask;
         TrendingProjects = await githubTask;
         ReleaseNews = await releaseTask;
+        AINews = await aiNewsTask;
     }
 }

@@ -14,6 +14,7 @@ VeilleNet centralise toutes les informations importantes de l'écosystème .NET 
 
 - ✅ **Agrégation des blogs .NET officiels** : Derniers articles des blogs Microsoft (.NET, ASP.NET, Visual Studio, C#)
 - ✅ **Nouveautés des releases** : Informations sur les dernières versions de .NET, C#, et ASP.NET Core
+- ✅ **Agent de Code - Actualités IA** : Dernières actualités des outils IA (GitHub Copilot, OpenAI, Anthropic, Mistral)
 - ✅ **Tendances GitHub** : Projets C# les plus populaires et récents sur GitHub
 - ✅ **Newsletter personnalisée** : Inscription avec sélection de sujets d'intérêt
 
@@ -34,12 +35,14 @@ VeilleNet centralise toutes les informations importantes de l'écosystème .NET 
 VeilleNet/
 ├── Models/                    # Modèles de données
 │   ├── BlogPost.cs           # Articles de blog
+│   ├── AINews.cs             # Actualités IA
 │   ├── GitHubProject.cs      # Projets GitHub
 │   ├── ReleaseNews.cs        # Nouvelles des releases
 │   └── NewsletterSubscription.cs
 ├── Services/                  # Couche service
 │   ├── CacheService.cs       # Service de cache
 │   ├── BlogAggregationService.cs
+│   ├── AINewsService.cs      # Agrégation actualités IA
 │   ├── GitHubService.cs
 │   ├── ReleaseNewsService.cs
 │   └── NewsletterService.cs
@@ -81,6 +84,7 @@ dotnet run
 
 L'application utilise le cache en mémoire avec les durées suivantes :
 - Articles de blog : 1 heure
+- Actualités IA : 1 heure
 - Projets GitHub : 6 heures
 - Nouvelles des releases : 24 heures
 
