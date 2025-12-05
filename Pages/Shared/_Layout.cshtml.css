@@ -1,48 +1,137 @@
-﻿/* Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-for details on configuring this project to bundle and minify static web assets. */
+﻿/* Modern Layout Styling */
+
+/* Navbar Styling */
+.navbar {
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.2);
+  padding: 1rem 0;
+  border: none !important;
+}
 
 a.navbar-brand {
   white-space: normal;
   text-align: center;
   word-break: break-all;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: white !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-a {
-  color: #0077cc;
+a.navbar-brand:hover {
+  transform: scale(1.05);
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
 }
 
-.btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+.navbar-brand .bi {
+  font-size: 1.75rem;
+  vertical-align: -0.25em;
+  margin-right: 0.5rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+.nav-link {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-weight: 500;
+  padding: 0.5rem 1rem !important;
+  border-radius: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin: 0 0.25rem;
 }
 
-.border-top {
-  border-top: 1px solid #e5e5e5;
-}
-.border-bottom {
-  border-bottom: 1px solid #e5e5e5;
-}
-
-.box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: white !important;
+  transform: translateY(-2px);
 }
 
-button.accept-policy {
-  font-size: 1rem;
-  line-height: inherit;
+.nav-link .bi {
+  margin-right: 0.5rem;
+  font-size: 1.1rem;
+  vertical-align: -0.125em;
 }
 
+/* Main Content Area */
+main {
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Footer Styling */
 .footer {
   position: absolute;
   bottom: 0;
   width: 100%;
-  white-space: nowrap;
-  line-height: 60px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-top: 1px solid #e2e8f0;
+  padding: 1.5rem 0;
+  margin-top: 3rem;
+}
+
+.footer a {
+  color: #667eea;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+}
+
+.footer a:hover {
+  color: #5a6fd8;
+  transform: translateX(5px);
+  display: inline-block;
+}
+
+.footer .bi-github {
+  font-size: 1.25rem;
+  vertical-align: -0.25em;
+  margin-right: 0.5rem;
+}
+
+.border-top {
+  border-top: 1px solid #e2e8f0 !important;
+}
+
+.border-bottom {
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+/* Container Spacing */
+.container-fluid {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+@media (max-width: 768px) {
+  .container-fluid {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .navbar-brand {
+    font-size: 1.25rem;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .navbar {
+    padding: 0.75rem 0;
+  }
+  
+  .nav-link {
+    padding: 0.5rem 0.75rem !important;
+  }
 }
