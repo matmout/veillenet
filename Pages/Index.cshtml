@@ -95,6 +95,48 @@
         </div>
     </div>
 
+    <!-- WinForm News Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h2 class="h4 mb-0">
+                        <i class="bi bi-window-desktop"></i> C# WinForms - Actualités
+                    </h2>
+                </div>
+                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                    @if (Model.WinFormNews.Any())
+                    {
+                        <div class="list-group list-group-flush">
+                            @foreach (var news in Model.WinFormNews.Take(10))
+                            {
+                                <div class="list-group-item px-0">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">
+                                            <a href="@news.Url" target="_blank" class="text-decoration-none">
+                                                @news.Title
+                                            </a>
+                                        </h6>
+                                    </div>
+                                    <p class="mb-1 small text-muted">@(news.Summary.Length > 0 ? news.Summary.Substring(0, Math.Min(150, news.Summary.Length)) : "")@(news.Summary.Length > 150 ? "..." : "")</p>
+                                    <small class="text-muted">
+                                        <span class="badge bg-@(news.Category == "Microsoft" ? "primary" : "secondary")">@news.Category</span> 
+                                        <i class="bi bi-tag"></i> @news.Source | 
+                                        <i class="bi bi-calendar"></i> @news.PublishedDate.ToString("dd MMM yyyy")
+                                    </small>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center">Chargement des actualités WinForms...</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Main Content Row -->
     <div class="row">
         <!-- Blog Posts Section -->

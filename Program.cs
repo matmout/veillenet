@@ -18,6 +18,7 @@ builder.Services.AddScoped<IGitHubService, GitHubService>();
 builder.Services.AddScoped<IReleaseNewsService, ReleaseNewsService>();
 builder.Services.AddScoped<INewsletterService, NewsletterService>();
 builder.Services.AddScoped<IAINewsService, AINewsService>();
+builder.Services.AddScoped<IWinFormNewsService, WinFormNewsService>();
 
 var app = builder.Build();
 
