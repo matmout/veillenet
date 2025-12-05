@@ -1,0 +1,15 @@
+**/.dockerignore
+**/.git
+**/.gitignore
+**/.vs
+**/.vscode
+**/*.*proj.user
+**/bin
+**/obj
+**/Dockerfile*
+**/docker-compose*
+**/*.md
+**/*.log
+**/node_modules
+**/.idea
+*.sln.DotSettings.user
