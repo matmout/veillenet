@@ -65,8 +65,6 @@ public class WinFormNewsService : IWinFormNewsService
         try
         {
             var httpClient = _httpClientFactory.CreateClient();
-            httpClient.DefaultRequestHeaders.Add("User-Agent", "VeilleNet/1.0");
-            
             using var stream = await httpClient.GetStreamAsync(feedUrl);
             using var xmlReader = XmlReader.Create(stream);
             
