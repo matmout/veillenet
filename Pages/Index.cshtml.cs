@@ -10,22 +10,26 @@ public class IndexModel : PageModel
     private readonly IGitHubService _gitHubService;
     private readonly IReleaseNewsService _releaseService;
     private readonly IAINewsService _aiNewsService;
+    private readonly IWinFormNewsService _winFormNewsService;
 
     public List<BlogPost> BlogPosts { get; set; } = new();
     public List<GitHubProject> TrendingProjects { get; set; } = new();
     public List<ReleaseNews> ReleaseNews { get; set; } = new();
     public List<AINews> AINews { get; set; } = new();
+    public List<WinFormNews> WinFormNews { get; set; } = new();
 
     public IndexModel(
         IBlogAggregationService blogService,
         IGitHubService gitHubService,
         IReleaseNewsService releaseService,
-        IAINewsService aiNewsService)
+        IAINewsService aiNewsService,
+        IWinFormNewsService winFormNewsService)
     {
         _blogService = blogService;
         _gitHubService = gitHubService;
         _releaseService = releaseService;
         _aiNewsService = aiNewsService;
+        _winFormNewsService = winFormNewsService;
     }
 
     public async Task OnGetAsync()
@@ -35,12 +39,14 @@ public class IndexModel : PageModel
         var githubTask = _gitHubService.GetTrendingCSharpProjectsAsync();
         var releaseTask = _releaseService.GetLatestReleasesAsync();
         var aiNewsTask = _aiNewsService.GetLatestAINewsAsync();
+        var winFormTask = _winFormNewsService.GetLatestWinFormNewsAsync();
 
-        await Task.WhenAll(blogTask, githubTask, releaseTask, aiNewsTask);
+        await Task.WhenAll(blogTask, githubTask, releaseTask, aiNewsTask, winFormTask);
 
         BlogPosts = await blogTask;
         TrendingProjects = await githubTask;
         ReleaseNews = await releaseTask;
         AINews = await aiNewsTask;
+        WinFormNews = await winFormTask;
     }
 }
