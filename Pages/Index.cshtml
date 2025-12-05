@@ -11,7 +11,7 @@
                 <i class="bi bi-microsoft"></i> Dashboard de Veille .NET
             </h1>
             <p class="lead text-center text-muted">
-                Restez à jour sur l'écosystème .NET - Blogs officiels, Releases, Tendances GitHub
+                Restez à jour sur l'écosystème .NET et l'IA - Blogs officiels, Releases, Tendances GitHub, Outils IA
             </p>
         </div>
     </div>
@@ -49,6 +49,47 @@
                             </div>
                         }
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI News Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h2 class="h4 mb-0">
+                        <i class="bi bi-robot"></i> Agent de Code - Actualités IA
+                    </h2>
+                </div>
+                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                    @if (Model.AINews.Any())
+                    {
+                        <div class="list-group list-group-flush">
+                            @foreach (var news in Model.AINews.Take(10))
+                            {
+                                <div class="list-group-item px-0">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">
+                                            <a href="@news.Url" target="_blank" class="text-decoration-none">
+                                                @news.Title
+                                            </a>
+                                        </h6>
+                                    </div>
+                                    <p class="mb-1 small text-muted">@(news.Summary.Length > 0 ? news.Summary.Substring(0, Math.Min(150, news.Summary.Length)) : "")@(news.Summary.Length > 150 ? "..." : "")</p>
+                                    <small class="text-muted">
+                                        <i class="bi bi-tag"></i> @news.Source | 
+                                        <i class="bi bi-calendar"></i> @news.PublishedDate.ToString("dd MMM yyyy")
+                                    </small>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center">Chargement des actualités IA...</p>
+                    }
                 </div>
             </div>
         </div>

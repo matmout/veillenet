@@ -17,6 +17,7 @@ builder.Services.AddScoped<IBlogAggregationService, BlogAggregationService>();
 builder.Services.AddScoped<IGitHubService, GitHubService>();
 builder.Services.AddScoped<IReleaseNewsService, ReleaseNewsService>();
 builder.Services.AddScoped<INewsletterService, NewsletterService>();
+builder.Services.AddScoped<IAINewsService, AINewsService>();
 
 var app = builder.Build();
 
