@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  veillenet:
+    build: .
+    image: veillenet:local
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_URLS=http://0.0.0.0:8080
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # Pas de volume pour éviter d’écraser /app publiés
+    # volumes:
+    #   - ./:/app
