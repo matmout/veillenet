@@ -1,0 +1,338 @@
+@page
+@model MCPModel
+@{
+    ViewData["Title"] = "MCP Tools";
+    ViewData["Description"] = "Discover essential Model Context Protocol (MCP) servers for AI development, database connections, and application deployment. Enhance your development workflow with these powerful tools.";
+    ViewData["CanonicalUrl"] = "https://containsharp.com/MCP";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-4 text-center mb-3">
+                <i class="bi bi-plugin"></i> MCP Tools
+            </h1>
+            <p class="lead text-center text-muted">
+                Model Context Protocol servers to enhance your AI-powered development workflow
+            </p>
+        </div>
+    </div>
+
+    <!-- Categories Grid -->
+    <div class="row g-4">
+        @foreach (var category in Model.Categories)
+        {
+            <div class="col-12 mb-4">
+                <div class="card h-100 category-card">
+                    <div class="card-header bg-@category.ColorClass">
+                        <h2 class="h4 mb-0">
+                            <i class="@category.Icon"></i> @category.Name
+                        </h2>
+                        <p class="mb-0 mt-2 small text-muted">@category.Description</p>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="row g-0 mcp-tools-grid">
+                            @foreach (var tool in category.Tools)
+                            {
+                                <div class="col-lg-6 col-xl-4">
+                                    <div class="mcp-tool-card">
+                                        <div class="tool-icon-wrapper">
+                                            <i class="@tool.Icon tool-icon"></i>
+                                        </div>
+                                        <div class="tool-content">
+                                            <h3 class="tool-name">@tool.Name</h3>
+                                            <p class="tool-description">@tool.Description</p>
+                                            <div class="tool-meta">
+                                                <span class="badge badge-category">@tool.Category</span>
+                                            </div>
+                                            <a href="@tool.GuideUrl" target="_blank" class="tool-link">
+                                                <i class="bi bi-book"></i> View Guide
+                                                <i class="bi bi-box-arrow-up-right ms-1"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Back to Dashboard -->
+    <div class="row mt-5 mb-4">
+        <div class="col-12 text-center">
+            <a href="/" class="btn btn-outline-primary btn-lg">
+                <i class="bi bi-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Category Cards */
+    .category-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid var(--vs-border);
+        background: var(--vs-panel);
+    }
+
+    .category-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
+    }
+
+    .category-card .card-header {
+        padding: 1.5rem;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .category-card .card-header.bg-primary {
+        background: linear-gradient(135deg, #007acc 0%, #005a9e 100%) !important;
+        color: #fff !important;
+    }
+
+    .category-card .card-header.bg-info {
+        background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%) !important;
+        color: #fff !important;
+    }
+
+    .category-card .card-header.bg-success {
+        background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%) !important;
+        color: #fff !important;
+    }
+
+    .category-card .card-header .small {
+        opacity: 0.9;
+        font-size: 0.9rem;
+    }
+
+    /* MCP Tools Grid */
+    .mcp-tools-grid {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .mcp-tool-card {
+        padding: 1.5rem;
+        border-right: 1px solid var(--vs-border);
+        border-bottom: 1px solid var(--vs-border);
+        background: var(--vs-panel-alt);
+        transition: all 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .mcp-tool-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--vs-accent-strong) 0%, var(--vs-purple) 100%);
+        transition: width 0.3s ease;
+    }
+
+    .mcp-tool-card:hover {
+        background: rgba(0, 122, 204, 0.05);
+        transform: translateY(-4px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .mcp-tool-card:hover::before {
+        width: 100%;
+    }
+
+    /* Tool Icon */
+    .tool-icon-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--vs-panel) 0%, var(--vs-bg) 100%);
+        border: 2px solid var(--vs-border);
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .mcp-tool-card:hover .tool-icon-wrapper {
+        background: linear-gradient(135deg, var(--vs-accent-strong) 0%, var(--vs-purple) 100%);
+        border-color: var(--vs-accent-strong);
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .tool-icon {
+        font-size: 1.75rem;
+        color: var(--vs-accent-strong);
+        transition: color 0.3s ease;
+    }
+
+    .mcp-tool-card:hover .tool-icon {
+        color: #fff;
+    }
+
+    /* Tool Content */
+    .tool-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .tool-name {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--vs-text);
+        margin-bottom: 0.75rem;
+        line-height: 1.3;
+    }
+
+    .tool-description {
+        font-size: 0.9rem;
+        color: var(--vs-muted);
+        line-height: 1.5;
+        margin-bottom: 1rem;
+        flex: 1;
+    }
+
+    /* Tool Meta */
+    .tool-meta {
+        margin-bottom: 1rem;
+    }
+
+    .badge-category {
+        background: rgba(0, 122, 204, 0.15);
+        color: var(--vs-accent-strong);
+        border: 1px solid rgba(0, 122, 204, 0.3);
+        padding: 0.35rem 0.75rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .mcp-tool-card:hover .badge-category {
+        background: rgba(0, 122, 204, 0.25);
+        border-color: var(--vs-accent-strong);
+    }
+
+    /* Tool Link */
+    .tool-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: rgba(0, 122, 204, 0.1);
+        border: 1px solid var(--vs-accent-strong);
+        border-radius: 6px;
+        color: var(--vs-accent-strong);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        align-self: flex-start;
+    }
+
+    .tool-link:hover {
+        background: var(--vs-accent-strong);
+        color: #fff;
+        transform: translateX(4px);
+    }
+
+    /* Responsive Grid Adjustments */
+    @@media (max-width: 1199px) {
+        .col-xl-4:nth-child(3n) .mcp-tool-card {
+            border-right: none;
+        }
+    }
+
+    @@media (max-width: 991px) {
+        .col-lg-6:nth-child(2n) .mcp-tool-card {
+            border-right: none;
+        }
+    }
+
+    @@media (max-width: 767px) {
+        .mcp-tool-card {
+            border-right: none;
+        }
+
+        .tool-icon-wrapper {
+            width: 50px;
+            height: 50px;
+        }
+
+        .tool-icon {
+            font-size: 1.5rem;
+        }
+
+        .tool-name {
+            font-size: 1rem;
+        }
+
+        .tool-description {
+            font-size: 0.85rem;
+        }
+    }
+
+    /* Animation on page load */
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .category-card {
+        animation: fadeInUp 0.6s ease-out backwards;
+    }
+
+    /* Individual animation delays */
+    .col-12:nth-child(1) .category-card {
+        animation-delay: 0.1s;
+    }
+
+    .col-12:nth-child(2) .category-card {
+        animation-delay: 0.2s;
+    }
+
+    .col-12:nth-child(3) .category-card {
+        animation-delay: 0.3s;
+    }
+
+    /* MCP Tool Cards stagger animation */
+    .mcp-tool-card {
+        animation: fadeInUp 0.5s ease-out backwards;
+    }
+
+    .mcp-tools-grid > div:nth-child(1) .mcp-tool-card {
+        animation-delay: 0.2s;
+    }
+
+    .mcp-tools-grid > div:nth-child(2) .mcp-tool-card {
+        animation-delay: 0.3s;
+    }
+
+    .mcp-tools-grid > div:nth-child(3) .mcp-tool-card {
+        animation-delay: 0.4s;
+    }
+
+    .mcp-tools-grid > div:nth-child(4) .mcp-tool-card {
+        animation-delay: 0.5s;
+    }
+
+    .mcp-tools-grid > div:nth-child(5) .mcp-tool-card {
+        animation-delay: 0.6s;
+    }
+</style>
