@@ -386,6 +386,36 @@ small, .small {
   box-shadow: var(--card-shadow);
 }
 
+/* VS-like Output window */
+.vs-output {
+  background: var(--vs-panel);
+  border: 1px solid var(--vs-border);
+}
+.output-titlebar {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .5rem .75rem;
+  background: var(--vs-panel-alt);
+  border-bottom: 1px solid var(--vs-border);
+}
+.output-titlebar .controls { display:flex; gap:.35rem; }
+.output-titlebar .dot{ width:10px; height:10px; border-radius:50%; display:inline-block; }
+.output-titlebar .dot.close{ background:#ef4444; }
+.output-titlebar .dot.min{ background:#ffd166; }
+.output-titlebar .dot.max{ background:#22c55e; }
+.output-titlebar .title{ color:var(--vs-text); font-weight:600; }
+.output-titlebar .spacer{ flex:1; }
+
+.output-toolbar{ display:flex; gap:.5rem; padding:.4rem .6rem; border-bottom:1px solid var(--vs-border); background:var(--vs-panel); }
+.output-toolbar .chip{ background:var(--vs-panel-alt); border:1px solid var(--vs-border); color:var(--vs-muted); padding:.15rem .5rem; border-radius:6px; font-size:.8rem; }
+
+.output-stream{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size:.85rem; line-height:1.55; padding:.75rem; height:260px; overflow:auto; background:#111; color:#cbd5e1; }
+.output-stream .ok{ color:#22c55e; }
+.output-stream .warn{ color:#ffd166; }
+.output-stream .err{ color:#ef4444; }
+.output-stream .dim{ color:#94a3b8; }
+
 /* Navbar – style Visual Studio */
 .navbar {
   background: var(--vs-panel-alt) !important;
