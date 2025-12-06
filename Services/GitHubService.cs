@@ -62,8 +62,9 @@ public class GitHubService : IGitHubService
                 }
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            Console.WriteLine($"Impossible de récupérer les projets GitHub trending C# Erreur : {ex.Message}", ex);
             // Log error and return empty list or cached data
         }
 

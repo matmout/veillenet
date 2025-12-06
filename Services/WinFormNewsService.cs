@@ -46,8 +46,9 @@ public class WinFormNewsService : IWinFormNewsService
                 var feedNews = await FetchFeedAsync(name, url, category);
                 winFormNews.AddRange(feedNews);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine($"Impossible de lire le contenu WinForm News {name} {url} Erreur : {ex.Message}", ex);
                 // Log error in production, continue with other feeds
             }
         }
@@ -90,8 +91,9 @@ public class WinFormNewsService : IWinFormNewsService
                 }
             }
         }
-        catch
+        catch (Exception ex)
         {
+            Console.WriteLine($"Impossible de parser le feed WinForm {source} {feedUrl} Erreur : {ex.Message}", ex);
             // Handle feed parsing errors
         }
 

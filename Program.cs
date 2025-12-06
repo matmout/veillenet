@@ -59,12 +59,15 @@ var app = builder.Build();
 // Use response compression early in the pipeline
 app.UseResponseCompression();
 
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    // app.UseHsts();
-}
+// Configure status code pages for 404
+app.UseStatusCodePagesWithReExecute("/Error404");
+
+//if (!app.Environment.IsDevelopment())
+//{
+//      app.UseExceptionHandler("/Error404");
+//    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+//    // app.UseHsts();
+//}
 
 // Static files with caching headers
 app.UseStaticFiles(new StaticFileOptions
@@ -74,7 +77,7 @@ app.UseStaticFiles(new StaticFileOptions
         // Cache static assets for 1 year in production
         if (!app.Environment.IsDevelopment())
         {
-            const int durationInSeconds = 60 * 60 * 24 * 365; // 1 year
+            const int durationInSeconds = 60 * 60 * 24 * 30; // 30 days
             ctx.Context.Response.Headers["Cache-Control"] = $"public,max-age={durationInSeconds}";
             ctx.Context.Response.Headers["Expires"] = DateTime.UtcNow.AddYears(1).ToString("R");
         }

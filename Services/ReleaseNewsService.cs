@@ -32,17 +32,17 @@ public class ReleaseNewsService : IReleaseNewsService
             new ReleaseNews
             {
                 Version = ".NET 10.0",
-                Title = ".NET 10 Preview Release",
-                Description = "Latest preview of .NET 10 with enhanced performance and new C# features",
-                ReleaseDate = new DateTime(2024, 11, 15),
+                Title = ".NET 10 Stable Release",
+                Description = "Official stable release of .NET 10 (LTS) with performance improvements and new C# features",
+                ReleaseDate = new DateTime(2025, 11, 12), // Ajustez à la date exacte si nécessaire
                 Url = "https://dotnet.microsoft.com/download/dotnet/10.0",
-                Type = "Preview"
+                Type = "Stable"
             },
             new ReleaseNews
             {
                 Version = ".NET 9.0",
                 Title = ".NET 9 Stable Release",
-                Description = "Official stable release of .NET 9 with long-term support",
+                Description = "Official stable release of .NET 9 (STS) with platform updates and improvements",
                 ReleaseDate = new DateTime(2024, 11, 12),
                 Url = "https://dotnet.microsoft.com/download/dotnet/9.0",
                 Type = "Stable"

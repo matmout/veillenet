@@ -47,8 +47,9 @@ public class BlogAggregationService : IBlogAggregationService
                 var feedPosts = await FetchFeedAsync(name, url);
                 posts.AddRange(feedPosts);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine($"Impossible de lire le contenu {name} {url} Erreur : {ex.Message}", ex);
                 // Log error in production, continue with other feeds
             }
         }
@@ -84,8 +85,9 @@ public class BlogAggregationService : IBlogAggregationService
                 });
             }
         }
-        catch
+        catch(Exception ex)
         {
+            Console.WriteLine($"Impossible de lire le contenu {source} {feedUrl} Erreur : {ex.Message}", ex);
             // Handle feed parsing errors
         }
 

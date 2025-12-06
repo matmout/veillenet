@@ -91,7 +91,7 @@
                     @if (Model.AINews.Any())
                     {
                         <div class="list-group list-group-flush">
-                            @foreach (var news in Model.AINews.Take(10))
+                            @foreach (var news in Model.AINews)
                             {
                                 <div class="list-group-item px-0">
                                     <div class="d-flex w-100 justify-content-between">
@@ -132,7 +132,7 @@
                     @if (Model.WinFormNews.Any())
                     {
                         <div class="list-group list-group-flush">
-                            @foreach (var news in Model.WinFormNews.Take(10))
+                            @foreach (var news in Model.WinFormNews)
                             {
                                 <div class="list-group-item px-0">
                                     <div class="d-flex w-100 justify-content-between">
@@ -174,7 +174,7 @@
                     @if (Model.Videos.Any())
                     {
                         <div class="list-group list-group-flush">
-                            @foreach (var video in Model.Videos.Take(10))
+                            @foreach (var video in Model.Videos)
                             {
                                 <div class="list-group-item px-0">
                                     <div class="d-flex w-100 justify-content-between align-items-start">
@@ -224,7 +224,7 @@
                     @if (Model.BlogPosts.Any())
                     {
                         <div class="list-group list-group-flush">
-                            @foreach (var post in Model.BlogPosts.Take(10))
+                            @foreach (var post in Model.BlogPosts)
                             {
                                 <div class="list-group-item px-0">
                                     <div class="d-flex w-100 justify-content-between">
