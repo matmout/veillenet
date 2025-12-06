@@ -13,44 +13,44 @@ public class LiensModel : PageModel
         {
             new LinkCategory
             {
-                Name = "C# Officiel",
-                Description = "Ressources officielles Microsoft pour C# et .NET",
+                Name = "Official C#",
+                Description = "Microsoft official resources for C# and .NET",
                 Icon = "bi-microsoft",
                 ColorClass = "primary",
                 Links = new List<UsefulLink>
                 {
                     new UsefulLink
                     {
-                        Name = "Documentation C#",
-                        Description = "Documentation officielle de C# avec guides, tutoriels et références API",
+                        Name = "C# Documentation",
+                        Description = "Official C# docs with guides, tutorials, and API references",
                         Url = "https://learn.microsoft.com/fr-fr/dotnet/csharp/",
                         Icon = "bi-book"
                     },
                     new UsefulLink
                     {
                         Name = ".NET Blog",
-                        Description = "Blog officiel de l'équipe .NET avec les dernières annonces et nouveautés",
+                        Description = "Official .NET team blog with the latest announcements and news",
                         Url = "https://devblogs.microsoft.com/dotnet/",
                         Icon = "bi-newspaper"
                     },
                     new UsefulLink
                     {
                         Name = "C# Language Specification",
-                        Description = "Spécification complète du langage C#",
+                        Description = "Full C# language specification",
                         Url = "https://learn.microsoft.com/fr-fr/dotnet/csharp/language-reference/language-specification/",
                         Icon = "bi-file-text"
                     },
                     new UsefulLink
                     {
                         Name = ".NET Releases",
-                        Description = "Calendrier et notes de version de .NET",
+                        Description = "Release schedule and notes for .NET",
                         Url = "https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core",
                         Icon = "bi-calendar-event"
                     },
                     new UsefulLink
                     {
                         Name = "GitHub .NET",
-                        Description = "Repository officiel .NET sur GitHub",
+                        Description = "Official .NET GitHub organization",
                         Url = "https://github.com/dotnet",
                         Icon = "bi-github"
                     }
@@ -58,8 +58,8 @@ public class LiensModel : PageModel
             },
             new LinkCategory
             {
-                Name = "Intelligence Artificielle",
-                Description = "Outils et ressources IA pour développeurs",
+                Name = "Artificial Intelligence",
+                Description = "AI tools and resources for developers",
                 Icon = "bi-robot",
                 ColorClass = "info",
                 Links = new List<UsefulLink>
@@ -67,35 +67,35 @@ public class LiensModel : PageModel
                     new UsefulLink
                     {
                         Name = "GitHub Copilot",
-                        Description = "Assistant de code alimenté par l'IA pour Visual Studio et VS Code",
+                        Description = "AI-powered coding assistant for Visual Studio and VS Code",
                         Url = "https://github.com/features/copilot",
                         Icon = "bi-code-square"
                     },
                     new UsefulLink
                     {
                         Name = "ChatGPT",
-                        Description = "Assistant conversationnel d'OpenAI pour le développement et plus",
+                        Description = "OpenAI conversational assistant for development and more",
                         Url = "https://chat.openai.com/",
                         Icon = "bi-chat-dots"
                     },
                     new UsefulLink
                     {
                         Name = "Claude AI",
-                        Description = "Assistant IA d'Anthropic avec capacités de raisonnement avancées",
+                        Description = "Anthropic AI assistant with advanced reasoning capabilities",
                         Url = "https://claude.ai/",
                         Icon = "bi-lightning"
                     },
                     new UsefulLink
                     {
                         Name = "Microsoft Copilot",
-                        Description = "Suite d'outils IA de Microsoft intégrée à l'écosystème Microsoft 365",
+                        Description = "Microsoft's AI tools suite integrated with Microsoft 365",
                         Url = "https://copilot.microsoft.com/",
                         Icon = "bi-stars"
                     },
                     new UsefulLink
                     {
                         Name = "Mistral AI",
-                        Description = "Modèles IA open-source et performants développés en France",
+                        Description = "Open-source, high-performance AI models developed in France",
                         Url = "https://mistral.ai/",
                         Icon = "bi-cpu"
                     }
@@ -104,36 +104,36 @@ public class LiensModel : PageModel
             new LinkCategory
             {
                 Name = "WinForms",
-                Description = "Ressources pour le développement d'applications Windows Forms",
+                Description = "Resources for building Windows Forms applications",
                 Icon = "bi-window-desktop",
                 ColorClass = "warning",
                 Links = new List<UsefulLink>
                 {
                     new UsefulLink
                     {
-                        Name = "Documentation WinForms",
-                        Description = "Guide officiel Microsoft pour Windows Forms .NET",
+                        Name = "WinForms Documentation",
+                        Description = "Microsoft official guide for Windows Forms .NET",
                         Url = "https://learn.microsoft.com/fr-fr/dotnet/desktop/winforms/",
                         Icon = "bi-book"
                     },
                     new UsefulLink
                     {
                         Name = "WinForms Designer",
-                        Description = "Documentation du concepteur visuel WinForms",
+                        Description = "Documentation for the WinForms visual designer",
                         Url = "https://learn.microsoft.com/fr-fr/dotnet/desktop/winforms/controls/",
                         Icon = "bi-palette"
                     },
                     new UsefulLink
                     {
                         Name = "GitHub WinForms",
-                        Description = "Repository officiel Windows Forms sur GitHub",
+                        Description = "Official Windows Forms GitHub repository",
                         Url = "https://github.com/dotnet/winforms",
                         Icon = "bi-github"
                     },
                     new UsefulLink
                     {
                         Name = "WinForms Samples",
-                        Description = "Exemples de code et applications WinForms",
+                        Description = "WinForms code samples and applications",
                         Url = "https://github.com/dotnet/samples/tree/main/windowsforms",
                         Icon = "bi-code-slash"
                     }
@@ -141,8 +141,8 @@ public class LiensModel : PageModel
             },
             new LinkCategory
             {
-                Name = "Jeux et Code",
-                Description = "Plateformes pour apprendre en s'amusant",
+                Name = "Coding & Games",
+                Description = "Platforms to learn while having fun",
                 Icon = "bi-joystick",
                 ColorClass = "success",
                 Links = new List<UsefulLink>
@@ -150,28 +150,28 @@ public class LiensModel : PageModel
                     new UsefulLink
                     {
                         Name = "CodinGame",
-                        Description = "Apprenez à coder en jouant avec des défis programmation multijoueurs",
+                        Description = "Learn to code by playing with multiplayer programming challenges",
                         Url = "https://www.codingame.com/",
                         Icon = "bi-controller"
                     },
                     new UsefulLink
                     {
                         Name = "Exercism",
-                        Description = "Exercices de programmation avec mentorat gratuit en C#",
+                        Description = "Programming exercises with free mentoring in C#",
                         Url = "https://exercism.org/tracks/csharp",
                         Icon = "bi-trophy"
                     },
                     new UsefulLink
                     {
                         Name = "HackerRank",
-                        Description = "Défis de programmation et préparation aux entretiens techniques",
+                        Description = "Programming challenges and technical interview prep",
                         Url = "https://www.hackerrank.com/domains/tutorials/10-days-of-csharp",
                         Icon = "bi-award"
                     },
                     new UsefulLink
                     {
                         Name = "Advent of Code",
-                        Description = "Calendrier de l'avent avec des défis de programmation quotidiens",
+                        Description = "Advent calendar with daily coding challenges",
                         Url = "https://adventofcode.com/",
                         Icon = "bi-calendar-star"
                     }
@@ -179,8 +179,8 @@ public class LiensModel : PageModel
             },
             new LinkCategory
             {
-                Name = "Outils C#",
-                Description = "Utilitaires et générateurs de code",
+                Name = "C# Tools",
+                Description = "Utilities and code generators",
                 Icon = "bi-tools",
                 ColorClass = "danger",
                 Links = new List<UsefulLink>
@@ -188,35 +188,35 @@ public class LiensModel : PageModel
                     new UsefulLink
                     {
                         Name = "Json2CSharp",
-                        Description = "Générez des classes C# à partir de JSON",
+                        Description = "Generate C# classes from JSON",
                         Url = "https://json2csharp.com/",
                         Icon = "bi-braces"
                     },
                     new UsefulLink
                     {
                         Name = "SharpLab",
-                        Description = "Compilateur C# en ligne avec visualisation IL et AST",
+                        Description = "Online C# compiler with IL and AST visualization",
                         Url = "https://sharplab.io/",
                         Icon = "bi-eye"
                     },
                     new UsefulLink
                     {
                         Name = ".NET Fiddle",
-                        Description = "IDE en ligne pour tester du code C# et .NET",
+                        Description = "Online IDE to test C# and .NET code",
                         Url = "https://dotnetfiddle.net/",
                         Icon = "bi-play-circle"
                     },
                     new UsefulLink
                     {
                         Name = "NuGet",
-                        Description = "Gestionnaire de packages officiel pour .NET",
+                        Description = "Official package manager for .NET",
                         Url = "https://www.nuget.org/",
                         Icon = "bi-box-seam"
                     },
                     new UsefulLink
                     {
                         Name = "Regex101",
-                        Description = "Testeur et débogueur d'expressions régulières",
+                        Description = "Regex tester and debugger",
                         Url = "https://regex101.com/",
                         Icon = "bi-regex"
                     }
@@ -224,8 +224,8 @@ public class LiensModel : PageModel
             },
             new LinkCategory
             {
-                Name = "Algorithmie",
-                Description = "Entraînez-vous aux algorithmes et structures de données",
+                Name = "Algorithms",
+                Description = "Practice algorithms and data structures",
                 Icon = "bi-diagram-3",
                 ColorClass = "secondary",
                 Links = new List<UsefulLink>
@@ -233,35 +233,35 @@ public class LiensModel : PageModel
                     new UsefulLink
                     {
                         Name = "LeetCode",
-                        Description = "Plateforme d'entraînement avec des milliers de problèmes algorithmiques",
+                        Description = "Training platform with thousands of algorithmic problems",
                         Url = "https://leetcode.com/",
                         Icon = "bi-code"
                     },
                     new UsefulLink
                     {
                         Name = "AlgoExpert",
-                        Description = "Formation approfondie aux algorithmes avec vidéos explicatives",
+                        Description = "Deep algorithm training with explanatory videos",
                         Url = "https://www.algoexpert.io/",
                         Icon = "bi-mortarboard"
                     },
                     new UsefulLink
                     {
                         Name = "Visualgo",
-                        Description = "Visualisez les algorithmes et structures de données",
+                        Description = "Visualize algorithms and data structures",
                         Url = "https://visualgo.net/",
                         Icon = "bi-graph-up"
                     },
                     new UsefulLink
                     {
                         Name = "Big-O Cheat Sheet",
-                        Description = "Référence rapide des complexités algorithmiques",
+                        Description = "Quick reference for algorithmic complexities",
                         Url = "https://www.bigocheatsheet.com/",
                         Icon = "bi-table"
                     },
                     new UsefulLink
                     {
                         Name = "Project Euler",
-                        Description = "Problèmes mathématiques et algorithmiques complexes",
+                        Description = "Challenging mathematical and algorithmic problems",
                         Url = "https://projecteuler.net/",
                         Icon = "bi-calculator"
                     }

@@ -1,7 +1,7 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Votre dose quotidienne de C#";
+    ViewData["Title"] = "Your daily dose of C#";
 }
 
 <div class="container-fluid">
@@ -11,7 +11,7 @@
                 <i class="bi bi-braces"></i> Contain<span class="text-primary">('</span><span class="text-primary fw-bold"><img src="~/icons/containsharp.svg" alt="ContainSharp" width="64" height="64" class="rounded" /></span><span class="text-primary">')</span>
             </h1>
             <p class="lead text-center text-muted">
-                Votre dose quotidienne de C# - Blogs, Releases, Tendances GitHub, Outils IA
+                Your daily dose of C# - Official blogs, Releases, GitHub Trends, AI tools
             </p>
         </div>
     </div>
@@ -22,7 +22,7 @@
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
                     <h2 class="h4 mb-0">
-                        <i class="bi bi-megaphone"></i> Nouveautés des Releases
+                        <i class="bi bi-megaphone"></i> Release News
                     </h2>
                 </div>
                 <div class="card-body">
@@ -42,7 +42,7 @@
                                             <i class="bi bi-calendar"></i> @release.ReleaseDate.ToString("dd MMM yyyy")
                                         </p>
                                         <a href="@release.Url" target="_blank" class="btn btn-sm btn-outline-primary">
-                                            En savoir plus <i class="bi bi-box-arrow-up-right"></i>
+                                        Learn more <i class="bi bi-box-arrow-up-right"></i>
                                         </a>
                                     </div>
                                 </div>
@@ -60,7 +60,7 @@
             <div class="card shadow-sm">
                 <div class="card-header bg-info text-white">
                     <h2 class="h4 mb-0">
-                        <i class="bi bi-robot"></i> Agent de Code - Actualités IA
+                        <i class="bi bi-robot"></i> Coding Agents - AI News
                     </h2>
                 </div>
                 <div class="card-body" style="max-height: 400px; overflow-y: auto;">
@@ -88,7 +88,7 @@
                     }
                     else
                     {
-                        <p class="text-muted text-center">Chargement des actualités IA...</p>
+                        <p class="text-muted text-center">Loading AI news...</p>
                     }
                 </div>
             </div>
@@ -101,7 +101,7 @@
             <div class="card shadow-sm">
                 <div class="card-header bg-warning text-dark">
                     <h2 class="h4 mb-0">
-                        <i class="bi bi-window-desktop"></i> C# WinForms - Actualités
+                        <i class="bi bi-window-desktop"></i> C# WinForms - News
                     </h2>
                 </div>
                 <div class="card-body" style="max-height: 400px; overflow-y: auto;">
@@ -130,7 +130,7 @@
                     }
                     else
                     {
-                        <p class="text-muted text-center">Chargement des actualités WinForms...</p>
+                        <p class="text-muted text-center">Loading WinForms news...</p>
                     }
                 </div>
             </div>
@@ -144,7 +144,7 @@
             <div class="card shadow-sm h-100">
                 <div class="card-header bg-success text-white">
                     <h2 class="h4 mb-0">
-                        <i class="bi bi-rss"></i> Blogs .NET Officiels
+                        <i class="bi bi-rss"></i> Official .NET Blogs
                     </h2>
                 </div>
                 <div class="card-body" style="max-height: 600px; overflow-y: auto;">
@@ -173,7 +173,7 @@
                     }
                     else
                     {
-                        <p class="text-muted text-center">Chargement des articles...</p>
+                        <p class="text-muted text-center">Loading posts...</p>
                     }
                 </div>
             </div>
@@ -227,19 +227,19 @@
     </div>
 
     <!-- Newsletter Section -->
-    <div class="row mb-4">
+@*     <div class="row mb-4">
         <div class="col-12">
             <div class="card shadow-sm bg-light">
                 <div class="card-body text-center py-4">
                     <h3 class="mb-3">
-                        <i class="bi bi-envelope"></i> Newsletter Personnalisée
+                        <i class="bi bi-envelope"></i> Personalized Newsletter
                     </h3>
-                    <p class="mb-3">Recevez les dernières actualités .NET directement dans votre boîte mail</p>
+                    <p class="mb-3">Get the latest .NET news directly in your inbox</p>
                     <a href="/Newsletter" class="btn btn-primary btn-lg">
-                        S'abonner à la Newsletter <i class="bi bi-arrow-right"></i>
+                        Subscribe to the Newsletter <i class="bi bi-arrow-right"></i>
                     </a>
                 </div>
             </div>
         </div>
-    </div>
+    </div> *@
 </div>

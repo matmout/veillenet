@@ -18,7 +18,7 @@
                     {
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
                             <i class="bi bi-check-circle"></i> 
-                            <strong>Succès!</strong> Vous êtes maintenant inscrit à notre newsletter.
+                            <strong>Success!</strong> You're now subscribed to our newsletter.
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     }
@@ -27,7 +27,7 @@
                     {
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             <i class="bi bi-exclamation-triangle"></i> 
-                            <strong>Erreur!</strong> @Model.ErrorMessage
+                            <strong>Error!</strong> @Model.ErrorMessage
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     }
@@ -39,7 +39,7 @@
                     <form method="post">
                         <div class="mb-4">
                             <label for="email" class="form-label fw-bold">
-                                <i class="bi bi-envelope"></i> Adresse Email
+                                <i class="bi bi-envelope"></i> Email Address
                             </label>
                             <input type="email" 
                                    class="form-control form-control-lg" 
@@ -52,7 +52,7 @@
 
                         <div class="mb-4">
                             <label class="form-label fw-bold mb-3">
-                                <i class="bi bi-tags"></i> Sujets d'intérêt
+                                <i class="bi bi-tags"></i> Topics of interest
                             </label>
                             <div class="row">
                                 @for (int i = 0; i < Model.AvailableTopics.Count; i++)
@@ -76,14 +76,14 @@
                         </div>
 
                         <div class="d-grid gap-2 mb-3">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="bi bi-check-circle"></i> S'abonner à la Newsletter
-                            </button>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-check-circle"></i> Subscribe to the Newsletter
+                        </button>
                         </div>
 
                         <div class="text-center">
                             <a href="/" class="btn btn-link">
-                                <i class="bi bi-arrow-left"></i> Retour au Dashboard
+                                <i class="bi bi-arrow-left"></i> Back to Dashboard
                             </a>
                         </div>
                     </form>
@@ -93,7 +93,7 @@
             <div class="card mt-4 bg-light">
                 <div class="card-body">
                     <h5 class="card-title">
-                        <i class="bi bi-info-circle"></i> À propos de la Newsletter
+                        <i class="bi bi-info-circle"></i> About the Newsletter
                     </h5>
                     <ul class="mb-0">
                         <li>Recevez votre dose quotidienne de C# directement dans votre boîte mail</li>
