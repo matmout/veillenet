@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.3.11218.70 d18.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VeilleNet", "VeilleNet.csproj", "{DCA5633D-86C6-F376-FEEF-4460E5BA130D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DCA5633D-86C6-F376-FEEF-4460E5BA130D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCA5633D-86C6-F376-FEEF-4460E5BA130D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCA5633D-86C6-F376-FEEF-4460E5BA130D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCA5633D-86C6-F376-FEEF-4460E5BA130D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {74FD85A8-3F77-4BB9-95AF-7DCF9029B15C}
+	EndGlobalSection
+EndGlobal
