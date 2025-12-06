@@ -12,11 +12,10 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["VeilleNet.csproj", "VeilleNet/"]
-RUN dotnet restore "./VeilleNet/VeilleNet.csproj"
+COPY VeilleNet.csproj ./
+RUN dotnet restore ./VeilleNet.csproj
 COPY . .
-WORKDIR "/src/VeilleNet"
-RUN dotnet build "./VeilleNet.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build ./VeilleNet.csproj -c $BUILD_CONFIGURATION -o /app/build
 
 # Cette étape permet de publier le projet de service à copier dans la phase finale
 FROM build AS publish
