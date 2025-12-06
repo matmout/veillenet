@@ -1,0 +1,287 @@
+@page
+@model LiensModel
+@{
+    ViewData["Title"] = "Liens Utiles";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-4 text-center mb-3">
+                <i class="bi bi-link-45deg"></i> Liens Utiles
+            </h1>
+            <p class="lead text-center text-muted">
+                Ressources essentielles pour développeurs C# - Organisées par catégorie
+            </p>
+        </div>
+    </div>
+
+    <!-- Categories Grid -->
+    <div class="row g-4">
+        @foreach (var category in Model.Categories)
+        {
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100 category-card">
+                    <div class="card-header bg-@category.ColorClass">
+                        <h2 class="h4 mb-0">
+                            <i class="@category.Icon"></i> @category.Name
+                        </h2>
+                        <p class="mb-0 mt-2 small text-muted">@category.Description</p>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="links-container">
+                            @foreach (var link in category.Links)
+                            {
+                                <a href="@link.Url" target="_blank" class="link-item">
+                                    <div class="link-icon">
+                                        <i class="@link.Icon"></i>
+                                    </div>
+                                    <div class="link-content">
+                                        <div class="link-name">
+                                            @link.Name
+                                            <i class="bi bi-box-arrow-up-right ms-1 external-icon"></i>
+                                        </div>
+                                        <div class="link-description">
+                                            @link.Description
+                                        </div>
+                                    </div>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Back to Dashboard -->
+    <div class="row mt-5 mb-4">
+        <div class="col-12 text-center">
+            <a href="/" class="btn btn-outline-primary btn-lg">
+                <i class="bi bi-arrow-left"></i> Retour au Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Category Cards */
+    .category-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .category-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
+    }
+
+    .category-card .card-header {
+        padding: 1.25rem;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .category-card .card-header.bg-primary {
+        background: linear-gradient(135deg, #007acc 0%, #005a9e 100%) !important;
+        color: #fff !important;
+    }
+
+    .category-card .card-header.bg-info {
+        background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%) !important;
+        color: #fff !important;
+    }
+
+    .category-card .card-header.bg-warning {
+        background: linear-gradient(135deg, #ffd166 0%, #f59e0b 100%) !important;
+        color: #1e1e1e !important;
+    }
+
+    .category-card .card-header.bg-success {
+        background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%) !important;
+        color: #fff !important;
+    }
+
+    .category-card .card-header.bg-danger {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+        color: #fff !important;
+    }
+
+    .category-card .card-header.bg-secondary {
+        background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%) !important;
+        color: #fff !important;
+    }
+
+    .category-card .card-header .small {
+        opacity: 0.9;
+        font-size: 0.85rem;
+    }
+
+    /* Links Container */
+    .links-container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .link-item {
+        display: flex;
+        align-items: flex-start;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid var(--vs-border);
+        transition: all 0.2s ease;
+        text-decoration: none;
+        color: var(--vs-text);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .link-item:last-child {
+        border-bottom: none;
+    }
+
+    .link-item::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 0;
+        background: linear-gradient(90deg, rgba(0, 122, 204, 0.1) 0%, transparent 100%);
+        transition: width 0.3s ease;
+    }
+
+    .link-item:hover {
+        background: rgba(0, 122, 204, 0.05);
+        padding-left: 1.5rem;
+    }
+
+    .link-item:hover::before {
+        width: 4px;
+    }
+
+    .link-item:hover .link-name {
+        color: var(--vs-accent-strong);
+    }
+
+    .link-item:hover .external-icon {
+        opacity: 1;
+        transform: translate(2px, -2px);
+    }
+
+    /* Link Icon */
+    .link-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        background: var(--vs-panel-alt);
+        border: 1px solid var(--vs-border);
+        margin-right: 1rem;
+        flex-shrink: 0;
+        transition: all 0.2s ease;
+    }
+
+    .link-item:hover .link-icon {
+        background: var(--vs-accent-strong);
+        border-color: var(--vs-accent-strong);
+        color: #fff;
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .link-icon i {
+        font-size: 1.25rem;
+    }
+
+    /* Link Content */
+    .link-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .link-name {
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
+        transition: color 0.2s ease;
+        display: flex;
+        align-items: center;
+    }
+
+    .link-description {
+        font-size: 0.875rem;
+        color: var(--vs-muted);
+        line-height: 1.4;
+    }
+
+    .external-icon {
+        font-size: 0.75rem;
+        opacity: 0;
+        transition: all 0.2s ease;
+    }
+
+    /* Responsive adjustments */
+    @@media (max-width: 768px) {
+        .link-item {
+            padding: 0.875rem 1rem;
+        }
+
+        .link-icon {
+            width: 36px;
+            height: 36px;
+            margin-right: 0.75rem;
+        }
+
+        .link-icon i {
+            font-size: 1.1rem;
+        }
+
+        .link-name {
+            font-size: 0.95rem;
+        }
+
+        .link-description {
+            font-size: 0.8rem;
+        }
+    }
+
+    /* Animation on page load */
+    @@keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .category-card {
+        animation: slideInUp 0.5s ease-out backwards;
+    }
+
+    /* Individual animation delays */
+    .col-lg-6:nth-child(1) .category-card {
+        animation-delay: 0.1s;
+    }
+
+    .col-lg-6:nth-child(2) .category-card {
+        animation-delay: 0.2s;
+    }
+
+    .col-lg-6:nth-child(3) .category-card {
+        animation-delay: 0.3s;
+    }
+
+    .col-lg-6:nth-child(4) .category-card {
+        animation-delay: 0.4s;
+    }
+
+    .col-lg-6:nth-child(5) .category-card {
+        animation-delay: 0.5s;
+    }
+
+    .col-lg-6:nth-child(6) .category-card {
+        animation-delay: 0.6s;
+    }
+</style>
