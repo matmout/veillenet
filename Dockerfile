@@ -17,8 +17,10 @@ WORKDIR /app
 # Copy published output
 COPY --from=build /app/publish .
 
-# Railway injecte la variable PORT automatiquement
+# Configuration pour Railway
 ENV ASPNETCORE_ENVIRONMENT=Production
+ENV ASPNETCORE_HTTP_PORTS=8080
+EXPOSE 8080
 
 # Start the application
 ENTRYPOINT ["dotnet", "VeilleNet.dll"]

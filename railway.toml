@@ -7,3 +7,5 @@ healthcheckPath = "/"
 healthcheckTimeout = 300
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3
+sleepApplication = false
+startCommand = "dotnet VeilleNet.dll"

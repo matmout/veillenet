@@ -2,10 +2,6 @@ using VeilleNet.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configuration du port pour Railway (utilise la variable PORT)
-var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-builder.WebHost.UseUrls($"http://*:{port}");
-
 // Add services to the container.
 builder.Services.AddRazorPages();
 
