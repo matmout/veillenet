@@ -1,15 +1,35 @@
 ﻿<!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Contain('Sharp') - @ViewData["Title"]</title>
+    <title>@(ViewData["Title"] != null ? ViewData["Title"] + " - Contain('Sharp')" : "Contain('Sharp') - Your daily dose of C#")</title>
+    <meta name="description" content="@(ViewData["Description"] ?? "ContainSharp - Your daily dose of C#. Stay updated with official .NET blogs, releases, GitHub trends, AI tools, and essential resources for C# developers.")" />
+    <meta name="keywords" content="C#, .NET, ASP.NET, Visual Studio, GitHub, AI tools, WinForms, development, programming" />
+    <meta name="author" content="ContainSharp" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="@(ViewData["CanonicalUrl"] ?? "https://containsharp.com")" />
+    <meta property="og:title" content="@(ViewData["Title"] != null ? ViewData["Title"] + " - Contain('Sharp')" : "Contain('Sharp') - Your daily dose of C#")" />
+    <meta property="og:description" content="@(ViewData["Description"] ?? "ContainSharp - Your daily dose of C#. Stay updated with official .NET blogs, releases, GitHub trends, AI tools, and essential resources for C# developers.")" />
+    <meta property="og:image" content="https://containsharp.com/icons/containsharp.png" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="@(ViewData["CanonicalUrl"] ?? "https://containsharp.com")" />
+    <meta property="twitter:title" content="@(ViewData["Title"] != null ? ViewData["Title"] + " - Contain('Sharp')" : "Contain('Sharp') - Your daily dose of C#")" />
+    <meta property="twitter:description" content="@(ViewData["Description"] ?? "ContainSharp - Your daily dose of C#. Stay updated with official .NET blogs, releases, GitHub trends, AI tools, and essential resources for C# developers.")" />
+    <meta property="twitter:image" content="https://containsharp.com/icons/containsharp.png" />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="@(ViewData["CanonicalUrl"] ?? "https://containsharp.com")" />
     <link rel="icon" type="image/svg+xml" href="~/icons/containsharp.svg" />
     <link rel="alternate icon" type="image/png" href="~/icons/containsharp.png" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>

@@ -1,0 +1,6 @@
+# ContainSharp robots.txt
+User-agent: *
+Allow: /
+Disallow: /Error
+
+Sitemap: https://containsharp.com/sitemap.xml
