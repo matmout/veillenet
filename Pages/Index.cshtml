@@ -159,6 +159,55 @@
         </div>
     </div>
 
+    <!-- C# Videos Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <h2 class="h4 mb-0">
+                        <i class="bi bi-play-circle"></i> New C# Videos
+                    </h2>
+                </div>
+                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                    @if (Model.Videos.Any())
+                    {
+                        <div class="list-group list-group-flush">
+                            @foreach (var video in Model.Videos.Take(10))
+                            {
+                                <div class="list-group-item px-0">
+                                    <div class="d-flex w-100 justify-content-between align-items-start">
+                                        @if (!string.IsNullOrEmpty(video.Thumbnail))
+                                        {
+                                            <div class="me-3">
+                                                <img src="@video.Thumbnail" alt="@video.Title" style="width: 120px; height: 90px; object-fit: cover; border-radius: 4px;" />
+                                            </div>
+                                        }
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-1">
+                                                <a href="@video.Url" target="_blank" class="text-decoration-none">
+                                                    @video.Title
+                                                </a>
+                                            </h6>
+                                            <p class="mb-1 small text-muted">@(video.Description.Length > 0 ? video.Description.Substring(0, Math.Min(150, video.Description.Length)) : "")@(video.Description.Length > 150 ? "..." : "")</p>
+                                            <small class="text-muted">
+                                                <i class="bi bi-camera-video"></i> @video.Channel | 
+                                                <i class="bi bi-calendar"></i> @video.PublishedDate.ToString("dd MMM yyyy")
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center">Loading videos...</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Main Content Row -->
     <div class="row">
         <!-- Blog Posts Section -->
