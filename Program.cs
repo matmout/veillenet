@@ -19,6 +19,7 @@ builder.Services.AddScoped<IReleaseNewsService, ReleaseNewsService>();
 builder.Services.AddScoped<INewsletterService, NewsletterService>();
 builder.Services.AddScoped<IAINewsService, AINewsService>();
 builder.Services.AddScoped<IWinFormNewsService, WinFormNewsService>();
+builder.Services.AddScoped<IVideoService, VideoService>();
 
 var app = builder.Build();
 
@@ -32,7 +33,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 
-// Activer les fichiers statiques (nécessaire pour wwwroot)
+// Activer les fichiers statiques (nï¿½cessaire pour wwwroot)
 app.UseStaticFiles();
 
 app.UseHttpsRedirection();
