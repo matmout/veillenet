@@ -249,6 +249,41 @@ public class MCPService : IMCPService
                         GuideUrl = "https://docs.mistral.ai"
                     }
                 }
+            },
+            // New category: Misc
+            new MCPCategory
+            {
+                Name = "Misc",
+                Description = "Miscellaneous official MCP servers and integrations",
+                Icon = "bi-ui-checks",
+                ColorClass = "secondary",
+                Tools = new List<MCPTool>
+                {
+                    new MCPTool
+                    {
+                        Name = "Atlassian MCP Server",
+                        Description = "Official Atlassian Remote MCP Server for integrating with Atlassian products",
+                        Category = "Misc",
+                        Icon = "bi-gear",
+                        GuideUrl = "https://support.atlassian.com/atlassian-rovo-mcp-server/docs/getting-started-with-the-atlassian-remote-mcp-server/"
+                    },
+                    new MCPTool
+                    {
+                        Name = "GitLab MCP Server",
+                        Description = "Official GitLab MCP server for GitLab Duo and project operations",
+                        Category = "Misc",
+                        Icon = "bi-git",
+                        GuideUrl = "https://docs.gitlab.com/user/gitlab_duo/model_context_protocol/mcp_server/"
+                    },
+                    new MCPTool
+                    {
+                        Name = "Jenkins MCP Server",
+                        Description = "Official Jenkins MCP server plugin for CI/CD automation",
+                        Category = "Misc",
+                        Icon = "bi-tools",
+                        GuideUrl = "https://plugins.jenkins.io/mcp-server/"
+                    }
+                }
             }
         };
     }

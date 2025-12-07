@@ -31,7 +31,8 @@ public class LiensModel : PageModel
                         Name = ".NET Blog",
                         Description = "Official .NET team blog with the latest announcements and news",
                         Url = "https://devblogs.microsoft.com/dotnet/",
-                        Icon = "bi-newspaper"
+                        Icon = "bi-newspaper",
+                        IsRecommended = true
                     },
                     new UsefulLink
                     {
@@ -69,7 +70,8 @@ public class LiensModel : PageModel
                         Name = "GitHub Copilot",
                         Description = "AI-powered coding assistant for Visual Studio and VS Code",
                         Url = "https://github.com/features/copilot",
-                        Icon = "bi-code-square"
+                        Icon = "bi-code-square",
+                        IsRecommended = true
                     },
                     new UsefulLink
                     {
@@ -114,7 +116,8 @@ public class LiensModel : PageModel
                         Name = "WinForms Documentation",
                         Description = "Microsoft official guide for Windows Forms .NET",
                         Url = "https://learn.microsoft.com/en-us/dotnet/desktop/winforms/",
-                        Icon = "bi-book"
+                        Icon = "bi-book",
+                        IsRecommended = true
                     },
                     new UsefulLink
                     {
@@ -152,28 +155,37 @@ public class LiensModel : PageModel
                         Name = "CodinGame",
                         Description = "Learn to code by playing with multiplayer programming challenges",
                         Url = "https://www.codingame.com/",
-                        Icon = "bi-controller"
+                        Icon = "bi-controller",
+                        IsRecommended = true
                     },
                     new UsefulLink
                     {
                         Name = "Exercism",
                         Description = "Programming exercises with free mentoring in C#",
                         Url = "https://exercism.org/tracks/csharp",
-                        Icon = "bi-trophy"
+                        Icon = "bi-controller"
                     },
                     new UsefulLink
                     {
                         Name = "HackerRank",
                         Description = "Programming challenges and technical interview prep",
                         Url = "https://www.hackerrank.com/dashboard",
-                        Icon = "bi-award"
+                        Icon = "bi-controller"
+                    },
+                    new UsefulLink
+                    {
+                        Name = "LeetCode",
+                        Description = "Training platform with thousands of algorithmic problems",
+                        Url = "https://leetcode.com/",
+                        Icon = "bi-code",
+                        IsRecommended = true
                     },
                     new UsefulLink
                     {
                         Name = "Advent of Code",
                         Description = "Advent calendar with daily coding challenges",
                         Url = "https://adventofcode.com/",
-                        Icon = "bi-calendar-star"
+                        Icon = "bi-controller"
                     }
                 }
             },
@@ -211,7 +223,8 @@ public class LiensModel : PageModel
                         Name = "NuGet",
                         Description = "Official package manager for .NET",
                         Url = "https://www.nuget.org/",
-                        Icon = "bi-box-seam"
+                        Icon = "bi-box-seam",
+                        IsRecommended = true
                     },
                     new UsefulLink
                     {
@@ -232,10 +245,10 @@ public class LiensModel : PageModel
                 {
                     new UsefulLink
                     {
-                        Name = "LeetCode",
-                        Description = "Training platform with thousands of algorithmic problems",
-                        Url = "https://leetcode.com/",
-                        Icon = "bi-code"
+                        Name = "Design Patterns - Refactoring Guru",
+                        Description = "The Catalog of C# Design Pattern Examples",
+                        Url = "https://refactoring.guru/design-patterns/csharp",
+                        Icon = "bi-mortarboard"
                     },
                     new UsefulLink
                     {
@@ -249,7 +262,7 @@ public class LiensModel : PageModel
                         Name = "Visualgo",
                         Description = "Visualize algorithms and data structures",
                         Url = "https://visualgo.net/",
-                        Icon = "bi-graph-up"
+                        Icon = "bi-mortarboard"
                     },
                     new UsefulLink
                     {
@@ -263,7 +276,8 @@ public class LiensModel : PageModel
                         Name = "CsvIsTool",
                         Description = "CS 1332 Data Structures & Algorithms Visualization Tool",
                         Url = "https://csvistool.com/",
-                        Icon = "bi-calculator"
+                        Icon = "bi-mortarboard",
+                        IsRecommended = true
                     }
                 }
             }

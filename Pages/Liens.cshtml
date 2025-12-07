@@ -31,8 +31,19 @@
                         <p class="mb-0 mt-2 small text-muted">@category.Description</p>
                     </div>
                     <div class="card-body p-0">
+                        @{ 
+                            var orderedLinks = category.Links
+                                .OrderByDescending(l => l.IsRecommended)
+                                .ThenBy(l => l.Name)
+                                .ToList();
+                            var visibleLinks = orderedLinks.Take(4).ToList();
+                            var hiddenLinks = orderedLinks.Skip(4).ToList();
+                            var collapseId = $"collapse-{category.Name.Replace(" ", "-").ToLowerInvariant()}";
+                        }
+
                         <div class="links-container">
-                            @foreach (var link in category.Links)
+                        <div class="links-container vs-scroll" style="max-height: 320px; overflow-y: auto;">
+                            @foreach (var link in orderedLinks)
                             {
                                 <a href="@link.Url" target="_blank" class="link-item">
                                     <div class="link-icon">
@@ -41,6 +52,12 @@
                                     <div class="link-content">
                                         <div class="link-name">
                                             @link.Name
+                                            @if (link.IsRecommended)
+                                            {
+                                                <span class="ms-2" title="Recommended" aria-label="Recommended">
+                                                    <i class="bi bi-star-fill text-warning"></i>
+                                                </span>
+                                            }
                                             <i class="bi bi-box-arrow-up-right ms-1 external-icon"></i>
                                         </div>
                                         <div class="link-description">

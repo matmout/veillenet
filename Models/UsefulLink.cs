@@ -6,6 +6,7 @@ public class UsefulLink
     public string Description { get; set; } = string.Empty;
     public string Url { get; set; } = string.Empty;
     public string Icon { get; set; } = string.Empty;
+    public bool IsRecommended { get; set; } = false;
 }
 
 public class LinkCategory
