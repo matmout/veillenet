@@ -1,0 +1,309 @@
+@page
+@model LatestLLMModel
+@{
+    ViewData["Title"] = "Latest LLM";
+    ViewData["Description"] = "Discover the latest Large Language Models (LLM) available, including OpenAI GPT-4, Claude, Grok, GitHub Copilot, and Perplexity models. Stay updated with the newest AI models for development and productivity.";
+    ViewData["CanonicalUrl"] = "https://containsharp.com/LatestLLM";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-4 text-center mb-3">
+                <i class="bi bi-cpu"></i> Latest LLM
+            </h1>
+            <p class="lead text-center text-muted">
+                Explore the latest Large Language Models available for AI-powered development
+            </p>
+        </div>
+    </div>
+
+    <!-- LLM Cards Grid -->
+    <div class="row g-4">
+        @foreach (var llm in Model.LLMs)
+        {
+            <div class="col-lg-6 col-xl-4">
+                <div class="llm-card h-100">
+                    <div class="llm-card-header">
+                        <div class="llm-icon-wrapper">
+                            <i class="bi bi-robot llm-icon"></i>
+                        </div>
+                        <div class="llm-header-content">
+                            <h3 class="llm-name">@llm.Name</h3>
+                            <p class="llm-author">
+                                <i class="bi bi-building"></i> @llm.Author
+                            </p>
+                        </div>
+                    </div>
+                    <div class="llm-card-body">
+                        <p class="llm-description">@llm.Description</p>
+                        <div class="llm-meta">
+                            <div class="meta-item">
+                                <i class="bi bi-calendar-event"></i>
+                                <span>@llm.DateRelease.ToString("dd MMM yyyy")</span>
+                            </div>
+                            @if (!string.IsNullOrEmpty(llm.ScoreIA) && llm.ScoreIA != "N/A")
+                            {
+                                <div class="meta-item">
+                                    <i class="bi bi-star-fill"></i>
+                                    <span>Score: @llm.ScoreIA</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="llm-card-footer">
+                        <a href="@llm.Link" target="_blank" class="llm-link">
+                            <i class="bi bi-box-arrow-up-right"></i> Visit Documentation
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Back to Dashboard -->
+    <div class="row mt-5 mb-4">
+        <div class="col-12 text-center">
+            <a href="/" class="btn btn-outline-primary btn-lg">
+                <i class="bi bi-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* LLM Card Styles - Visual Studio Theme */
+    .llm-card {
+        background: var(--vs-panel);
+        border: 1px solid var(--vs-border);
+        border-radius: var(--border-radius-lg);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .llm-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s ease;
+    }
+
+    .llm-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--card-shadow-hover);
+        border-color: var(--vs-accent-strong);
+    }
+
+    .llm-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    /* Card Header */
+    .llm-card-header {
+        padding: 1.5rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        border-bottom: 1px solid var(--vs-border);
+        background: var(--vs-panel-alt);
+    }
+
+    .llm-icon-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        flex-shrink: 0;
+        transition: all 0.3s ease;
+    }
+
+    .llm-card:hover .llm-icon-wrapper {
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .llm-icon {
+        font-size: 1.75rem;
+        color: #fff;
+    }
+
+    .llm-header-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .llm-name {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--vs-text);
+        margin-bottom: 0.5rem;
+        line-height: 1.3;
+        word-wrap: break-word;
+    }
+
+    .llm-author {
+        font-size: 0.9rem;
+        color: var(--vs-muted);
+        margin-bottom: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* Card Body */
+    .llm-card-body {
+        padding: 1.5rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .llm-description {
+        font-size: 0.95rem;
+        color: var(--vs-muted);
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+        flex: 1;
+    }
+
+    .llm-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--vs-border);
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        color: var(--vs-muted);
+    }
+
+    .meta-item i {
+        color: var(--vs-accent-strong);
+        font-size: 1rem;
+    }
+
+    /* Card Footer */
+    .llm-card-footer {
+        padding: 1rem 1.5rem;
+        background: var(--vs-panel-alt);
+        border-top: 1px solid var(--vs-border);
+    }
+
+    .llm-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: rgba(0, 122, 204, 0.1);
+        border: 1px solid var(--vs-accent-strong);
+        border-radius: 6px;
+        color: var(--vs-accent-strong);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .llm-link:hover {
+        background: var(--vs-accent-strong);
+        color: #fff;
+        transform: translateX(4px);
+    }
+
+    /* Animation on page load */
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .llm-card {
+        animation: fadeInUp 0.6s ease-out backwards;
+    }
+
+    /* Stagger animation for cards */
+    .col-lg-6:nth-child(1) .llm-card {
+        animation-delay: 0.1s;
+    }
+
+    .col-lg-6:nth-child(2) .llm-card {
+        animation-delay: 0.2s;
+    }
+
+    .col-lg-6:nth-child(3) .llm-card {
+        animation-delay: 0.3s;
+    }
+
+    .col-lg-6:nth-child(4) .llm-card {
+        animation-delay: 0.4s;
+    }
+
+    .col-lg-6:nth-child(5) .llm-card {
+        animation-delay: 0.5s;
+    }
+
+    .col-lg-6:nth-child(6) .llm-card {
+        animation-delay: 0.6s;
+    }
+
+    .col-lg-6:nth-child(7) .llm-card {
+        animation-delay: 0.7s;
+    }
+
+    .col-lg-6:nth-child(8) .llm-card {
+        animation-delay: 0.8s;
+    }
+
+    .col-lg-6:nth-child(9) .llm-card {
+        animation-delay: 0.9s;
+    }
+
+    /* Responsive adjustments */
+    @@media (max-width: 767px) {
+        .llm-card-header {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .llm-icon-wrapper {
+            margin: 0 auto;
+        }
+
+        .llm-author {
+            justify-content: center;
+        }
+
+        .llm-meta {
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .meta-item {
+            justify-content: center;
+        }
+    }
+</style>
