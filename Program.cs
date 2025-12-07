@@ -45,6 +45,7 @@ builder.Services.AddHttpClient();
 
 // Register application services
 builder.Services.AddSingleton<ICacheService, MemoryCacheService>();
+builder.Services.AddSingleton<IMCPService, MCPService>();
 builder.Services.AddScoped<IBlogAggregationService, BlogAggregationService>();
 builder.Services.AddScoped<IGitHubService, GitHubService>();
 builder.Services.AddScoped<IReleaseNewsService, ReleaseNewsService>();

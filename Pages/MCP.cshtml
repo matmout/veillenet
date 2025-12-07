@@ -37,7 +37,14 @@
                                 <div class="col-lg-6 col-xl-4">
                                     <div class="mcp-tool-card">
                                         <div class="tool-icon-wrapper">
-                                            <i class="@tool.Icon tool-icon"></i>
+                                            @if (!string.IsNullOrEmpty(tool.ImageUrl))
+                                            {
+                                                <img src="@tool.ImageUrl" alt="@tool.Name" class="tool-image" />
+                                            }
+                                            else
+                                            {
+                                                <i class="@tool.Icon tool-icon"></i>
+                                            }
                                         </div>
                                         <div class="tool-content">
                                             <h3 class="tool-name">@tool.Name</h3>
@@ -176,6 +183,12 @@
 
     .mcp-tool-card:hover .tool-icon {
         color: #fff;
+    }
+
+    .tool-image {
+        width: 60%;
+        height: 60%;
+        object-fit: contain;
     }
 
     /* Tool Content */

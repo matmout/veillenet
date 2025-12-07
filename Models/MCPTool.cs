@@ -7,6 +7,7 @@ public class MCPTool
     public string Category { get; set; } = string.Empty;
     public string GuideUrl { get; set; } = string.Empty;
     public string Icon { get; set; } = string.Empty;
+    public string ImageUrl { get; set; } = string.Empty;
 }
 
 public class MCPCategory
