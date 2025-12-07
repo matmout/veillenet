@@ -921,6 +921,594 @@ public class QuestionService : IQuestionService
                 Choices = new List<string> { "Facade", "Bridge", "Composite", "Proxy" },
                 CorrectAnswer = "Facade",
                 Explanation = "Facade provides a unified interface that simplifies the use of a complex subsystem." 
+            },
+
+            // ASP.NET Core / Web (20 questions)
+            new Question
+            {
+                Id = 84,
+                Category = "ASP.NET Core",
+                Type = QuestionType.MultipleChoice,
+                Text = "Which method is used to add middleware to the ASP.NET Core pipeline?",
+                Choices = new List<string> { "Use", "Map", "Run", "Add" },
+                CorrectAnswer = "Use",
+                Explanation = "The Use method adds middleware to the request pipeline that can pass control to the next middleware."
+            },
+            new Question
+            {
+                Id = 85,
+                Category = "ASP.NET Core",
+                Type = QuestionType.MultipleChoice,
+                Text = "What is the difference between AddScoped and AddTransient in dependency injection?",
+                Choices = new List<string> { "Scoped creates one instance per request, Transient creates a new instance each time", "Scoped is thread-safe, Transient is not", "Scoped is faster than Transient", "They are identical" },
+                CorrectAnswer = "Scoped creates one instance per request, Transient creates a new instance each time",
+                Explanation = "AddScoped creates one instance per HTTP request, while AddTransient creates a new instance every time it's requested."
+            },
+            new Question
+            {
+                Id = 86,
+                Category = "ASP.NET Core",
+                Type = QuestionType.MultipleChoice,
+                Text = "Which attribute is used to bind action parameters from the request body?",
+                Choices = new List<string> { "[FromBody]", "[FromQuery]", "[FromRoute]", "[FromForm]" },
+                CorrectAnswer = "[FromBody]",
+                Explanation = "[FromBody] binds the parameter from the request body, typically for JSON payloads."
+            },
+            new Question
+            {
+                Id = 87,
+                Category = "ASP.NET Core",
+                Type = QuestionType.MultipleChoice,
+                Text = "What HTTP status code should be returned when a resource is successfully created?",
+                Choices = new List<string> { "201 Created", "200 OK", "204 No Content", "202 Accepted" },
+                CorrectAnswer = "201 Created",
+                Explanation = "201 Created indicates successful resource creation and should include a Location header pointing to the new resource."
+            },
+            new Question
+            {
+                Id = 88,
+                Category = "ASP.NET Core",
+                Type = QuestionType.MultipleChoice,
+                Text = "Which method terminates the middleware pipeline without calling the next middleware?",
+                Choices = new List<string> { "Run", "Use", "Map", "UseWhen" },
+                CorrectAnswer = "Run",
+                Explanation = "Run is a terminal middleware that doesn't call next(), ending the pipeline."
+            },
+            new Question
+            {
+                Id = 89,
+                Category = "ASP.NET Core",
+                Type = QuestionType.MultipleChoice,
+                Text = "What is the purpose of ModelState.IsValid in ASP.NET Core?",
+                Choices = new List<string> { "Validates model binding and data annotations", "Checks if the model is null", "Verifies SQL injection attacks", "Ensures the model is serializable" },
+                CorrectAnswer = "Validates model binding and data annotations",
+                Explanation = "ModelState.IsValid checks whether model binding succeeded and all validation attributes are satisfied."
+            },
+            new Question
+            {
+                Id = 90,
+                Category = "ASP.NET Core",
+                Type = QuestionType.MultipleChoice,
+                Text = "Which interface should a middleware class implement?",
+                Choices = new List<string> { "IMiddleware", "IApplicationMiddleware", "IRequestHandler", "IHttpMiddleware" },
+                CorrectAnswer = "IMiddleware",
+                Explanation = "Custom middleware classes can implement IMiddleware for factory-based activation."
+            },
+            new Question
+            {
+                Id = 91,
+                Category = "ASP.NET Core",
+                Type = QuestionType.MultipleChoice,
+                Text = "What is the purpose of the [ApiController] attribute?",
+                Choices = new List<string> { "Enables automatic model validation and binding conventions", "Marks a controller as thread-safe", "Enables caching automatically", "Adds authentication requirements" },
+                CorrectAnswer = "Enables automatic model validation and binding conventions",
+                Explanation = "[ApiController] enables features like automatic HTTP 400 responses for invalid models and inference of binding sources."
+            },
+            new Question
+            {
+                Id = 92,
+                Category = "HTTP",
+                Type = QuestionType.MultipleChoice,
+                Text = "Which HTTP method is idempotent and should be used to update a complete resource?",
+                Choices = new List<string> { "PUT", "POST", "PATCH", "DELETE" },
+                CorrectAnswer = "PUT",
+                Explanation = "PUT is idempotent and replaces the entire resource. Multiple identical PUT requests have the same effect as a single one."
+            },
+            new Question
+            {
+                Id = 93,
+                Category = "HTTP",
+                Type = QuestionType.MultipleChoice,
+                Text = "What HTTP status code indicates that the server understood the request but refuses to authorize it?",
+                Choices = new List<string> { "403 Forbidden", "401 Unauthorized", "400 Bad Request", "405 Method Not Allowed" },
+                CorrectAnswer = "403 Forbidden",
+                Explanation = "403 Forbidden means authentication succeeded but the user lacks permission. 401 means authentication is required."
+            },
+            new Question
+            {
+                Id = 94,
+                Category = "ASP.NET Core",
+                Type = QuestionType.MultipleChoice,
+                Text = "Which method is used to configure services in the dependency injection container?",
+                Choices = new List<string> { "ConfigureServices", "Configure", "AddServices", "RegisterServices" },
+                CorrectAnswer = "ConfigureServices",
+                Explanation = "In older ASP.NET Core versions, ConfigureServices was used. In .NET 6+, services are added directly to builder.Services."
+            },
+            new Question
+            {
+                Id = 95,
+                Category = "ASP.NET Core",
+                Type = QuestionType.MultipleChoice,
+                Text = "What is the purpose of IActionResult in ASP.NET Core?",
+                Choices = new List<string> { "Represents the result of an action method", "Validates action parameters", "Filters incoming requests", "Manages session state" },
+                CorrectAnswer = "Represents the result of an action method",
+                Explanation = "IActionResult is an interface for action results like OkResult, NotFoundResult, CreatedResult, etc."
+            },
+            new Question
+            {
+                Id = 96,
+                Category = "ASP.NET Core",
+                Type = QuestionType.MultipleChoice,
+                Text = "Which attribute prevents over-posting attacks by specifying which properties can be bound?",
+                Choices = new List<string> { "[Bind]", "[ValidateInput]", "[BindProperty]", "[SafeModel]" },
+                CorrectAnswer = "[Bind]",
+                Explanation = "The [Bind] attribute specifies which properties the model binder should include, preventing mass assignment vulnerabilities."
+            },
+            new Question
+            {
+                Id = 97,
+                Category = "ASP.NET Core",
+                Type = QuestionType.MultipleChoice,
+                Text = "What is the difference between IActionFilter and IResultFilter?",
+                Choices = new List<string> { "ActionFilter runs before/after action execution, ResultFilter runs before/after result execution", "ActionFilter is synchronous, ResultFilter is asynchronous", "ActionFilter is for APIs only, ResultFilter is for MVC", "They are identical" },
+                CorrectAnswer = "ActionFilter runs before/after action execution, ResultFilter runs before/after result execution",
+                Explanation = "IActionFilter executes around action method execution, while IResultFilter executes around result execution (e.g., view rendering)."
+            },
+            new Question
+            {
+                Id = 98,
+                Category = "ASP.NET Core",
+                Type = QuestionType.MultipleChoice,
+                Text = "Which method should you use to return a 404 Not Found response in a controller?",
+                Choices = new List<string> { "NotFound()", "BadRequest()", "NoContent()", "StatusCode(404)" },
+                CorrectAnswer = "NotFound()",
+                Explanation = "NotFound() returns a 404 status code. StatusCode(404) also works but NotFound() is more semantic."
+            },
+            new Question
+            {
+                Id = 99,
+                Category = "ASP.NET Core",
+                Type = QuestionType.MultipleChoice,
+                Text = "What is content negotiation in ASP.NET Core Web API?",
+                Choices = new List<string> { "Selecting response format based on Accept header", "Compressing response data", "Validating request content", "Encrypting API responses" },
+                CorrectAnswer = "Selecting response format based on Accept header",
+                Explanation = "Content negotiation allows the API to return different formats (JSON, XML) based on the client's Accept header."
+            },
+            new Question
+            {
+                Id = 100,
+                Category = "ASP.NET Core",
+                Type = QuestionType.MultipleChoice,
+                Text = "Which method configures strongly-typed configuration objects?",
+                Choices = new List<string> { "Configure<T>", "AddOptions<T>", "Bind<T>", "Register<T>" },
+                CorrectAnswer = "Configure<T>",
+                Explanation = "services.Configure<TOptions>(configuration.GetSection(\"SectionName\")) binds configuration to strongly-typed options."
+            },
+            new Question
+            {
+                Id = 101,
+                Category = "ASP.NET Core",
+                Type = QuestionType.MultipleChoice,
+                Text = "What is the purpose of the [Authorize] attribute?",
+                Choices = new List<string> { "Restricts access to authenticated users", "Validates model data", "Enables CORS", "Configures routing" },
+                CorrectAnswer = "Restricts access to authenticated users",
+                Explanation = "[Authorize] restricts access to authenticated users. It can also specify roles, policies, or authentication schemes."
+            },
+            new Question
+            {
+                Id = 102,
+                Category = "ASP.NET Core",
+                Type = QuestionType.MultipleChoice,
+                Text = "Which HTTP method should be used for partial updates?",
+                Choices = new List<string> { "PATCH", "PUT", "POST", "UPDATE" },
+                CorrectAnswer = "PATCH",
+                Explanation = "PATCH is designed for partial updates, while PUT replaces the entire resource."
+            },
+            new Question
+            {
+                Id = 103,
+                Category = "ASP.NET Core",
+                Type = QuestionType.MultipleChoice,
+                Text = "What is the purpose of UseRouting() and UseEndpoints() in the middleware pipeline?",
+                Choices = new List<string> { "UseRouting matches requests to endpoints, UseEndpoints executes them", "Both are identical and interchangeable", "UseRouting handles static files, UseEndpoints handles dynamic content", "UseRouting is for MVC, UseEndpoints is for APIs" },
+                CorrectAnswer = "UseRouting matches requests to endpoints, UseEndpoints executes them",
+                Explanation = "UseRouting adds route matching to the pipeline, while UseEndpoints executes the matched endpoint."
+            },
+
+            // Security & Authentication (15 questions)
+            new Question
+            {
+                Id = 104,
+                Category = "Security",
+                Type = QuestionType.MultipleChoice,
+                Text = "What does JWT stand for?",
+                Choices = new List<string> { "JSON Web Token", "Java Web Technology", "JavaScript Web Template", "Joint Web Transfer" },
+                CorrectAnswer = "JSON Web Token",
+                Explanation = "JWT (JSON Web Token) is a compact, URL-safe token format for securely transmitting information between parties."
+            },
+            new Question
+            {
+                Id = 105,
+                Category = "Security",
+                Type = QuestionType.MultipleChoice,
+                Text = "Which JWT component contains the actual claims and payload data?",
+                Choices = new List<string> { "Payload", "Header", "Signature", "Footer" },
+                CorrectAnswer = "Payload",
+                Explanation = "JWT consists of three parts: Header (metadata), Payload (claims), and Signature (verification)."
+            },
+            new Question
+            {
+                Id = 106,
+                Category = "Security",
+                Type = QuestionType.MultipleChoice,
+                Text = "What is the primary purpose of CORS (Cross-Origin Resource Sharing)?",
+                Choices = new List<string> { "Allow or restrict cross-origin HTTP requests", "Encrypt data in transit", "Prevent SQL injection", "Manage user sessions" },
+                CorrectAnswer = "Allow or restrict cross-origin HTTP requests",
+                Explanation = "CORS is a security feature that controls which origins can access resources in a web application."
+            },
+            new Question
+            {
+                Id = 107,
+                Category = "Security",
+                Type = QuestionType.MultipleChoice,
+                Text = "Which attack involves injecting malicious scripts into web pages viewed by other users?",
+                Choices = new List<string> { "XSS (Cross-Site Scripting)", "CSRF (Cross-Site Request Forgery)", "SQL Injection", "DDoS" },
+                CorrectAnswer = "XSS (Cross-Site Scripting)",
+                Explanation = "XSS attacks inject malicious scripts that execute in users' browsers. Always encode output and sanitize input."
+            },
+            new Question
+            {
+                Id = 108,
+                Category = "Security",
+                Type = QuestionType.MultipleChoice,
+                Text = "How should passwords be stored in a database?",
+                Choices = new List<string> { "Hashed with a salt using bcrypt or Argon2", "Encrypted with AES", "Plain text", "Base64 encoded" },
+                CorrectAnswer = "Hashed with a salt using bcrypt or Argon2",
+                Explanation = "Passwords should be hashed (one-way) with unique salts using slow algorithms like bcrypt, not encrypted (reversible)."
+            },
+            new Question
+            {
+                Id = 109,
+                Category = "Security",
+                Type = QuestionType.MultipleChoice,
+                Text = "What is the purpose of an anti-forgery token in web applications?",
+                Choices = new List<string> { "Prevent CSRF attacks", "Prevent XSS attacks", "Prevent SQL injection", "Encrypt form data" },
+                CorrectAnswer = "Prevent CSRF attacks",
+                Explanation = "Anti-forgery tokens prevent Cross-Site Request Forgery by validating that requests originate from your application."
+            },
+            new Question
+            {
+                Id = 110,
+                Category = "Authentication",
+                Type = QuestionType.MultipleChoice,
+                Text = "What is the difference between authentication and authorization?",
+                Choices = new List<string> { "Authentication verifies identity, authorization verifies permissions", "Authentication is for APIs, authorization is for web apps", "They are identical", "Authentication uses tokens, authorization uses cookies" },
+                CorrectAnswer = "Authentication verifies identity, authorization verifies permissions",
+                Explanation = "Authentication verifies who you are (identity), while authorization determines what you can access (permissions)."
+            },
+            new Question
+            {
+                Id = 111,
+                Category = "Authentication",
+                Type = QuestionType.MultipleChoice,
+                Text = "Which OAuth 2.0 flow is recommended for server-side web applications?",
+                Choices = new List<string> { "Authorization Code Flow", "Implicit Flow", "Client Credentials Flow", "Resource Owner Password Flow" },
+                CorrectAnswer = "Authorization Code Flow",
+                Explanation = "Authorization Code Flow is most secure for server-side apps as the token is never exposed to the browser."
+            },
+            new Question
+            {
+                Id = 112,
+                Category = "Security",
+                Type = QuestionType.MultipleChoice,
+                Text = "What is the primary defense against SQL injection attacks?",
+                Choices = new List<string> { "Use parameterized queries or ORM", "Validate input length", "Use stored procedures only", "Encrypt the database" },
+                CorrectAnswer = "Use parameterized queries or ORM",
+                Explanation = "Parameterized queries (or ORMs like EF Core) prevent SQL injection by separating SQL code from data."
+            },
+            new Question
+            {
+                Id = 113,
+                Category = "Security",
+                Type = QuestionType.MultipleChoice,
+                Text = "What does the HttpOnly flag on a cookie prevent?",
+                Choices = new List<string> { "JavaScript access to the cookie", "Cookie transmission over HTTP", "Cookie expiration", "Cookie encryption" },
+                CorrectAnswer = "JavaScript access to the cookie",
+                Explanation = "HttpOnly prevents client-side JavaScript from accessing the cookie, mitigating XSS-based cookie theft."
+            },
+            new Question
+            {
+                Id = 114,
+                Category = "Security",
+                Type = QuestionType.MultipleChoice,
+                Text = "What does the Secure flag on a cookie ensure?",
+                Choices = new List<string> { "Cookie is only sent over HTTPS", "Cookie is encrypted", "Cookie is HttpOnly", "Cookie has anti-forgery protection" },
+                CorrectAnswer = "Cookie is only sent over HTTPS",
+                Explanation = "The Secure flag ensures cookies are only transmitted over encrypted HTTPS connections."
+            },
+            new Question
+            {
+                Id = 115,
+                Category = "Authentication",
+                Type = QuestionType.MultipleChoice,
+                Text = "What is OpenID Connect (OIDC)?",
+                Choices = new List<string> { "An identity layer on top of OAuth 2.0", "A database authentication protocol", "A password hashing algorithm", "A cross-origin policy" },
+                CorrectAnswer = "An identity layer on top of OAuth 2.0",
+                Explanation = "OpenID Connect is an identity layer built on OAuth 2.0 that adds authentication to authorization."
+            },
+            new Question
+            {
+                Id = 116,
+                Category = "Security",
+                Type = QuestionType.MultipleChoice,
+                Text = "What is the purpose of Content Security Policy (CSP)?",
+                Choices = new List<string> { "Prevent XSS by restricting resource sources", "Encrypt HTTP traffic", "Prevent CSRF attacks", "Manage CORS policies" },
+                CorrectAnswer = "Prevent XSS by restricting resource sources",
+                Explanation = "CSP is a security header that restricts which sources can load scripts, styles, and other resources, mitigating XSS."
+            },
+            new Question
+            {
+                Id = 117,
+                Category = "Authentication",
+                Type = QuestionType.MultipleChoice,
+                Text = "Which ASP.NET Core Identity method is used to sign in a user?",
+                Choices = new List<string> { "SignInManager.SignInAsync", "UserManager.LoginAsync", "AuthenticationManager.SignIn", "IdentityManager.Authenticate" },
+                CorrectAnswer = "SignInManager.SignInAsync",
+                Explanation = "SignInManager<TUser>.SignInAsync creates the authentication cookie and signs in the user."
+            },
+            new Question
+            {
+                Id = 118,
+                Category = "Security",
+                Type = QuestionType.MultipleChoice,
+                Text = "What is the principle of least privilege?",
+                Choices = new List<string> { "Grant minimum permissions necessary to perform a task", "Use the simplest code possible", "Store minimal data in databases", "Use the shortest passwords allowed" },
+                CorrectAnswer = "Grant minimum permissions necessary to perform a task",
+                Explanation = "Least privilege means users and services should have only the minimum permissions required for their function."
+            },
+            new Question
+            {
+                Id = 119,
+                Category = "Security",
+                Type = QuestionType.MultipleChoice,
+                Text = "What is the purpose of rate limiting in APIs?",
+                Choices = new List<string> { "Prevent abuse and DoS attacks by limiting request frequency", "Improve performance", "Encrypt data", "Validate input" },
+                CorrectAnswer = "Prevent abuse and DoS attacks by limiting request frequency",
+                Explanation = "Rate limiting restricts the number of requests a client can make in a time period, preventing abuse and DoS."
+            },
+            new Question
+            {
+                Id = 120,
+                Category = "Security",
+                Type = QuestionType.MultipleChoice,
+                Text = "Which header should be set to prevent clickjacking attacks?",
+                Choices = new List<string> { "X-Frame-Options", "X-Content-Type-Options", "X-XSS-Protection", "Strict-Transport-Security" },
+                CorrectAnswer = "X-Frame-Options",
+                Explanation = "X-Frame-Options (or CSP frame-ancestors) prevents your site from being embedded in iframes, preventing clickjacking."
+            },
+            new Question
+            {
+                Id = 121,
+                Category = "Authentication",
+                Type = QuestionType.MultipleChoice,
+                Text = "What does MFA (Multi-Factor Authentication) provide?",
+                Choices = new List<string> { "Additional security layer beyond password", "Faster login process", "Automatic password reset", "Single sign-on capability" },
+                CorrectAnswer = "Additional security layer beyond password",
+                Explanation = "MFA requires multiple verification factors (something you know, have, or are) for enhanced security."
+            },
+
+            // Modern C# Features (10 questions)
+            new Question
+            {
+                Id = 122,
+                Category = "Modern C#",
+                Type = QuestionType.MultipleChoice,
+                Text = "What is a record in C# 9+?",
+                Choices = new List<string> { "Immutable reference type with value-based equality", "A database table representation", "An async data structure", "A logging mechanism" },
+                CorrectAnswer = "Immutable reference type with value-based equality",
+                Explanation = "Records are reference types with value-based equality, immutability by default, and concise syntax."
+            },
+            new Question
+            {
+                Id = 123,
+                Category = "Modern C#",
+                Type = QuestionType.MultipleChoice,
+                Text = "What does the 'init' accessor do in C#?",
+                Choices = new List<string> { "Allows property to be set during initialization only", "Initializes the property to default value", "Makes property read-only", "Enables lazy initialization" },
+                CorrectAnswer = "Allows property to be set during initialization only",
+                Explanation = "init accessors allow properties to be set during object initialization but become read-only afterwards."
+            },
+            new Question
+            {
+                Id = 124,
+                Category = "Modern C#",
+                Type = QuestionType.MultipleChoice,
+                Text = "What is pattern matching in C#?",
+                Choices = new List<string> { "Testing if a value matches a specific shape or pattern", "Matching regular expressions", "Comparing strings", "Database query matching" },
+                CorrectAnswer = "Testing if a value matches a specific shape or pattern",
+                Explanation = "Pattern matching allows testing values against patterns in switch expressions, is expressions, etc."
+            },
+            new Question
+            {
+                Id = 125,
+                Category = "Modern C#",
+                Type = QuestionType.MultipleChoice,
+                Text = "What is the purpose of the 'required' modifier in C# 11?",
+                Choices = new List<string> { "Forces property to be initialized during construction", "Makes parameter mandatory", "Enables null checking", "Marks method as essential" },
+                CorrectAnswer = "Forces property to be initialized during construction",
+                Explanation = "The required modifier ensures a property must be set during object creation, enforced by the compiler."
+            },
+            new Question
+            {
+                Id = 126,
+                Category = "Modern C#",
+                Type = QuestionType.MultipleChoice,
+                Text = "What is a top-level statement in C# 9+?",
+                Choices = new List<string> { "Code outside of a class or method in Program.cs", "A statement at the beginning of a method", "The first line of a class", "A global variable declaration" },
+                CorrectAnswer = "Code outside of a class or method in Program.cs",
+                Explanation = "Top-level statements eliminate boilerplate code by allowing statements directly in Program.cs without a Main method."
+            },
+            new Question
+            {
+                Id = 127,
+                Category = "Modern C#",
+                Type = QuestionType.MultipleChoice,
+                Text = "What does the null-coalescing assignment operator ??= do?",
+                Choices = new List<string> { "Assigns value only if left operand is null", "Checks if both operands are null", "Throws if value is null", "Converts null to default value" },
+                CorrectAnswer = "Assigns value only if left operand is null",
+                Explanation = "x ??= y assigns y to x only if x is null, equivalent to x = x ?? y."
+            },
+            new Question
+            {
+                Id = 128,
+                Category = "Modern C#",
+                Type = QuestionType.MultipleChoice,
+                Text = "What is a switch expression in C#?",
+                Choices = new List<string> { "Concise syntax that returns a value based on patterns", "A loop structure", "An async expression", "A LINQ expression" },
+                CorrectAnswer = "Concise syntax that returns a value based on patterns",
+                Explanation = "Switch expressions provide a concise, expression-based alternative to switch statements with pattern matching."
+            },
+            new Question
+            {
+                Id = 129,
+                Category = "Modern C#",
+                Type = QuestionType.MultipleChoice,
+                Text = "What is the purpose of the 'with' keyword for records?",
+                Choices = new List<string> { "Creates a copy with modified properties", "Joins two records", "Validates record data", "Serializes the record" },
+                CorrectAnswer = "Creates a copy with modified properties",
+                Explanation = "The 'with' expression creates a copy of a record with specified properties changed (non-destructive mutation)."
+            },
+            new Question
+            {
+                Id = 130,
+                Category = "Modern C#",
+                Type = QuestionType.MultipleChoice,
+                Text = "What does the null-forgiving operator '!' do?",
+                Choices = new List<string> { "Tells compiler to suppress nullable warnings", "Throws if value is null", "Converts null to default", "Checks for null" },
+                CorrectAnswer = "Tells compiler to suppress nullable warnings",
+                Explanation = "The ! operator suppresses nullable reference type warnings when you know a value isn't null."
+            },
+            new Question
+            {
+                Id = 131,
+                Category = "Modern C#",
+                Type = QuestionType.MultipleChoice,
+                Text = "What is a primary constructor in C# 12?",
+                Choices = new List<string> { "Constructor parameters declared in class declaration", "The first constructor defined", "A required constructor", "A parameterless constructor" },
+                CorrectAnswer = "Constructor parameters declared in class declaration",
+                Explanation = "Primary constructors allow declaring constructor parameters directly in the class declaration for concise syntax."
+            },
+
+            // Additional SQL & EF Core (10 questions)
+            new Question
+            {
+                Id = 132,
+                Category = "Entity Framework",
+                Type = QuestionType.MultipleChoice,
+                Text = "What is the N+1 query problem in EF Core?",
+                Choices = new List<string> { "Loading parent then querying each child separately", "Loading too much data at once", "Using wrong index", "Having null foreign keys" },
+                CorrectAnswer = "Loading parent then querying each child separately",
+                Explanation = "N+1 problem occurs when loading a parent entity (1 query) then loading each child in separate queries (N queries). Use Include() to fix."
+            },
+            new Question
+            {
+                Id = 133,
+                Category = "Entity Framework",
+                Type = QuestionType.MultipleChoice,
+                Text = "Which method eagerly loads related entities in EF Core?",
+                Choices = new List<string> { "Include()", "Load()", "Join()", "Fetch()" },
+                CorrectAnswer = "Include()",
+                Explanation = "Include() eagerly loads related entities in the same query. ThenInclude() loads nested relationships."
+            },
+            new Question
+            {
+                Id = 134,
+                Category = "Entity Framework",
+                Type = QuestionType.MultipleChoice,
+                Text = "What is the purpose of AsNoTracking() in EF Core?",
+                Choices = new List<string> { "Improves performance for read-only queries", "Disables change tracking for updates", "Prevents SQL injection", "Enables lazy loading" },
+                CorrectAnswer = "Improves performance for read-only queries",
+                Explanation = "AsNoTracking() disables change tracking, improving performance when you don't need to update entities."
+            },
+            new Question
+            {
+                Id = 135,
+                Category = "SQL",
+                Type = QuestionType.MultipleChoice,
+                Text = "What is a stored procedure?",
+                Choices = new List<string> { "Precompiled SQL statements stored in database", "A cached query result", "A temporary table", "A database backup" },
+                CorrectAnswer = "Precompiled SQL statements stored in database",
+                Explanation = "Stored procedures are precompiled SQL code stored in the database, offering performance and security benefits."
+            },
+            new Question
+            {
+                Id = 136,
+                Category = "SQL",
+                Type = QuestionType.MultipleChoice,
+                Text = "What is a database transaction?",
+                Choices = new List<string> { "A unit of work that is atomic, consistent, isolated, and durable", "A single SQL query", "A database backup operation", "A table join operation" },
+                CorrectAnswer = "A unit of work that is atomic, consistent, isolated, and durable",
+                Explanation = "Transactions ensure ACID properties: all operations succeed or all fail together, maintaining data integrity."
+            },
+            new Question
+            {
+                Id = 137,
+                Category = "Entity Framework",
+                Type = QuestionType.MultipleChoice,
+                Text = "What is a migration in EF Core?",
+                Choices = new List<string> { "Code that evolves database schema over time", "Moving data between tables", "Importing data from files", "Database backup" },
+                CorrectAnswer = "Code that evolves database schema over time",
+                Explanation = "Migrations are version-controlled changes to database schema that can be applied or rolled back."
+            },
+            new Question
+            {
+                Id = 138,
+                Category = "SQL",
+                Type = QuestionType.MultipleChoice,
+                Text = "What is the difference between DELETE and TRUNCATE?",
+                Choices = new List<string> { "DELETE is logged and can have WHERE clause, TRUNCATE is faster but removes all rows", "DELETE is faster", "TRUNCATE can have WHERE clause", "They are identical" },
+                CorrectAnswer = "DELETE is logged and can have WHERE clause, TRUNCATE is faster but removes all rows",
+                Explanation = "DELETE removes rows one by one with logging and WHERE support. TRUNCATE quickly removes all rows, resets identity, minimal logging."
+            },
+            new Question
+            {
+                Id = 139,
+                Category = "SQL",
+                Type = QuestionType.MultipleChoice,
+                Text = "What is a database index?",
+                Choices = new List<string> { "Data structure that improves query performance", "A primary key", "A foreign key relationship", "A table constraint" },
+                CorrectAnswer = "Data structure that improves query performance",
+                Explanation = "Indexes speed up data retrieval at the cost of slower writes and additional storage."
+            },
+            new Question
+            {
+                Id = 140,
+                Category = "Entity Framework",
+                Type = QuestionType.MultipleChoice,
+                Text = "What does the virtual keyword enable in EF Core navigation properties?",
+                Choices = new List<string> { "Lazy loading", "Eager loading", "Explicit loading", "No tracking" },
+                CorrectAnswer = "Lazy loading",
+                Explanation = "Making navigation properties virtual enables lazy loading proxies to load related data on first access."
+            },
+            new Question
+            {
+                Id = 141,
+                Category = "SQL",
+                Type = QuestionType.MultipleChoice,
+                Text = "What is a foreign key constraint?",
+                Choices = new List<string> { "Enforces referential integrity between tables", "Improves query performance", "Creates an index automatically", "Encrypts column data" },
+                CorrectAnswer = "Enforces referential integrity between tables",
+                Explanation = "Foreign key constraints ensure that values in one table match values in another, maintaining referential integrity."
             }
         };
     }
