@@ -1,0 +1,453 @@
+@page
+@using VeilleNet.Models
+@model TrainingModel
+@{
+    ViewData["Title"] = "Training";
+    ViewData["Description"] = "Test your C# and .NET knowledge with our interactive quiz. Random developer interview questions with multiple choice and free text answers.";
+    ViewData["CanonicalUrl"] = "https://containsharp.com/Training";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-4 text-center mb-3">
+                <i class="bi bi-mortarboard"></i> Training
+            </h1>
+            <p class="lead text-center text-muted">
+                Testez vos connaissances en C# et .NET avec des questions aléatoires
+            </p>
+        </div>
+    </div>
+
+    <!-- Stats Card -->
+    <div class="row mb-4">
+        <div class="col-lg-8 mx-auto">
+            <div class="card stats-card">
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3 col-6 mb-2 mb-md-0">
+                            <div class="stat-item">
+                                <i class="bi bi-check-circle stat-icon text-success"></i>
+                                <div class="stat-value">@Model.Session.CorrectAnswers</div>
+                                <div class="stat-label">Correctes</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-2 mb-md-0">
+                            <div class="stat-item">
+                                <i class="bi bi-x-circle stat-icon text-danger"></i>
+                                <div class="stat-value">@Model.Session.IncorrectAnswers</div>
+                                <div class="stat-label">Incorrectes</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="stat-item">
+                                <i class="bi bi-question-circle stat-icon text-info"></i>
+                                <div class="stat-value">@Model.RemainingQuestions</div>
+                                <div class="stat-label">Restantes</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="stat-item">
+                                <i class="bi bi-collection stat-icon text-warning"></i>
+                                <div class="stat-value">@Model.TotalQuestions</div>
+                                <div class="stat-label">Total</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Question Card -->
+    @if (Model.CurrentQuestion != null)
+    {
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card question-card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">
+                                <i class="bi bi-chat-square-text"></i> Question
+                            </h5>
+                            <span class="badge badge-category">@Model.CurrentQuestion.Category</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h3 class="question-text mb-4">@Model.CurrentQuestion.Text</h3>
+
+                        @if (!Model.ShowResult)
+                        {
+                            <form method="post" asp-page-handler="SubmitAnswer">
+                                <input type="hidden" name="CurrentQuestionId" value="@Model.CurrentQuestion.Id" />
+                                @if (Model.CurrentQuestion.Type == QuestionType.MultipleChoice)
+                                {
+                                    <div class="choices-container">
+                                        @foreach (var choice in Model.CurrentQuestion.Choices)
+                                        {
+                                            <label class="choice-item">
+                                                <input type="radio" name="UserAnswer" value="@choice" required />
+                                                <span class="choice-text">@choice</span>
+                                            </label>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="mb-4">
+                                        <label class="form-label">Votre réponse :</label>
+                                        <input type="text" class="form-control form-control-lg" name="UserAnswer" required />
+                                    </div>
+                                }
+
+                                <div class="text-center mt-4">
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="bi bi-check-lg"></i> Valider
+                                    </button>
+                                </div>
+                            </form>
+                        }
+                        else
+                        {
+                            <div class="result-container @(Model.IsCorrect ? "result-correct" : "result-incorrect")">
+                                <div class="result-icon">
+                                    @if (Model.IsCorrect)
+                                    {
+                                        <i class="bi bi-check-circle-fill text-success"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-x-circle-fill text-danger"></i>
+                                    }
+                                </div>
+                                <h4 class="result-title">
+                                    @(Model.IsCorrect ? "Bravo ! Bonne réponse !" : "Oups ! Mauvaise réponse")
+                                </h4>
+                                
+                                @if (!Model.IsCorrect)
+                                {
+                                    <div class="correct-answer-box">
+                                        <strong>La bonne réponse était :</strong> @Model.CurrentQuestion.CorrectAnswer
+                                    </div>
+                                }
+
+                                @if (!string.IsNullOrEmpty(Model.CurrentQuestion.Explanation))
+                                {
+                                    <div class="explanation-box">
+                                        <i class="bi bi-lightbulb"></i>
+                                        <strong>Explication :</strong> @Model.CurrentQuestion.Explanation
+                                    </div>
+                                }
+
+                                <form method="post" asp-page-handler="NextQuestion" class="mt-4">
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="bi bi-arrow-right"></i> Question suivante
+                                    </button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card question-card text-center">
+                    <div class="card-body p-5">
+                        <i class="bi bi-trophy completion-icon"></i>
+                        <h2 class="mb-4">Session terminée !</h2>
+                        <p class="lead">Vous avez répondu à toutes les questions disponibles.</p>
+                        <div class="final-score my-4">
+                            <h3>Score final : @Model.Session.CorrectAnswers / @Model.TotalQuestions</h3>
+                            <p class="text-muted">
+                                @{
+                                    var percentage = Model.TotalQuestions > 0 ? (Model.Session.CorrectAnswers * 100.0 / Model.TotalQuestions) : 0;
+                                }
+                                Taux de réussite : @percentage.ToString("F1")%
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Reset Button -->
+    <div class="row mt-4 mb-4">
+        <div class="col-lg-8 mx-auto text-center">
+            <form method="post" asp-page-handler="ResetSession" class="d-inline">
+                <button type="submit" class="btn btn-outline-warning btn-lg me-3">
+                    <i class="bi bi-arrow-clockwise"></i> Nouvelle session
+                </button>
+            </form>
+            <a href="/" class="btn btn-outline-primary btn-lg">
+                <i class="bi bi-arrow-left"></i> Retour au Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Stats Card */
+    .stats-card {
+        background: var(--vs-panel);
+        border: 1px solid var(--vs-border);
+        border-radius: var(--border-radius-lg);
+        box-shadow: var(--card-shadow);
+        transition: var(--transition-base);
+    }
+
+    .stats-card:hover {
+        box-shadow: var(--card-shadow-hover);
+    }
+
+    .stat-item {
+        padding: 1rem;
+    }
+
+    .stat-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: var(--vs-text);
+    }
+
+    .stat-label {
+        font-size: 0.875rem;
+        color: var(--vs-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Question Card */
+    .question-card {
+        background: var(--vs-panel);
+        border: 1px solid var(--vs-border);
+        border-radius: var(--border-radius-lg);
+        box-shadow: var(--card-shadow);
+        transition: var(--transition-base);
+    }
+
+    .question-card .card-header {
+        background: linear-gradient(135deg, #007acc 0%, #005a9e 100%);
+        color: #fff;
+        padding: 1.5rem;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+    }
+
+    .question-card .card-body {
+        padding: 2rem;
+    }
+
+    .question-text {
+        color: var(--vs-text);
+        font-size: 1.5rem;
+        font-weight: 500;
+        line-height: 1.6;
+    }
+
+    .badge-category {
+        background: rgba(255, 255, 255, 0.2);
+        color: #fff;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    /* Multiple Choice Options */
+    .choices-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .choice-item {
+        display: flex;
+        align-items: center;
+        padding: 1.25rem 1.5rem;
+        background: var(--vs-panel-alt);
+        border: 2px solid var(--vs-border);
+        border-radius: var(--border-radius-base);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        position: relative;
+    }
+
+    .choice-item:hover {
+        background: #3c3c3c;
+        border-color: var(--vs-accent-strong);
+        transform: translateX(5px);
+    }
+
+    .choice-item input[type="radio"] {
+        margin-right: 1rem;
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        accent-color: var(--vs-accent-strong);
+    }
+
+    .choice-item input[type="radio"]:checked + .choice-text {
+        color: var(--vs-accent-strong);
+        font-weight: 600;
+    }
+
+    .choice-text {
+        flex: 1;
+        font-size: 1.125rem;
+        color: var(--vs-text);
+    }
+
+    /* Free Text Input */
+    .form-control {
+        background: var(--vs-panel-alt);
+        border: 2px solid var(--vs-border);
+        color: var(--vs-text);
+        padding: 0.75rem 1rem;
+        border-radius: var(--border-radius-base);
+        font-size: 1.125rem;
+    }
+
+    .form-control:focus {
+        background: var(--vs-panel-alt);
+        border-color: var(--vs-accent-strong);
+        color: var(--vs-text);
+        box-shadow: 0 0 0 0.2rem rgba(0, 122, 204, 0.25);
+    }
+
+    .form-label {
+        color: var(--vs-text);
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Result Container */
+    .result-container {
+        text-align: center;
+        padding: 2rem;
+        border-radius: var(--border-radius-base);
+        background: var(--vs-panel-alt);
+    }
+
+    .result-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+
+    .result-title {
+        color: var(--vs-text);
+        margin-bottom: 1.5rem;
+    }
+
+    .correct-answer-box {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid var(--vs-red);
+        padding: 1rem;
+        border-radius: var(--border-radius-base);
+        margin-bottom: 1rem;
+        color: var(--vs-text);
+    }
+
+    .explanation-box {
+        background: rgba(106, 159, 181, 0.1);
+        border: 1px solid var(--vs-accent);
+        padding: 1rem;
+        border-radius: var(--border-radius-base);
+        margin-top: 1rem;
+        color: var(--vs-text);
+        text-align: left;
+    }
+
+    .explanation-box i {
+        color: var(--vs-yellow);
+        margin-right: 0.5rem;
+    }
+
+    /* Completion */
+    .completion-icon {
+        font-size: 5rem;
+        color: var(--vs-yellow);
+        margin-bottom: 1rem;
+    }
+
+    .final-score {
+        background: var(--vs-panel-alt);
+        padding: 2rem;
+        border-radius: var(--border-radius-base);
+        border: 2px solid var(--vs-border);
+    }
+
+    .final-score h3 {
+        color: var(--vs-text);
+        margin-bottom: 0.5rem;
+    }
+
+    /* Buttons */
+    .btn-primary {
+        background: linear-gradient(135deg, #007acc 0%, #005a9e 100%);
+        border: none;
+        padding: 0.75rem 2rem;
+        font-weight: 500;
+        transition: var(--transition-base);
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #005a9e 0%, #004578 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 122, 204, 0.3);
+    }
+
+    .btn-outline-warning {
+        border: 2px solid var(--vs-yellow);
+        color: var(--vs-yellow);
+        background: transparent;
+        transition: var(--transition-base);
+    }
+
+    .btn-outline-warning:hover {
+        background: var(--vs-yellow);
+        color: var(--vs-bg);
+        transform: translateY(-2px);
+    }
+
+    .btn-outline-primary {
+        border: 2px solid var(--vs-accent-strong);
+        color: var(--vs-accent-strong);
+        background: transparent;
+        transition: var(--transition-base);
+    }
+
+    .btn-outline-primary:hover {
+        background: var(--vs-accent-strong);
+        color: #fff;
+        transform: translateY(-2px);
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .question-text {
+            font-size: 1.25rem;
+        }
+
+        .choice-text {
+            font-size: 1rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+        }
+
+        .stat-icon {
+            font-size: 1.5rem;
+        }
+    }
+</style>

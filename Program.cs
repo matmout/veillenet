@@ -7,6 +7,15 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 
+// Add session support
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 // Add response compression (Brotli and Gzip)
 builder.Services.AddResponseCompression(options =>
 {
@@ -54,6 +63,7 @@ builder.Services.AddScoped<IAINewsService, AINewsService>();
 builder.Services.AddScoped<IWinFormNewsService, WinFormNewsService>();
 builder.Services.AddScoped<IVideoService, VideoService>();
 builder.Services.AddScoped<ILLMService, LLMService>();
+builder.Services.AddSingleton<IQuestionService, QuestionService>();
 
 var app = builder.Build();
 
@@ -89,6 +99,8 @@ app.UseStaticFiles(new StaticFileOptions
 app.UseHttpsRedirection();
 
 app.UseRouting();
+
+app.UseSession();
 
 app.UseAuthorization();
 
