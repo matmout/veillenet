@@ -35,7 +35,7 @@ public class LLMService : ILLMService
                 Description = "A state-of-the-art, open-weight, general-purpose model.",
                 Link = "https://mistral.ai/",
                 Author = "Mistral AI",
-                DateRelease = new DateTime(2025, 12, 1),
+                DateRelease = new DateTime(2025, 12, 2),
                 ScoreIA = "N/A"
             },
             new LLM
@@ -44,7 +44,7 @@ public class LLMService : ILLMService
                 Description = "Our frontier-class multimodal model released for general availability.",
                 Link = "https://mistral.ai/",
                 Author = "Mistral AI",
-                DateRelease = new DateTime(2025, 8, 1),
+                DateRelease = new DateTime(2025, 8, 12),
                 ScoreIA = "N/A"
             },
             new LLM
@@ -53,7 +53,7 @@ public class LLMService : ILLMService
                 Description = "An update to our previous small model, optimized for efficiency.",
                 Link = "https://mistral.ai/",
                 Author = "Mistral AI",
-                DateRelease = new DateTime(2025, 6, 1),
+                DateRelease = new DateTime(2025, 6, 20),
                 ScoreIA = "N/A"
             },
             new LLM
@@ -62,7 +62,7 @@ public class LLMService : ILLMService
                 Description = "A powerful model offering best-in-class text generation capabilities.",
                 Link = "https://mistral.ai/",
                 Author = "Mistral AI",
-                DateRelease = new DateTime(2025, 12, 1),
+                DateRelease = new DateTime(2025, 12, 2),
                 ScoreIA = "N/A"
             },
             new LLM
@@ -71,7 +71,7 @@ public class LLMService : ILLMService
                 Description = "A powerful and efficient model offering best-in-class performance for its size.",
                 Link = "https://mistral.ai/",
                 Author = "Mistral AI",
-                DateRelease = new DateTime(2025, 12, 1),
+                DateRelease = new DateTime(2025, 12, 2),
                 ScoreIA = "N/A"
             },
             new LLM
@@ -80,7 +80,7 @@ public class LLMService : ILLMService
                 Description = "A tiny and efficient model offering best-in-class performance on edge devices.",
                 Link = "https://mistral.ai/",
                 Author = "Mistral AI",
-                DateRelease = new DateTime(2025, 12, 1),
+                DateRelease = new DateTime(2025, 12, 2),
                 ScoreIA = "N/A"
             },
             new LLM
@@ -89,16 +89,7 @@ public class LLMService : ILLMService
                 Description = "Our frontier-class multimodal reasoning model.",
                 Link = "https://mistral.ai/",
                 Author = "Mistral AI",
-                DateRelease = new DateTime(2025, 9, 1),
-                ScoreIA = "N/A"
-            },
-            new LLM
-            {
-                Name = "Magistral Small 1.2",
-                Description = "Our small multimodal reasoning model.",
-                Link = "https://mistral.ai/",
-                Author = "Mistral AI",
-                DateRelease = new DateTime(2025, 9, 1),
+                DateRelease = new DateTime(2025, 9, 18),
                 ScoreIA = "N/A"
             },
             new LLM
@@ -125,7 +116,7 @@ public class LLMService : ILLMService
                 Description = "Our cutting-edge language model for coding tasks.",
                 Link = "https://mistral.ai/",
                 Author = "Mistral AI",
-                DateRelease = new DateTime(2025, 8, 1),
+                DateRelease = new DateTime(2025, 7, 30),
                 ScoreIA = "N/A"
             },
             new LLM
@@ -134,7 +125,7 @@ public class LLMService : ILLMService
                 Description = "An enterprise grade text model, that excels at development tasks.",
                 Link = "https://mistral.ai/",
                 Author = "Mistral AI",
-                DateRelease = new DateTime(2025, 7, 1),
+                DateRelease = new DateTime(2025, 7, 10),
                 ScoreIA = "N/A"
             },
             new LLM
@@ -143,7 +134,7 @@ public class LLMService : ILLMService
                 Description = "A mini version of our first audio input model.",
                 Link = "https://mistral.ai/",
                 Author = "Mistral AI",
-                DateRelease = new DateTime(2025, 7, 1),
+                DateRelease = new DateTime(2025, 7, 15),
                 ScoreIA = "N/A"
             },
             new LLM
@@ -152,7 +143,7 @@ public class LLMService : ILLMService
                 Description = "Our first model with audio input capabilities for general use.",
                 Link = "https://mistral.ai/",
                 Author = "Mistral AI",
-                DateRelease = new DateTime(2025, 7, 1),
+                DateRelease = new DateTime(2025, 7, 15),
                 ScoreIA = "N/A"
             },
             new LLM
@@ -161,7 +152,7 @@ public class LLMService : ILLMService
                 Description = "An update to our open source model that specializes in development.",
                 Link = "https://mistral.ai/",
                 Author = "Mistral AI",
-                DateRelease = new DateTime(2025, 7, 1),
+                DateRelease = new DateTime(2025, 7, 10),
                 ScoreIA = "N/A"
             },
             new LLM
@@ -170,7 +161,7 @@ public class LLMService : ILLMService
                 Description = "Our moderation service that enables our safety capabilities.",
                 Link = "https://mistral.ai/",
                 Author = "Mistral AI",
-                DateRelease = new DateTime(2024, 11, 1),
+                DateRelease = new DateTime(2024, 11, 6),
                 ScoreIA = "N/A"
             },
             new LLM
@@ -179,7 +170,7 @@ public class LLMService : ILLMService
                 Description = "Our state-of-the-art semantic model for extracting embeddings from code.",
                 Link = "https://mistral.ai/",
                 Author = "Mistral AI",
-                DateRelease = new DateTime(2025, 5, 1),
+                DateRelease = new DateTime(2025, 5, 28),
                 ScoreIA = "N/A"
             },
             new LLM
@@ -188,25 +179,25 @@ public class LLMService : ILLMService
                 Description = "Our frontier-class multimodal model released for general availability.",
                 Link = "https://mistral.ai/",
                 Author = "Mistral AI",
-                DateRelease = new DateTime(2025, 5, 1),
+                DateRelease = new DateTime(2025, 5, 7),
                 ScoreIA = "N/A"
             },
             new LLM
             {
                 Name = "Claude Opus 4.5",
                 Description = "Anthropic's most powerful model (4.5 series), excelling in complex tasks, reasoning, and creativity.",
-                Link = "https://docs.anthropic.com/claude/docs/models",
+                Link = "https://www.anthropic.com/news/claude-opus-4-5",
                 Author = "Anthropic",
-                DateRelease = new DateTime(2025, 12, 1), // Conjectured from context
+                DateRelease = new DateTime(2025, 11, 24), // Conjectured from context
                 ScoreIA = "N/A"
             },
             new LLM
             {
                 Name = "Claude Sonnet 4.5",
                 Description = "Performance/cost balance of the 4.5 series, ideal for enterprise and scaling.",
-                Link = "https://docs.anthropic.com/claude/docs/models",
+                Link = "https://www.anthropic.com/claude/sonnet",
                 Author = "Anthropic",
-                DateRelease = new DateTime(2025, 12, 1),
+                DateRelease = new DateTime(2025, 9, 29),
                 ScoreIA = "N/A"
             },
             new LLM
@@ -215,7 +206,7 @@ public class LLMService : ILLMService
                 Description = "New generation of Google Gemini, natively multimodal with increased reasoning capabilities.",
                 Link = "https://deepmind.google/technologies/gemini/",
                 Author = "Google",
-                DateRelease = new DateTime(2025, 11, 15),
+                DateRelease = new DateTime(2025, 11, 18),
                 ScoreIA = "N/A"
             },
             new LLM
@@ -233,7 +224,7 @@ public class LLMService : ILLMService
                 Description = "Iterative improvement of GPT-5, offering better reliability and more nuanced responses.",
                 Link = "https://openai.com/",
                 Author = "OpenAI",
-                DateRelease = new DateTime(2025, 10, 15),
+                DateRelease = new DateTime(2025, 11, 12),
                 ScoreIA = "N/A"
             },
             new LLM
@@ -242,7 +233,7 @@ public class LLMService : ILLMService
                 Description = "OpenAI's next major leap, promising general intelligence closer to human level.",
                 Link = "https://openai.com/",
                 Author = "OpenAI",
-                DateRelease = new DateTime(2025, 9, 1),
+                DateRelease = new DateTime(2025, 8, 7),
                 ScoreIA = "N/A"
             },
             new LLM
@@ -251,7 +242,7 @@ public class LLMService : ILLMService
                 Description = "Intermediate update to the Claude 4 Opus series.",
                 Link = "https://docs.anthropic.com/",
                 Author = "Anthropic",
-                DateRelease = new DateTime(2025, 8, 1),
+                DateRelease = new DateTime(2025, 8, 5),
                 ScoreIA = "N/A"
             },
             new LLM
@@ -278,7 +269,7 @@ public class LLMService : ILLMService
                 Description = "Fourth iteration of xAI, deeply integrated with real-time data.",
                 Link = "https://x.ai/",
                 Author = "xAI",
-                DateRelease = new DateTime(2025, 7, 1),
+                DateRelease = new DateTime(2025, 7, 9),
                 ScoreIA = "N/A"
             },
             new LLM
@@ -287,7 +278,7 @@ public class LLMService : ILLMService
                 Description = "Flagship model of generation 4, pushing boundaries of context and understanding.",
                 Link = "https://docs.anthropic.com/",
                 Author = "Anthropic",
-                DateRelease = new DateTime(2025, 6, 1),
+                DateRelease = new DateTime(2025, 5, 22),
                 ScoreIA = "N/A"
             },
             new LLM
@@ -386,7 +377,7 @@ public class LLMService : ILLMService
                 Description = "Fast and light version of Claude 3.5, optimized for latency and cost.",
                 Link = "https://docs.anthropic.com/claude/docs/models",
                 Author = "Anthropic",
-                DateRelease = new DateTime(2024, 7, 1),
+                DateRelease = new DateTime(2024, 10, 22),
                 ScoreIA = "N/A"
             },
             new LLM
@@ -395,7 +386,7 @@ public class LLMService : ILLMService
                 Description = "Advanced generalist model, text and code, successor to GPT-4/Turbo.",
                 Link = "https://platform.openai.com/docs/models",
                 Author = "OpenAI",
-                DateRelease = new DateTime(2024, 6, 1),
+                DateRelease = new DateTime(2025, 4, 14),
                 ScoreIA = "N/A"
             },
             new LLM
