@@ -37,8 +37,7 @@ public class QuestionService : IQuestionService
             return _questions[0]; // Return first question if all have been asked
         }
 
-        var random = new Random();
-        var index = random.Next(availableQuestions.Count);
+        var index = Random.Shared.Next(availableQuestions.Count);
         return availableQuestions[index];
     }
 
@@ -385,7 +384,7 @@ public class QuestionService : IQuestionService
                 Category = "Nullable",
                 Type = QuestionType.MultipleChoice,
                 Text = "Quel opérateur permet de fournir une valeur par défaut si null ?",
-                Choices = new List<string> { "??", "?.", "!!", "??" },
+                Choices = new List<string> { "??", "?.", "??=", "!" },
                 CorrectAnswer = "??",
                 Explanation = "L'opérateur '??' (null-coalescing) fournit une valeur par défaut si l'opérande est null."
             },
