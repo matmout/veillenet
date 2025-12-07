@@ -2,6 +2,50 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
+(function () {
+    // Interactive tilt on hover based on mouse position
+    const MAX_ROTATE_DEG = 3; // limit rotation
+    const MAX_TRANSLATE_PX = 6; // slight parallax
+
+    function handleMouseMove(e) {
+        const el = e.currentTarget;
+        const rect = el.getBoundingClientRect();
+        const x = e.clientX - rect.left; // mouse x within element
+        const y = e.clientY - rect.top;  // mouse y within element
+        const cx = rect.width / 2;
+        const cy = rect.height / 2;
+
+        const nx = (x - cx) / cx; // -1..1
+        const ny = (y - cy) / cy; // -1..1
+
+        const rotateY = -nx * MAX_ROTATE_DEG; // tilt left/right
+        const rotateX = ny * MAX_ROTATE_DEG;  // tilt up/down
+        const translateX = nx * MAX_TRANSLATE_PX;
+        const translateY = ny * MAX_TRANSLATE_PX;
+
+        el.style.transform = `translate(${translateX}px, ${translateY}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    }
+
+    function handleMouseLeave(e) {
+        const el = e.currentTarget;
+        el.style.transform = ""; // reset to CSS default (with transition)
+    }
+
+    function initHoverTilt() {
+        document.querySelectorAll('.hover-tilt').forEach(el => {
+            // Ensure GPU acceleration
+            el.style.willChange = 'transform';
+            el.addEventListener('mousemove', handleMouseMove);
+            el.addEventListener('mouseleave', handleMouseLeave);
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initHoverTilt);
+    } else {
+        initHoverTilt();
+    }
+})();
 
 (function () {
   const el = document.getElementById('output-stream');

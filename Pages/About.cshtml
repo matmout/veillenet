@@ -1,0 +1,82 @@
+@page
+@model VeilleNet.Pages.AboutModel
+@{
+    ViewData["Title"] = "About";
+}
+
+<section class="container mt-4 text-light">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-4 text-center mb-3">
+                <i class="bi bi-info-circle"></i> About
+            </h1>
+        </div>
+    </div>
+@*     <h1 class="display-6">About</h1> *@
+    <hr />
+    <div class="row g-4 align-items-stretch">
+        <div class="col-12 col-lg-4 d-flex">
+            <!-- Responsive, lightweight display of the photo with lazy loading -->
+            <div class="card bg-dark border-secondary shadow-sm w-100 h-100">
+                <div class="card-body p-2">
+                    <img class="img-fluid rounded about-photo hover-tilt w-100"
+                         src="~/images/about.jpg"
+                         alt="Matthieu TRACHSEL"
+                         loading="lazy"
+                         decoding="async"
+                         style="height: 100%; max-height: 340px; object-fit: cover; width: 100%;" />
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-8 d-flex">
+            <div class="card bg-dark border-secondary shadow-sm w-100 h-100">
+                <div class="card-body text-light">
+                    <h2 class="h5 mb-3">Matthieu TRACHSEL - Paris</h2>
+                    <p>
+                        This site is built with C# .NET10 and Razor Pages. I created it to stay up to date as a developer,
+                        aggregating resources and practicing with real features. The goal was to have a Visual Studio-like
+                        design and a practical playground to iterate quickly.
+                    </p>
+                    <p>
+                        As a developer, I needed a central place to track news, test ideas, and keep learning.
+                        This project helps me structure that journey.
+                    </p>
+                    <p class="mt-2">
+                        I am currently a FullStack Developer at BRED.
+                    </p>
+                    <p class="mb-0">
+                        I’m always curious about challenging projects and collaborative environments that push technical craftsmanship forward.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile cards -->
+    <div class="row g-4 mt-4">
+        <div class="col-12 col-md-6">
+            <div class="card h-100 bg-dark border-secondary">
+                <div class="card-body text-light">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="bi bi-linkedin me-2"></i>
+                        <h3 class="h6 m-0">LinkedIn</h3>
+                    </div>
+                    <p class="mb-3">Connect and follow professional updates.</p>
+                    <a class="btn btn-primary" href="https://www.linkedin.com/in/matthieutrachsel" target="_blank" rel="noopener">View Profile</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="card h-100 bg-dark border-secondary">
+                <div class="card-body text-light">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="bi bi-github me-2"></i>
+                        <h3 class="h6 m-0">GitHub</h3>
+                    </div>
+                    <p class="mb-3">Explore repositories and contributions.</p>
+                    <a class="btn btn-outline-light" href="https://github.com/matmout" target="_blank" rel="noopener">View Profile</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

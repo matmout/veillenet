@@ -1,11 +1,20 @@
 using VeilleNet.Services;
 using Microsoft.AspNetCore.ResponseCompression;
 using System.IO.Compression;
+using Microsoft.AspNetCore.DataProtection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
+// Persist DataProtection keys to the filesystem to maintain a stable key ring across restarts/deploys
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "keys")))
+    .SetApplicationName("VeilleNet");
+
+// Ensure the keys directory exists on startup
+Directory.CreateDirectory(Path.Combine(builder.Environment.ContentRootPath, "keys"));
 
 // Add session support
 builder.Services.AddDistributedMemoryCache();

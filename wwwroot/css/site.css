@@ -188,8 +188,32 @@ body {
   transition: var(--transition-base);
   overflow: hidden;
   background: var(--vs-panel);
+  height: 100%; /* Ensure consistent height for cards */
 }
 
+.hover-tilt {
+    transition: transform 180ms ease, box-shadow 180ms ease;
+    will-change: transform;
+}
+.hover-tilt:hover {
+    transform: rotate(-1.2deg) scale(1.03);
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.35);
+}
+
+.about-photo {
+    border-radius: 0.5rem;
+}
+
+/* Ensure no blur overlay/filter is applied on hover */
+.about-photo:hover {
+    filter: none !important;
+    backdrop-filter: none !important;
+}
+
+.card.h-100 {
+    display: flex;
+    flex-direction: column; /* Ensure consistent sizing for card elements */
+}
 .card:hover {
   transform: translateY(-5px);
   box-shadow: var(--card-shadow-hover);

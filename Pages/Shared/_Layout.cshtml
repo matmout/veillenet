@@ -84,7 +84,7 @@
                     </ul>
                 </div>
                 <!-- Dev typing animation -->
-                <div class="dev-typer" aria-hidden="true">
+                <a class="dev-typer" asp-area="" asp-page="/About" title="About" aria-label="About - Learn more about this site">
                     <div class="dev">
                         <div class="dev-head"></div>
                         <div class="dev-body">
@@ -96,7 +96,7 @@
                             <div class="dev-keyboard"></div>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
         </nav>
     </header>
@@ -115,6 +115,10 @@
                 <div class="col-md-6 text-end">
                     <a href="https://github.com/matmout/veillenet" target="_blank" rel="noopener noreferrer" class="text-decoration-none" aria-label="View source code on GitHub (opens in new tab)">
                         <i class="bi bi-github" aria-hidden="true"></i> GitHub
+                    </a>
+                    <span class="mx-2">|</span>
+                    <a asp-area="" asp-page="/About" class="text-decoration-none" aria-label="About this site">
+                        <i class="bi bi-info-circle" aria-hidden="true"></i> About
                     </a>
                 </div>
             </div>
