@@ -36,12 +36,8 @@
                                 .OrderByDescending(l => l.IsRecommended)
                                 .ThenBy(l => l.Name)
                                 .ToList();
-                            var visibleLinks = orderedLinks.Take(4).ToList();
-                            var hiddenLinks = orderedLinks.Skip(4).ToList();
-                            var collapseId = $"collapse-{category.Name.Replace(" ", "-").ToLowerInvariant()}";
                         }
 
-                        <div class="links-container">
                         <div class="links-container vs-scroll" style="max-height: 320px; overflow-y: auto;">
                             @foreach (var link in orderedLinks)
                             {
@@ -149,7 +145,7 @@
         text-decoration: none;
         color: var(--vs-text);
         position: relative;
-        overflow: hidden;
+        overflow: visible;
     }
 
     .link-item:last-child {
@@ -227,9 +223,12 @@
     }
 
     .link-description {
-        font-size: 0.875rem;
+        font-size: 0.925rem;
         color: var(--vs-muted);
-        line-height: 1.4;
+        line-height: 1.6;
+        padding-bottom: 0.25rem;
+        white-space: normal;
+        overflow: visible;
     }
 
     .external-icon {

@@ -93,7 +93,7 @@
                         <div class="list-group list-group-flush">
                             @foreach (var news in Model.AINews)
                             {
-                                <div class="list-group-item px-0">
+                                <div class="list-group-item px-0" style="overflow: visible;">
                                     <div class="d-flex w-100 justify-content-between">
                                         <h6 class="mb-1">
                                             <a href="@news.Url" target="_blank" class="text-decoration-none">
@@ -101,7 +101,7 @@
                                             </a>
                                         </h6>
                                     </div>
-                                    <p class="mb-1 small text-muted">@(news.Summary.Length > 0 ? news.Summary.Substring(0, Math.Min(150, news.Summary.Length)) : "")@(news.Summary.Length > 150 ? "..." : "")</p>
+                                    <p class="mb-1 small text-muted" style="line-height:1.6;">@(news.Summary.Length > 0 ? news.Summary.Substring(0, Math.Min(150, news.Summary.Length)) : "")@(news.Summary.Length > 150 ? "..." : "")</p>
                                     <small class="text-muted">
                                         <i class="bi bi-tag"></i> @news.Source | 
                                         <i class="bi bi-calendar"></i> @news.PublishedDate.ToString("dd MMM yyyy")
@@ -134,7 +134,7 @@
                         <div class="list-group list-group-flush">
                             @foreach (var news in Model.WinFormNews)
                             {
-                                <div class="list-group-item px-0">
+                                <div class="list-group-item px-0" style="overflow: visible;">
                                     <div class="d-flex w-100 justify-content-between">
                                         <h6 class="mb-1">
                                             <a href="@news.Url" target="_blank" class="text-decoration-none">
@@ -142,7 +142,7 @@
                                             </a>
                                         </h6>
                                     </div>
-                                    <p class="mb-1 small text-muted">@(news.Summary.Length > 0 ? news.Summary.Substring(0, Math.Min(150, news.Summary.Length)) : "")@(news.Summary.Length > 150 ? "..." : "")</p>
+                                    <p class="mb-1 small text-muted" style="line-height:1.6;">@(news.Summary.Length > 0 ? news.Summary.Substring(0, Math.Min(150, news.Summary.Length)) : "")@(news.Summary.Length > 150 ? "..." : "")</p>
                                     <small class="text-muted">
                                         <span class="badge bg-@(news.Category == "Microsoft" ? "primary" : "secondary")">@news.Category</span> 
                                         <i class="bi bi-tag"></i> @news.Source | 
