@@ -23,7 +23,7 @@ public class LiensModel : PageModel
                     {
                         Name = "C# Documentation",
                         Description = "Official C# docs with guides, tutorials, and API references",
-                        Url = "https://learn.microsoft.com/fr-fr/dotnet/csharp/",
+                        Url = "https://learn.microsoft.com/en-us/dotnet/csharp/",
                         Icon = "bi-book"
                     },
                     new UsefulLink
@@ -37,7 +37,7 @@ public class LiensModel : PageModel
                     {
                         Name = "C# Language Specification",
                         Description = "Full C# language specification",
-                        Url = "https://learn.microsoft.com/fr-fr/dotnet/csharp/language-reference/language-specification/",
+                        Url = "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/",
                         Icon = "bi-file-text"
                     },
                     new UsefulLink
@@ -113,14 +113,14 @@ public class LiensModel : PageModel
                     {
                         Name = "WinForms Documentation",
                         Description = "Microsoft official guide for Windows Forms .NET",
-                        Url = "https://learn.microsoft.com/fr-fr/dotnet/desktop/winforms/",
+                        Url = "https://learn.microsoft.com/en-us/dotnet/desktop/winforms/",
                         Icon = "bi-book"
                     },
                     new UsefulLink
                     {
                         Name = "WinForms Designer",
                         Description = "Documentation for the WinForms visual designer",
-                        Url = "https://learn.microsoft.com/fr-fr/dotnet/desktop/winforms/controls/",
+                        Url = "https://learn.microsoft.com/en-us/dotnet/desktop/winforms/controls/",
                         Icon = "bi-palette"
                     },
                     new UsefulLink
@@ -165,7 +165,7 @@ public class LiensModel : PageModel
                     {
                         Name = "HackerRank",
                         Description = "Programming challenges and technical interview prep",
-                        Url = "https://www.hackerrank.com/domains/tutorials/10-days-of-csharp",
+                        Url = "https://www.hackerrank.com/dashboard",
                         Icon = "bi-award"
                     },
                     new UsefulLink
@@ -239,9 +239,9 @@ public class LiensModel : PageModel
                     },
                     new UsefulLink
                     {
-                        Name = "AlgoExpert",
-                        Description = "Deep algorithm training with explanatory videos",
-                        Url = "https://www.algoexpert.io/",
+                        Name = "Algorithm Visualizer",
+                        Description = "Bring algorithms to life through visualization",
+                        Url = "https://algorithm-visualizer.org/",
                         Icon = "bi-mortarboard"
                     },
                     new UsefulLink
@@ -260,9 +260,9 @@ public class LiensModel : PageModel
                     },
                     new UsefulLink
                     {
-                        Name = "Project Euler",
-                        Description = "Challenging mathematical and algorithmic problems",
-                        Url = "https://projecteuler.net/",
+                        Name = "CsvIsTool",
+                        Description = "CS 1332 Data Structures & Algorithms Visualization Tool",
+                        Url = "https://csvistool.com/",
                         Icon = "bi-calculator"
                     }
                 }

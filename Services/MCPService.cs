@@ -53,7 +53,7 @@ public class MCPService : IMCPService
                         Description = "Access GitHub repositories, issues, pull requests, and workflows directly from your AI assistant",
                         Category = "AI & Code Agents",
                         Icon = "bi-github",
-                        GuideUrl = "https://github.com/modelcontextprotocol/servers/tree/main/src/github"
+                        GuideUrl = "https://github.com/github/github-mcp-server"
                     },
                     new MCPTool
                     {
@@ -61,7 +61,7 @@ public class MCPService : IMCPService
                         Description = "Browser automation and web testing capabilities through MCP",
                         Category = "AI & Code Agents",
                         Icon = "bi-browser-chrome",
-                        GuideUrl = "https://github.com/modelcontextprotocol/servers/tree/main/src/playwright"
+                        GuideUrl = "https://github.com/microsoft/playwright-mcp"
                     },
                     new MCPTool
                     {
