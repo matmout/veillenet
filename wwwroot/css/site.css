@@ -254,7 +254,7 @@ body {
   color: var(--vs-muted) !important;
 }
 
-/* Couleur uniforme pour les listes dans les cartes (À propos, etc.) */
+/* Couleur uniforme pour les listes dans les cartes (ï¿½ propos, etc.) */
 .card ul,
 .card ul li {
   color: var(--vs-text) !important;
@@ -522,7 +522,7 @@ small, .small {
 .output-stream .err{ color:#ef4444; }
 .output-stream .dim{ color:#94a3b8; }
 
-/* Navbar – style Visual Studio */
+/* Navbar ï¿½ style Visual Studio */
 .navbar {
   background: var(--vs-panel-alt) !important;
   border-bottom: 1px solid var(--vs-border);
@@ -602,7 +602,7 @@ small, .small {
   width: 20px;
   height: 10px;
   margin: 0 auto;
-  background: #20912;
+  background: #1e2933;
   border-radius: 3px;
   box-shadow: 0 0 0 1px #1f2933;
   position: relative;
