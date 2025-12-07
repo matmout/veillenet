@@ -53,6 +53,7 @@ builder.Services.AddScoped<INewsletterService, NewsletterService>();
 builder.Services.AddScoped<IAINewsService, AINewsService>();
 builder.Services.AddScoped<IWinFormNewsService, WinFormNewsService>();
 builder.Services.AddScoped<IVideoService, VideoService>();
+builder.Services.AddScoped<ILLMService, LLMService>();
 
 var app = builder.Build();
 
