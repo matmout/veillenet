@@ -134,6 +134,15 @@ Inscription pour recevoir des actualités personnalisées par email (en prépara
 
 ## 🏗️ Architecture
 
+> 📖 **Pour une documentation détaillée de l'architecture**, consultez [Docs/ARCHITECTURE.md](Docs/ARCHITECTURE.md)
+> 
+> Ce document contient :
+> - Diagrammes d'architecture ASCII
+> - Flux de données détaillés
+> - Patterns et principes appliqués
+> - Stratégies de cache et sécurité
+> - Plans d'évolution
+
 ### Structure du projet
 
 ```
@@ -734,20 +743,68 @@ FullStack Developer @ BRED, basé à Paris
 
 ## 📸 Captures d'écran
 
+> 🌐 **Le site est accessible en production sur [containsharp.com](https://containsharp.com)**
+
+> 📖 **Documentation des pages** : Consultez [Docs/screenshots/README.md](Docs/screenshots/README.md) pour des descriptions détaillées de chaque page.
+
 ### Dashboard principal
-Le dashboard affiche une simulation de console Visual Studio avec les dernières actualités, suivie de sections pour les releases, GitHub trending, blogs, actualités IA, et vidéos.
+Le dashboard affiche une simulation de console Visual Studio avec les dernières actualités, suivie de sections pour :
+- **Release News** : Versions .NET, C#, ASP.NET Core
+- **AI Coding Tools** : GitHub Copilot, OpenAI, Anthropic, Mistral
+- **GitHub Trending** : Projets C# populaires récents
+- **Official Blogs** : Articles Microsoft (.NET, ASP.NET, Visual Studio, C#)
+- **WinForms News** : Actualités Windows Forms
+- **C# Videos** : Dernières vidéos YouTube
 
-### Page Liens utiles
-Collection organisée de ressources essentielles pour développeurs C# avec un design card-based moderne.
+**Design** : Interface sombre style Visual Studio avec console animée, cards Bootstrap, et effets hover.
 
-### Page MCP Tools
-Liste interactive des serveurs Model Context Protocol avec catégories et filtres.
+---
 
-### Page LLM
-Comparateur de modèles de langage avec tableau interactif et informations détaillées sur chaque provider.
+### Liens utiles
+Collection organisée de ressources essentielles avec catégories :
+- Documentation officielle
+- Outils de développement  
+- Apprentissage et certifications
+- Communauté et forums
+- Packages NuGet
 
-### Page Training
-Quiz interactif pour tester vos connaissances en C# avec feedback immédiat et explications.
+**Design** : Grille responsive de cards avec icônes Bootstrap.
+
+---
+
+### MCP Tools
+Liste interactive des serveurs Model Context Protocol pour agents IA :
+- Development (GitHub, GitLab, npm)
+- Databases (PostgreSQL, SQLite, MySQL)
+- Cloud Services (AWS, Azure, Google Cloud)
+- Utilities (Filesystem, Fetch, Memory)
+
+**Design** : Cards par catégorie avec liens GitHub.
+
+---
+
+### Latest LLM
+Comparateur de modèles de langage avec informations sur :
+- **Providers** : OpenAI, Anthropic, Google, Meta, Mistral, xAI
+- **Specs** : Contexte, prix, date de sortie
+- **Capacités** : Vision, function calling, streaming
+
+**Design** : Tableau comparatif responsive avec badges.
+
+---
+
+### Training
+Quiz interactif C# avec :
+- Questions sur syntaxe, LINQ, async/await, patterns, performance
+- Niveaux de difficulté progressifs
+- Feedback immédiat et explications détaillées
+- Suivi de score
+
+**Design** : Interface quiz avec boutons radio et feedback coloré.
+
+---
+
+> 💡 **Note** : Des captures d'écran haute résolution seront ajoutées prochainement dans `Docs/screenshots/`
 
 ---
 
