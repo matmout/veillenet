@@ -31,8 +31,8 @@ public class TrainingModel : PageModel
     public void OnGet()
     {
         LoadSession();
-        TotalQuestions = _questionService.GetAllQuestions().Count;
-        RemainingQuestions = TotalQuestions - Session.AskedQuestionIds.Count;
+        TotalQuestions = Math.Min(15, _questionService.GetAllQuestions().Count);
+        RemainingQuestions = Math.Max(0, TotalQuestions - Session.AskedQuestionIds.Count);
         
         if (Session.AskedQuestionIds.Count == 0)
         {
@@ -74,8 +74,8 @@ public class TrainingModel : PageModel
             SaveSession();
         }
 
-        TotalQuestions = _questionService.GetAllQuestions().Count;
-        RemainingQuestions = TotalQuestions - Session.AskedQuestionIds.Count;
+        TotalQuestions = Math.Min(15, _questionService.GetAllQuestions().Count);
+        RemainingQuestions = Math.Max(0, TotalQuestions - Session.AskedQuestionIds.Count);
 
         return Page();
     }
@@ -83,13 +83,25 @@ public class TrainingModel : PageModel
     public IActionResult OnPostNextQuestion()
     {
         LoadSession();
-        
-        if (CurrentQuestion != null)
+        // Record the current question id if available
+        if (CurrentQuestionId.HasValue)
         {
-            Session.AskedQuestionIds.Add(CurrentQuestion.Id);
-            SaveSession();
+            var answered = _questionService.GetQuestionById(CurrentQuestionId.Value);
+            if (answered != null && !Session.AskedQuestionIds.Contains(answered.Id))
+            {
+                Session.AskedQuestionIds.Add(answered.Id);
+                SaveSession();
+            }
         }
 
+        // If cap reached, just refresh page (will show completion)
+        if (Session.AskedQuestionIds.Count >= 15)
+        {
+            return RedirectToPage();
+        }
+
+        // Prepare next question
+        LoadNextQuestion();
         return RedirectToPage();
     }
 
@@ -125,6 +137,14 @@ public class TrainingModel : PageModel
     {
         LoadSession();
         
+        // Stop when cap reached
+        if (Session.AskedQuestionIds.Count >= 15)
+        {
+            CurrentQuestion = null;
+            CurrentQuestionId = null;
+            return;
+        }
+
         // Get a random question that hasn't been asked yet
         CurrentQuestion = _questionService.GetRandomQuestion(Session.AskedQuestionIds);
         CurrentQuestionId = CurrentQuestion?.Id;
