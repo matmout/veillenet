@@ -267,8 +267,6 @@ builder.Services.AddSingleton<IGitHubService, GitHubService>();
 
 ### Installation locale
 
-### Installation locale
-
 #### 1. Cloner le repository
 ```bash
 git clone https://github.com/matmout/veillenet.git
