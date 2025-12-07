@@ -1092,7 +1092,7 @@ public class QuestionService : IQuestionService
                 Text = "Which method configures strongly-typed configuration objects?",
                 Choices = new List<string> { "Configure<T>", "AddOptions<T>", "Bind<T>", "Register<T>" },
                 CorrectAnswer = "Configure<T>",
-                Explanation = "services.Configure<TOptions>(configuration.GetSection('SectionName')) binds configuration to strongly-typed options."
+                Explanation = "services.Configure<TOptions>(configuration.GetSection(\"SectionName\")) binds configuration to strongly-typed options."
             },
             new Question
             {
