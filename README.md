@@ -5,7 +5,7 @@
   
   **Dashboard de veille technologique pour l'écosystème .NET**
   
-  🌐 **[containsharp.com](https://containsharp.com)** - Site public en production
+  🌐 **[containsharp.com](https://www.containsharp.com)** - Site public en production
   
   [![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
   [![C#](https://img.shields.io/badge/C%23-12.0-239120?logo=csharp)](https://docs.microsoft.com/en-us/dotnet/csharp/)
@@ -722,7 +722,7 @@ MIT License - Voir le fichier LICENSE pour plus de détails.
 ## 👤 Auteur
 
 **Matthieu TRACHSEL**
-- Site web : [containsharp.com](https://containsharp.com)
+- Site web : [www.containsharp.com](https://www.containsharp.com)
 - GitHub : [@matmout](https://github.com/matmout)
 - LinkedIn : [matthieutrachsel](https://www.linkedin.com/in/matthieutrachsel)
 
@@ -741,7 +741,7 @@ FullStack Developer @ BRED, basé à Paris
 
 ## 📸 Captures d'écran
 
-> 🌐 **Le site est accessible en production sur [containsharp.com](https://containsharp.com)**
+> 🌐 **Le site est accessible en production sur [www.containsharp.com](https://www.containsharp.com)**
 
 > 📖 **Documentation des pages** : Consultez [Docs/screenshots/README.md](Docs/screenshots/README.md) pour des descriptions détaillées de chaque page.
 
