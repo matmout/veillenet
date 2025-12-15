@@ -41,7 +41,9 @@ public class AiSummarizationBackgroundService : BackgroundService
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _logger.LogInformation("AI Summarization Background Service started");
-
+        //Desable for now
+        if (true)
+        { return; }
         // Initial delay to avoid running immediately on startup
         await Task.Delay(TimeSpan.FromMinutes(60), stoppingToken);
 

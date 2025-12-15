@@ -173,7 +173,13 @@ public class AiSummarizationService : IAiSummarizationService
             var response = await chatClient.GetResponseAsync(messages, chatOptions, cancellationToken);
             responseText = response.Text;
         }
-        catch
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Error during AI summarization for article: {Title} ({Url})", post.Title, post.Url);
+            return null;
+        }
+
+        if(string.IsNullOrEmpty(responseText))
         {
             return null;
         }
