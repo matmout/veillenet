@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Caching.Memory;
 
-namespace VeilleNet.Services;
+namespace VeilleNet.Services.Tools;
 
 public interface ICacheService
 {

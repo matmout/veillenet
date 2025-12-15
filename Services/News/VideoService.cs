@@ -1,8 +1,9 @@
 ﻿using System.ServiceModel.Syndication;
 using System.Xml;
 using VeilleNet.Models;
+using VeilleNet.Services.Tools;
 
-namespace VeilleNet.Services;
+namespace VeilleNet.Services.News;
 
 public interface IVideoService
 {
@@ -12,7 +13,7 @@ public interface IVideoService
 public class VideoService : IVideoService
 {
     private readonly ICacheService _cacheService;
-    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IFeedService _feedService;
     private const string CacheKey = "CSharpVideos";
     private static readonly TimeSpan CacheExpiration = TimeSpan.FromHours(1);
 
@@ -34,10 +35,10 @@ public class VideoService : IVideoService
         ("Kudvenkat", "https://www.youtube.com/feeds/videos.xml?channel_id=UCCTVrRB5KpIiK6V2GGVsR1Q"),
     };
 
-    public VideoService(ICacheService cacheService, IHttpClientFactory httpClientFactory)
+    public VideoService(ICacheService cacheService, IFeedService feedService)
     {
         _cacheService = cacheService;
-        _httpClientFactory = httpClientFactory;
+        _feedService = feedService;
     }
 
     public async Task<List<Video>> GetLatestVideosAsync()
@@ -54,7 +55,7 @@ public class VideoService : IVideoService
         {
             try
             {
-                var feedVideos = await FetchFeedAsync(name, url);
+                var feedVideos = await _feedService.FetchVideoFeedAsync(name, url, video => IsCSharpRelated(video.Title, video.Description) && !videos.Any(w => w.Title == video.Title));
                 videos.AddRange(feedVideos);
             }
             catch (Exception ex)
@@ -70,60 +71,7 @@ public class VideoService : IVideoService
         return videos;
     }
 
-    private async Task<List<Video>> FetchFeedAsync(string channel, string feedUrl)
-    {
-        var videos = new List<Video>();
 
-        try
-        {
-            var httpClient = _httpClientFactory.CreateClient();
-            httpClient.DefaultRequestHeaders.Add("User-Agent", "VeilleNet/1.0");
-            
-            using var stream = await httpClient.GetStreamAsync(feedUrl);
-            using var xmlReader = XmlReader.Create(stream);
-            
-            var feed = SyndicationFeed.Load(xmlReader);
-
-            foreach (var item in feed.Items.Take(5))
-            {
-                var title = item.Title?.Text ?? "No title";
-                var description = HtmlSanitizer.StripHtml(item.Summary?.Text);
-                var videoUrl = item.Links.FirstOrDefault()?.Uri.ToString() ?? "";
-                
-                // Extract YouTube video ID for thumbnail
-                var thumbnail = "";
-                if (videoUrl.Contains("youtube.com") || videoUrl.Contains("youtu.be"))
-                {
-                    var videoId = ExtractYouTubeVideoId(videoUrl);
-                    if (!string.IsNullOrEmpty(videoId))
-                    {
-                        thumbnail = $"https://img.youtube.com/vi/{videoId}/mqdefault.jpg";
-                    }
-                }
-
-                // Filter for C#-related content
-                if (IsCSharpRelated(title, description) && !videos.Any(w=>w.Title == title))
-                {
-                    videos.Add(new Video
-                    {
-                        Title = title,
-                        Url = videoUrl,
-                        Description = description,
-                        PublishedDate = item.PublishDate.DateTime,
-                        Channel = channel,
-                        Thumbnail = thumbnail
-                    });
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Impossible de parser le feed video {channel} {feedUrl} Erreur : {ex.Message}", ex);
-            // Handle feed parsing errors
-        }
-
-        return videos;
-    }
 
     private string ExtractYouTubeVideoId(string url)
     {

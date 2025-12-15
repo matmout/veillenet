@@ -1,6 +1,7 @@
 using VeilleNet.Models;
+using VeilleNet.Services.Tools;
 
-namespace VeilleNet.Services;
+namespace VeilleNet.Services.News;
 
 public interface IReleaseNewsService
 {

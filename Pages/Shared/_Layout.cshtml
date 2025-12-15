@@ -81,6 +81,11 @@
                             </a>
                         </li>
                         <li class="nav-item" role="none">
+                            <a class="nav-link text-white" asp-area="" asp-page="/AiSummary" role="menuitem" aria-label="AI Summary - AI generated summaries">
+                                <i class="bi bi-stars" aria-hidden="true"></i> AI Summary
+                            </a>
+                        </li>
+                        <li class="nav-item" role="none">
                             <a class="nav-link text-white" asp-area="" asp-page="/Training" role="menuitem" aria-label="Training - Test your C# knowledge">
                                 <i class="bi bi-mortarboard" aria-hidden="true"></i> Training
                             </a>
@@ -137,6 +142,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/output-shrink.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

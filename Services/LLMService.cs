@@ -1,4 +1,5 @@
 using VeilleNet.Models;
+using VeilleNet.Services.Tools;
 
 namespace VeilleNet.Services;
 

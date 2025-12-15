@@ -51,130 +51,175 @@ public class QuestionService : IQuestionService
     {
         return new List<Question>
         {
-            // C# Basics - Multiple Choice
+            // C# Fundamentals - Professional Level
             new Question
             {
                 Id = 1,
-                Category = "C# Basics",
+                Category = "C# Fundamentals",
                 Type = QuestionType.MultipleChoice,
-                Text = "Which keyword is used to define a class in C#?",
-                Choices = new List<string> { "class", "Class", "define", "type" },
-                CorrectAnswer = "class",
-                Explanation = "The 'class' keyword is used to define a new class in C#."
+                Text = "What is the key difference between 'class' and 'struct' in terms of memory allocation?",
+                Choices = new List<string> {
+                    "Classes are reference types allocated on heap, structs are value types typically allocated on stack",
+                    "Classes are always immutable, structs are mutable",
+                    "Classes support inheritance, structs don't",
+                    "Classes are sealed by default, structs are not"
+                },
+                CorrectAnswer = "Classes are reference types allocated on heap, structs are value types typically allocated on stack",
+                Explanation = "The fundamental difference is memory allocation: classes are reference types (heap), structs are value types (stack). Both can be mutable, but classes support inheritance while structs don't."
             },
             new Question
             {
                 Id = 2,
-                Category = "C# Basics",
+                Category = "C# Fundamentals",
                 Type = QuestionType.MultipleChoice,
-                Text = "What is the default value of an uninitialized 'int' variable?",
-                Choices = new List<string> { "0", "null", "1", "undefined" },
-                CorrectAnswer = "0",
-                Explanation = "Value types like int have a default value of 0."
+                Text = "In a production application, what's the safest way to handle uninitialized value type variables?",
+                Choices = new List<string> {
+                    "Always explicitly initialize them",
+                    "Rely on default values",
+                    "Use nullable types with null checks",
+                    "Throw exceptions if uninitialized"
+                },
+                CorrectAnswer = "Always explicitly initialize them",
+                Explanation = "While value types have default values, professional code should explicitly initialize variables to avoid subtle bugs and make intent clear."
             },
             new Question
             {
                 Id = 3,
-                Category = "C# Basics",
+                Category = "C# Fundamentals",
                 Type = QuestionType.MultipleChoice,
-                Text = "Which access modifier makes a member accessible only within the class itself?",
-                Choices = new List<string> { "private", "public", "protected", "internal" },
-                CorrectAnswer = "private",
-                Explanation = "The 'private' modifier restricts access to members of the class itself."
+                Text = "What's the most appropriate use of 'protected internal' access modifier in enterprise applications?",
+                Choices = new List<string> {
+                    "Base class methods that should be accessible to derived classes and within the same assembly",
+                    "Public API methods",
+                    "Private implementation details",
+                    "Extension methods"
+                },
+                CorrectAnswer = "Base class methods that should be accessible to derived classes and within the same assembly",
+                Explanation = "'protected internal' is ideal for framework/base class scenarios where methods need to be accessible to derived classes and other classes in the same assembly, but not to external consumers."
             },
             new Question
             {
                 Id = 4,
-                Category = "C# Basics",
+                Category = "C# Fundamentals",
                 Type = QuestionType.FreeText,
-                Text = "How many bits does an 'int' type occupy in memory?",
+                Text = "In a 64-bit .NET application, how many bytes does an 'int' type occupy in memory?",
                 Choices = new List<string>(),
-                CorrectAnswer = "32",
-                Explanation = "An int in C# is a signed 32-bit integer."
+                CorrectAnswer = "4",
+                Explanation = "An int in C# is always a signed 32-bit integer (4 bytes), regardless of platform architecture. For 64-bit integers, use 'long'."
             },
             
-            // OOP - Multiple Choice
+            // OOP - Professional Scenarios
             new Question
             {
                 Id = 5,
                 Category = "OOP",
                 Type = QuestionType.MultipleChoice,
-                Text = "Which pillar of OOP allows hiding implementation details?",
-                Choices = new List<string> { "Encapsulation", "Inheritance", "Polymorphism", "Abstraction" },
-                CorrectAnswer = "Encapsulation",
-                Explanation = "Encapsulation hides implementation details and controls access to data."
+                Text = "You're designing a logging system where different loggers (FileLogger, DatabaseLogger) should be interchangeable. Which OOP principle is most relevant?",
+                Choices = new List<string> {
+                    "Polymorphism through interfaces",
+                    "Encapsulation of logger state",
+                    "Inheritance from a base Logger class",
+                    "Abstraction of logging details"
+                },
+                CorrectAnswer = "Polymorphism through interfaces",
+                Explanation = "Polymorphism through interfaces (ILogger) allows different logger implementations to be used interchangeably, following the Dependency Inversion Principle."
             },
             new Question
             {
                 Id = 6,
                 Category = "OOP",
                 Type = QuestionType.MultipleChoice,
-                Text = "Which syntax allows a class to inherit from another class in C#?",
-                Choices = new List<string> { ":", "extends", "inherits", "implements" },
-                CorrectAnswer = ":",
-                Explanation = "In C#, ':' is used to indicate inheritance (unlike 'extends' in Java)."
+                Text = "In a microservices architecture, why might you prefer composition over inheritance for service clients?",
+                Choices = new List<string> {
+                    "Composition provides more flexibility and avoids tight coupling",
+                    "Inheritance is faster for service calls",
+                    "Composition requires less memory",
+                    "Inheritance is the only way to share code"
+                },
+                CorrectAnswer = "Composition provides more flexibility and avoids tight coupling",
+                Explanation = "Composition (has-a relationships) is preferred in professional code as it's more flexible, avoids the fragility of inheritance hierarchies, and follows the Composition over Inheritance principle."
             },
             new Question
             {
                 Id = 7,
                 Category = "OOP",
                 Type = QuestionType.MultipleChoice,
-                Text = "Can an abstract class be instantiated?",
-                Choices = new List<string> { "No", "Yes", "Only with new", "Depends on context" },
-                CorrectAnswer = "No",
-                Explanation = "An abstract class cannot be instantiated directly; it must be inherited."
+                Text = "What's the primary purpose of an abstract class in enterprise application design?",
+                Choices = new List<string> {
+                    "To provide a common base implementation for derived classes",
+                    "To prevent instantiation of base classes",
+                    "To enforce method implementation in derived classes",
+                    "To reduce code duplication through inheritance"
+                },
+                CorrectAnswer = "To provide a common base implementation for derived classes",
+                Explanation = "Abstract classes excel at providing partial implementations that derived classes can build upon, combining shared functionality with required customization."
             },
             new Question
             {
                 Id = 8,
                 Category = "OOP",
                 Type = QuestionType.FreeText,
-                Text = "How many classes can a C# class inherit directly?",
+                Text = "In C#, what's the maximum depth of inheritance chain recommended for maintainable code?",
                 Choices = new List<string>(),
-                CorrectAnswer = "1",
-                Explanation = "C# supports only single inheritance; a class can inherit from one class."
+                CorrectAnswer = "3-4 levels",
+                Explanation = "While C# allows deep inheritance chains, professional practice recommends 3-4 levels maximum for maintainability. Deeper chains become hard to understand and debug."
             },
 
-            // Collections & LINQ
+            // Collections & LINQ - Performance Focus
             new Question
             {
                 Id = 9,
                 Category = "Collections",
                 Type = QuestionType.MultipleChoice,
-                Text = "Which collection guarantees element uniqueness?",
-                Choices = new List<string> { "HashSet", "List", "ArrayList", "Queue" },
-                CorrectAnswer = "HashSet",
-                Explanation = "HashSet guarantees all elements are unique."
+                Text = "You need to frequently check for item existence and maintain uniqueness in a large dataset. Which collection provides the best performance?",
+                Choices = new List<string> {
+                    "HashSet<T>",
+                    "List<T> with Contains() checks",
+                    "SortedSet<T>",
+                    "Dictionary<T, bool>"
+                },
+                CorrectAnswer = "HashSet<T>",
+                Explanation = "HashSet<T> provides O(1) average complexity for add/remove/contains operations and guarantees uniqueness, making it ideal for this scenario."
             },
             new Question
             {
                 Id = 10,
                 Category = "LINQ",
                 Type = QuestionType.MultipleChoice,
-                Text = "Which LINQ method returns the first element or the default value?",
-                Choices = new List<string> { "FirstOrDefault", "First", "Single", "Take" },
-                CorrectAnswer = "FirstOrDefault",
-                Explanation = "FirstOrDefault returns the first element or default(T) if the sequence is empty."
+                Text = "In a high-performance application, what's the most efficient way to get the first matching element from a large collection?",
+                Choices = new List<string> {
+                    "FirstOrDefault() with a predicate",
+                    "Where().FirstOrDefault()",
+                    "SingleOrDefault()",
+                    "ToList().FirstOrDefault()"
+                },
+                CorrectAnswer = "FirstOrDefault() with a predicate",
+                Explanation = "FirstOrDefault(predicate) is most efficient as it stops enumerating at the first match, avoiding unnecessary iteration and allocation."
             },
             new Question
             {
                 Id = 11,
                 Category = "LINQ",
                 Type = QuestionType.MultipleChoice,
-                Text = "Which LINQ method projects each element of a sequence?",
-                Choices = new List<string> { "Select", "Where", "OrderBy", "GroupBy" },
-                CorrectAnswer = "Select",
-                Explanation = "Select is used to project/transform each element of a sequence."
+                Text = "What's the key performance consideration when using LINQ's Select() vs direct property access?",
+                Choices = new List<string> {
+                    "Select() defers execution until enumeration",
+                    "Select() is always faster",
+                    "Direct access is always better",
+                    "Select() creates intermediate collections"
+                },
+                CorrectAnswer = "Select() defers execution until enumeration",
+                Explanation = "Select() uses deferred execution - it doesn't process data until the query is enumerated, which can be more efficient for chained operations."
             },
             new Question
             {
                 Id = 12,
                 Category = "Collections",
                 Type = QuestionType.FreeText,
-                Text = "What is the average time complexity of a lookup in a Dictionary?",
+                Text = "What is the worst-case time complexity of a lookup in a Dictionary with many hash collisions?",
                 Choices = new List<string>(),
-                CorrectAnswer = "O(1)",
-                Explanation = "Dictionary uses a hash table, offering O(1) average complexity."
+                CorrectAnswer = "O(n)",
+                Explanation = "While Dictionary typically provides O(1) lookups, with many hash collisions it degrades to O(n) as it must traverse linked lists of colliding entries."
             },
 
             // Async/Await
@@ -1509,6 +1554,301 @@ public class QuestionService : IQuestionService
                 Choices = new List<string> { "Enforces referential integrity between tables", "Improves query performance", "Creates an index automatically", "Encrypts column data" },
                 CorrectAnswer = "Enforces referential integrity between tables",
                 Explanation = "Foreign key constraints ensure that values in one table match values in another, maintaining referential integrity."
+            },
+
+            // Advanced C# Features - Professional Development
+            new Question
+            {
+                Id = 142,
+                Category = "Advanced C#",
+                Type = QuestionType.MultipleChoice,
+                Text = "What's the primary benefit of using 'record' types in DTOs (Data Transfer Objects)?",
+                Choices = new List<string> {
+                    "Value-based equality and immutability by default",
+                    "Better serialization performance",
+                    "Automatic database mapping",
+                    "Built-in validation"
+                },
+                CorrectAnswer = "Value-based equality and immutability by default",
+                Explanation = "Records provide value-based equality (comparing properties vs reference) and immutability, making them ideal for DTOs that represent data rather than identity."
+            },
+            new Question
+            {
+                Id = 143,
+                Category = "Advanced C#",
+                Type = QuestionType.MultipleChoice,
+                Text = "In a high-concurrency application, what's the safest way to implement lazy initialization?",
+                Choices = new List<string> {
+                    "Lazy<T> with thread-safe initialization",
+                    "Manual double-checked locking",
+                    "Simple null checks",
+                    "Static constructors"
+                },
+                CorrectAnswer = "Lazy<T> with thread-safe initialization",
+                Explanation = "Lazy<T> provides built-in thread-safe initialization patterns that are more reliable and maintainable than manual double-checked locking."
+            },
+            new Question
+            {
+                Id = 144,
+                Category = "Advanced C#",
+                Type = QuestionType.MultipleChoice,
+                Text = "What's the most appropriate use of 'Span<T>' in performance-critical code?",
+                Choices = new List<string> {
+                    "Working with contiguous memory without allocations",
+                    "Replacing all array usage",
+                    "Thread synchronization",
+                    "Database access"
+                },
+                CorrectAnswer = "Working with contiguous memory without allocations",
+                Explanation = "Span<T> provides type-safe access to contiguous memory regions without heap allocations, ideal for high-performance parsing and memory manipulation."
+            },
+
+            // Real-World Debugging & Performance
+            new Question
+            {
+                Id = 145,
+                Category = "Debugging",
+                Type = QuestionType.MultipleChoice,
+                Text = "You're investigating a memory leak in a long-running .NET service. What's the most effective first step?",
+                Choices = new List<string> {
+                    "Take memory dumps and analyze with WinDbg or dotMemory",
+                    "Restart the service",
+                    "Add more logging",
+                    "Increase garbage collection frequency"
+                },
+                CorrectAnswer = "Take memory dumps and analyze with WinDbg or dotMemory",
+                Explanation = "Memory dumps provide concrete evidence of object retention patterns and are essential for diagnosing memory leaks in production services."
+            },
+            new Question
+            {
+                Id = 146,
+                Category = "Performance",
+                Type = QuestionType.MultipleChoice,
+                Text = "What's the most common cause of poor LINQ-to-SQL performance in enterprise applications?",
+                Choices = new List<string> {
+                    "N+1 query problems and inefficient joins",
+                    "Using async/await",
+                    "Small database tables",
+                    "Too many indexes"
+                },
+                CorrectAnswer = "N+1 query problems and inefficient joins",
+                Explanation = "N+1 queries (loading parent then querying each child separately) and poorly optimized joins are the most common performance bottlenecks in ORM usage."
+            },
+
+            // Architecture & Design Patterns
+            new Question
+            {
+                Id = 147,
+                Category = "Architecture",
+                Type = QuestionType.MultipleChoice,
+                Text = "What's the primary benefit of the CQRS pattern in complex applications?",
+                Choices = new List<string> {
+                    "Separation of read and write models for scalability and optimization",
+                    "Automatic caching",
+                    "Reduced database size",
+                    "Simpler code structure"
+                },
+                CorrectAnswer = "Separation of read and write models for scalability and optimization",
+                Explanation = "CQRS (Command Query Responsibility Segregation) separates read and write operations, allowing each to be optimized independently for complex domains."
+            },
+            new Question
+            {
+                Id = 148,
+                Category = "Architecture",
+                Type = QuestionType.MultipleChoice,
+                Text = "When would you choose event sourcing over traditional CRUD in a financial application?",
+                Choices = new List<string> {
+                    "When you need a complete audit trail of all state changes",
+                    "When performance is the only concern",
+                    "For simple data models",
+                    "When using relational databases"
+                },
+                CorrectAnswer = "When you need a complete audit trail of all state changes",
+                Explanation = "Event sourcing stores all state changes as a sequence of events, providing a complete audit trail essential for financial and compliance scenarios."
+            },
+
+            // Modern .NET Practices
+            new Question
+            {
+                Id = 149,
+                Category = "Modern .NET",
+                Type = QuestionType.MultipleChoice,
+                Text = "What's the recommended approach for dependency injection in .NET 6+ minimal APIs?",
+                Choices = new List<string> {
+                    "Use builder.Services for registration and constructor injection",
+                    "Manual instantiation in each endpoint",
+                    "Service locator pattern",
+                    "Static service access"
+                },
+                CorrectAnswer = "Use builder.Services for registration and constructor injection",
+                Explanation = "Modern .NET uses builder.Services.Add*() methods for registration and constructor injection for clean, testable dependency management."
+            },
+            new Question
+            {
+                Id = 150,
+                Category = "Modern .NET",
+                Type = QuestionType.MultipleChoice,
+                Text = "What's the primary benefit of using Source Generators in .NET 5+?",
+                Choices = new List<string> {
+                    "Compile-time code generation to improve performance and reduce runtime overhead",
+                    "Automatic database schema generation",
+                    "Replacing all reflection usage",
+                    "Simpler build pipelines"
+                },
+                CorrectAnswer = "Compile-time code generation to improve performance and reduce runtime overhead",
+                Explanation = "Source Generators enable compile-time code generation, reducing runtime reflection overhead and improving startup performance."
+            },
+
+            // Modern C# Syntax - Concise Expressions (C# 6-12)
+            new Question
+            {
+                Id = 151,
+                Category = "Modern C# Syntax",
+                Type = QuestionType.MultipleChoice,
+                Text = "What's the most concise way to write this null check: 'if (value != null) return value; else return defaultValue;'?",
+                Choices = new List<string> {
+                    "return value ?? defaultValue;",
+                    "return value != null ? value : defaultValue;",
+                    "return value ??= defaultValue;",
+                    "return defaultValue ?? value;"
+                },
+                CorrectAnswer = "return value ?? defaultValue;",
+                Explanation = "The null-coalescing operator ?? provides the most concise syntax for returning a value or its fallback."
+            },
+            new Question
+            {
+                Id = 152,
+                Category = "Modern C# Syntax",
+                Type = QuestionType.MultipleChoice,
+                Text = "How can you write this property with a backing field more concisely: 'private string _name; public string Name { get { return _name; } set { _name = value; } }'?",
+                Choices = new List<string> {
+                    "public string Name { get; set; }",
+                    "public string Name => _name;",
+                    "public string Name { get; init; }",
+                    "public string Name { get; private set; }"
+                },
+                CorrectAnswer = "public string Name { get; set; }",
+                Explanation = "Auto-properties (get; set;) eliminate the need for explicit backing fields in most cases."
+            },
+            new Question
+            {
+                Id = 153,
+                Category = "Modern C# Syntax",
+                Type = QuestionType.MultipleChoice,
+                Text = "What's the equivalent concise syntax for: 'if (string.IsNullOrEmpty(value)) throw new ArgumentException(\"Value cannot be null or empty\");'?",
+                Choices = new List<string> {
+                    "ArgumentException.ThrowIfNullOrEmpty(value);",
+                    "throw if string.IsNullOrEmpty(value);",
+                    "value.ThrowIfNullOrEmpty();",
+                    "!string.IsNullOrEmpty(value) ?? throw new ArgumentException();"
+                },
+                CorrectAnswer = "ArgumentException.ThrowIfNullOrEmpty(value);",
+                Explanation = "C# 10+ provides concise throw helper methods like ArgumentException.ThrowIfNullOrEmpty() for cleaner validation."
+            },
+            new Question
+            {
+                Id = 154,
+                Category = "Modern C# Syntax",
+                Type = QuestionType.MultipleChoice,
+                Text = "How can you rewrite this switch statement more concisely: 'switch(x) { case 1: return \"One\"; case 2: return \"Two\"; default: return \"Many\"; }'?",
+                Choices = new List<string> {
+                    "return x switch { 1 => \"One\", 2 => \"Two\", _ => \"Many\" };",
+                    "return x switch { case 1: \"One\", case 2: \"Two\", default: \"Many\" };",
+                    "return x switch { 1: \"One\", 2: \"Two\", *: \"Many\" };",
+                    "return x switch { 1 => \"One\", 2 => \"Two\", else => \"Many\" };"
+                },
+                CorrectAnswer = "return x switch { 1 => \"One\", 2 => \"Two\", _ => \"Many\" };",
+                Explanation = "Switch expressions provide concise, expression-based syntax with lambda-style case patterns."
+            },
+            new Question
+            {
+                Id = 155,
+                Category = "Modern C# Syntax",
+                Type = QuestionType.MultipleChoice,
+                Text = "What's the most concise way to write this list initialization: 'var list = new List<string>(); list.Add(\"a\"); list.Add(\"b\"); list.Add(\"c\");'?",
+                Choices = new List<string> {
+                    "var list = new List<string> { \"a\", \"b\", \"c\" };",
+                    "var list = [\"a\", \"b\", \"c\"];",
+                    "var list = new() { \"a\", \"b\", \"c\" };",
+                    "var list = new List<string>(new[] { \"a\", \"b\", \"c\" });"
+                },
+                CorrectAnswer = "var list = new List<string> { \"a\", \"b\", \"c\" };",
+                Explanation = "Collection initializers provide concise syntax for populating collections at creation time."
+            },
+            new Question
+            {
+                Id = 156,
+                Category = "Modern C# Syntax",
+                Type = QuestionType.MultipleChoice,
+                Text = "How can you write this method more concisely: 'public string GetName() { return _name; }'?",
+                Choices = new List<string> {
+                    "public string GetName() => _name;",
+                    "public string GetName() { _name; }",
+                    "public string GetName() return _name;",
+                    "public string GetName() { return: _name; }"
+                },
+                CorrectAnswer = "public string GetName() => _name;",
+                Explanation = "Expression-bodied members use => to provide concise syntax for single-expression methods."
+            },
+            new Question
+            {
+                Id = 157,
+                Category = "Modern C# Syntax",
+                Type = QuestionType.MultipleChoice,
+                Text = "What's the equivalent of this null check with assignment: 'if (value == null) value = new ValueType();'?",
+                Choices = new List<string> {
+                    "value ??= new ValueType();",
+                    "value = value ?? new ValueType();",
+                    "value ?? new ValueType();",
+                    "value = new ValueType() ?? value;"
+                },
+                CorrectAnswer = "value ??= new ValueType();",
+                Explanation = "The null-coalescing assignment operator ??= assigns a value only if the left operand is null."
+            },
+            new Question
+            {
+                Id = 158,
+                Category = "Modern C# Syntax",
+                Type = QuestionType.MultipleChoice,
+                Text = "How can you write this property pattern more concisely: 'public string Name { get { return _name; } private set { _name = value; } }'?",
+                Choices = new List<string> {
+                    "public string Name { get => _name; private set => _name = value; }",
+                    "public string Name { get; private set; } = _name;",
+                    "public string Name => _name { private set; }",
+                    "public string Name { get; private init; }"
+                },
+                CorrectAnswer = "public string Name { get => _name; private set => _name = value; }",
+                Explanation = "Expression-bodied accessors allow concise syntax for simple get/set implementations."
+            },
+            new Question
+            {
+                Id = 159,
+                Category = "Modern C# Syntax",
+                Type = QuestionType.MultipleChoice,
+                Text = "What's the most concise way to write this conditional assignment: 'if (condition) result = value1; else result = value2;'?",
+                Choices = new List<string> {
+                    "result = condition ? value1 : value2;",
+                    "result = condition switch { true => value1, false => value2 };",
+                    "result = condition ? value1 : value2 ?? default;",
+                    "result = condition then value1 else value2;"
+                },
+                CorrectAnswer = "result = condition ? value1 : value2;",
+                Explanation = "The ternary conditional operator provides the most concise syntax for simple conditional assignments."
+            },
+            new Question
+            {
+                Id = 160,
+                Category = "Modern C# Syntax",
+                Type = QuestionType.MultipleChoice,
+                Text = "How can you write this array initialization more concisely in C# 12+: 'int[] numbers = new int[] { 1, 2, 3, 4, 5 };'?",
+                Choices = new List<string> {
+                    "int[] numbers = [1, 2, 3, 4, 5];",
+                    "int[] numbers = new[] { 1, 2, 3, 4, 5 };",
+                    "int[] numbers = { 1, 2, 3, 4, 5 };",
+                    "int[] numbers = new int[5] { 1, 2, 3, 4, 5 };"
+                },
+                CorrectAnswer = "int[] numbers = [1, 2, 3, 4, 5];",
+                Explanation = "C# 12+ introduces collection expressions with [] syntax for more concise array and collection initialization."
             }
         };
     }

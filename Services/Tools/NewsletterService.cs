@@ -1,6 +1,6 @@
 using VeilleNet.Models;
 
-namespace VeilleNet.Services;
+namespace VeilleNet.Services.Tools;
 
 public interface INewsletterService
 {

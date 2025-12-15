@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using VeilleNet.Models;
-using VeilleNet.Services;
+using VeilleNet.Services.Tools;
 
 namespace VeilleNet.Pages;
 

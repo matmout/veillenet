@@ -1,6 +1,6 @@
 namespace VeilleNet.Models;
 
-public class BlogPost
+public class BaseNews
 {
     public string Title { get; set; } = string.Empty;
     public string Url { get; set; } = string.Empty;
@@ -8,4 +8,6 @@ public class BlogPost
     public DateTime PublishedDate { get; set; }
     public string Author { get; set; } = string.Empty;
     public string Source { get; set; } = string.Empty;
+    public string Category { get; set; } = string.Empty; // e.g., "Microsoft", "DevExpress"
+    public string Image { get; set; } = string.Empty;
 }
