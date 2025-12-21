@@ -71,7 +71,7 @@ body {
 }
 
 .btn-outline-primary:focus-visible {
-  box-shadow: 0 0 0 4px rgba(0, 122, 204, 0.2);
+  box-shadow: 0 0 0 4px rgba(0, 122,204, 0.2);
 }
 
 /* Form control focus states */
@@ -292,6 +292,241 @@ body {
 
 .form-control::placeholder {
   color: #a8adb5; /* WCAG AA compliant */
+}
+
+/* Newsletter form input styling */
+input[name="Email"]::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+input[name="Email"]:focus::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Visual Studio Panel Styles */
+.vs-panel {
+  background: var(--vs-panel);
+  border: 1px solid var(--vs-border);
+  border-radius: var(--border-radius-base);
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+}
+
+.vs-panel-secondary {
+  background: var(--vs-panel-alt);
+}
+
+.vs-panel-header {
+  background: var(--vs-panel-alt);
+  color: var(--vs-text);
+  padding: 1rem 1.25rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  border-bottom: 1px solid var(--vs-border);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.vs-panel-body {
+  padding: 1.5rem;
+}
+
+/* VS Alerts */
+.vs-alert {
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-left: 4px solid;
+}
+
+.vs-alert-success {
+  background: rgba(34, 197, 94, 0.1);
+  border-left-color: #22c55e;
+  color: #86efac;
+}
+
+.vs-alert-error {
+  background: rgba(239, 68, 68, 0.1);
+  border-left-color: #ef4444;
+  color: #fca5a5;
+}
+
+.vs-alert-info {
+  background: rgba(59, 130, 246, 0.1);
+  border-left-color: #3b82f6;
+  color: #93c5fd;
+}
+
+.vs-alert-secondary {
+  background: rgba(107, 114, 128, 0.1);
+  border-left-color: #6b7280;
+  color: #d1d5db;
+}
+
+/* VS Info Box */
+.vs-info-box {
+  background: rgba(255, 193, 7, 0.05);
+  border: 1px solid rgba(255, 193, 7, 0.2);
+  border-radius: 6px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.vs-info-box-title {
+  color: #ffd166;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+}
+
+.vs-info-list {
+  color: var(--vs-muted);
+  margin: 0;
+  padding-left: 1.5rem;
+  line-height: 1.8;
+}
+
+.vs-info-list li {
+  margin-bottom: 0.5rem;
+}
+
+.vs-info-note {
+  color: var(--vs-muted);
+  font-size: 0.875rem;
+  margin: 0.75rem 0 0 0;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 193, 7, 0.1);
+}
+
+/* VS Form Styles */
+.vs-form-group {
+  margin-bottom: 1.5rem;
+}
+
+.vs-label {
+  display: block;
+  color: var(--vs-text);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.vs-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: #111827;
+  border: 1px solid var(--vs-border);
+  border-radius: 6px;
+  color: var(--vs-text);
+  font-size: 1rem;
+  transition: var(--transition-base);
+}
+
+.vs-input:focus {
+  outline: none;
+  border-color: var(--vs-accent-strong);
+  box-shadow: 0 0 0 3px rgba(0, 122, 204, 0.15);
+  background: #0d1117;
+}
+
+.vs-input::placeholder {
+  color: var(--vs-muted);
+}
+
+.vs-error {
+  display: block;
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+/* VS Form Actions */
+.vs-form-actions {
+  margin-top: 2rem;
+}
+
+/* VS Buttons */
+.vs-button {
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition-base);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  justify-content: center;
+}
+
+.vs-button-danger {
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+.vs-button-danger:hover {
+  background: linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%);
+  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.4);
+  transform: translateY(-2px);
+}
+
+.vs-button-danger:active {
+  transform: translateY(0);
+}
+
+/* VS Feature List */
+.vs-feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.vs-feature-list li {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--vs-border);
+}
+
+.vs-feature-list li:last-child {
+  border-bottom: none;
+}
+
+.vs-feature-list li i {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  margin-top: 0.25rem;
+}
+
+.vs-feature-list li div {
+  flex-grow: 1;
+}
+
+.vs-feature-list li strong {
+  display: block;
+  color: var(--vs-text);
+  margin-bottom: 0.25rem;
+  font-size: 1rem;
+}
+
+.vs-feature-list li span {
+  display: block;
+  color: var(--vs-muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
 }
 
 .form-check-input {
@@ -701,4 +936,29 @@ small, .small {
 
 .navbar-collapse {
   background: var(--vs-panel-alt);
+}
+
+/* StackOverflow Tags - Visual Studio Style */
+.stackoverflow-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 2px solid;
+  border-radius: 12px;
+  transition: var(--transition-base);
+  background: linear-gradient(135deg, rgba(167, 139, 250, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  border-color: #a78bfa;
+  color: #c4b5fd;
+  letter-spacing: 0.3px;
+  text-transform: lowercase;
+}
+
+.stackoverflow-tag:hover {
+  background: linear-gradient(135deg, rgba(167, 139, 250, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
+  border-color: #c4b5fd;
+  color: #e9d5ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(167, 139, 250, 0.3);
 }

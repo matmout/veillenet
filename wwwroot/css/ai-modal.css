@@ -1,0 +1,241 @@
+/* AI Summary Modal - Visual Studio Style */
+.ai-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 9998;
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.2s ease-out;
+}
+
+.ai-modal-overlay.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ai-modal {
+    background: var(--vs-panel);
+    border: 1px solid var(--vs-border);
+    border-radius: 8px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    max-width: 800px;
+    width: 90%;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    animation: slideDown 0.3s ease-out;
+    position: relative;
+}
+
+/* Modal Header - VS Style */
+.ai-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--vs-panel-alt);
+    border-bottom: 1px solid var(--vs-border);
+    border-radius: 8px 8px 0 0;
+}
+
+.ai-modal-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--vs-text);
+    margin: 0;
+}
+
+.ai-modal-title i {
+    color: var(--vs-accent-strong);
+    font-size: 18px;
+}
+
+.ai-modal-close {
+    background: transparent;
+    border: none;
+    color: var(--vs-muted);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s;
+    line-height: 1;
+}
+
+.ai-modal-close:hover {
+    background: var(--vs-panel);
+    color: var(--vs-text);
+}
+
+.ai-modal-close:focus {
+    outline: 2px solid var(--vs-accent-strong);
+    outline-offset: 2px;
+}
+
+/* Modal Body */
+.ai-modal-body {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.ai-modal-loading {
+    text-align: center;
+    padding: 40px;
+    color: var(--vs-muted);
+}
+
+.ai-modal-loading i {
+    font-size: 32px;
+    animation: spin 1s linear infinite;
+}
+
+.ai-modal-error {
+    padding: 20px;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid var(--vs-red);
+    border-radius: 6px;
+    color: var(--vs-red);
+}
+
+/* AI Summary Content Styling */
+.ai-summary {
+    color: var(--vs-text);
+    line-height: 1.7;
+}
+
+.ai-summary h3 {
+    color: var(--vs-accent-strong);
+    font-size: 1.1rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.ai-summary h3:first-child {
+    margin-top: 0;
+}
+
+.ai-summary strong {
+    color: var(--vs-accent);
+    font-weight: 600;
+}
+
+.ai-summary p {
+    margin-bottom: 1rem;
+}
+
+.ai-summary ul {
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.ai-summary li {
+    margin-bottom: 0.5rem;
+    color: var(--vs-text);
+}
+
+.ai-summary li strong {
+    color: var(--vs-accent-strong);
+}
+
+/* Article Metadata */
+.ai-modal-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--vs-panel-alt);
+    border-top: 1px solid var(--vs-border);
+    border-radius: 0 0 8px 8px;
+    font-size: 0.875rem;
+}
+
+.ai-modal-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--vs-muted);
+}
+
+.ai-modal-meta-item i {
+    color: var(--vs-accent);
+}
+
+.ai-modal-meta-link {
+    color: var(--vs-accent);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.ai-modal-meta-link:hover {
+    color: var(--vs-accent-strong);
+    text-decoration: underline;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .ai-modal {
+        width: 95%;
+        max-height: 90vh;
+    }
+    
+    .ai-modal-body {
+        padding: 16px;
+    }
+}
+
+/* Scrollbar for modal body */
+.ai-modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.ai-modal-body::-webkit-scrollbar-track {
+    background: var(--vs-panel-alt);
+}
+
+.ai-modal-body::-webkit-scrollbar-thumb {
+    background: var(--vs-border);
+    border-radius: 4px;
+}
+
+.ai-modal-body::-webkit-scrollbar-thumb:hover {
+    background: var(--vs-accent-strong);
+}

@@ -1,0 +1,7 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Force Git to treat these as binary (will not be committed even if staged)
+appsettings.json binary
+appsettings.Development.json binary
+appsettings.*.json binary

@@ -1,0 +1,578 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:creativeCommons="http://backend.userland.com/creativeCommonsRssModule" xmlns:re="http://purl.org/atompub/rank/1.0">
+    <title type="text">Highest scored questions tagged c# - Stack Overflow</title>
+    <link rel="self" href="https://stackoverflow.com/feeds/tag?tagnames=c%23&amp;sort=votes" type="application/atom+xml" />
+    <link rel="alternate" href="https://stackoverflow.com/questions/tagged?tagnames=c%23&amp;sort=votes" type="text/html" />
+    <subtitle>most recent 30 from stackoverflow.com</subtitle>
+    <updated>2025-12-21T22:23:43Z</updated>
+    <id>https://stackoverflow.com/feeds/tag?tagnames=c%23&amp;sort=votes</id>
+    <creativeCommons:license>https://creativecommons.org/licenses/by-sa/4.0/rdf</creativeCommons:license> 
+    <entry>
+        <id>https://stackoverflow.com/q/7074</id>
+        <re:rank scheme="https://stackoverflow.com">7598</re:rank>
+        <title type="text">What is the difference between String and string in C#?</title>
+            <category scheme="https://stackoverflow.com/tags" term="c#" />
+            <category scheme="https://stackoverflow.com/tags" term=".net" />
+            <category scheme="https://stackoverflow.com/tags" term="string" />
+            <category scheme="https://stackoverflow.com/tags" term="types" />
+            <category scheme="https://stackoverflow.com/tags" term="alias" />
+        <author>
+            <name>Lance Fisher</name>
+            <uri>https://stackoverflow.com/users/571</uri>
+        </author>
+        <link rel="alternate" href="https://stackoverflow.com/questions/7074/what-is-the-difference-between-string-and-string-in-c" />
+        <published>2008-08-10T07:18:02Z</published>
+        <updated>2024-11-15T13:18:16Z</updated>
+        <summary type="html">
+            &lt;p&gt;What are the differences between these two, and which one should I use?&lt;/p&gt;&#xA;&lt;pre&gt;&lt;code&gt;string s = &amp;quot;Hello world!&amp;quot;;&#xA;String s = &amp;quot;Hello world!&amp;quot;;&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;
+        </summary>
+    </entry>
+    <entry>
+        <id>https://stackoverflow.com/q/105372</id>
+        <re:rank scheme="https://stackoverflow.com">4420</re:rank>
+        <title type="text">How can I enumerate an enum?</title>
+            <category scheme="https://stackoverflow.com/tags" term="c#" />
+            <category scheme="https://stackoverflow.com/tags" term=".net" />
+            <category scheme="https://stackoverflow.com/tags" term="loops" />
+            <category scheme="https://stackoverflow.com/tags" term="enums" />
+            <category scheme="https://stackoverflow.com/tags" term="enumeration" />
+        <author>
+            <name>Ian Boyd</name>
+            <uri>https://stackoverflow.com/users/12597</uri>
+        </author>
+        <link rel="alternate" href="https://stackoverflow.com/questions/105372/how-can-i-enumerate-an-enum" />
+        <published>2008-09-19T20:34:50Z</published>
+        <updated>2025-11-07T14:42:33Z</updated>
+        <summary type="html">
+            &lt;p&gt;How can you enumerate an &lt;code&gt;enum&lt;/code&gt; in C#?&lt;/p&gt;&#xA;&lt;p&gt;E.g., the following code does not compile:&lt;/p&gt;&#xA;&lt;pre class=&quot;lang-cs prettyprint-override&quot;&gt;&lt;code&gt;public enum Suit&#xA;{&#xA;    Spades,&#xA;    Hearts,&#xA;    Clubs,&#xA;    Diamonds&#xA;}&#xA;&#xA;public void EnumerateAllSuitsDemoMethod()&#xA;{&#xA;    foreach (Suit suit in Suit)&#xA;    {&#xA;        DoSomething(suit);&#xA;    }&#xA;}&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&lt;p&gt;And it gives the following compile-time error:&lt;/p&gt;&#xA;&lt;blockquote&gt;&#xA;&lt;p&gt;&#x27;Suit&#x27; is a &#x27;type&#x27; but is used like a &#x27;variable&#x27;&lt;/p&gt;&#xA;&lt;/blockquote&gt;&#xA;&lt;p&gt;It fails on the &lt;code&gt;Suit&lt;/code&gt; keyword, the second one.&lt;/p&gt;&#xA;
+        </summary>
+    </entry>
+    <entry>
+        <id>https://stackoverflow.com/q/29482</id>
+        <re:rank scheme="https://stackoverflow.com">3948</re:rank>
+        <title type="text">How do I cast int to enum in C#?</title>
+            <category scheme="https://stackoverflow.com/tags" term="c#" />
+            <category scheme="https://stackoverflow.com/tags" term="enums" />
+            <category scheme="https://stackoverflow.com/tags" term="casting" />
+            <category scheme="https://stackoverflow.com/tags" term="integer" />
+        <author>
+            <name>lomaxx</name>
+            <uri>https://stackoverflow.com/users/493</uri>
+        </author>
+        <link rel="alternate" href="https://stackoverflow.com/questions/29482/how-do-i-cast-int-to-enum-in-c" />
+        <published>2008-08-27T03:58:21Z</published>
+        <updated>2024-06-02T11:11:25Z</updated>
+        <summary type="html">
+            &lt;p&gt;How do I cast an &lt;code&gt;int&lt;/code&gt; to an &lt;code&gt;enum&lt;/code&gt; in C#?&lt;/p&gt;&#xA;
+        </summary>
+    </entry>
+    <entry>
+        <id>https://stackoverflow.com/q/444798</id>
+        <re:rank scheme="https://stackoverflow.com">3490</re:rank>
+        <title type="text">How to make &#x27;.Contains(string)&#x27; case insensitive</title>
+            <category scheme="https://stackoverflow.com/tags" term="c#" />
+            <category scheme="https://stackoverflow.com/tags" term="string" />
+            <category scheme="https://stackoverflow.com/tags" term="contains" />
+            <category scheme="https://stackoverflow.com/tags" term="case-insensitive" />
+        <author>
+            <name>Boris Callens</name>
+            <uri>https://stackoverflow.com/users/11333</uri>
+        </author>
+        <link rel="alternate" href="https://stackoverflow.com/questions/444798/how-to-make-containsstring-case-insensitive" />
+        <published>2009-01-14T21:39:46Z</published>
+        <updated>2025-10-21T22:43:33Z</updated>
+        <summary type="html">
+            &lt;p&gt;Is there a way to make the following return true?&lt;/p&gt;&#xA;&lt;pre&gt;&lt;code&gt;string title = &amp;quot;ASTRINGTOTEST&amp;quot;;&#xA;title.Contains(&amp;quot;string&amp;quot;);&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&lt;p&gt;There doesn&#x27;t seem to be an overload that allows me to set the case sensitivity. Currently I UPPERCASE them both, but that&#x27;s just silly (by which I am referring to the &lt;a href=&quot;http://en.wikipedia.org/wiki/Internationalization_and_localization&quot; rel=&quot;nofollow noreferrer&quot;&gt;i18n&lt;/a&gt; issues that come with up- and down casing).&lt;/p&gt;&#xA;
+        </summary>
+    </entry>
+    <entry>
+        <id>https://stackoverflow.com/q/141088</id>
+        <re:rank scheme="https://stackoverflow.com">3350</re:rank>
+        <title type="text">How to iterate over a dictionary?</title>
+            <category scheme="https://stackoverflow.com/tags" term="c#" />
+            <category scheme="https://stackoverflow.com/tags" term="dictionary" />
+            <category scheme="https://stackoverflow.com/tags" term="loops" />
+        <author>
+            <name>Jake Stewart</name>
+            <uri>https://stackoverflow.com/users/9311</uri>
+        </author>
+        <link rel="alternate" href="https://stackoverflow.com/questions/141088/how-to-iterate-over-a-dictionary" />
+        <published>2008-09-26T18:20:06Z</published>
+        <updated>2025-09-02T20:06:49Z</updated>
+        <summary type="html">
+            &lt;p&gt;I&#x27;ve seen a few different ways to iterate over a dictionary in C#.  Is there a standard way?&lt;/p&gt;&#xA;
+        </summary>
+    </entry>
+    <entry>
+        <id>https://stackoverflow.com/q/247621</id>
+        <re:rank scheme="https://stackoverflow.com">2926</re:rank>
+        <title type="text">What are the correct version numbers for C#?</title>
+            <category scheme="https://stackoverflow.com/tags" term="c#" />
+            <category scheme="https://stackoverflow.com/tags" term=".net" />
+            <category scheme="https://stackoverflow.com/tags" term="visual-studio" />
+            <category scheme="https://stackoverflow.com/tags" term=".net-core" />
+            <category scheme="https://stackoverflow.com/tags" term=".net-framework-version" />
+        <author>
+            <name>Jon Skeet</name>
+            <uri>https://stackoverflow.com/users/22656</uri>
+        </author>
+        <link rel="alternate" href="https://stackoverflow.com/questions/247621/what-are-the-correct-version-numbers-for-c" />
+        <published>2008-10-29T17:09:40Z</published>
+        <updated>2025-01-08T11:27:29Z</updated>
+        <summary type="html">
+            &lt;p&gt;What are the correct version numbers for C#? What came out when? Why can&#x27;t I find any answers about &lt;strong&gt;&lt;em&gt;C# 3.5&lt;/em&gt;&lt;/strong&gt;?&lt;/p&gt;&#xA;&#xA;&lt;p&gt;This question is primarily to aid those who are searching for an answer using an incorrect version number, e.g. &lt;strong&gt;&lt;em&gt;C# 3.5&lt;/em&gt;&lt;/strong&gt;. The hope is that anyone failing to find an answer with the wrong version number will find &lt;em&gt;this&lt;/em&gt; question and then search again with the right version number.&lt;/p&gt;&#xA;
+        </summary>
+    </entry>
+    <entry>
+        <id>https://stackoverflow.com/q/78536</id>
+        <re:rank scheme="https://stackoverflow.com">2683</re:rank>
+        <title type="text">Deep cloning objects</title>
+            <category scheme="https://stackoverflow.com/tags" term="c#" />
+            <category scheme="https://stackoverflow.com/tags" term=".net" />
+            <category scheme="https://stackoverflow.com/tags" term="clone" />
+            <category scheme="https://stackoverflow.com/tags" term="deep-copy" />
+        <author>
+            <name>NakedBrunch</name>
+            <uri>https://stackoverflow.com/users/3742</uri>
+        </author>
+        <link rel="alternate" href="https://stackoverflow.com/questions/78536/deep-cloning-objects" />
+        <published>2008-09-17T00:06:27Z</published>
+        <updated>2025-10-12T19:43:08Z</updated>
+        <summary type="html">
+            &lt;p&gt;I want to do something like:&lt;/p&gt;&#xA;&#xA;&lt;pre&gt;&lt;code&gt;MyObject myObj = GetMyObj(); // Create and fill a new object&#xA;MyObject newObj = myObj.Clone();&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&#xA;&lt;p&gt;And then make changes to the new object that are not reflected in the original object.&lt;/p&gt;&#xA;&#xA;&lt;p&gt;I don&#x27;t often need this functionality, so when it&#x27;s been necessary, I&#x27;ve resorted to creating a new object and then copying each property individually, but it always leaves me with the feeling that there is a better or more elegant way of handling the situation.&lt;/p&gt;&#xA;&#xA;&lt;p&gt;How can I clone or deep copy an object so that the cloned object can be modified without any changes being reflected in the original object?&lt;/p&gt;&#xA;
+        </summary>
+    </entry>
+    <entry>
+        <id>https://stackoverflow.com/q/136035</id>
+        <re:rank scheme="https://stackoverflow.com">2631</re:rank>
+        <title type="text">Catch multiple exceptions at once?</title>
+            <category scheme="https://stackoverflow.com/tags" term="c#" />
+            <category scheme="https://stackoverflow.com/tags" term=".net" />
+            <category scheme="https://stackoverflow.com/tags" term="exception" />
+        <author>
+            <name>Michael Stum</name>
+            <uri>https://stackoverflow.com/users/91</uri>
+        </author>
+        <link rel="alternate" href="https://stackoverflow.com/questions/136035/catch-multiple-exceptions-at-once" />
+        <published>2008-09-25T20:56:08Z</published>
+        <updated>2025-07-25T20:34:44Z</updated>
+        <summary type="html">
+            &lt;p&gt;It is discouraged to catch &lt;code&gt;System.Exception&lt;/code&gt; errors. Instead, only the &amp;quot;known&amp;quot; exceptions should be caught.&lt;/p&gt;&#xA;&lt;p&gt;This sometimes leads to unnecessary repetitive code, for example:&lt;/p&gt;&#xA;&lt;pre&gt;&lt;code&gt;try&#xA;{&#xA;    WebId = new Guid(queryString[&amp;quot;web&amp;quot;]);&#xA;}&#xA;catch (FormatException)&#xA;{&#xA;    WebId = Guid.Empty;&#xA;}&#xA;catch (OverflowException)&#xA;{&#xA;    WebId = Guid.Empty;&#xA;}&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&lt;p&gt;Is there a way to catch both exceptions and only set &lt;code&gt;WebId = Guid.Empty&lt;/code&gt; once?&lt;/p&gt;&#xA;&lt;p&gt;The given example is rather simple, as it&#x27;s only a &lt;a href=&quot;http://en.wikipedia.org/wiki/Globally_unique_identifier&quot; rel=&quot;noreferrer&quot;&gt;&lt;code&gt;GUID&lt;/code&gt;&lt;/a&gt;, but imagine code where you modify an object multiple times, and if one of the manipulations fails as expected, you want to &amp;quot;reset&amp;quot; the object. However, if there is an unexpected exception, I still want to throw that higher.&lt;/p&gt;&#xA;
+        </summary>
+    </entry>
+    <entry>
+        <id>https://stackoverflow.com/q/2706500</id>
+        <re:rank scheme="https://stackoverflow.com">2486</re:rank>
+        <title type="text">How do I generate a random integer in C#?</title>
+            <category scheme="https://stackoverflow.com/tags" term="c#" />
+            <category scheme="https://stackoverflow.com/tags" term="random" />
+        <author>
+            <name>Rella</name>
+            <uri>https://stackoverflow.com/users/434051</uri>
+        </author>
+        <link rel="alternate" href="https://stackoverflow.com/questions/2706500/how-do-i-generate-a-random-integer-in-c" />
+        <published>2010-04-24T23:09:11Z</published>
+        <updated>2023-03-08T10:47:20Z</updated>
+        <summary type="html">
+            &lt;p&gt;How do I generate a random integer in C#?&lt;/p&gt;&#xA;
+        </summary>
+    </entry>
+    <entry>
+        <id>https://stackoverflow.com/q/125319</id>
+        <re:rank scheme="https://stackoverflow.com">2440</re:rank>
+        <title type="text">Should &#x27;using&#x27; directives be inside or outside the namespace in C#?</title>
+            <category scheme="https://stackoverflow.com/tags" term="c#" />
+            <category scheme="https://stackoverflow.com/tags" term=".net" />
+            <category scheme="https://stackoverflow.com/tags" term="namespaces" />
+            <category scheme="https://stackoverflow.com/tags" term="stylecop" />
+            <category scheme="https://stackoverflow.com/tags" term="code-organization" />
+        <author>
+            <name>benPearce</name>
+            <uri>https://stackoverflow.com/users/4490</uri>
+        </author>
+        <link rel="alternate" href="https://stackoverflow.com/questions/125319/should-using-directives-be-inside-or-outside-the-namespace-in-c" />
+        <published>2008-09-24T03:49:50Z</published>
+        <updated>2024-04-02T22:50:15Z</updated>
+        <summary type="html">
+            &lt;p&gt;I have been running &lt;a href=&quot;http://en.wikipedia.org/wiki/StyleCop&quot; rel=&quot;noreferrer&quot;&gt;StyleCop&lt;/a&gt; over some C# code, and it keeps reporting that my &lt;code&gt;using&lt;/code&gt; directives should be inside the namespace.&lt;/p&gt;&#xA;&#xA;&lt;p&gt;Is there a technical reason for putting the &lt;code&gt;using&lt;/code&gt; directives inside instead of outside the namespace?&lt;/p&gt;&#xA;
+        </summary>
+    </entry>
+    <entry>
+        <id>https://stackoverflow.com/q/943398</id>
+        <re:rank scheme="https://stackoverflow.com">2402</re:rank>
+        <title type="text">Get int value from enum in C#</title>
+            <category scheme="https://stackoverflow.com/tags" term="c#" />
+            <category scheme="https://stackoverflow.com/tags" term="enums" />
+            <category scheme="https://stackoverflow.com/tags" term="casting" />
+            <category scheme="https://stackoverflow.com/tags" term="int" />
+        <author>
+            <name>jim</name>
+            <uri>https://stackoverflow.com/users/100175</uri>
+        </author>
+        <link rel="alternate" href="https://stackoverflow.com/questions/943398/get-int-value-from-enum-in-c-sharp" />
+        <published>2009-06-03T06:46:39Z</published>
+        <updated>2024-06-13T13:51:45Z</updated>
+        <summary type="html">
+            &lt;p&gt;I have a class called &lt;code&gt;Questions&lt;/code&gt; (plural). In this class there is an enum called &lt;code&gt;Question&lt;/code&gt; (singular) which looks like this.&lt;/p&gt;&#xA;&#xA;&lt;pre&gt;&lt;code&gt;public enum Question&#xA;{&#xA;    Role = 2,&#xA;    ProjectFunding = 3,&#xA;    TotalEmployee = 4,&#xA;    NumberOfServers = 5,&#xA;    TopBusinessConcern = 6&#xA;}&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&#xA;&lt;p&gt;In the &lt;code&gt;Questions&lt;/code&gt; class I have a &lt;code&gt;get(int foo)&lt;/code&gt; function that returns a &lt;code&gt;Questions&lt;/code&gt; object for that &lt;code&gt;foo&lt;/code&gt;. Is there an easy way to get the integer value off the enum so I can do something like this &lt;code&gt;Questions.Get(Question.Role)&lt;/code&gt;?&lt;/p&gt;&#xA;
+        </summary>
+    </entry>
+    <entry>
+        <id>https://stackoverflow.com/q/472906</id>
+        <re:rank scheme="https://stackoverflow.com">2375</re:rank>
+        <title type="text">How do I get a consistent byte representation of strings in C# without manually specifying an encoding?</title>
+            <category scheme="https://stackoverflow.com/tags" term="c#" />
+            <category scheme="https://stackoverflow.com/tags" term=".net" />
+            <category scheme="https://stackoverflow.com/tags" term="string" />
+            <category scheme="https://stackoverflow.com/tags" term="character-encoding" />
+        <author>
+            <name>Agnel Kurian</name>
+            <uri>https://stackoverflow.com/users/45603</uri>
+        </author>
+        <link rel="alternate" href="https://stackoverflow.com/questions/472906/how-do-i-get-a-consistent-byte-representation-of-strings-in-c-sharp-without-manu" />
+        <published>2009-01-23T13:39:54Z</published>
+        <updated>2022-10-04T04:11:23Z</updated>
+        <summary type="html">
+            &lt;p&gt;How do I convert a &lt;code&gt;string&lt;/code&gt; to a &lt;code&gt;byte[]&lt;/code&gt; in .NET (C#) without manually specifying a specific encoding?&lt;/p&gt;&#xA;&#xA;&lt;p&gt;I&#x27;m going to encrypt the string. I can encrypt it without converting, but I&#x27;d still like to know why encoding comes to play here.&lt;/p&gt;&#xA;&#xA;&lt;p&gt;Also, why should encoding even be taken into consideration? Can&#x27;t I simply get what bytes the string has been stored in? Why is there a dependency on character encodings?&lt;/p&gt;&#xA;
+        </summary>
+    </entry>
+    <entry>
+        <id>https://stackoverflow.com/q/40730</id>
+        <re:rank scheme="https://stackoverflow.com">2344</re:rank>
+        <title type="text">What is the best way to give a C# auto-property an initial value?</title>
+            <category scheme="https://stackoverflow.com/tags" term="c#" />
+            <category scheme="https://stackoverflow.com/tags" term="constructor" />
+            <category scheme="https://stackoverflow.com/tags" term="getter" />
+            <category scheme="https://stackoverflow.com/tags" term="setter" />
+            <category scheme="https://stackoverflow.com/tags" term="automatic-properties" />
+        <author>
+            <name>bentford</name>
+            <uri>https://stackoverflow.com/users/946</uri>
+        </author>
+        <link rel="alternate" href="https://stackoverflow.com/questions/40730/what-is-the-best-way-to-give-a-c-sharp-auto-property-an-initial-value" />
+        <published>2008-09-02T21:29:41Z</published>
+        <updated>2025-11-03T17:46:55Z</updated>
+        <summary type="html">
+            &lt;p&gt;How do you give a C# auto-property an initial value?&lt;/p&gt;&#xA;&#xA;&lt;p&gt;I either use the constructor, or revert to the old syntax. &lt;/p&gt;&#xA;&#xA;&lt;p&gt;&lt;strong&gt; Using the Constructor:&lt;/strong&gt;&lt;/p&gt;&#xA;&#xA;&lt;pre&gt;&lt;code&gt;class Person &#xA;{&#xA;    public Person()&#xA;    {&#xA;        Name = &quot;Initial Name&quot;;&#xA;    }&#xA;    public string Name { get; set; }&#xA;}&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&#xA;&lt;p&gt;&lt;strong&gt;Using normal property syntax&lt;/strong&gt;  (with an initial value)&lt;/p&gt;&#xA;&#xA;&lt;pre&gt;&lt;code&gt;private string name = &quot;Initial Name&quot;;&#xA;public string Name &#xA;{&#xA;    get &#xA;    {&#xA;        return name;&#xA;    }&#xA;    set&#xA;    {&#xA;        name = value;&#xA;    }&#xA;}&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&#xA;&lt;p&gt;Is there a better way?&lt;/p&gt;&#xA;
+        </summary>
+    </entry>
+    <entry>
+        <id>https://stackoverflow.com/q/9</id>
+        <re:rank scheme="https://stackoverflow.com">2273</re:rank>
+        <title type="text">How do I calculate someone&#x27;s age based on a DateTime type birthday?</title>
+            <category scheme="https://stackoverflow.com/tags" term="c#" />
+            <category scheme="https://stackoverflow.com/tags" term=".net" />
+            <category scheme="https://stackoverflow.com/tags" term="datetime" />
+        <author>
+            <name>Jeff Atwood</name>
+            <uri>https://stackoverflow.com/users/1</uri>
+        </author>
+        <link rel="alternate" href="https://stackoverflow.com/questions/9/how-do-i-calculate-someones-age-based-on-a-datetime-type-birthday" />
+        <published>2008-07-31T23:40:59Z</published>
+        <updated>2025-05-01T16:40:42Z</updated>
+        <summary type="html">
+            &lt;p&gt;Given a &lt;code&gt;DateTime&lt;/code&gt; representing a person&#x27;s birthday, how do I calculate their age in years?&lt;/p&gt;&#xA;
+        </summary>
+    </entry>
+    <entry>
+        <id>https://stackoverflow.com/q/38138100</id>
+        <re:rank scheme="https://stackoverflow.com">2192</re:rank>
+        <title type="text">AddTransient, AddScoped and AddSingleton Services Differences</title>
+            <category scheme="https://stackoverflow.com/tags" term="c#" />
+            <category scheme="https://stackoverflow.com/tags" term="asp.net-core" />
+            <category scheme="https://stackoverflow.com/tags" term=".net-core" />
+        <author>
+            <name>Elvin Mammadov</name>
+            <uri>https://stackoverflow.com/users/1368240</uri>
+        </author>
+        <link rel="alternate" href="https://stackoverflow.com/questions/38138100/addtransient-addscoped-and-addsingleton-services-differences" />
+        <published>2016-07-01T06:03:02Z</published>
+        <updated>2025-02-13T21:23:15Z</updated>
+        <summary type="html">
+            &lt;p&gt;I want to implement &lt;a href=&quot;https://en.wikipedia.org/wiki/Dependency_injection&quot; rel=&quot;noreferrer&quot;&gt;dependency injection&lt;/a&gt; (DI) in ASP.NET Core. So after adding this code to &lt;strong&gt;&lt;code&gt;ConfigureServices&lt;/code&gt;&lt;/strong&gt; method, both ways work.&lt;/p&gt;&#xA;&lt;p&gt;What is the difference between the &lt;code&gt;services.AddTransient&lt;/code&gt; and &lt;code&gt;service.AddScoped&lt;/code&gt; methods in ASP.NET Core?&lt;/p&gt;&#xA;&lt;pre&gt;&lt;code&gt;public void ConfigureServices(IServiceCollection services)&#xA;{&#xA;    // Add framework services.&#xA;&#xA;    // Add application services.&#xA;    services.AddTransient&amp;lt;IEmailSender, AuthMessageSender&amp;gt;();&#xA;    services.AddScoped&amp;lt;IEmailSender, AuthMessageSender&amp;gt;();&#xA;}&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;
+        </summary>
+    </entry>
+    <entry>
+        <id>https://stackoverflow.com/q/151005</id>
+        <re:rank scheme="https://stackoverflow.com">2191</re:rank>
+        <title type="text">How do I create an Excel (.XLS and .XLSX) file in C# without installing Microsoft Office?</title>
+            <category scheme="https://stackoverflow.com/tags" term="c#" />
+            <category scheme="https://stackoverflow.com/tags" term=".net" />
+            <category scheme="https://stackoverflow.com/tags" term="excel" />
+            <category scheme="https://stackoverflow.com/tags" term="file-io" />
+        <author>
+            <name>mistrmark</name>
+            <uri>https://stackoverflow.com/users/19242</uri>
+        </author>
+        <link rel="alternate" href="https://stackoverflow.com/questions/151005/how-do-i-create-an-excel-xls-and-xlsx-file-in-c-sharp-without-installing-mic" />
+        <published>2008-09-29T22:30:28Z</published>
+        <updated>2025-03-03T03:11:50Z</updated>
+        <summary type="html">
+            &lt;p&gt;How can I create an Excel spreadsheet with C# without requiring Excel to be installed on the machine that&#x27;s running the code?&lt;/p&gt;&#xA;
+        </summary>
+    </entry>
+    <entry>
+        <id>https://stackoverflow.com/q/2155930</id>
+        <re:rank scheme="https://stackoverflow.com">2138</re:rank>
+        <title type="text">How do I remedy &quot;The breakpoint will not currently be hit. No symbols have been loaded for this document.&quot; warning?</title>
+            <category scheme="https://stackoverflow.com/tags" term="c#" />
+            <category scheme="https://stackoverflow.com/tags" term=".net" />
+            <category scheme="https://stackoverflow.com/tags" term="debugging" />
+            <category scheme="https://stackoverflow.com/tags" term="breakpoints" />
+            <category scheme="https://stackoverflow.com/tags" term="visual-studio-express" />
+        <author>
+            <name>Instance Hunter</name>
+            <uri>https://stackoverflow.com/users/65393</uri>
+        </author>
+        <link rel="alternate" href="https://stackoverflow.com/questions/2155930/how-do-i-remedy-the-breakpoint-will-not-currently-be-hit-no-symbols-have-been" />
+        <published>2010-01-28T16:09:10Z</published>
+        <updated>2025-09-16T06:25:28Z</updated>
+        <summary type="html">
+            &lt;p&gt;A C# desktop application (on the Visual Studio Express edition) worked, but then it didn&#x27;t work 5 seconds later.&lt;/p&gt;&#xA;&lt;p&gt;I tried the following:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Ensure debug configuration, debug flag, and full debug information are set on all assemblies.&lt;/li&gt;&#xA;&lt;li&gt;Delete all bin and obj folders and all DLL files related to the project from my entire machine.&lt;/li&gt;&#xA;&lt;li&gt;Recreate projects causing the problem from scratch.&lt;/li&gt;&#xA;&lt;li&gt;Reboot.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;I have two Windows Forms projects in the solution. One of them loads the debug information, one doesn&#x27;t. They both refer to the assembly I&#x27;m trying to get debug information on in exactly the same way in the project file. Any ideas?&lt;/p&gt;&#xA;&lt;hr /&gt;&#xA;&lt;p&gt;I want to add here, mostly for myself when I come back to review this question, that symbols are not loaded until the assembly is loaded, and the assembly is not loaded until it is needed. If the breakpoint is in a library that is only used in one function in your main assembly, the symbols will not be loaded (and it will show the breakpoint as not being hit) until that function is called.&lt;/p&gt;&#xA;
+        </summary>
+    </entry>
+    <entry>
+        <id>https://stackoverflow.com/q/446835</id>
+        <re:rank scheme="https://stackoverflow.com">2038</re:rank>
+        <title type="text">What do two question marks together mean in C#?</title>
+            <category scheme="https://stackoverflow.com/tags" term="c#" />
+            <category scheme="https://stackoverflow.com/tags" term="null-coalescing-operator" />
+        <author>
+            <name>Edward Tanguay</name>
+            <uri>https://stackoverflow.com/users/4639</uri>
+        </author>
+        <link rel="alternate" href="https://stackoverflow.com/questions/446835/what-do-two-question-marks-together-mean-in-c" />
+        <published>2009-01-15T14:03:13Z</published>
+        <updated>2025-09-26T11:19:24Z</updated>
+        <summary type="html">
+            &lt;p&gt;Ran across this line of code:&lt;/p&gt;&#xA;&#xA;&lt;pre&gt;&lt;code&gt;FormsAuth = formsAuth ?? new FormsAuthenticationWrapper();&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&#xA;&lt;p&gt;What do the two question marks mean, is it some kind of ternary operator?&#xA;It&#x27;s hard to look up in Google.&lt;/p&gt;&#xA;
+        </summary>
+    </entry>
+    <entry>
+        <id>https://stackoverflow.com/q/983030</id>
+        <re:rank scheme="https://stackoverflow.com">1942</re:rank>
+        <title type="text">Type Checking: typeof, GetType, or is?</title>
+            <category scheme="https://stackoverflow.com/tags" term="c#" />
+            <category scheme="https://stackoverflow.com/tags" term="types" />
+            <category scheme="https://stackoverflow.com/tags" term="typeof" />
+            <category scheme="https://stackoverflow.com/tags" term="gettype" />
+        <author>
+            <name>jasonh</name>
+            <uri>https://stackoverflow.com/users/116176</uri>
+        </author>
+        <link rel="alternate" href="https://stackoverflow.com/questions/983030/type-checking-typeof-gettype-or-is" />
+        <published>2009-06-11T19:10:28Z</published>
+        <updated>2024-03-30T20:37:49Z</updated>
+        <summary type="html">
+            &lt;p&gt;I&#x27;ve seen many people use the following code:&lt;/p&gt;&#xA;&lt;pre&gt;&lt;code&gt;Type t = typeof(SomeType);&#xA;if (t == typeof(int))&#xA;    // Some code here&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&lt;p&gt;But I know you could also do this:&lt;/p&gt;&#xA;&lt;pre&gt;&lt;code&gt;if (obj1.GetType() == typeof(int))&#xA;    // Some code here&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&lt;p&gt;Or this:&lt;/p&gt;&#xA;&lt;pre&gt;&lt;code&gt;if (obj1 is int)&#xA;    // Some code here&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&lt;p&gt;Personally, I feel the last one is the cleanest, but is there something I&#x27;m missing? Which one is the best to use, or is it personal preference?&lt;/p&gt;&#xA;
+        </summary>
+    </entry>
+    <entry>
+        <id>https://stackoverflow.com/q/538060</id>
+        <re:rank scheme="https://stackoverflow.com">1918</re:rank>
+        <title type="text">Proper use of the IDisposable interface</title>
+            <category scheme="https://stackoverflow.com/tags" term="c#" />
+            <category scheme="https://stackoverflow.com/tags" term=".net" />
+            <category scheme="https://stackoverflow.com/tags" term="garbage-collection" />
+            <category scheme="https://stackoverflow.com/tags" term="idisposable" />
+        <author>
+            <name>cwick</name>
+            <uri>https://stackoverflow.com/users/4828</uri>
+        </author>
+        <link rel="alternate" href="https://stackoverflow.com/questions/538060/proper-use-of-the-idisposable-interface" />
+        <published>2009-02-11T18:12:41Z</published>
+        <updated>2025-05-30T14:00:40Z</updated>
+        <summary type="html">
+            &lt;p&gt;I know from reading &lt;a href=&quot;https://learn.microsoft.com/dotnet/api/system.idisposable&quot; rel=&quot;noreferrer&quot;&gt;Microsoft documentation&lt;/a&gt; that the &amp;quot;primary&amp;quot; use of the &lt;code&gt;IDisposable&lt;/code&gt; interface is to clean up unmanaged resources.&lt;/p&gt;&#xA;&lt;p&gt;To me, &amp;quot;unmanaged&amp;quot; means things like database connections, sockets, window handles, etc.  But, I&#x27;ve seen code where the &lt;code&gt;Dispose()&lt;/code&gt; method is implemented to free &lt;em&gt;managed&lt;/em&gt; resources, which seems redundant to me, since the garbage collector should take care of that for you.&lt;/p&gt;&#xA;&lt;p&gt;For example:&lt;/p&gt;&#xA;&lt;pre class=&quot;lang-cs prettyprint-override&quot;&gt;&lt;code&gt;public class MyCollection : IDisposable&#xA;{&#xA;    private List&amp;lt;String&amp;gt; _theList = new List&amp;lt;String&amp;gt;();&#xA;    private Dictionary&amp;lt;String, Point&amp;gt; _theDict = new Dictionary&amp;lt;String, Point&amp;gt;();&#xA;&#xA;    // Die, clear it up! (free unmanaged resources)&#xA;    public void Dispose()&#xA;    {&#xA;        _theList.clear();&#xA;        _theDict.clear();&#xA;        _theList = null;&#xA;        _theDict = null;&#xA;    }&#xA;}&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&lt;p&gt;My question is, does this make the garbage collector free memory used by &lt;code&gt;MyCollection&lt;/code&gt; any faster than it normally would?&lt;/p&gt;&#xA;&lt;hr /&gt;&#xA;&lt;p&gt;&lt;strong&gt;Edit&lt;/strong&gt;:  So far people have posted some good examples of using &lt;code&gt;IDisposable&lt;/code&gt; to clean up unmanaged resources such as database connections and bitmaps.  But suppose that &lt;code&gt;_theList&lt;/code&gt; in the above code contained a million strings, and you wanted to free that memory &lt;em&gt;now&lt;/em&gt;, rather than waiting for the garbage collector.  Would the above code accomplish that?&lt;/p&gt;&#xA;
+        </summary>
+    </entry>
+    <entry>
+        <id>https://stackoverflow.com/q/12051</id>
+        <re:rank scheme="https://stackoverflow.com">1880</re:rank>
+        <title type="text">Calling the base constructor in C#</title>
+            <category scheme="https://stackoverflow.com/tags" term="c#" />
+            <category scheme="https://stackoverflow.com/tags" term=".net" />
+            <category scheme="https://stackoverflow.com/tags" term="inheritance" />
+            <category scheme="https://stackoverflow.com/tags" term="constructor" />
+        <author>
+            <name>lomaxx</name>
+            <uri>https://stackoverflow.com/users/493</uri>
+        </author>
+        <link rel="alternate" href="https://stackoverflow.com/questions/12051/calling-the-base-constructor-in-c-sharp" />
+        <published>2008-08-15T07:39:23Z</published>
+        <updated>2024-06-03T07:34:06Z</updated>
+        <summary type="html">
+            &lt;p&gt;If I inherit from a base class and want to pass something from the constructor of the inherited class to the constructor of the base class, how do I do that?&lt;/p&gt;&#xA;&#xA;&lt;p&gt;For example, if I inherit from the Exception class I want to do something like this:&lt;/p&gt;&#xA;&#xA;&lt;pre&gt;&lt;code&gt;class MyExceptionClass : Exception&#xA;{&#xA;     public MyExceptionClass(string message, string extraInfo)&#xA;     {&#xA;         //This is where it&#x27;s all falling apart&#xA;         base(message);&#xA;     }&#xA;}&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&#xA;&lt;p&gt;Basically what I want is to be able to pass the string message to the base Exception class.&lt;/p&gt;&#xA;
+        </summary>
+    </entry>
+    <entry>
+        <id>https://stackoverflow.com/q/8898925</id>
+        <re:rank scheme="https://stackoverflow.com">1871</re:rank>
+        <title type="text">Is there a reason for C#&#x27;s reuse of the variable in a foreach?</title>
+            <category scheme="https://stackoverflow.com/tags" term="c#" />
+            <category scheme="https://stackoverflow.com/tags" term="foreach" />
+            <category scheme="https://stackoverflow.com/tags" term="lambda" />
+            <category scheme="https://stackoverflow.com/tags" term="scope" />
+            <category scheme="https://stackoverflow.com/tags" term="anonymous-methods" />
+        <author>
+            <name>StriplingWarrior</name>
+            <uri>https://stackoverflow.com/users/120955</uri>
+        </author>
+        <link rel="alternate" href="https://stackoverflow.com/questions/8898925/is-there-a-reason-for-cs-reuse-of-the-variable-in-a-foreach" />
+        <published>2012-01-17T17:21:07Z</published>
+        <updated>2024-07-21T13:59:58Z</updated>
+        <summary type="html">
+            &lt;p&gt;When using lambda expressions or anonymous methods in C#, we have to be wary of the &lt;em&gt;access to modified closure&lt;/em&gt; pitfall. For example:&lt;/p&gt;&#xA;&#xA;&lt;pre&gt;&lt;code&gt;foreach (var s in strings)&#xA;{&#xA;   query = query.Where(i =&amp;gt; i.Prop == s); // access to modified closure&#xA;   ...&#xA;}&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&#xA;&lt;p&gt;Due to the modified closure, the above code will cause all of the &lt;code&gt;Where&lt;/code&gt; clauses on the query to be based on the final value of &lt;code&gt;s&lt;/code&gt;.&lt;/p&gt;&#xA;&#xA;&lt;p&gt;As explained &lt;a href=&quot;http://resnikb.wordpress.com/2009/06/17/c-lambda-and-foreach-variable/&quot; rel=&quot;noreferrer&quot;&gt;here&lt;/a&gt;, this happens because the &lt;code&gt;s&lt;/code&gt; variable declared in &lt;code&gt;foreach&lt;/code&gt; loop above is translated like this in the compiler:&lt;/p&gt;&#xA;&#xA;&lt;pre&gt;&lt;code&gt;string s;&#xA;while (enumerator.MoveNext())&#xA;{&#xA;   s = enumerator.Current;&#xA;   ...&#xA;}&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&#xA;&lt;p&gt;instead of like this:&lt;/p&gt;&#xA;&#xA;&lt;pre&gt;&lt;code&gt;while (enumerator.MoveNext())&#xA;{&#xA;   string s;&#xA;   s = enumerator.Current;&#xA;   ...&#xA;}&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&#xA;&lt;p&gt;As pointed out &lt;a href=&quot;https://stackoverflow.com/a/2388644/120955&quot;&gt;here&lt;/a&gt;, there are no performance advantages to declaring a variable outside the loop, and under normal circumstances the only reason I can think of for doing this is if you plan to use the variable outside the scope of the loop:&lt;/p&gt;&#xA;&#xA;&lt;pre&gt;&lt;code&gt;string s;&#xA;while (enumerator.MoveNext())&#xA;{&#xA;   s = enumerator.Current;&#xA;   ...&#xA;}&#xA;var finalString = s;&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&#xA;&lt;p&gt;However variables defined in a &lt;code&gt;foreach&lt;/code&gt; loop cannot be used outside the loop:&lt;/p&gt;&#xA;&#xA;&lt;pre&gt;&lt;code&gt;foreach(string s in strings)&#xA;{&#xA;}&#xA;var finalString = s; // won&#x27;t work: you&#x27;re outside the scope.&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&#xA;&lt;p&gt;So the compiler declares the variable in a way that makes it highly prone to an error that is often difficult to find and debug, while producing no perceivable benefits.&lt;/p&gt;&#xA;&#xA;&lt;p&gt;Is there something you can do with &lt;code&gt;foreach&lt;/code&gt; loops this way that you couldn&#x27;t if they were compiled with an inner-scoped variable, or is this just an arbitrary choice that was made before anonymous methods and lambda expressions were available or common, and which hasn&#x27;t been revised since then?&lt;/p&gt;&#xA;
+        </summary>
+    </entry>
+    <entry>
+        <id>https://stackoverflow.com/q/4660142</id>
+        <re:rank scheme="https://stackoverflow.com">1866</re:rank>
+        <title type="text">What is a NullReferenceException, and how do I fix it?</title>
+            <category scheme="https://stackoverflow.com/tags" term="c#" />
+            <category scheme="https://stackoverflow.com/tags" term=".net" />
+            <category scheme="https://stackoverflow.com/tags" term="vb.net" />
+            <category scheme="https://stackoverflow.com/tags" term="null" />
+            <category scheme="https://stackoverflow.com/tags" term="nullreferenceexception" />
+        <author>
+            <name>John Saunders</name>
+            <uri>https://stackoverflow.com/users/76337</uri>
+        </author>
+        <link rel="alternate" href="https://stackoverflow.com/questions/4660142/what-is-a-nullreferenceexception-and-how-do-i-fix-it" />
+        <published>2011-01-11T16:48:29Z</published>
+        <updated>2024-10-07T15:15:46Z</updated>
+        <summary type="html">
+            &lt;p&gt;I have some code and when it executes, it throws a &lt;code&gt;NullReferenceException&lt;/code&gt;, saying:&lt;/p&gt;&#xA;&#xA;&lt;blockquote&gt;&#xA;  &lt;p&gt;Object reference not set to an instance of an object.&lt;/p&gt;&#xA;&lt;/blockquote&gt;&#xA;&#xA;&lt;p&gt;What does this mean, and what can I do to fix this error?&lt;/p&gt;&#xA;
+        </summary>
+    </entry>
+    <entry>
+        <id>https://stackoverflow.com/q/8447</id>
+        <re:rank scheme="https://stackoverflow.com">1814</re:rank>
+        <title type="text">What does the [Flags] Enum Attribute mean in C#?</title>
+            <category scheme="https://stackoverflow.com/tags" term="c#" />
+            <category scheme="https://stackoverflow.com/tags" term="enums" />
+            <category scheme="https://stackoverflow.com/tags" term="flags" />
+        <author>
+            <name>Brian Leahy</name>
+            <uri>https://stackoverflow.com/users/580</uri>
+        </author>
+        <link rel="alternate" href="https://stackoverflow.com/questions/8447/what-does-the-flags-enum-attribute-mean-in-c" />
+        <published>2008-08-12T04:09:16Z</published>
+        <updated>2024-07-30T11:41:43Z</updated>
+        <summary type="html">
+            &lt;p&gt;From time to time I see an enum like the following:&lt;/p&gt;&#xA;&#xA;&lt;pre&gt;&lt;code&gt;[Flags]&#xA;public enum Options &#xA;{&#xA;    None    = 0,&#xA;    Option1 = 1,&#xA;    Option2 = 2,&#xA;    Option3 = 4,&#xA;    Option4 = 8&#xA;}&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&#xA;&lt;p&gt;I don&#x27;t understand what exactly the &lt;code&gt;[Flags]&lt;/code&gt; attribute does.&lt;/p&gt;&#xA;&#xA;&lt;p&gt;Anyone have a good explanation or example they could post?&lt;/p&gt;&#xA;
+        </summary>
+    </entry>
+    <entry>
+        <id>https://stackoverflow.com/q/972307</id>
+        <re:rank scheme="https://stackoverflow.com">1786</re:rank>
+        <title type="text">How to loop through all enum values in C#? [duplicate]</title>
+            <category scheme="https://stackoverflow.com/tags" term="c#" />
+            <category scheme="https://stackoverflow.com/tags" term=".net" />
+            <category scheme="https://stackoverflow.com/tags" term="enums" />
+            <category scheme="https://stackoverflow.com/tags" term="language-features" />
+        <author>
+            <name>divinci</name>
+            <uri>https://stackoverflow.com/users/105685</uri>
+        </author>
+        <link rel="alternate" href="https://stackoverflow.com/questions/972307/how-to-loop-through-all-enum-values-in-c" />
+        <published>2009-06-09T20:25:04Z</published>
+        <updated>2024-10-14T07:23:14Z</updated>
+        <summary type="html">
+            &lt;pre&gt;&lt;code&gt;public enum Foos&#xA;{&#xA;    A,&#xA;    B,&#xA;    C&#xA;}&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&lt;p&gt;Is there a way to loop through the possible values of &lt;code&gt;Foos&lt;/code&gt;?&lt;/p&gt;&#xA;&lt;p&gt;Basically?&lt;/p&gt;&#xA;&lt;pre&gt;&lt;code&gt;foreach(Foo in Foos)&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;
+        </summary>
+    </entry>
+    <entry>
+        <id>https://stackoverflow.com/q/21692193</id>
+        <re:rank scheme="https://stackoverflow.com">1738</re:rank>
+        <title type="text">Why not inherit from List&lt;T&gt;?</title>
+            <category scheme="https://stackoverflow.com/tags" term="c#" />
+            <category scheme="https://stackoverflow.com/tags" term=".net" />
+            <category scheme="https://stackoverflow.com/tags" term="list" />
+            <category scheme="https://stackoverflow.com/tags" term="oop" />
+            <category scheme="https://stackoverflow.com/tags" term="inheritance" />
+        <author>
+            <name>Superbest</name>
+            <uri>https://stackoverflow.com/users/1042555</uri>
+        </author>
+        <link rel="alternate" href="https://stackoverflow.com/questions/21692193/why-not-inherit-from-listt" />
+        <published>2014-02-11T03:01:36Z</published>
+        <updated>2023-11-03T13:49:28Z</updated>
+        <summary type="html">
+            &lt;p&gt;When planning out my programs, I often start with a chain of thought like so:&lt;/p&gt;&#xA;&#xA;&lt;blockquote&gt;&#xA;  &lt;p&gt;A football team is just a list of football players. Therefore, I should represent it with:&lt;/p&gt;&#xA;&#xA;&lt;pre&gt;&lt;code&gt;var football_team = new List&amp;lt;FootballPlayer&amp;gt;();&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;  &#xA;  &lt;p&gt;The ordering of this list represent the order in which the players are listed in the roster.&lt;/p&gt;&#xA;&lt;/blockquote&gt;&#xA;&#xA;&lt;p&gt;But I realize later that teams also have other properties, besides the mere list of players, that must be recorded. For example, the running total of scores this season, the current budget, the uniform colors, a &lt;code&gt;string&lt;/code&gt; representing the name of the team, etc..&lt;/p&gt;&#xA;&#xA;&lt;p&gt;So then I think:&lt;/p&gt;&#xA;&#xA;&lt;blockquote&gt;&#xA;  &lt;p&gt;Okay, a football team is just like a list of players, but additionally, it has a name (a &lt;code&gt;string&lt;/code&gt;) and a running total of scores (an &lt;code&gt;int&lt;/code&gt;). .NET does not provide a class for storing football teams, so I will make my own class. The most similar and relevant existing structure is &lt;code&gt;List&amp;lt;FootballPlayer&amp;gt;&lt;/code&gt;, so I will inherit from it:&lt;/p&gt;&#xA;&#xA;&lt;pre&gt;&lt;code&gt;class FootballTeam : List&amp;lt;FootballPlayer&amp;gt; &#xA;{ &#xA;    public string TeamName; &#xA;    public int RunningTotal &#xA;}&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&lt;/blockquote&gt;&#xA;&#xA;&lt;p&gt;But it turns out that &lt;a href=&quot;https://stackoverflow.com/a/5376343/1042555&quot;&gt;a guideline says you shouldn&#x27;t inherit from &lt;code&gt;List&amp;lt;T&amp;gt;&lt;/code&gt;&lt;/a&gt;. I&#x27;m thoroughly confused by this guideline in two respects.&lt;/p&gt;&#xA;&#xA;&lt;h2&gt;Why not?&lt;/h2&gt;&#xA;&#xA;&lt;p&gt;Apparently &lt;a href=&quot;https://stackoverflow.com/a/5376358/1042555&quot;&gt;&lt;code&gt;List&lt;/code&gt; is somehow optimized for performance&lt;/a&gt;. How so? What performance problems will I cause if I extend &lt;code&gt;List&lt;/code&gt;? What exactly will break?&lt;/p&gt;&#xA;&#xA;&lt;p&gt;Another reason I&#x27;ve seen is that &lt;code&gt;List&lt;/code&gt; is provided by Microsoft, and I have no control over it, so &lt;a href=&quot;https://stackoverflow.com/questions/5376203/inherit-listt#comment6077237_5376343&quot;&gt;I cannot change it later, after exposing a &quot;public API&quot;&lt;/a&gt;. But I struggle to understand this. What is a public API and why should I care? If my current project does not and is not likely to ever have this public API, can I safely ignore this guideline? If I do inherit from &lt;code&gt;List&lt;/code&gt; &lt;em&gt;and&lt;/em&gt; it turns out I need a public API, what difficulties will I have?&lt;/p&gt;&#xA;&#xA;&lt;p&gt;Why does it even matter? A list is a list. What could possibly change? What could I possibly want to change?&lt;/p&gt;&#xA;&#xA;&lt;p&gt;And lastly, if Microsoft did not want me to inherit from &lt;code&gt;List&lt;/code&gt;, why didn&#x27;t they make the class &lt;code&gt;sealed&lt;/code&gt;?&lt;/p&gt;&#xA;&#xA;&lt;h2&gt;What else am I supposed to use?&lt;/h2&gt;&#xA;&#xA;&lt;p&gt;Apparently, for custom collections, Microsoft has provided a &lt;code&gt;Collection&lt;/code&gt; class which should be extended instead of &lt;code&gt;List&lt;/code&gt;. But this class is very bare, and does not have many useful things, &lt;a href=&quot;https://stackoverflow.com/questions/1474863/addrange-to-a-collection&quot;&gt;such as &lt;code&gt;AddRange&lt;/code&gt;&lt;/a&gt;, for instance. &lt;a href=&quot;https://stackoverflow.com/a/12039943/1042555&quot;&gt;jvitor83&#x27;s answer&lt;/a&gt; provides a performance rationale for that particular method, but how is a slow &lt;code&gt;AddRange&lt;/code&gt; not better than no &lt;code&gt;AddRange&lt;/code&gt;?&lt;/p&gt;&#xA;&#xA;&lt;p&gt;Inheriting from &lt;code&gt;Collection&lt;/code&gt; is way more work than inheriting from &lt;code&gt;List&lt;/code&gt;, and I see no benefit. Surely Microsoft wouldn&#x27;t tell me to do extra work for no reason, so I can&#x27;t help feeling like I am somehow misunderstanding something, and inheriting &lt;code&gt;Collection&lt;/code&gt; is actually not the right solution for my problem.&lt;/p&gt;&#xA;&#xA;&lt;p&gt;I&#x27;ve seen suggestions such as implementing &lt;code&gt;IList&lt;/code&gt;. Just no. This is dozens of lines of boilerplate code which gains me nothing.&lt;/p&gt;&#xA;&#xA;&lt;p&gt;Lastly, some suggest wrapping the &lt;code&gt;List&lt;/code&gt; in something: &lt;/p&gt;&#xA;&#xA;&lt;pre&gt;&lt;code&gt;class FootballTeam &#xA;{ &#xA;    public List&amp;lt;FootballPlayer&amp;gt; Players; &#xA;}&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&#xA;&lt;p&gt;There are two problems with this:&lt;/p&gt;&#xA;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;&lt;p&gt;It makes my code needlessly verbose. I must now call &lt;code&gt;my_team.Players.Count&lt;/code&gt; instead of just &lt;code&gt;my_team.Count&lt;/code&gt;. Thankfully, with C# I can define indexers to make indexing transparent, and forward all the methods of the internal &lt;code&gt;List&lt;/code&gt;... But that&#x27;s a lot of code! What do I get for all that work?&lt;/p&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;p&gt;It just plain doesn&#x27;t make any sense. A football team doesn&#x27;t &quot;have&quot; a list of players. It &lt;em&gt;is&lt;/em&gt; the list of players. You don&#x27;t say &quot;John McFootballer has joined SomeTeam&#x27;s players&quot;. You say &quot;John has joined SomeTeam&quot;. You don&#x27;t add a letter to &quot;a string&#x27;s characters&quot;, you add a letter to a string. You don&#x27;t add a book to a library&#x27;s books, you add a book to a library.&lt;/p&gt;&lt;/li&gt;&#xA;&lt;/ol&gt;&#xA;&#xA;&lt;p&gt;I realize that what happens &quot;under the hood&quot; can be said to be &quot;adding X to Y&#x27;s internal list&quot;, but this seems like a very counter-intuitive way of thinking about the world.&lt;/p&gt;&#xA;&#xA;&lt;h2&gt;My question (summarized)&lt;/h2&gt;&#xA;&#xA;&lt;p&gt;What is the correct C# way of representing a data structure, which, &quot;logically&quot; (that is to say, &quot;to the human mind&quot;) is just a &lt;code&gt;list&lt;/code&gt; of &lt;code&gt;things&lt;/code&gt; with a few bells and whistles?&lt;/p&gt;&#xA;&#xA;&lt;p&gt;Is inheriting from &lt;code&gt;List&amp;lt;T&amp;gt;&lt;/code&gt; always unacceptable? When is it acceptable? Why/why not? What must a programmer consider, when deciding whether to inherit from &lt;code&gt;List&amp;lt;T&amp;gt;&lt;/code&gt; or not?&lt;/p&gt;&#xA;
+        </summary>
+    </entry>
+    <entry>
+        <id>https://stackoverflow.com/q/55984</id>
+        <re:rank scheme="https://stackoverflow.com">1734</re:rank>
+        <title type="text">What is the difference between const and readonly in C#?</title>
+            <category scheme="https://stackoverflow.com/tags" term="c#" />
+            <category scheme="https://stackoverflow.com/tags" term=".net" />
+            <category scheme="https://stackoverflow.com/tags" term="constants" />
+            <category scheme="https://stackoverflow.com/tags" term="readonly" />
+        <author>
+            <name>readonly</name>
+            <uri>https://stackoverflow.com/users/4883</uri>
+        </author>
+        <link rel="alternate" href="https://stackoverflow.com/questions/55984/what-is-the-difference-between-const-and-readonly-in-c" />
+        <published>2008-09-11T08:02:19Z</published>
+        <updated>2022-11-23T08:06:03Z</updated>
+        <summary type="html">
+            &lt;p&gt;What is the difference between &lt;strong&gt;&lt;code&gt;const&lt;/code&gt;&lt;/strong&gt; and &lt;strong&gt;&lt;code&gt;readonly&lt;/code&gt;&lt;/strong&gt; in C#? &lt;/p&gt;&#xA;&#xA;&lt;p&gt;When would you use one over the other?&lt;/p&gt;&#xA;
+        </summary>
+    </entry>
+    <entry>
+        <id>https://stackoverflow.com/q/3309188</id>
+        <re:rank scheme="https://stackoverflow.com">1677</re:rank>
+        <title type="text">How to Sort a List&lt;T&gt; by a property in the object</title>
+            <category scheme="https://stackoverflow.com/tags" term="c#" />
+            <category scheme="https://stackoverflow.com/tags" term="generics" />
+            <category scheme="https://stackoverflow.com/tags" term="list" />
+            <category scheme="https://stackoverflow.com/tags" term="sorting" />
+        <author>
+            <name>Shyju</name>
+            <uri>https://stackoverflow.com/users/40521</uri>
+        </author>
+        <link rel="alternate" href="https://stackoverflow.com/questions/3309188/how-to-sort-a-listt-by-a-property-in-the-object" />
+        <published>2010-07-22T13:13:25Z</published>
+        <updated>2023-06-21T13:18:14Z</updated>
+        <summary type="html">
+            &lt;p&gt;I have a class called &lt;code&gt;Order&lt;/code&gt; which has properties such as &lt;code&gt;OrderId&lt;/code&gt;, &lt;code&gt;OrderDate&lt;/code&gt;, &lt;code&gt;Quantity&lt;/code&gt;, and &lt;code&gt;Total&lt;/code&gt;. I have a list of this &lt;code&gt;Order&lt;/code&gt; class:&lt;/p&gt;&#xA;&lt;pre class=&quot;lang-cs prettyprint-override&quot;&gt;&lt;code&gt;List&amp;lt;Order&amp;gt; objListOrder = new List&amp;lt;Order&amp;gt;();&#xA;GetOrderList(objListOrder); // fill list of orders&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&lt;p&gt;I want to sort the list based on one property of the &lt;code&gt;Order&lt;/code&gt; object; for example, either by &lt;code&gt;OrderDate&lt;/code&gt; or &lt;code&gt;OrderID&lt;/code&gt;.&lt;/p&gt;&#xA;&lt;p&gt;How can I do this in C#?&lt;/p&gt;&#xA;
+        </summary>
+    </entry>
+    <entry>
+        <id>https://stackoverflow.com/q/311165</id>
+        <re:rank scheme="https://stackoverflow.com">1671</re:rank>
+        <title type="text">How do you convert a byte array to a hexadecimal string, and vice versa?</title>
+            <category scheme="https://stackoverflow.com/tags" term="c#" />
+            <category scheme="https://stackoverflow.com/tags" term="arrays" />
+            <category scheme="https://stackoverflow.com/tags" term="hex" />
+        <author>
+            <name>alextansc</name>
+            <uri>https://stackoverflow.com/users/19582</uri>
+        </author>
+        <link rel="alternate" href="https://stackoverflow.com/questions/311165/how-do-you-convert-a-byte-array-to-a-hexadecimal-string-and-vice-versa" />
+        <published>2008-11-22T10:03:13Z</published>
+        <updated>2023-06-22T08:50:53Z</updated>
+        <summary type="html">
+            &lt;p&gt;How can you convert a byte array to a hexadecimal string and vice versa?&lt;/p&gt;&#xA;
+        </summary>
+    </entry>
+    <entry>
+        <id>https://stackoverflow.com/q/371328</id>
+        <re:rank scheme="https://stackoverflow.com">1671</re:rank>
+        <title type="text">Why is it important to override GetHashCode when Equals method is overridden?</title>
+            <category scheme="https://stackoverflow.com/tags" term="c#" />
+            <category scheme="https://stackoverflow.com/tags" term="overriding" />
+            <category scheme="https://stackoverflow.com/tags" term="hashcode" />
+        <author>
+            <name>David Basarab</name>
+            <uri>https://stackoverflow.com/users/2469</uri>
+        </author>
+        <link rel="alternate" href="https://stackoverflow.com/questions/371328/why-is-it-important-to-override-gethashcode-when-equals-method-is-overridden" />
+        <published>2008-12-16T13:41:18Z</published>
+        <updated>2024-05-18T15:09:03Z</updated>
+        <summary type="html">
+            &lt;p&gt;Given the following class&lt;/p&gt;&#xA;&#xA;&lt;pre&gt;&lt;code&gt;public class Foo&#xA;{&#xA;    public int FooId { get; set; }&#xA;    public string FooName { get; set; }&#xA;&#xA;    public override bool Equals(object obj)&#xA;    {&#xA;        Foo fooItem = obj as Foo;&#xA;&#xA;        if (fooItem == null) &#xA;        {&#xA;           return false;&#xA;        }&#xA;&#xA;        return fooItem.FooId == this.FooId;&#xA;    }&#xA;&#xA;    public override int GetHashCode()&#xA;    {&#xA;        // Which is preferred?&#xA;&#xA;        return base.GetHashCode();&#xA;&#xA;        //return this.FooId.GetHashCode();&#xA;    }&#xA;}&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&#xA;&lt;p&gt;I have overridden the &lt;code&gt;Equals&lt;/code&gt; method because &lt;code&gt;Foo&lt;/code&gt; represent a row for the &lt;code&gt;Foo&lt;/code&gt;s table.  Which is the preferred method for overriding the &lt;code&gt;GetHashCode&lt;/code&gt;?&lt;/p&gt;&#xA;&#xA;&lt;p&gt;Why is it important to override &lt;code&gt;GetHashCode&lt;/code&gt;?&lt;/p&gt;&#xA;
+        </summary>
+    </entry>
+</feed>

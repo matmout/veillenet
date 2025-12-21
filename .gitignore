@@ -109,3 +109,20 @@ $RECYCLE.BIN/
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# ========================================
+# SECURITY: Ignore files with secrets
+# ========================================
+appsettings.Development.json
+appsettings.json
+appsettings.*.json
+*.env
+.env
+.env.*
+*.key
+*.pem
+*.pfx
+*.p12
+secrets.json
+user-secrets.json
+keys/

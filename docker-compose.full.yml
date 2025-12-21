@@ -1,0 +1,55 @@
+version: "3.9"
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: veillenet-postgres
+    environment:
+      POSTGRES_DB: 
+      POSTGRES_USER: 
+      POSTGRES_PASSWORD: 
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./Scripts/init-database.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - veillenet-network
+
+  # VeilleNet Application
+  veillenet:
+    build: .
+    container_name: veillenet-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_URLS=http://0.0.0.0:8080
+      # Override connection string to use postgres service
+      - Database__ConnectionString=
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - veillenet-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  veillenet-network:
+    driver: bridge

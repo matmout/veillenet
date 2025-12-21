@@ -8,6 +8,8 @@ using VeilleNet.Services.Tools;
 using VeilleNet.Services.Agent;
 using Amazon.Runtime;
 using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
+using VeilleNet.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,6 +66,37 @@ builder.Services.Configure<GzipCompressionProviderOptions>(options =>
 // Add memory cache
 builder.Services.AddMemoryCache();
 
+// Configure Database
+builder.Services.Configure<VeilleNet.Models.DatabaseOptions>(
+    builder.Configuration.GetSection(VeilleNet.Models.DatabaseOptions.SectionName));
+
+builder.Services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
+{
+    var dbOptions = serviceProvider.GetRequiredService<IOptions<VeilleNet.Models.DatabaseOptions>>().Value;
+    
+    options.UseNpgsql(dbOptions.ConnectionString, npgsqlOptions =>
+    {
+        npgsqlOptions.EnableRetryOnFailure(
+            maxRetryCount: dbOptions.MaxRetryCount,
+            maxRetryDelay: TimeSpan.FromSeconds(dbOptions.MaxRetryDelay),
+            errorCodesToAdd: null);
+        
+        npgsqlOptions.CommandTimeout(dbOptions.CommandTimeout);
+    });
+
+    if (dbOptions.EnableSensitiveDataLogging)
+    {
+        options.EnableSensitiveDataLogging();
+    }
+
+    if (dbOptions.EnableDetailedErrors)
+    {
+        options.EnableDetailedErrors();
+    }
+
+    // Don't set NoTracking globally - let repository methods control this
+});
+
 // Add HttpClient factory
 builder.Services.AddHttpClient();
 
@@ -78,8 +111,12 @@ builder.Services.AddScoped<INewsletterService, NewsletterService>();
 builder.Services.AddScoped<IAINewsService, AINewsService>();
 builder.Services.AddScoped<IWinFormNewsService, WinFormNewsService>();
 builder.Services.AddScoped<IVideoService, VideoService>();
+builder.Services.AddScoped<IStackOverflowService, StackOverflowService>();
 builder.Services.AddScoped<ILLMService, LLMService>();
 builder.Services.AddSingleton<IQuestionService, QuestionService>();
+
+// Data services
+builder.Services.AddScoped<VeilleNet.Services.Data.INewsRepository, VeilleNet.Services.Data.NewsRepository>();
 
 // AI summarization (Mistral via OpenAI-compatible endpoint)
 builder.Services.Configure<VeilleNet.Models.MistralOptions>(builder.Configuration.GetSection("Mistral"));
@@ -100,15 +137,64 @@ builder.Services.AddSingleton<IAmazonSimpleEmailService>(sp =>
     return new AmazonSimpleEmailServiceClient(credentials, config);
 });
 
-// Configure AWS options
-// builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
-// builder.Services.AddAWSService<IAmazonSimpleEmailService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Add background service for daily AI summarization
 builder.Services.AddHostedService<AiSummarizationBackgroundService>();
 
+// Add controllers for API endpoints
+builder.Services.AddControllers();
+
 var app = builder.Build();
+
+// Initialize database
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        var dbOptions = services.GetRequiredService<IOptions<VeilleNet.Models.DatabaseOptions>>().Value;
+        
+        logger.LogInformation("Checking database connection...");
+        logger.LogInformation("Connection string: {ConnectionString}", 
+            new Npgsql.NpgsqlConnectionStringBuilder(dbOptions.ConnectionString) { Password = "****" }.ToString());
+        
+        // Test raw connection first
+        var canConnect = await VeilleNet.Tools.PostgresConnectionTest.TestConnectionAsync(dbOptions.ConnectionString);
+        
+        if (!canConnect)
+        {
+            logger.LogWarning("Raw Npgsql connection test failed!");
+        }
+        
+        // Test if we can connect via EF Core
+        canConnect = await context.Database.CanConnectAsync();
+        if (canConnect)
+        {
+            logger.LogInformation("Database connection successful!");
+            
+            // Apply pending migrations
+            var pendingMigrations = await context.Database.GetPendingMigrationsAsync();
+            if (pendingMigrations.Any())
+            {
+                logger.LogInformation("Applying {Count} pending migrations...", pendingMigrations.Count());
+                await context.Database.MigrateAsync();
+                logger.LogInformation("Migrations applied successfully!");
+            }
+        }
+        else
+        {
+            logger.LogWarning("Cannot connect to database. Application will continue but database features will not work.");
+        }
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while initializing the database. Application will continue but database features may not work.");
+    }
+}
 
 // Configure the HTTP request pipeline.
 // Use response compression early in the pipeline
@@ -143,6 +229,7 @@ app.UseHttpsRedirection();
 app.UseRouting();
 app.UseSession();
 app.UseAuthorization();
+app.MapControllers();
 app.MapRazorPages();
 
 await app.RunAsync();

@@ -1,45 +1,77 @@
 using VeilleNet.Models;
+using VeilleNet.Services.Data;
 
 namespace VeilleNet.Services.Tools;
 
 public interface INewsletterService
 {
-    Task<bool> SubscribeAsync(NewsletterSubscription subscription);
-    Task<List<NewsletterSubscription>> GetAllSubscriptionsAsync();
+    Task<bool> SubscribeAsync(string email, string source = "Website");
+    Task<bool> UnsubscribeAsync(string email, string? reason = null);
+    Task<bool> IsSubscribedAsync(string email);
+    Task<List<string>> GetAllActiveSubscribersEmailsAsync();
+    Task<int> GetActiveSubscribersCountAsync();
+    Task IncrementEmailSentAsync(string email);
 }
 
 public class NewsletterService : INewsletterService
 {
-    private readonly ICacheService _cacheService;
-    private const string CacheKey = "NewsletterSubscriptions";
+    private readonly INewsRepository _newsRepository;
+    private readonly ILogger<NewsletterService> _logger;
 
-    public NewsletterService(ICacheService cacheService)
+    public NewsletterService(INewsRepository newsRepository, ILogger<NewsletterService> logger)
     {
-        _cacheService = cacheService;
+        _newsRepository = newsRepository;
+        _logger = logger;
     }
 
-    public async Task<bool> SubscribeAsync(NewsletterSubscription subscription)
+    public async Task<bool> SubscribeAsync(string email, string source = "Website")
     {
-        var subscriptions = await GetAllSubscriptionsAsync();
-        
-        // Check if email already exists
-        if (subscriptions.Any(s => s.Email.Equals(subscription.Email, StringComparison.OrdinalIgnoreCase)))
+        try
         {
+            await _newsRepository.SubscribeAsync(email, source);
+            _logger.LogInformation("Subscriber added: {Email} from {Source}", email, source);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error subscribing email: {Email}", email);
             return false;
         }
-
-        subscription.SubscribedAt = DateTime.UtcNow;
-        subscriptions.Add(subscription);
-        
-        // Store indefinitely (or until cache is cleared)
-        _cacheService.Set(CacheKey, subscriptions, TimeSpan.FromDays(365));
-        
-        return true;
     }
 
-    public async Task<List<NewsletterSubscription>> GetAllSubscriptionsAsync()
+    public async Task<bool> UnsubscribeAsync(string email, string? reason = null)
     {
-        var subscriptions = _cacheService.Get<List<NewsletterSubscription>>(CacheKey);
-        return await Task.FromResult(subscriptions ?? new List<NewsletterSubscription>());
+        try
+        {
+            await _newsRepository.UnsubscribeAsync(email, reason);
+            _logger.LogInformation("Subscriber unsubscribed: {Email}, Reason: {Reason}", email, reason ?? "Not specified");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error unsubscribing email: {Email}", email);
+            return false;
+        }
+    }
+
+    public async Task<bool> IsSubscribedAsync(string email)
+    {
+        return await _newsRepository.IsSubscribedAsync(email);
+    }
+
+    public async Task<List<string>> GetAllActiveSubscribersEmailsAsync()
+    {
+        var subscribers = await _newsRepository.GetActiveSubscribersAsync();
+        return subscribers.Select(s => s.Email).ToList();
+    }
+
+    public async Task<int> GetActiveSubscribersCountAsync()
+    {
+        return await _newsRepository.GetActiveSubscribersCountAsync();
+    }
+
+    public async Task IncrementEmailSentAsync(string email)
+    {
+        await _newsRepository.IncrementEmailSentAsync(email);
     }
 }

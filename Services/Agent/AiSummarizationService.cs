@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using VeilleNet.Models;
 using VeilleNet.Services.News;
 using VeilleNet.Services.Tools;
+using VeilleNet.Services.Data;
 using System.Text.RegularExpressions;
 using System.Net;
 
@@ -13,6 +14,7 @@ namespace VeilleNet.Services.Agent;
 public interface IAiSummarizationService
 {
     Task<List<AiContentSummary>> GetLatestBlogSummariesAsync(int count = 10, CancellationToken cancellationToken = default);
+    Task<List<AiContentSummary>> GetLatestBlogSummariesFromDatabaseAsync(int count = 10, CancellationToken cancellationToken = default);
 }
 
 public class AiSummarizationService : IAiSummarizationService
@@ -24,6 +26,7 @@ public class AiSummarizationService : IAiSummarizationService
     private readonly IAINewsService _aiNewsService;
     private readonly IWinFormNewsService _winFormNewsService;
     private readonly IVideoService _videoService;
+    private readonly INewsRepository _newsRepository;
     private readonly MistralOptions _options;
     private readonly ILogger<AiSummarizationService> _logger;
 
@@ -35,6 +38,7 @@ public class AiSummarizationService : IAiSummarizationService
         IAINewsService aiNewsService,
         IWinFormNewsService winFormNewsService,
         IVideoService videoService,
+        INewsRepository newsRepository,
         IOptions<MistralOptions> options,
         ILogger<AiSummarizationService> logger)
     {
@@ -45,8 +49,15 @@ public class AiSummarizationService : IAiSummarizationService
         _aiNewsService = aiNewsService;
         _winFormNewsService = winFormNewsService;
         _videoService = videoService;
+        _newsRepository = newsRepository;
         _options = options.Value;
         _logger = logger;
+    }
+
+    public async Task<List<AiContentSummary>> GetLatestBlogSummariesFromDatabaseAsync(int count = 10, CancellationToken cancellationToken = default)
+    {
+        var summaries = await _newsRepository.GetRecentAiSummariesAsync(count, cancellationToken);
+        return summaries.Select(s => s.ToAiContentSummary()).ToList();
     }
 
     public async Task<List<AiContentSummary>> GetLatestBlogSummariesAsync(int count = 10, CancellationToken cancellationToken = default)
@@ -66,6 +77,16 @@ public class AiSummarizationService : IAiSummarizationService
         globalPosts.AddRange(aiNewsTask);
         globalPosts.AddRange(winFormTask);
         //posts.AddRange(videoTask); TO be implemented after
+
+        // Save news articles to database
+        try
+        {
+            await _newsRepository.AddOrUpdateNewsArticlesAsync(globalPosts, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error saving news articles to database");
+        }
 
         // If not configured, degrade gracefully to RSS summaries.
         var chatClient = _chatClientFactory.TryCreate();
@@ -95,7 +116,19 @@ public class AiSummarizationService : IAiSummarizationService
             }
         });
 
-        return (await Task.WhenAll(tasks)).Where(s => s is not null).Select(s => s!).ToList();
+        var summaries = (await Task.WhenAll(tasks)).Where(s => s is not null).Select(s => s!).ToList();
+
+        // Save AI summaries to database
+        try
+        {
+            await _newsRepository.AddOrUpdateAiSummariesAsync(summaries, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error saving AI summaries to database");
+        }
+
+        return summaries;
     }
 
     private async Task<AiContentSummary?> SummarizePostAsync(IChatClient chatClient, BaseNews post, CancellationToken cancellationToken)
@@ -103,6 +136,21 @@ public class AiSummarizationService : IAiSummarizationService
         if (string.IsNullOrWhiteSpace(post.Url))
         {
             return null;
+        }
+
+        // Check database first
+        try
+        {
+            var existingSummary = await _newsRepository.GetAiSummaryByUrlAsync(post.Url, cancellationToken);
+            if (existingSummary != null && existingSummary.SummaryDate >= DateTime.UtcNow.AddHours(-24))
+            {
+                _logger.LogInformation("Using cached AI summary from database for: {Url}", post.Url);
+                return existingSummary.ToAiContentSummary();
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Error checking database for existing summary: {Url}", post.Url);
         }
 
         var cacheKey = GetCacheKey(post.Url);
@@ -192,7 +240,9 @@ public class AiSummarizationService : IAiSummarizationService
             Url = post.Url,
             Source = post.Source,
             PublishedDate = post.PublishedDate,
-            Summary = htmlReponseText
+            Summary = htmlReponseText,
+            AiGenerated = true,
+            SummaryDate = DateTime.UtcNow
         };
 
         _cacheService.Set(cacheKey, result, TimeSpan.FromMinutes(_options.CacheMinutes));

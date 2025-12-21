@@ -33,6 +33,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/scrollbar.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/ai-modal.css" asp-append-version="true" />
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-4B9NVDSYP2"></script>
     <script>
@@ -80,11 +81,11 @@
                                 <i class="bi bi-cpu" aria-hidden="true"></i> LLM
                             </a>
                         </li>
-                        <li class="nav-item" role="none">
+@*                         <li class="nav-item" role="none">
                             <a class="nav-link text-white" asp-area="" asp-page="/AiSummary" role="menuitem" aria-label="AI Summary - AI generated summaries">
                                 <i class="bi bi-stars" aria-hidden="true"></i> AI Summary
                             </a>
-                        </li>
+                        </li> *@
                         <li class="nav-item" role="none">
                             <a class="nav-link text-white" asp-area="" asp-page="/Training" role="menuitem" aria-label="Training - Test your C# knowledge">
                                 <i class="bi bi-mortarboard" aria-hidden="true"></i> Training
@@ -143,6 +144,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/output-shrink.js" asp-append-version="true"></script>
+    <script src="~/js/ai-modal.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

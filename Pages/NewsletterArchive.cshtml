@@ -1,0 +1,110 @@
+@page
+@model NewsletterArchiveModel
+@{
+    ViewData["Title"] = "Newsletter Archive";
+    ViewData["Description"] = "Archive of all daily newsletters sent by Contain'Sharp";
+    ViewData["CanonicalUrl"] = "https://containsharp.com/NewsletterArchive";
+}
+
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h2 mb-2"><i class="bi bi-archive"></i> Newsletter Archive</h1>
+            <p class="text-muted mb-0">Historique des newsletters quotidiennes envoyées</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            @if (Model.Newsletters.Any())
+            {
+                <div class="list-group">
+                    @foreach (var newsletter in Model.Newsletters)
+                    {
+                        var statusBadge = newsletter.IsSent 
+                            ? "<span class=\"badge bg-success\">Envoyée</span>" 
+                            : "<span class=\"badge bg-warning text-dark\">En attente</span>";
+
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between align-items-center mb-2">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-calendar-date"></i>
+                                    @newsletter.NewsletterDate.ToString("dddd dd MMMM yyyy", new System.Globalization.CultureInfo("fr-FR"))
+                                </h5>
+                                @Html.Raw(statusBadge)
+                            </div>
+                            
+                            <h6 class="mb-2">@newsletter.Subject</h6>
+                            
+                            <div class="row text-muted small">
+                                <div class="col-md-3">
+                                    <i class="bi bi-card-list"></i> @newsletter.SummaryCount résumés
+                                </div>
+                                @if (newsletter.IsSent)
+                                {
+                                    <div class="col-md-3">
+                                        <i class="bi bi-people"></i> @newsletter.RecipientCount destinataires
+                                    </div>
+                                    <div class="col-md-6">
+                                        <i class="bi bi-clock"></i> Envoyée le @newsletter.SentAt?.ToLocalTime().ToString("dd/MM/yyyy à HH:mm")
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="col-md-9">
+                                        <i class="bi bi-clock-history"></i> Créée le @newsletter.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy à HH:mm")
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="mt-3">
+                                <button class="btn btn-sm btn-outline-primary" 
+                                        type="button" 
+                                        data-bs-toggle="collapse" 
+                                        data-bs-target="#preview-@newsletter.Id">
+                                    <i class="bi bi-eye"></i> Aperçu HTML
+                                </button>
+                                <button class="btn btn-sm btn-outline-secondary" 
+                                        type="button" 
+                                        data-bs-toggle="collapse" 
+                                        data-bs-target="#text-@newsletter.Id">
+                                    <i class="bi bi-file-text"></i> Version texte
+                                </button>
+                            </div>
+
+                            <div class="collapse mt-3" id="preview-@newsletter.Id">
+                                <div class="card card-body bg-light">
+                                    <iframe srcdoc="@Html.Raw(newsletter.HtmlContent.Replace("\"", "&quot;"))" 
+                                            style="width: 100%; height: 600px; border: 1px solid #dee2e6; border-radius: 4px;"></iframe>
+                                </div>
+                            </div>
+
+                            <div class="collapse mt-3" id="text-@newsletter.Id">
+                                <div class="card card-body bg-light">
+                                    <pre class="mb-0" style="white-space: pre-wrap; font-size: 0.9em;">@newsletter.TextContent</pre>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> Aucune newsletter archivée pour le moment.
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12 text-center">
+            <a href="/Newsletter" class="btn btn-primary">
+                <i class="bi bi-envelope-heart"></i> S'abonner à la newsletter
+            </a>
+            <a href="/" class="btn btn-link">
+                <i class="bi bi-arrow-left"></i> Retour au tableau de bord
+            </a>
+        </div>
+    </div>
+</div>
