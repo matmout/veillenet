@@ -13,6 +13,23 @@ using VeilleNet.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Logging: be verbose only in Development
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
+if (builder.Environment.IsDevelopment())
+{
+    builder.Logging.SetMinimumLevel(LogLevel.Information);
+}
+else
+{
+    builder.Logging.SetMinimumLevel(LogLevel.Warning);
+    builder.Logging.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning);
+    builder.Logging.AddFilter("Microsoft.EntityFrameworkCore.Query", LogLevel.Warning);
+    builder.Logging.AddFilter("Microsoft.EntityFrameworkCore.Infrastructure", LogLevel.Warning);
+    builder.Logging.AddFilter("Microsoft", LogLevel.Warning);
+}
+
 // Add services to the container.
 builder.Services.AddRazorPages();
 
@@ -156,25 +173,31 @@ using (var scope = app.Services.CreateScope())
         var context = services.GetRequiredService<ApplicationDbContext>();
         var logger = services.GetRequiredService<ILogger<Program>>();
         var dbOptions = services.GetRequiredService<IOptions<VeilleNet.Models.DatabaseOptions>>().Value;
-        
-        logger.LogInformation("Checking database connection...");
-        logger.LogInformation("Connection string: {ConnectionString}", 
-            new Npgsql.NpgsqlConnectionStringBuilder(dbOptions.ConnectionString) { Password = "****" }.ToString());
-        
+
+        if (app.Environment.IsDevelopment())
+        {
+            logger.LogInformation("Checking database connection...");
+            logger.LogInformation("Connection string: {ConnectionString}",
+                new Npgsql.NpgsqlConnectionStringBuilder(dbOptions.ConnectionString) { Password = "****" }.ToString());
+        }
+
         // Test raw connection first
         var canConnect = await VeilleNet.Tools.PostgresConnectionTest.TestConnectionAsync(dbOptions.ConnectionString);
-        
+
         if (!canConnect)
         {
             logger.LogWarning("Raw Npgsql connection test failed!");
         }
-        
+
         // Test if we can connect via EF Core
         canConnect = await context.Database.CanConnectAsync();
         if (canConnect)
         {
-            logger.LogInformation("Database connection successful!");
-            
+            if (app.Environment.IsDevelopment())
+            {
+                logger.LogInformation("Database connection successful!");
+            }
+
             // Apply pending migrations
             var pendingMigrations = await context.Database.GetPendingMigrationsAsync();
             if (pendingMigrations.Any())
