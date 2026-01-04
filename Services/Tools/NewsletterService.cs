@@ -17,11 +17,13 @@ public class NewsletterService : INewsletterService
 {
     private readonly INewsRepository _newsRepository;
     private readonly ILogger<NewsletterService> _logger;
+    private readonly IEmailService _emailService;
 
-    public NewsletterService(INewsRepository newsRepository, ILogger<NewsletterService> logger)
+    public NewsletterService(INewsRepository newsRepository, ILogger<NewsletterService> logger, IEmailService emailService)
     {
         _newsRepository = newsRepository;
         _logger = logger;
+        _emailService = emailService;
     }
 
     public async Task<bool> SubscribeAsync(string email, string source = "Website")
@@ -30,6 +32,10 @@ public class NewsletterService : INewsletterService
         {
             await _newsRepository.SubscribeAsync(email, source);
             _logger.LogInformation("Subscriber added: {Email} from {Source}", email, source);
+            
+            // Send notification email to reporting address
+            await _emailService.SendSubscriptionNotificationEmailAsync(email, source);
+            
             return true;
         }
         catch (Exception ex)

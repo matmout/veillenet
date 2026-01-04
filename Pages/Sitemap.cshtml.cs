@@ -52,13 +52,6 @@ public class SitemapModel : PageModel
             ChangeFreq = "yearly",
             Priority = "0.1"
         });
-
-        // Future: Add dynamic content URLs here
-        // Example: Blog posts, video pages, etc.
-        // foreach (var post in blogPosts)
-        // {
-        //     Urls.Add(new SitemapUrl { Loc = $"{baseUrl}/Post/{post.Slug}", ... });
-        // }
     }
 }
 

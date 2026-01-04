@@ -407,6 +407,51 @@ public class LLMService : ILLMService
                 Author = "OpenAI",
                 DateRelease = new DateTime(2024, 5, 1),
                 ScoreIA = "N/A"
+            },
+            new LLM
+            {
+                Name = "Claude Haiku 4.5",
+                Description = "Fast, efficient Claude 4.5 series model optimized for low latency and cost.",
+                Link = "https://www.anthropic.com/news/claude-haiku-4-5",
+                Author = "Anthropic",
+                DateRelease = new DateTime(2025, 9, 1),
+                ScoreIA = "N/A"
+            },
+            new LLM
+            {
+                Name = "Llama 4 Maverick",
+                Description = "Flagship, Native Multimodal, MoE (400B), Advanced Reasoning, SOTA, High-Performance.",
+                Link = "https://www.llama.com/models/llama-4/",
+                Author = "Meta AI",
+                DateRelease = new DateTime(2025, 5, 14),
+                ScoreIA = "N/A"
+            },
+            new LLM
+            {
+                Name = "Llama 4 Scout",
+                Description = "Efficiency, Speed, Optimized MoE, Low-Latency, High-Reasoning/Low-Cost, Agile.",
+                Link = "https://www.llama.com/models/llama-4/",
+                Author = "Meta AI",
+                DateRelease = new DateTime(2025, 4, 8),
+                ScoreIA = "N/A"
+            },
+            new LLM
+            {
+                Name = "GPT-5.2",
+                Description = "Unified Reasoning, 400k Context, Agentic Workflows, Native Multimodality, High-Reliability.",
+                Link = "https://openai.com/index/introducing-gpt-5-2",
+                Author = "OpenAI",
+                DateRelease = new DateTime(2025, 12, 11),
+                ScoreIA = "N/A"
+            },
+            new LLM
+            {
+                Name = "GPT-5.2-Codex",
+                Description = "Agentic Coding, Large-scale Refactoring, Cybersecurity Defense, Codex CLI/IDE integration, Long-horizon tasks.",
+                Link = "https://openai.com/index/introducing-gpt-5-2-codex",
+                Author = "OpenAI",
+                DateRelease = new DateTime(2025, 12, 18),
+                ScoreIA = "N/A"
             }
         };
 

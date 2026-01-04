@@ -19,7 +19,7 @@ public class AINewsService : IAINewsService
 
     private readonly List<(string Name, string Url, string Category, string DefaultImage)> _aiFeeds = new()
     {
-        ("OpenAI Blog", "https://openai.com/blog/rss.xml", "AI/ML", "https://cdn.openai.com/favicon-32x32.png"),
+        ("OpenAI Blog", "https://openai.com/blog/rss.xml", "AI/ML", string.Empty),
         ("GitHub Blog", "https://github.blog/feed/", "Development", "https://github.githubassets.com/favicons/favicon.png"),
         ("Google AI Blog", "https://feeds.feedburner.com/blogspot/gJZg", "AI/ML", "https://www.gstatic.com/images/branding/product/2x/googleg_32dp.png"),
         ("Hugging Face Blog", "https://huggingface.co/blog/feed.xml", "AI/ML", "https://huggingface.co/favicon.ico"),

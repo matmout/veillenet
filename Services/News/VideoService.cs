@@ -33,6 +33,7 @@ public class VideoService : IVideoService
         ("freeCodeCamp.org", "https://www.youtube.com/feeds/videos.xml?channel_id=UC8butISFwT-Wl7EV0hUK0BQ"),
         ("Programming with Mosh", "https://www.youtube.com/feeds/videos.xml?channel_id=UCWv7vMbMWH4-V0ZXdmDpPBA"),
         ("Kudvenkat", "https://www.youtube.com/feeds/videos.xml?channel_id=UCCTVrRB5KpIiK6V2GGVsR1Q"),
+        ("Ed Andersen","https://www.youtube.com/feeds/videos.xml?channel_id=UCpZjU-GdtNJO42H8xPDyxRQ")
     };
 
     public VideoService(ICacheService cacheService, IFeedService feedService)

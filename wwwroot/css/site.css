@@ -63,11 +63,11 @@ body {
 .btn:focus-visible {
   outline: 2px solid var(--vs-accent-strong);
   outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(0, 122, 204, 0.2);
+  box-shadow: 0 0 0 4px rgba(0, 122,204, 0.2);
 }
 
 .btn-primary:focus-visible {
-  box-shadow: 0 0 0 4px rgba(0, 122, 204, 0.3);
+  box-shadow: 0 0 0 4px rgba(0, 122,204, 0.3);
 }
 
 .btn-outline-primary:focus-visible {
@@ -939,6 +939,7 @@ small, .small {
 }
 
 /* StackOverflow Tags - Visual Studio Style */
+.springframework
 .stackoverflow-tag {
   display: inline-flex;
   align-items: center;
@@ -962,3 +963,75 @@ small, .small {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(167, 139, 250, 0.3);
 }
+
+/* --- News blocks shared styles (align on WinForms block) --- */
+.news-list .list-group-item {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.news-item {
+  overflow: visible;
+}
+
+.news-thumb {
+  width: 60px;
+  height: 45px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.news-thumb-lg {
+  width: 120px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.news-thumb-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(108, 117, 125, 0.1);
+  border-radius: 4px;
+}
+
+.news-thumb-placeholder-lg {
+  width: 120px;
+  height: 90px;
+}
+
+.news-thumb-placeholder-sm {
+  width: 60px;
+  height: 45px;
+}
+
+.news-title {
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+}
+
+.news-title a {
+  color: var(--vs-text) !important;
+}
+
+.news-title a:hover {
+  color: var(--vs-accent-strong) !important;
+}
+
+.news-summary {
+  line-height: 1.6;
+}
+
+.news-meta {
+  color: var(--vs-muted) !important;
+}
+
+.news-meta a {
+  color: var(--vs-muted);
+  text-decoration: none;
+}
+
+.news-meta a:hover {
+  color: var(--vs-text);
+}}

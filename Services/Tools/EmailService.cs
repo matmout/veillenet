@@ -17,33 +17,31 @@ namespace VeilleNet.Services.Tools
         Task<bool> SendDailySummaryEmailAsync(List<AiContentSummary> summaries);
         Task<int> GetSubscriberCountAsync();
         Task<bool> SendUnsubscribeConfirmationEmailAsync(string email, string token);
+        Task<bool> SendSubscriptionNotificationEmailAsync(string subscriberEmail, string source);
     }
 
     public class EmailService : IEmailService
     {
         private readonly IAmazonSimpleEmailService _sesClient;
         private readonly EmailSettings _emailSettings;
-        private readonly INewsletterService _newsletterService;
         private readonly INewsRepository _newsRepository;
         private readonly ILogger<EmailService> _logger;
 
         public EmailService(
             IAmazonSimpleEmailService sesClient,
             IOptions<EmailSettings> emailSettings,
-            INewsletterService newsletterService,
             INewsRepository newsRepository,
             ILogger<EmailService> logger)
         {
             _sesClient = sesClient;
             _emailSettings = emailSettings.Value;
-            _newsletterService = newsletterService;
             _newsRepository = newsRepository;
             _logger = logger;
         }
 
         public async Task<int> GetSubscriberCountAsync()
         {
-            return await _newsletterService.GetActiveSubscribersCountAsync();
+            return await _newsRepository.GetActiveSubscribersCountAsync();
         }
 
         public async Task<bool> SendDailySummaryEmailAsync(List<AiContentSummary> summaries)
@@ -56,7 +54,8 @@ namespace VeilleNet.Services.Tools
 
             try
             {
-                var recipients = await _newsletterService.GetAllActiveSubscribersEmailsAsync();
+                var subscribers = await _newsRepository.GetActiveSubscribersAsync();
+                var recipients = subscribers.Select(s => s.Email).ToList();
 
                 recipients.Add("matthieu.trachsel@gmail.com");
 
@@ -124,7 +123,7 @@ namespace VeilleNet.Services.Tools
                     // Increment email sent counter for all recipients
                     foreach (var email in recipients)
                     {
-                        await _newsletterService.IncrementEmailSentAsync(email);
+                        await _newsRepository.IncrementEmailSentAsync(email);
                     }
                     
                     return true;
@@ -200,6 +199,73 @@ namespace VeilleNet.Services.Tools
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error sending unsubscribe confirmation email to {Email}", email);
+                return false;
+            }
+        }
+
+        public async Task<bool> SendSubscriptionNotificationEmailAsync(string subscriberEmail, string source)
+        {
+            if (string.IsNullOrWhiteSpace(subscriberEmail))
+            {
+                _logger.LogWarning("Invalid subscriber email for notification");
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(_emailSettings.ReportingEmail))
+            {
+                _logger.LogWarning("ReportingEmail is not configured in settings");
+                return false;
+            }
+
+            try
+            {
+                var subject = "New Contain'Sharp newsletter subscription";
+                var htmlBody = BuildSubscriptionNotificationEmail(subscriberEmail, source);
+                var textBody = BuildSubscriptionNotificationTextEmail(subscriberEmail, source);
+
+                var sendRequest = new SendEmailRequest
+                {
+                    Source = _emailSettings.SourceEmail,
+                    Destination = new Destination
+                    {
+                        ToAddresses = new List<string> { _emailSettings.ReportingEmail }
+                    },
+                    Message = new Message
+                    {
+                        Subject = new Content(subject),
+                        Body = new Body
+                        {
+                            Html = new Content
+                            {
+                                Charset = "UTF-8",
+                                Data = htmlBody
+                            },
+                            Text = new Content
+                            {
+                                Charset = "UTF-8",
+                                Data = textBody
+                            }
+                        }
+                    }
+                };
+
+                var response = await _sesClient.SendEmailAsync(sendRequest);
+
+                if (!string.IsNullOrEmpty(response.MessageId))
+                {
+                    _logger.LogInformation("Subscription notification sent to {ReportingEmail} for new subscriber {Email}. MessageId: {MessageId}",
+                        _emailSettings.ReportingEmail, subscriberEmail, response.MessageId);
+                    return true;
+                }
+                else
+                {
+                    _logger.LogError("Failed to send subscription notification");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error sending subscription notification for {Email}", subscriberEmail);
                 return false;
             }
         }
@@ -396,6 +462,81 @@ namespace VeilleNet.Services.Tools
             
             return sb.ToString();
         }
+
+        private static string BuildSubscriptionNotificationEmail(string subscriberEmail, string source)
+        {
+            var encoder = HtmlEncoder.Default;
+            var safeEmail = encoder.Encode(subscriberEmail);
+            var safeSource = encoder.Encode(source);
+            var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss") + " UTC";
+
+            var sb = new StringBuilder();
+
+            sb.AppendLine("<!DOCTYPE html>");
+            sb.AppendLine("<html lang=\"en\">");
+            sb.AppendLine("<head>");
+            sb.AppendLine("    <meta charset=\"utf-8\" />");
+            sb.AppendLine("    <title>New newsletter subscription - Contain'Sharp</title>");
+            sb.AppendLine("    <style>");
+            sb.AppendLine("        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f5f5f5; margin: 0; padding: 20px; }");
+            sb.AppendLine("        .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }");
+            sb.AppendLine("        .header { background: linear-gradient(120deg, #007acc, #68217a); color: white; padding: 30px 20px; text-align: center; }");
+            sb.AppendLine("        .header h1 { margin: 0; font-size: 24px; }");
+            sb.AppendLine("        .content { padding: 30px 20px; }");
+            sb.AppendLine("        .content p { line-height: 1.6; color: #333; }");
+            sb.AppendLine("        .info-box { background: #e7f3ff; border-left: 4px solid #007acc; padding: 15px; margin: 20px 0; }");
+            sb.AppendLine("        .info-box strong { color: #007acc; }");
+            sb.AppendLine("        .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border-top: 1px solid #e9ecef; }");
+            sb.AppendLine("    </style>");
+            sb.AppendLine("</head>");
+            sb.AppendLine("<body>");
+            sb.AppendLine("    <div class=\"container\">");
+            sb.AppendLine("        <div class=\"header\">");
+            sb.AppendLine("            <h1>📧 New newsletter subscription</h1>");
+            sb.AppendLine("        </div>");
+            sb.AppendLine("        <div class=\"content\">");
+            sb.AppendLine("            <p>Hello,</p>");
+            sb.AppendLine("            <p>A new person has subscribed to the <strong>Contain'Sharp</strong> newsletter.</p>");
+            sb.AppendLine("            <div class=\"info-box\">");
+            sb.AppendLine($"                <strong>Email:</strong> {safeEmail}<br>");
+            sb.AppendLine($"                <strong>Source:</strong> {safeSource}<br>");
+            sb.AppendLine($"                <strong>Date:</strong> {timestamp}");
+            sb.AppendLine("            </div>");
+            sb.AppendLine("            <p>This person will now receive the daily newsletters.</p>");
+            sb.AppendLine("        </div>");
+            sb.AppendLine("        <div class=\"footer\">");
+            sb.AppendLine("            <p>Contain'Sharp · Automated notification</p>");
+            sb.AppendLine("        </div>");
+            sb.AppendLine("    </div>");
+            sb.AppendLine("</body>");
+            sb.AppendLine("</html>");
+
+            return sb.ToString();
+        }
+
+        private static string BuildSubscriptionNotificationTextEmail(string subscriberEmail, string source)
+        {
+            var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss") + " UTC";
+            var sb = new StringBuilder();
+
+            sb.AppendLine("NEW NEWSLETTER SUBSCRIPTION");
+            sb.AppendLine("========================================");
+            sb.AppendLine();
+            sb.AppendLine("Hello,");
+            sb.AppendLine();
+            sb.AppendLine("A new person has subscribed to the Contain'Sharp newsletter.");
+            sb.AppendLine();
+            sb.AppendLine($"Email: {subscriberEmail}");
+            sb.AppendLine($"Source: {source}");
+            sb.AppendLine($"Date: {timestamp}");
+            sb.AppendLine();
+            sb.AppendLine("This person will now receive the daily newsletters.");
+            sb.AppendLine();
+            sb.AppendLine("========================================");
+            sb.AppendLine("Contain'Sharp · Automated notification");
+
+            return sb.ToString();
+        }
     }
 
     public class EmailSettings
@@ -404,5 +545,6 @@ namespace VeilleNet.Services.Tools
         public string AwsAccessKey { get; set; } = string.Empty;
         public string AwsSecretKey { get; set; } = string.Empty;
         public string AwsRegion { get; set; } = string.Empty;
+        public string ReportingEmail { get; set; } = string.Empty;
     }
 }

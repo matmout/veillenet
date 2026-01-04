@@ -1,0 +1,335 @@
+@page
+@model VeilleNet.Pages.RoadmapModel
+@{
+    ViewData["Title"] = "C# Learning Roadmap";
+    ViewData["Description"] = "Step-by-step guide to learning C# and .NET development - from fundamentals to advanced topics";
+    ViewData["CanonicalUrl"] = "https://containsharp.com/Roadmap";
+    
+    var sortedPath = Model.LearningPath.OrderBy(x => x.Step).ToList();
+    var foundationCount = sortedPath.Count(x => x.Type == VeilleNet.Models.RoadmapItemType.Foundation);
+    var advancedCount = sortedPath.Count(x => x.Type == VeilleNet.Models.RoadmapItemType.Advanced);
+    var specializationCount = sortedPath.Count(x => x.Type == VeilleNet.Models.RoadmapItemType.Specialization);
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-4 text-center mb-3">
+                <i class="bi bi-signpost-2"></i> C# Learning Roadmap
+            </h1>
+            <p class="lead text-center text-muted">
+                Step-by-step guide to becoming a C# developer in 2025
+            </p>
+        </div>
+    </div>
+
+    <!-- Progress Info -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-dark border-secondary shadow-sm">
+                <div class="card-body text-center">
+                    <div class="row">
+                        <div class="col-md-3 mb-2 mb-md-0">
+                            <div class="roadmap-stat">
+                                <i class="bi bi-signpost-split text-primary" style="font-size: 2rem;"></i>
+                                <div class="mt-2">
+                                    <strong>@sortedPath.Count</strong>
+                                    <div class="small text-muted">Learning Steps</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-2 mb-md-0">
+                            <div class="roadmap-stat">
+                                <i class="bi bi-star text-success" style="font-size: 2rem;"></i>
+                                <div class="mt-2">
+                                    <strong>@foundationCount</strong>
+                                    <div class="small text-muted">Foundation</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-2 mb-md-0">
+                            <div class="roadmap-stat">
+                                <i class="bi bi-rocket text-warning" style="font-size: 2rem;"></i>
+                                <div class="mt-2">
+                                    <strong>@advancedCount</strong>
+                                    <div class="small text-muted">Advanced</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="roadmap-stat">
+                                <i class="bi bi-trophy text-info" style="font-size: 2rem;"></i>
+                                <div class="mt-2">
+                                    <strong>@specializationCount</strong>
+                                    <div class="small text-muted">Specialization</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Roadmap Items with Steps -->
+    <div class="row">
+        @foreach (var item in sortedPath)
+        {
+            <div class="col-12 col-lg-6 mb-4">
+                <div class="card h-100 bg-dark border-secondary shadow-sm roadmap-card">
+                    <div class="card-header bg-@GetColorClass(item.Type) text-white">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h2 class="h5 mb-0 d-flex align-items-center flex-grow-1">
+                                <span class="step-badge me-2">@item.Step</span>
+                                <i class="bi bi-@GetIcon(item.Category) me-2"></i>
+                                @item.Title
+                            </h2>
+                        </div>
+                        <small class="text-white-50">@item.Description</small>
+                        
+                        @if (item.Prerequisites.Any())
+                        {
+                            <div class="mt-2">
+                                <small class="text-white-50">
+                                    <i class="bi bi-arrow-return-right"></i> Prerequisites: 
+                                    @string.Join(", ", item.Prerequisites.Select(p => $"Step {p}"))
+                                </small>
+                            </div>
+                        }
+                    </div>
+                    <div class="card-body">
+                        @if (item.Children.Any())
+                        {
+                            <div class="roadmap-children">
+                                @foreach (var child in item.Children)
+                                {
+                                    <div class="roadmap-child-item">
+                                        <div class="d-flex align-items-start">
+                                            <span class="roadmap-badge badge-@child.Type.ToString().ToLower() me-2 mt-1"></span>
+                                            <div class="flex-grow-1">
+                                                <div class="fw-semibold">@child.Title</div>
+                                                <small class="text-muted">@child.Description</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Training CTA -->
+    <div class="row mt-4 mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body text-center py-5">
+                    <h3 class="text-white mb-3">
+                        <i class="bi bi-mortarboard"></i> Test Your Knowledge
+                    </h3>
+                    <p class="text-white mb-4">Ready to challenge yourself? Try our C# quiz to assess your skills!</p>
+                    <a href="/Training" class="btn btn-warning btn-lg fw-bold" style="border-radius: 50px; padding: 0.75rem 2.5rem;">
+                        Start Quiz <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .roadmap-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+    }
+
+    .roadmap-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    }
+
+    .optional-step {
+        opacity: 0.9;
+    }
+
+    .optional-step::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 0 40px 40px 0;
+        border-color: transparent #6b7280 transparent transparent;
+    }
+
+    .step-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        font-weight: 700;
+        font-size: 1rem;
+        flex-shrink: 0;
+    }
+
+    .roadmap-stat {
+        padding: 1rem;
+    }
+
+    .roadmap-stat strong {
+        color: #e5e7eb;
+        font-size: 1.5rem;
+    }
+
+    .roadmap-badge {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .badge-foundation {
+        background-color: #22c55e;
+    }
+
+    .badge-advanced {
+        background-color: #ffd166;
+    }
+
+    .badge-specialization {
+        background-color: #a78bfa;
+    }
+
+    .roadmap-children {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .roadmap-child-item {
+        padding: 0.75rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 6px;
+        border-left: 3px solid transparent;
+        transition: all 0.2s ease;
+    }
+
+    .roadmap-child-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-left-color: var(--vs-accent-strong);
+    }
+
+    .roadmap-child-item .fw-semibold {
+        color: #e5e7eb;
+        font-size: 1rem;
+    }
+
+    .roadmap-child-item .text-muted {
+        color: #d1d5db !important;
+        font-size: 0.9rem;
+    }
+
+    .learning-path-tips {
+        color: #e5e7eb;
+        line-height: 1.8;
+        margin: 0;
+        padding-left: 1.5rem;
+    }
+
+    .learning-path-tips li {
+        margin-bottom: 0.75rem;
+    }
+
+    .learning-path-tips strong {
+        color: #ffffff;
+    }
+
+    .bg-success {
+        background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%) !important;
+    }
+
+    .bg-warning {
+        background: linear-gradient(135deg, #ffd166 0%, #f59e0b 100%) !important;
+        color: #1e1e1e !important;
+    }
+
+    .bg-info {
+        background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%) !important;
+    }
+
+    .bg-secondary {
+        background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%) !important;
+    }
+
+    .bg-danger {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+    }
+
+    /* Improve card header text visibility */
+    .roadmap-card .card-header h2 {
+        color: #ffffff !important;
+        font-weight: 600;
+    }
+
+    .roadmap-card .card-header small {
+        color: rgba(255, 255, 255, 0.85) !important;
+    }
+
+    /* Improve stats card text */
+    .card.bg-dark .small.text-muted {
+        color: #d1d5db !important;
+    }
+
+    @@media (max-width: 768px) {
+        .roadmap-stat {
+            padding: 0.5rem;
+        }
+
+        .roadmap-stat i {
+            font-size: 1.5rem !important;
+        }
+
+        .roadmap-stat strong {
+            font-size: 1.25rem;
+        }
+
+        .step-badge {
+            width: 28px;
+            height: 28px;
+            font-size: 0.9rem;
+        }
+    }
+</style>
+
+@functions {
+    string GetColorClass(VeilleNet.Models.RoadmapItemType type)
+    {
+        return type switch
+        {
+            VeilleNet.Models.RoadmapItemType.Foundation => "success",
+            VeilleNet.Models.RoadmapItemType.Advanced => "warning",
+            VeilleNet.Models.RoadmapItemType.Specialization => "info",
+            _ => "secondary"
+        };
+    }
+
+    string GetIcon(string category)
+    {
+        return category switch
+        {
+            "Foundation" => "star-fill",
+            "Core" => "gear-fill",
+            "Advanced" => "rocket-fill",
+            "Specialization" => "trophy-fill",
+            _ => "circle-fill"
+        };
+    }
+}
