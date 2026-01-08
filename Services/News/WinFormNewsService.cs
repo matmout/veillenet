@@ -21,7 +21,7 @@ public class WinFormNewsService : IWinFormNewsService
     {
         ("Microsoft .NET Blog", "https://devblogs.microsoft.com/dotnet/feed/", "Microsoft", "https://devblogs.microsoft.com/wp-content/uploads/sites/10/2019/05/cropped-dotnet-icon-32x32.png"),
         ("Visual Studio Blog", "https://devblogs.microsoft.com/visualstudio/feed/", "Microsoft", "https://devblogs.microsoft.com/wp-content/uploads/sites/4/2019/01/cropped-vs-icon-32x32.png"),
-        ("DevExpress WinForms", "https://community.devexpress.com/blogs/winforms/rss.aspx", "DevExpress", "https://www.devexpress.com/favicon.ico")
+        ("DevExpress", "https://community.devexpress.com/Blogs/MainFeed", "DevExpress", "https://www.devexpress.com/favicon.ico")
     };
 
     public WinFormNewsService(ICacheService cacheService, IFeedService feedService)

@@ -15,6 +15,7 @@ public interface IAiSummarizationService
 {
     Task<List<AiContentSummary>> GetLatestBlogSummariesAsync(int count = 10, CancellationToken cancellationToken = default);
     Task<List<AiContentSummary>> GetLatestBlogSummariesFromDatabaseAsync(int count = 10, CancellationToken cancellationToken = default);
+    Task<string?> GetDominantThemeFromRecentNewsAsync(CancellationToken cancellationToken = default);
 }
 
 public class AiSummarizationService : IAiSummarizationService
@@ -60,6 +61,76 @@ public class AiSummarizationService : IAiSummarizationService
         return summaries.Select(s => s.ToAiContentSummary()).ToList();
     }
 
+    public async Task<string?> GetDominantThemeFromRecentNewsAsync(CancellationToken cancellationToken = default)
+    {
+        var generationDate = DateOnly.FromDateTime(DateTime.UtcNow);
+        var existingTheme = await _newsRepository.GetDominantThemeByDateAsync(generationDate, cancellationToken);
+        if (existingTheme != null)
+        {
+            return FormatThemeOutput(existingTheme.Theme, existingTheme.Rationale);
+        }
+
+        var sinceDate = DateTime.UtcNow.AddDays(-3);
+        var articles = await _newsRepository.GetRecentNewsArticlesAsync(200, cancellationToken);
+        var recentTitles = articles
+            .Where(a => a.PublishedDate >= sinceDate)
+            .Select(a => a.Title?.Trim())
+            .Where(t => !string.IsNullOrWhiteSpace(t))
+            .ToList();
+
+        if (recentTitles.Count == 0)
+        {
+            return null;
+        }
+
+        var chatClient = _chatClientFactory.TryCreate();
+        if (chatClient is null)
+        {
+            _logger.LogWarning("Chat client not configured; unable to detect dominant theme.");
+            return null;
+        }
+
+        var titlesBuilder = new StringBuilder();
+        for (var i = 0; i < recentTitles.Count; i++)
+        {
+            titlesBuilder.Append(i + 1).Append(". ").AppendLine(recentTitles[i]!);
+        }
+
+        var titlesPayload = titlesBuilder.ToString();
+        var messages = new List<ChatMessage>
+        {
+            new(ChatRole.System, "You are a technology trend analyst. Given multiple software and AI news headlines, identify the single dominant theme tying most of them together. Respond with 'Theme: <short theme>' on the first line and one concise sentence explaining the rationale."),
+            new(ChatRole.User, $"Here are {recentTitles.Count} headlines published within the last 3 days:\n{titlesPayload}\n\nIdentify the theme that appears the most across these headlines.")
+        };
+
+        var chatOptions = new ChatOptions { Temperature = _options.Temperature };
+
+        try
+        {
+            var response = await chatClient.GetResponseAsync(messages, chatOptions, cancellationToken);
+            var parsedTheme = ParseDominantThemeResponse(response.Text);
+
+            if (parsedTheme != null)
+            {
+                await _newsRepository.AddOrUpdateDominantThemeAsync(generationDate, parsedTheme.Value.theme, parsedTheme.Value.rationale, cancellationToken);
+                return FormatThemeOutput(parsedTheme.Value.theme, parsedTheme.Value.rationale);
+            }
+
+            var fallback = response.Text?.Trim();
+            if (!string.IsNullOrWhiteSpace(fallback))
+            {
+                await _newsRepository.AddOrUpdateDominantThemeAsync(generationDate, fallback!, null, cancellationToken);
+            }
+
+            return fallback;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error detecting dominant theme from recent news");
+            return null;
+        }
+    }
+
     public async Task<List<AiContentSummary>> GetLatestBlogSummariesAsync(int count = 10, CancellationToken cancellationToken = default)
     {
         List<BaseNews> globalPosts = new List<BaseNews>();
@@ -102,7 +173,7 @@ public class AiSummarizationService : IAiSummarizationService
             }).ToList();
         }
 
-        using var gate = new SemaphoreSlim(3);
+        using var gate = new SemaphoreSlim(1);
         var tasks = globalPosts.Select(async p =>
         {
             await gate.WaitAsync(cancellationToken);
@@ -278,5 +349,52 @@ public class AiSummarizationService : IAiSummarizationService
     {
         var hash = SHA256.HashData(Encoding.UTF8.GetBytes(url));
         return "AiSummary:" + Convert.ToHexString(hash);
+    }
+
+    private static (string theme, string? rationale)? ParseDominantThemeResponse(string? responseText)
+    {
+        if (string.IsNullOrWhiteSpace(responseText))
+        {
+            return null;
+        }
+
+        var normalized = responseText.Trim();
+        var lines = normalized
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+        if (lines.Length == 0)
+        {
+            return null;
+        }
+
+        var themeLine = lines[0];
+        if (themeLine.StartsWith("Theme:", StringComparison.OrdinalIgnoreCase))
+        {
+            themeLine = themeLine[6..].Trim();
+        }
+
+        if (string.IsNullOrWhiteSpace(themeLine))
+        {
+            return null;
+        }
+
+        var rationale = lines.Length > 1 ? string.Join(' ', lines.Skip(1)).Trim() : null;
+        if (string.IsNullOrWhiteSpace(rationale))
+        {
+            rationale = null;
+        }
+
+        return (themeLine, rationale);
+    }
+
+    private static string FormatThemeOutput(string theme, string? rationale)
+    {
+        var normalizedTheme = theme.StartsWith("Theme:", StringComparison.OrdinalIgnoreCase)
+            ? theme
+            : $"Theme: {theme}";
+
+        return string.IsNullOrWhiteSpace(rationale)
+            ? normalizedTheme
+            : normalizedTheme + Environment.NewLine + rationale;
     }
 }

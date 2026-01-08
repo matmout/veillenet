@@ -1,4 +1,5 @@
 using Microsoft.Extensions.AI;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Text;
 using System.Text.Json;
@@ -16,10 +17,12 @@ public class MistralChatClientFactory : IMistralChatClientFactory
     private readonly MistralOptions _options;
     private IChatClient? _client;
     private readonly object _lock = new();
+    private readonly ILogger<MistralChatClientFactory> _logger;
 
-    public MistralChatClientFactory(IOptions<MistralOptions> options)
+    public MistralChatClientFactory(IOptions<MistralOptions> options, ILogger<MistralChatClientFactory> logger)
     {
         _options = options.Value;
+        _logger = logger;
     }
 
     public IChatClient? TryCreate()
@@ -46,7 +49,8 @@ public class MistralChatClientFactory : IMistralChatClientFactory
             var mistralClient = new OpenAIChatClient(
                 model: _options.Model,
                 endpoint: endpoint,
-                credential: _options.ApiKey);
+                credential: _options.ApiKey,
+                logger: _logger);
 
             _client = mistralClient;
             return _client;
@@ -61,12 +65,14 @@ internal class OpenAIChatClient : IChatClient
     private readonly Uri _endpoint;
     private readonly string _apiKey;
     private readonly HttpClient _httpClient;
+    private readonly ILogger _logger;
 
-    public OpenAIChatClient(string model, Uri endpoint, string credential)
+    public OpenAIChatClient(string model, Uri endpoint, string credential, ILogger logger)
     {
         _model = model;
         _endpoint = endpoint;
         _apiKey = credential;
+        _logger = logger;
         _httpClient = new HttpClient();
         _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_apiKey}");
     }
@@ -88,28 +94,27 @@ internal class OpenAIChatClient : IChatClient
         // Check if endpoint already ends with /, if not add it
         var baseUrl = _endpoint.ToString().TrimEnd('/');
         var requestUri = new Uri($"{baseUrl}/chat/completions");
-        
-        // Debug logging
-        Console.WriteLine($"Mistral API Request: POST {requestUri}");
-        Console.WriteLine($"Model: {_model}");
-        Console.WriteLine($"Request: {JsonSerializer.Serialize(request)}");
-        
+
+        if (_logger.IsEnabled(LogLevel.Debug))
+        {
+            _logger.LogDebug("Mistral API request: POST {RequestUri} (model={Model}, messages={MessageCount})", requestUri, _model, messages.Count());
+        }
+
         var jsonContent = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
 
         var response = await _httpClient.PostAsync(requestUri, jsonContent, cancellationToken);
-        
+
         if (!response.IsSuccessStatusCode)
         {
-            var errorContent = await response.Content.ReadAsStringAsync();
+            var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
             throw new HttpRequestException($"Mistral API error: {response.StatusCode}. Response: {errorContent}");
         }
 
-        var responseContent = await response.Content.ReadAsStringAsync();
+        var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
         var jsonResponse = JsonDocument.Parse(responseContent);
-        
+
         var responseText = jsonResponse.RootElement.GetProperty("choices")[0].GetProperty("message").GetProperty("content").GetString() ?? string.Empty;
 
-        // Create a ChatResponse with the response text
         var chatMessage = new ChatMessage(ChatRole.Assistant, responseText);
         return new ChatResponse([chatMessage]);
     }

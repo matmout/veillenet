@@ -31,7 +31,9 @@ public class IndexModel : PageModel
     public List<BaseNews> WinFormNews { get; set; } = new();
     public List<Video> Videos { get; set; } = new();
     public List<StackOverflowQuestion> StackOverflowQuestions { get; set; } = new();
-    
+
+    public int ActiveNewsletterSubscribersCount { get; private set; }
+
     // Dictionary to store AI summaries by URL
     private Dictionary<string, AiContentSummary> _aiSummaries = new();
 
@@ -71,8 +73,9 @@ public class IndexModel : PageModel
         var winFormTask = _winFormNewsService.GetLatestWinFormNewsAsync();
         var videoTask = _videoService.GetLatestVideosAsync();
         var stackOverflowTask = _stackOverflowService.GetLatestQuestionsAsync();
+        var subscribersCountTask = _newsletterService.GetActiveSubscribersCountAsync();
 
-        await Task.WhenAll(blogTask, githubTask, releaseTask, aiNewsTask, winFormTask, videoTask, stackOverflowTask);
+        await Task.WhenAll(blogTask, githubTask, releaseTask, aiNewsTask, winFormTask, videoTask, stackOverflowTask, subscribersCountTask);
 
         BlogPosts = await blogTask;
         TrendingProjects = await githubTask;
@@ -81,7 +84,8 @@ public class IndexModel : PageModel
         WinFormNews = await winFormTask;
         Videos = await videoTask;
         StackOverflowQuestions = await stackOverflowTask;
-        
+        ActiveNewsletterSubscribersCount = await subscribersCountTask;
+
         // Load AI summaries from database for all news items
         await LoadAiSummariesAsync();
     }

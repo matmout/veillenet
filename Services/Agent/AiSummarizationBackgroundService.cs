@@ -55,7 +55,7 @@ public class AiSummarizationBackgroundService : BackgroundService
                
                 // Get the latest posts from the last 24 hours
                 var summaries = await aiSummarizationService.GetLatestBlogSummariesAsync(10, stoppingToken);
-                
+                string? defaultTheme = await aiSummarizationService.GetDominantThemeFromRecentNewsAsync(stoppingToken);
                 _logger.LogInformation("Generated {SummaryCount} summaries for this batch", 
                     summaries.Count(s => s.AiGenerated));
                     

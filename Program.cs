@@ -24,9 +24,20 @@ if (builder.Environment.IsDevelopment())
 else
 {
     builder.Logging.SetMinimumLevel(LogLevel.Warning);
+
+    // EF Core: hide SQL + command details
     builder.Logging.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning);
     builder.Logging.AddFilter("Microsoft.EntityFrameworkCore.Query", LogLevel.Warning);
     builder.Logging.AddFilter("Microsoft.EntityFrameworkCore.Infrastructure", LogLevel.Warning);
+
+    // HttpClient: very noisy at Info (request start/stop)
+    builder.Logging.AddFilter("System.Net.Http.HttpClient", LogLevel.Warning);
+
+    // Framework noise
+    builder.Logging.AddFilter("Microsoft.AspNetCore.DataProtection", LogLevel.Error);
+    builder.Logging.AddFilter("Microsoft.AspNetCore.HttpsPolicy", LogLevel.Error);
+
+    // Default for Microsoft
     builder.Logging.AddFilter("Microsoft", LogLevel.Warning);
 }
 
@@ -181,12 +192,16 @@ using (var scope = app.Services.CreateScope())
                 new Npgsql.NpgsqlConnectionStringBuilder(dbOptions.ConnectionString) { Password = "****" }.ToString());
         }
 
-        // Test raw connection first
-        var canConnect = await VeilleNet.Tools.PostgresConnectionTest.TestConnectionAsync(dbOptions.ConnectionString);
-
-        if (!canConnect)
+        // Test raw connection first (noisy) only in Development
+        var canConnect = true;
+        if (app.Environment.IsDevelopment())
         {
-            logger.LogWarning("Raw Npgsql connection test failed!");
+            canConnect = await VeilleNet.Tools.PostgresConnectionTest.TestConnectionAsync(dbOptions.ConnectionString);
+
+            if (!canConnect)
+            {
+                logger.LogWarning("Raw Npgsql connection test failed!");
+            }
         }
 
         // Test if we can connect via EF Core

@@ -2,34 +2,40 @@ using Npgsql;
 
 namespace VeilleNet.Tools;
 
-/// <summary>
-/// Simple test to verify PostgreSQL connection
-/// </summary>
 public static class PostgresConnectionTest
 {
-    public static async Task<bool> TestConnectionAsync(string connectionString)
+    public static async Task<bool> TestConnectionAsync(string connectionString, bool verbose = false)
     {
         try
         {
-            Console.WriteLine($"Testing connection with: {MaskPassword(connectionString)}");
-            
+            if (verbose)
+            {
+                Console.WriteLine($"Testing connection with: {MaskPassword(connectionString)}");
+            }
+
             using var connection = new NpgsqlConnection(connectionString);
             await connection.OpenAsync();
-            
-            Console.WriteLine("? Connection successful!");
-            
-            using var command = new NpgsqlCommand("SELECT version();", connection);
-            var version = await command.ExecuteScalarAsync();
-            Console.WriteLine($"PostgreSQL version: {version}");
-            
+
+            if (verbose)
+            {
+                Console.WriteLine("Connection successful!");
+
+                using var command = new NpgsqlCommand("SELECT version();", connection);
+                var version = await command.ExecuteScalarAsync();
+                Console.WriteLine($"PostgreSQL version: {version}");
+            }
+
             await connection.CloseAsync();
             return true;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"? Connection failed: {ex.Message}");
-            Console.WriteLine($"Exception type: {ex.GetType().Name}");
-            Console.WriteLine($"Stack trace: {ex.StackTrace}");
+            if (verbose)
+            {
+                Console.WriteLine($"Connection failed: {ex.Message}");
+                Console.WriteLine($"Exception type: {ex.GetType().Name}");
+            }
+
             return false;
         }
     }

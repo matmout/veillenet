@@ -161,6 +161,39 @@ public class NewsRepository : INewsRepository
         }, nameof(AddOrUpdateNewsArticlesAsync));
     }
 
+    public async Task<DominantTheme?> GetDominantThemeByDateAsync(DateOnly generationDate, CancellationToken cancellationToken = default)
+    {
+        return await ExecuteWithRetryAsync(async () =>
+            await _context.DominantThemes
+                .AsNoTracking()
+                .FirstOrDefaultAsync(t => t.GenerationDate == generationDate, cancellationToken),
+            nameof(GetDominantThemeByDateAsync));
+    }
+
+    public async Task<DominantTheme> AddOrUpdateDominantThemeAsync(DateOnly generationDate, string theme, string? rationale, CancellationToken cancellationToken = default)
+    {
+        return await ExecuteWithRetryAsync(async () =>
+        {
+            var existing = await _context.DominantThemes
+                .FirstOrDefaultAsync(t => t.GenerationDate == generationDate, cancellationToken);
+
+            if (existing != null)
+            {
+                existing.Theme = theme;
+                existing.Rationale = rationale;
+                existing.UpdatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync(cancellationToken);
+                return existing;
+            }
+
+            var entity = DominantTheme.Create(generationDate, theme, rationale);
+            _context.DominantThemes.Add(entity);
+            await _context.SaveChangesAsync(cancellationToken);
+            return entity;
+        }, nameof(AddOrUpdateDominantThemeAsync));
+    }
+
     // AI Summaries
     public async Task<AiSummaryEntity?> GetAiSummaryByUrlAsync(string url, CancellationToken cancellationToken = default)
     {

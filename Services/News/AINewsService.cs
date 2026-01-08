@@ -26,7 +26,8 @@ public class AINewsService : IAINewsService
         ("Microsoft AI Blog", "https://blogs.microsoft.com/ai/feed/", "AI/ML", "https://blogs.microsoft.com/wp-content/uploads/prod/2019/01/cropped-microsoft_logo_element-192x192.png"),
         ("The Verge AI", "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml", "AI/ML", "https://www.theverge.com/static-assets/icons/favicon.ico"),
         ("NVIDIA AI Blog", "https://blogs.nvidia.com/feed/", "AI/ML", "https://www.nvidia.com/favicon.ico"),
-        ("DeepMind Blog", "https://www.deepmind.com/blog/rss.xml", "AI/ML", "https://www.deepmind.com/favicon.ico")
+        ("DeepMind Blog", "https://www.deepmind.com/blog/rss.xml", "AI/ML", "https://www.deepmind.com/favicon.ico"),
+        ("Google Developers Tool","https://blog.google/innovation-and-ai/technology/developers-tools/rss/","AI/Tool",string.Empty)
     };
 
     public AINewsService(ICacheService cacheService, IFeedService feedService)

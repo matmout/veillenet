@@ -14,6 +14,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<AiSummaryEntity> AiSummaries { get; set; }
     public DbSet<NewsletterSubscriber> NewsletterSubscribers { get; set; }
     public DbSet<DailyNewsletter> DailyNewsletters { get; set; }
+    public DbSet<DominantTheme> DominantThemes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -92,6 +93,23 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP");
         });
+
+        // Configure DominantTheme
+        modelBuilder.Entity<DominantTheme>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.GenerationDate).IsUnique();
+
+            entity.Property(e => e.Theme)
+                .HasMaxLength(500)
+                .IsRequired();
+
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+        });
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -142,6 +160,10 @@ public class ApplicationDbContext : DbContext
                 else if (entry.Entity is AiSummaryEntity aiSummary)
                 {
                     aiSummary.UpdatedAt = DateTime.UtcNow;
+                }
+                else if (entry.Entity is DominantTheme dominantTheme)
+                {
+                    dominantTheme.UpdatedAt = DateTime.UtcNow;
                 }
             }
         }
