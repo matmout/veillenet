@@ -161,37 +161,60 @@ public class NewsRepository : INewsRepository
         }, nameof(AddOrUpdateNewsArticlesAsync));
     }
 
-    public async Task<DominantTheme?> GetDominantThemeByDateAsync(DateOnly generationDate, CancellationToken cancellationToken = default)
-    {
-        return await ExecuteWithRetryAsync(async () =>
-            await _context.DominantThemes
-                .AsNoTracking()
-                .FirstOrDefaultAsync(t => t.GenerationDate == generationDate, cancellationToken),
-            nameof(GetDominantThemeByDateAsync));
-    }
-
-    public async Task<DominantTheme> AddOrUpdateDominantThemeAsync(DateOnly generationDate, string theme, string? rationale, CancellationToken cancellationToken = default)
+    public async Task<(List<NewsArticle> Items, int TotalCount)> SearchNewsArticlesAsync(string? keyword, DateTime? startDate, DateTime? endDate, string? source, int skip = 0, int take = 20, CancellationToken cancellationToken = default)
     {
         return await ExecuteWithRetryAsync(async () =>
         {
-            var existing = await _context.DominantThemes
-                .FirstOrDefaultAsync(t => t.GenerationDate == generationDate, cancellationToken);
+            var query = _context.NewsArticles.AsNoTracking();
 
-            if (existing != null)
+            if (!string.IsNullOrWhiteSpace(keyword))
             {
-                existing.Theme = theme;
-                existing.Rationale = rationale;
-                existing.UpdatedAt = DateTime.UtcNow;
-
-                await _context.SaveChangesAsync(cancellationToken);
-                return existing;
+                var pattern = $"%{keyword}%";
+                query = query.Where(n => EF.Functions.ILike(n.Title, pattern) || EF.Functions.ILike(n.Summary, pattern));
             }
 
-            var entity = DominantTheme.Create(generationDate, theme, rationale);
-            _context.DominantThemes.Add(entity);
-            await _context.SaveChangesAsync(cancellationToken);
-            return entity;
-        }, nameof(AddOrUpdateDominantThemeAsync));
+            if (startDate.HasValue)
+            {
+                var startUtc = EnsureUtc(startDate.Value);
+                query = query.Where(n => n.PublishedDate >= startUtc);
+            }
+
+            if (endDate.HasValue)
+            {
+                var endUtc = EnsureUtc(endDate.Value);
+                query = query.Where(n => n.PublishedDate <= endUtc);
+            }
+
+            if (!string.IsNullOrWhiteSpace(source))
+            {
+                query = query.Where(n => n.Source == source);
+            }
+
+            take = Math.Clamp(take, 1, 200);
+            skip = Math.Max(0, skip);
+
+            var totalCount = await query.CountAsync(cancellationToken);
+
+            var items = await query
+                .OrderByDescending(n => n.PublishedDate)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync(cancellationToken);
+
+            return (items, totalCount);
+        }, nameof(SearchNewsArticlesAsync));
+    }
+
+    public async Task<List<string>> GetAllNewsSourcesAsync(CancellationToken cancellationToken = default)
+    {
+        return await ExecuteWithRetryAsync(async () =>
+            await _context.NewsArticles
+                .AsNoTracking()
+                .Select(n => n.Source)
+                .Distinct()
+                .OrderBy(s => s)
+                .ToListAsync(cancellationToken),
+            nameof(GetAllNewsSourcesAsync));
     }
 
     // AI Summaries
@@ -660,5 +683,38 @@ public class NewsRepository : INewsRepository
             await _context.DailyNewsletters
                 .AnyAsync(n => n.NewsletterDate == date, cancellationToken),
             nameof(HasNewsletterForDateAsync));
+    }
+
+    public async Task<DominantTheme?> GetDominantThemeByDateAsync(DateOnly generationDate, CancellationToken cancellationToken = default)
+    {
+        return await ExecuteWithRetryAsync(async () =>
+            await _context.DominantThemes
+                .AsNoTracking()
+                .FirstOrDefaultAsync(t => t.GenerationDate == generationDate, cancellationToken),
+            nameof(GetDominantThemeByDateAsync));
+    }
+
+    public async Task<DominantTheme> AddOrUpdateDominantThemeAsync(DateOnly generationDate, string theme, string? rationale, CancellationToken cancellationToken = default)
+    {
+        return await ExecuteWithRetryAsync(async () =>
+        {
+            var existing = await _context.DominantThemes
+                .FirstOrDefaultAsync(t => t.GenerationDate == generationDate, cancellationToken);
+
+            if (existing != null)
+            {
+                existing.Theme = theme;
+                existing.Rationale = rationale;
+                existing.UpdatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync(cancellationToken);
+                return existing;
+            }
+
+            var entity = DominantTheme.Create(generationDate, theme, rationale);
+            _context.DominantThemes.Add(entity);
+            await _context.SaveChangesAsync(cancellationToken);
+            return entity;
+        }, nameof(AddOrUpdateDominantThemeAsync));
     }
 }

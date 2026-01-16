@@ -27,7 +27,7 @@ public class AINewsService : IAINewsService
         ("The Verge AI", "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml", "AI/ML", "https://www.theverge.com/static-assets/icons/favicon.ico"),
         ("NVIDIA AI Blog", "https://blogs.nvidia.com/feed/", "AI/ML", "https://www.nvidia.com/favicon.ico"),
         ("DeepMind Blog", "https://www.deepmind.com/blog/rss.xml", "AI/ML", "https://www.deepmind.com/favicon.ico"),
-        ("Google Developers Tool","https://blog.google/innovation-and-ai/technology/developers-tools/rss/","AI/Tool",string.Empty)
+       // ("Google Developers Tool","https://blog.google/innovation-and-ai/technology/developers-tools/rss/","AI/Tool",string.Empty)
     };
 
     public AINewsService(ICacheService cacheService, IFeedService feedService)

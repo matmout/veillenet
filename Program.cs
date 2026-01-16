@@ -142,6 +142,7 @@ builder.Services.AddScoped<IVideoService, VideoService>();
 builder.Services.AddScoped<IStackOverflowService, StackOverflowService>();
 builder.Services.AddScoped<ILLMService, LLMService>();
 builder.Services.AddSingleton<IQuestionService, QuestionService>();
+builder.Services.AddScoped<INewsHistoryService, NewsHistoryService>();
 
 // Data services
 builder.Services.AddScoped<VeilleNet.Services.Data.INewsRepository, VeilleNet.Services.Data.NewsRepository>();

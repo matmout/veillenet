@@ -11,6 +11,8 @@ public interface INewsRepository
     Task<NewsArticle> AddNewsArticleAsync(NewsArticle article, CancellationToken cancellationToken = default);
     Task<NewsArticle> UpdateNewsArticleAsync(NewsArticle article, CancellationToken cancellationToken = default);
     Task<List<NewsArticle>> AddOrUpdateNewsArticlesAsync(List<BaseNews> news, CancellationToken cancellationToken = default);
+    Task<(List<NewsArticle> Items, int TotalCount)> SearchNewsArticlesAsync(string? keyword, DateTime? startDate, DateTime? endDate, string? source, int skip = 0, int take = 20, CancellationToken cancellationToken = default);
+    Task<List<string>> GetAllNewsSourcesAsync(CancellationToken cancellationToken = default);
 
     // Dominant Themes
     Task<DominantTheme?> GetDominantThemeByDateAsync(DateOnly generationDate, CancellationToken cancellationToken = default);

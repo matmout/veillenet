@@ -19,8 +19,8 @@ public class WinFormNewsService : IWinFormNewsService
 
     private readonly List<(string Name, string Url, string Category, string DefaultImage)> _winFormFeeds = new()
     {
-        ("Microsoft .NET Blog", "https://devblogs.microsoft.com/dotnet/feed/", "Microsoft", "https://devblogs.microsoft.com/wp-content/uploads/sites/10/2019/05/cropped-dotnet-icon-32x32.png"),
-        ("Visual Studio Blog", "https://devblogs.microsoft.com/visualstudio/feed/", "Microsoft", "https://devblogs.microsoft.com/wp-content/uploads/sites/4/2019/01/cropped-vs-icon-32x32.png"),
+        //("Microsoft .NET Blog", "https://devblogs.microsoft.com/dotnet/feed/", "Microsoft", "https://devblogs.microsoft.com/wp-content/uploads/sites/10/2019/05/cropped-dotnet-icon-32x32.png"),
+        //("Visual Studio Blog", "https://devblogs.microsoft.com/visualstudio/feed/", "Microsoft", "https://devblogs.microsoft.com/wp-content/uploads/sites/4/2019/01/cropped-vs-icon-32x32.png"),
         ("DevExpress", "https://community.devexpress.com/Blogs/MainFeed", "DevExpress", "https://www.devexpress.com/favicon.ico")
     };
 
@@ -44,7 +44,7 @@ public class WinFormNewsService : IWinFormNewsService
         {
             try
             {
-                var feedNews = await _feedService.FetchNewsFeedAsync(name, url, defaultImage, category, news => IsWinFormRelated(news.Title, news.Summary));
+                var feedNews = await _feedService.FetchNewsFeedAsync(name, url, defaultImage, category, news => true /*IsWinFormRelated(news.Title, news.Summary)*/);
                 winFormNews.AddRange(feedNews);
             }
             catch (Exception ex)
