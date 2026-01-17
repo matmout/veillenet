@@ -2,7 +2,52 @@
 @model PrivacyModel
 @{
     ViewData["Title"] = "Privacy Policy";
+    ViewData["Description"] = "ContainSharp privacy policy. Learn how we handle your data and protect your privacy when using our C# developer news aggregation service.";
+    ViewData["CanonicalUrl"] = "https://containsharp.com/Privacy";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-4 text-center mb-3">Privacy Policy</h1>
+            <p class="lead text-center text-muted">
+                How we protect your data
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">Data Collection</h2>
+                    <p>ContainSharp collects minimal data necessary to provide our services:</p>
+                    <ul>
+                        <li>Email addresses for newsletter subscriptions (optional)</li>
+                        <li>Anonymous usage statistics via Google Analytics</li>
+                        <li>Session data for the training quiz feature</li>
+                    </ul>
+
+                    <h2 class="h4 mb-3 mt-4">How We Use Your Data</h2>
+                    <p>We use collected data solely for:</p>
+                    <ul>
+                        <li>Sending daily C# and .NET news newsletters to subscribers</li>
+                        <li>Improving our website and user experience</li>
+                        <li>Understanding which features are most valuable to our users</li>
+                    </ul>
+
+                    <h2 class="h4 mb-3 mt-4">Data Protection</h2>
+                    <p>We are committed to protecting your privacy:</p>
+                    <ul>
+                        <li>We never sell or share your personal information with third parties</li>
+                        <li>You can unsubscribe from our newsletter at any time</li>
+                        <li>Data is stored securely using industry-standard practices</li>
+                    </ul>
+
+                    <h2 class="h4 mb-3 mt-4">Contact</h2>
+                    <p>If you have questions about this privacy policy, please visit our <a href="/About">About page</a> for contact information.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

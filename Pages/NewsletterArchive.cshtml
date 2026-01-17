@@ -1,8 +1,8 @@
 @page
 @model NewsletterArchiveModel
 @{
-    ViewData["Title"] = "Newsletter Archive";
-    ViewData["Description"] = "Archive of all daily newsletters sent by Contain'Sharp";
+    ViewData["Title"] = "Newsletter Archive - Daily C# Updates";
+    ViewData["Description"] = "Browse past ContainSharp newsletters. Daily C# and .NET news digests featuring Microsoft updates, GitHub trends, AI tools, and developer resources.";
     ViewData["CanonicalUrl"] = "https://containsharp.com/NewsletterArchive";
 }
 
@@ -10,7 +10,7 @@
     <div class="row mb-4">
         <div class="col-12">
             <h1 class="h2 mb-2"><i class="bi bi-archive"></i> Newsletter Archive</h1>
-            <p class="text-muted mb-0">Historique des newsletters quotidiennes envoyées</p>
+            <p class="text-muted mb-0">Historique des newsletters quotidiennes envoyï¿½es</p>
         </div>
     </div>
 
@@ -22,7 +22,7 @@
                     @foreach (var newsletter in Model.Newsletters)
                     {
                         var statusBadge = newsletter.IsSent 
-                            ? "<span class=\"badge bg-success\">Envoyée</span>" 
+                            ? "<span class=\"badge bg-success\">Envoyï¿½e</span>" 
                             : "<span class=\"badge bg-warning text-dark\">En attente</span>";
 
                         <div class="list-group-item">
@@ -38,7 +38,7 @@
                             
                             <div class="row text-muted small">
                                 <div class="col-md-3">
-                                    <i class="bi bi-card-list"></i> @newsletter.SummaryCount résumés
+                                    <i class="bi bi-card-list"></i> @newsletter.SummaryCount rï¿½sumï¿½s
                                 </div>
                                 @if (newsletter.IsSent)
                                 {
@@ -46,13 +46,13 @@
                                         <i class="bi bi-people"></i> @newsletter.RecipientCount destinataires
                                     </div>
                                     <div class="col-md-6">
-                                        <i class="bi bi-clock"></i> Envoyée le @newsletter.SentAt?.ToLocalTime().ToString("dd/MM/yyyy à HH:mm")
+                                        <i class="bi bi-clock"></i> Envoyï¿½e le @newsletter.SentAt?.ToLocalTime().ToString("dd/MM/yyyy ï¿½ HH:mm")
                                     </div>
                                 }
                                 else
                                 {
                                     <div class="col-md-9">
-                                        <i class="bi bi-clock-history"></i> Créée le @newsletter.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy à HH:mm")
+                                        <i class="bi bi-clock-history"></i> Crï¿½ï¿½e le @newsletter.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy ï¿½ HH:mm")
                                     </div>
                                 }
                             </div>
@@ -62,7 +62,7 @@
                                         type="button" 
                                         data-bs-toggle="collapse" 
                                         data-bs-target="#preview-@newsletter.Id">
-                                    <i class="bi bi-eye"></i> Aperçu HTML
+                                    <i class="bi bi-eye"></i> Aperï¿½u HTML
                                 </button>
                                 <button class="btn btn-sm btn-outline-secondary" 
                                         type="button" 
@@ -91,7 +91,7 @@
             else
             {
                 <div class="alert alert-info">
-                    <i class="bi bi-info-circle"></i> Aucune newsletter archivée pour le moment.
+                    <i class="bi bi-info-circle"></i> Aucune newsletter archivï¿½e pour le moment.
                 </div>
             }
         </div>
@@ -100,7 +100,7 @@
     <div class="row mt-4">
         <div class="col-12 text-center">
             <a href="/Newsletter" class="btn btn-primary">
-                <i class="bi bi-envelope-heart"></i> S'abonner à la newsletter
+                <i class="bi bi-envelope-heart"></i> S'abonner ï¿½ la newsletter
             </a>
             <a href="/" class="btn btn-link">
                 <i class="bi bi-arrow-left"></i> Retour au tableau de bord
