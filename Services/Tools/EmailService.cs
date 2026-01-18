@@ -85,52 +85,93 @@ namespace VeilleNet.Services.Tools
 
                 _logger.LogInformation("Newsletter saved to database for {Date}", today);
 
-                var sendRequest = new SendEmailRequest
+                // Send emails in batches to avoid provider limits and improve traceability
+                var batchSize = _emailSettings.BatchSize > 0 ? _emailSettings.BatchSize : 50;
+                var batchDelayMs = _emailSettings.BatchDelayMs >= 0 ? _emailSettings.BatchDelayMs : 500;
+
+                var totalSent = 0;
+
+                for (var i = 0; i < recipients.Count; i += batchSize)
                 {
-                    Source = _emailSettings.SourceEmail,
-                    Destination = new Destination
+                    System.Threading.Thread.Sleep(1000);
+                    var batch = recipients.Skip(i).Take(batchSize).ToList();
+
+                    var sendRequest = new SendEmailRequest
                     {
-                        BccAddresses = recipients // Use BCC to hide recipients from each other
-                    },
-                    Message = new Message
-                    {
-                        Subject = new Content(subject),
-                        Body = new Body
+                        Source = _emailSettings.SourceEmail,
+                        Destination = new Destination
                         {
-                            Html = new Content
+                            BccAddresses = batch // Use BCC to hide recipients from each other
+                        },
+                        Message = new Message
+                        {
+                            Subject = new Content(subject),
+                            Body = new Body
                             {
-                                Charset = "UTF-8",
-                                Data = htmlBody
-                            },
-                            Text = new Content
-                            {
-                                Charset = "UTF-8",
-                                Data = textBody
+                                Html = new Content
+                                {
+                                    Charset = "UTF-8",
+                                    Data = htmlBody
+                                },
+                                Text = new Content
+                                {
+                                    Charset = "UTF-8",
+                                    Data = textBody
+                                }
                             }
                         }
-                    }
-                };
+                    };
 
-                var response = await _sesClient.SendEmailAsync(sendRequest);
-                
-                if (!string.IsNullOrEmpty(response.MessageId))
-                {
-                    _logger.LogInformation("Daily summary email sent successfully. MessageId: {MessageId}", response.MessageId);
-                    
-                    // Mark newsletter as sent
-                    await _newsRepository.MarkNewsletterAsSentAsync(today, recipients.Count);
-                    
-                    // Increment email sent counter for all recipients
-                    foreach (var email in recipients)
+                    try
                     {
-                        await _newsRepository.IncrementEmailSentAsync(email);
+                        var response = await _sesClient.SendEmailAsync(sendRequest);
+
+                        if (!string.IsNullOrEmpty(response.MessageId))
+                        {
+                            _logger.LogInformation("Daily summary batch sent successfully. MessageId: {MessageId} (batch {BatchStart}-{BatchEnd})", response.MessageId, i + 1, i + batch.Count);
+
+                            // Increment counters for successfully sent recipients in this batch
+                            foreach (var email in batch)
+                            {
+                                try
+                                {
+                                    await _newsRepository.IncrementEmailSentAsync(email);
+                                }
+                                catch (Exception ex)
+                                {
+                                    _logger.LogWarning(ex, "Failed to increment EmailSentCount for {Email}", email);
+                                }
+                            }
+
+                            totalSent += batch.Count;
+                        }
+                        else
+                        {
+                            _logger.LogError("Failed to send daily summary batch {BatchStart}-{BatchEnd}", i + 1, i + batch.Count);
+                        }
                     }
-                    
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error sending daily summary batch {BatchStart}-{BatchEnd}", i + 1, i + batch.Count);
+                    }
+
+                    // Respect a small delay between batches to avoid throttling
+                    if (batchDelayMs > 0 && i + batchSize < recipients.Count)
+                    {
+                        await Task.Delay(batchDelayMs);
+                    }
+                }
+
+                if (totalSent > 0)
+                {
+                    _logger.LogInformation("Daily summary email sent to {Count} recipients (out of {Total})", totalSent, recipients.Count);
+                    // Mark newsletter as sent with the actual number of recipients reached
+                    await _newsRepository.MarkNewsletterAsSentAsync(today, totalSent);
                     return true;
                 }
                 else
                 {
-                    _logger.LogError("Failed to send daily summary email");
+                    _logger.LogError("Failed to send daily summary email to any recipients");
                     return false;
                 }
             }
@@ -334,7 +375,7 @@ namespace VeilleNet.Services.Tools
             sb.AppendLine("    <div class=\"footer\">");
             sb.AppendLine("        <p style=\"margin:0 0 8px;\">ContainSharp · Your Daily Dev Stream</p>");
             sb.AppendLine("        <p style=\"margin:0;font-size:11px;color:#666;\">Powered by AI · Delivered with ❤️ for devs</p>");
-            sb.AppendLine("        <p style=\"margin:8px 0 0;font-size:11px;color:#666;\"><a href=\"https://containsharp.com/Newsletter\" style=\"color:#666;\">Unsubscribe</a> (secure 2-step process)</p>");
+            sb.AppendLine("        <p style=\"margin:8px 0 0;font-size:11px;color:#666;\"><a href=\"https://www.containsharp.com/Newsletter\" style =\"color:#666;\">Unsubscribe</a> (secure 2-step process)</p>");
             sb.AppendLine("    </div>");
             sb.AppendLine("</div>\n</body>\n</html>");
 
@@ -546,5 +587,10 @@ namespace VeilleNet.Services.Tools
         public string AwsSecretKey { get; set; } = string.Empty;
         public string AwsRegion { get; set; } = string.Empty;
         public string ReportingEmail { get; set; } = string.Empty;
+        // Batch settings for bulk sends
+        // Number of recipients per BCC batch. Default 100.
+        public int BatchSize { get; set; } = 100;
+        // Delay in milliseconds between batches to reduce throttling. Default 500ms.
+        public int BatchDelayMs { get; set; } = 500;
     }
 }

@@ -1,0 +1,75 @@
+@page "/Newsletter/ConfirmUnsubscribe"
+@model ConfirmUnsubscribeModel
+@{
+    ViewData["Title"] = "Unsubscribe Confirmation";
+}
+
+<style>
+    .confirm-card {
+        max-width: 720px;
+        margin: 2.5rem auto;
+        border-radius: 12px;
+        padding: 1.5rem;
+        background: var(--vs-panel-alt, #1f1f1f);
+        border: 1px solid var(--vs-border, rgba(255,255,255,0.04));
+        box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+        color: var(--vs-text, #e6eef8);
+        text-align: center;
+    }
+
+    .confirm-icon {
+        width: 64px;
+        height: 64px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        margin-bottom: 1rem;
+        font-size: 1.6rem;
+    }
+
+    .confirm-card.success .confirm-icon {
+        background: linear-gradient(180deg,#0b6b48,#055a3a);
+        color: #fff;
+    }
+
+    .confirm-card.error .confirm-icon {
+        background: linear-gradient(180deg,#c94b4b,#9b2f2f);
+        color: #fff;
+    }
+
+    .confirm-message {
+        font-size: 1.125rem;
+        line-height: 1.6;
+        color: var(--vs-text, #e6eef8);
+        margin-bottom: 1rem;
+        opacity: 0.96;
+    }
+
+    .confirm-actions {
+        margin-top: 1rem;
+    }
+</style>
+
+<div class="container">
+    <div class="confirm-card @(Model.MessageType == "success" ? "success" : "error")">
+        <div class="confirm-icon" aria-hidden="true">
+            @if (Model.MessageType == "success")
+            {
+                <i class="bi bi-check-lg"></i>
+            }
+            else
+            {
+                <i class="bi bi-x-lg"></i>
+            }
+        </div>
+
+        <h3 class="confirm-message">@Html.Raw(Model.Message)</h3>
+
+        <div class="confirm-actions">
+            <a asp-page="/Index" class="btn btn-primary">
+                <i class="bi bi-house"></i> Back to Home
+            </a>
+        </div>
+    </div>
+</div>

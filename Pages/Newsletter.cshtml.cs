@@ -100,40 +100,5 @@ public class NewsletterModel : PageModel
 
         return Page();
     }
-
-    public async Task<IActionResult> OnGetConfirmUnsubscribeAsync(string? token)
-    {
-        if (string.IsNullOrEmpty(token))
-        {
-            Message = "Invalid unsubscription token.";
-            MessageType = "error";
-            return RedirectToPage();
-        }
-
-        try
-        {
-            var success = await _newsRepository.UnsubscribeWithTokenAsync(token);
-            
-            if (success)
-            {
-                Message = "You have been successfully unsubscribed. We're sorry to see you go!";
-                MessageType = "success";
-                _logger.LogInformation("Successfully unsubscribed via token: {Token}", token.Substring(0, 10) + "...");
-            }
-            else
-            {
-                Message = "Invalid or expired unsubscription token. Please request a new link.";
-                MessageType = "error";
-                _logger.LogWarning("Invalid or expired unsubscribe token: {Token}", token.Substring(0, 10) + "...");
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error during token unsubscription");
-            Message = "An error occurred. Please try again later.";
-            MessageType = "error";
-        }
-
-        return RedirectToPage();
-    }
 }
+

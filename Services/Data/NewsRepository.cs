@@ -579,16 +579,19 @@ public class NewsRepository : INewsRepository
     {
         return await ExecuteWithRetryAsync(async () =>
         {
+            var normalizedToken = token.ToLower();
             var subscriber = await _context.NewsletterSubscribers
-                .FirstOrDefaultAsync(s => s.UnsubscribeToken == token.ToLower(), cancellationToken);
+                .FirstOrDefaultAsync(s => s.UnsubscribeToken == normalizedToken, cancellationToken);
 
             if (subscriber == null)
             {
+                _logger.LogWarning("No subscriber found with token: {Token}", normalizedToken.Substring(0, Math.Min(10, normalizedToken.Length)));
                 return false;
             }
 
             if (!subscriber.IsUnsubscribeTokenValid(token))
             {
+                _logger.LogWarning("Token invalid or expired for subscriber: {Email}", subscriber.Email);
                 return false;
             }
 
