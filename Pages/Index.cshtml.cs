@@ -151,9 +151,8 @@ public class IndexModel : PageModel
                 
                 if (success)
                 {
-                    ViewData["NewsletterMessage"] = "Success! Check your inbox tomorrow for your daily .NET updates! 🎊";
+                    ViewData["NewsletterMessage"] = "A confirmation message has been sent to you. Please check your email to complete your subscription. 📧";
                     ViewData["NewsletterMessageType"] = "success";
-                    ViewData["TriggerFireworks"] = "true"; // Flag pour l'animation
                     _logger.LogInformation("New subscriber via homepage: {Email}", email);
                 }
                 else

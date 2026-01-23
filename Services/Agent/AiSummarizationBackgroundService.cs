@@ -19,20 +19,15 @@ public class AiSummarizationBackgroundService : BackgroundService
 {
     private readonly ILogger<AiSummarizationBackgroundService> _logger;
     private readonly IServiceScopeFactory _serviceScopeFactory;
-    private readonly MistralOptions _options;
     private readonly TimeSpan _interval;
-    private readonly string _recipientEmail;
 
     public AiSummarizationBackgroundService(
         ILogger<AiSummarizationBackgroundService> logger,
         IServiceScopeFactory serviceScopeFactory,
-        IOptions<MistralOptions> options,
         IConfiguration configuration)
     {
         _logger = logger;
         _serviceScopeFactory = serviceScopeFactory;
-        _options = options.Value;
-        _recipientEmail = "matthieu.trachsel@gmail.com"; // configuration["EmailSettings:SourceEmail"] ?? 
 
         // Run once per hour
         _interval = TimeSpan.FromHours(1);

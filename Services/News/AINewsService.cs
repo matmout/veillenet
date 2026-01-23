@@ -50,7 +50,7 @@ public class AINewsService : IAINewsService
         {
             try
             {
-                var feedNews = await _feedService.FetchNewsFeedAsync(name, url, defaultImage, category, news => IsAIRelated(news.Title, news.Summary));
+                var feedNews = await _feedService.FetchNewsFeedAsync(name, url, defaultImage, 10, category, news => IsAIRelated(news.Title, news.Summary));
                 aiNews.AddRange(feedNews);
             }
             catch (Exception ex)

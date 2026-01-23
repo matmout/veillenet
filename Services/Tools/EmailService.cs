@@ -18,6 +18,7 @@ namespace VeilleNet.Services.Tools
         Task<int> GetSubscriberCountAsync();
         Task<bool> SendUnsubscribeConfirmationEmailAsync(string email, string token);
         Task<bool> SendSubscriptionNotificationEmailAsync(string subscriberEmail, string source);
+        Task<bool> SendSubscriptionConfirmationEmailAsync(string email, string token);
     }
 
     public class EmailService : IEmailService
@@ -242,6 +243,137 @@ namespace VeilleNet.Services.Tools
                 _logger.LogError(ex, "Error sending unsubscribe confirmation email to {Email}", email);
                 return false;
             }
+        }
+
+        public async Task<bool> SendSubscriptionConfirmationEmailAsync(string email, string token)
+        {
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(token))
+            {
+                _logger.LogWarning("Invalid email or token for subscription confirmation");
+                return false;
+            }
+
+            try
+            {
+                var confirmationUrl = $"https://containsharp.com/Newsletter/ConfirmSubscription?token={token}";
+                
+                var htmlBody = BuildSubscriptionConfirmationEmail(email, confirmationUrl);
+                var textBody = BuildSubscriptionConfirmationTextEmail(email, confirmationUrl);
+                var subject = "Contain'Sharp - Confirm Your Subscription";
+
+                var sendRequest = new SendEmailRequest
+                {
+                    Source = _emailSettings.SourceEmail,
+                    Destination = new Destination
+                    {
+                        ToAddresses = new List<string> { email }
+                    },
+                    Message = new Message
+                    {
+                        Subject = new Content(subject),
+                        Body = new Body
+                        {
+                            Html = new Content
+                            {
+                                Charset = "UTF-8",
+                                Data = htmlBody
+                            },
+                            Text = new Content
+                            {
+                                Charset = "UTF-8",
+                                Data = textBody
+                            }
+                        }
+                    }
+                };
+
+                var response = await _sesClient.SendEmailAsync(sendRequest);
+                
+                if (!string.IsNullOrEmpty(response.MessageId))
+                {
+                    _logger.LogInformation("Subscription confirmation email sent to {Email}. MessageId: {MessageId}", email, response.MessageId);
+                    return true;
+                }
+                else
+                {
+                    _logger.LogError("Failed to send subscription confirmation email to {Email}", email);
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error sending subscription confirmation email to {Email}", email);
+                return false;
+            }
+        }
+
+        private static string BuildSubscriptionConfirmationEmail(string email, string confirmationUrl)
+        {
+            var sb = new StringBuilder();
+            
+            sb.AppendLine("<!DOCTYPE html>");
+            sb.AppendLine("<html lang=\"en\">");
+            sb.AppendLine("<head>");
+            sb.AppendLine("    <meta charset=\"utf-8\" />");
+            sb.AppendLine("    <title>Confirm Your Subscription - Contain'Sharp</title>");
+            sb.AppendLine("    <style>");
+            sb.AppendLine("        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f5f5f5; margin: 0; padding: 20px; }");
+            sb.AppendLine("        .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }");
+            sb.AppendLine("        .header { background: linear-gradient(120deg, #007acc, #68217a); color: white; padding: 30px 20px; text-align: center; }");
+            sb.AppendLine("        .header h1 { margin: 0; font-size: 24px; }");
+            sb.AppendLine("        .content { padding: 30px 20px; }");
+            sb.AppendLine("        .content p { line-height: 1.6; color: #333; }");
+            sb.AppendLine("        .button { display: inline-block; background: #28a745; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 20px 0; }");
+            sb.AppendLine("        .button:hover { background: #218838; }");
+            sb.AppendLine("        .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border-top: 1px solid #e9ecef; }");
+            sb.AppendLine("    </style>");
+            sb.AppendLine("</head>");
+            sb.AppendLine("<body>");
+            sb.AppendLine("    <div class=\"container\">");
+            sb.AppendLine("        <div class=\"header\">");
+            sb.AppendLine("            <h1>📧 Confirm Your Subscription</h1>");
+            sb.AppendLine("        </div>");
+            sb.AppendLine("        <div class=\"content\">");
+            sb.AppendLine($"            <p>Hello,</p>");
+            sb.AppendLine($"            <p>You have requested to subscribe to the Contain'Sharp newsletter with the address <strong>{email}</strong>.</p>");
+            sb.AppendLine("            <p>To <strong>confirm your subscription</strong> and start receiving our daily .NET news, please click the button below:</p>");
+            sb.AppendLine($"            <center><a href=\"{confirmationUrl}\" class=\"button\">✅ Confirm Subscription</a></center>");
+            sb.AppendLine("            <p><small>This link is valid for <strong>48 hours</strong>.</small></p>");
+            sb.AppendLine("            <hr style=\"border: none; border-top: 1px solid #e9ecef; margin: 30px 0;\" />");
+            sb.AppendLine("            <p>If you did not request this subscription, you can safely ignore this email.</p>");
+            sb.AppendLine("        </div>");
+            sb.AppendLine("        <div class=\"footer\">");
+            sb.AppendLine("            <p>Contain'Sharp · Your Daily .NET and C# News</p>");
+            sb.AppendLine("        </div>");
+            sb.AppendLine("    </div>");
+            sb.AppendLine("</body>");
+            sb.AppendLine("</html>");
+            
+            return sb.ToString();
+        }
+
+        private static string BuildSubscriptionConfirmationTextEmail(string email, string confirmationUrl)
+        {
+            var sb = new StringBuilder();
+            
+            sb.AppendLine("CONFIRM YOUR SUBSCRIPTION");
+            sb.AppendLine("========================================");
+            sb.AppendLine();
+            sb.AppendLine("Hello,");
+            sb.AppendLine();
+            sb.AppendLine($"You have requested to subscribe to the Contain'Sharp newsletter with the address {email}.");
+            sb.AppendLine();
+            sb.AppendLine("To CONFIRM your subscription, click this link:");
+            sb.AppendLine(confirmationUrl);
+            sb.AppendLine();
+            sb.AppendLine("This link is valid for 48 hours.");
+            sb.AppendLine();
+            sb.AppendLine("========================================");
+            sb.AppendLine("Contain'Sharp · Your Daily .NET and C# News");
+            sb.AppendLine();
+            sb.AppendLine("If you did not request this subscription, ignore this email.");
+            
+            return sb.ToString();
         }
 
         public async Task<bool> SendSubscriptionNotificationEmailAsync(string subscriberEmail, string source)

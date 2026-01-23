@@ -1,0 +1,60 @@
+@page
+@model VeilleNet.Pages.Newsletter.ConfirmSubscriptionModel
+@{
+    ViewData["Title"] = "Confirm Subscription";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <h1 class="h3 mb-0">Newsletter Subscription</h1>
+                </div>
+                <div class="card-body text-center p-5">
+                    
+                    @if (Model.IsConfirmed)
+                    {
+                        <div class="mb-4">
+                            <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+                        </div>
+                        <h2 class="h4 text-success mb-3">Subscription Confirmed!</h2>
+                        <p class="lead mb-4">@Model.Message</p>
+                        <p class="text-muted">Thank you for joining the Contain'Sharp community.</p>
+                        <a href="/" class="btn btn-primary btn-lg mt-3">Return to Dashboard</a>
+                    }
+                    else
+                    {
+                        <div class="mb-4">
+                            <i class="bi bi-x-circle-fill text-danger" style="font-size: 5rem;"></i>
+                        </div>
+                        <h2 class="h4 text-danger mb-3">Confirmation Failed</h2>
+                        <p class="lead mb-4">@Model.Message</p>
+                        
+                        <div class="alert alert-warning">
+                             <i class="bi bi-exclamation-triangle me-2"></i>
+                             If you believe this is an error, try subscribing again on the home page.
+                        </div>
+                        
+                        <a href="/" class="btn btn-outline-secondary mt-3">Return to Homepage</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Fireworks Canvas for Success Animation -->
+<canvas id="fireworks-canvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; display: none;"></canvas>
+
+@if (ViewData["TriggerFireworks"] as string == "true")
+{
+    <script>
+        // Set attribute to trigger fireworks animation
+        document.body.setAttribute('data-trigger-fireworks', 'true');
+    </script>
+}
+
+@section Scripts {
+    <script src="~/js/fireworks.js"></script>
+}

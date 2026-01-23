@@ -44,7 +44,7 @@ public class WinFormNewsService : IWinFormNewsService
         {
             try
             {
-                var feedNews = await _feedService.FetchNewsFeedAsync(name, url, defaultImage, category, news => true /*IsWinFormRelated(news.Title, news.Summary)*/);
+                var feedNews = await _feedService.FetchNewsFeedAsync(name, url, defaultImage,20, category, news => true /*IsWinFormRelated(news.Title, news.Summary)*/);
                 winFormNews.AddRange(feedNews);
             }
             catch (Exception ex)

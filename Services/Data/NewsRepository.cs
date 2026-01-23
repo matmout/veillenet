@@ -428,7 +428,7 @@ public class NewsRepository : INewsRepository
             nameof(GetAllSubscribersAsync));
     }
 
-    public async Task<NewsletterSubscriber> SubscribeAsync(string email, string source = "Website", CancellationToken cancellationToken = default)
+    public async Task<NewsletterSubscriber> SubscribeAsync(string email, string source = "Website", bool isActive = true, CancellationToken cancellationToken = default)
     {
         return await ExecuteWithRetryAsync(async () =>
         {
@@ -437,8 +437,13 @@ public class NewsRepository : INewsRepository
 
             if (existing != null)
             {
-                // Reactivate if unsubscribed
-                if (!existing.IsActive)
+                // Reactivate if unsubscribed AND we want to activate immediately
+                // If isActive is false (pending confirmation), we should probably NOT reactivate immediately but generate a token?
+                // But for simplicity, if they exist, we return them.
+                // If they are inactive and we want to subscribe them (isActive=true), we reactivate.
+                // If they are inactive and we pass isActive=false, we leave them inactive (waiting for confirmation).
+                
+                if (!existing.IsActive && isActive)
                 {
                     existing.Resubscribe();
                     await _context.SaveChangesAsync(cancellationToken);
@@ -452,7 +457,7 @@ public class NewsRepository : INewsRepository
                 Email = email.ToLower(),
                 Source = source,
                 SubscribedAt = DateTime.UtcNow,
-                IsActive = true,
+                IsActive = isActive,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
@@ -535,16 +540,41 @@ public class NewsRepository : INewsRepository
                 subscriber.UnsubscribeTokenExpiresAt.HasValue &&
                 subscriber.UnsubscribeTokenExpiresAt.Value > DateTime.UtcNow)
             {
-                // Return existing valid token instead of generating a new one
                 return subscriber.UnsubscribeToken;
             }
 
-            // Generate new token only if no valid token exists
             subscriber.GenerateUnsubscribeToken();
             await _context.SaveChangesAsync(cancellationToken);
 
             return subscriber.UnsubscribeToken ?? throw new InvalidOperationException("Failed to generate token");
         }, nameof(GenerateUnsubscribeTokenAsync));
+    }
+
+    public async Task<string> GenerateConfirmationTokenAsync(string email, CancellationToken cancellationToken = default)
+    {
+        return await ExecuteWithRetryAsync(async () =>
+        {
+            var subscriber = await _context.NewsletterSubscribers
+                .FirstOrDefaultAsync(s => s.Email.ToLower() == email.ToLower(), cancellationToken);
+
+            if (subscriber == null)
+            {
+                throw new InvalidOperationException($"Subscriber with email {email} not found");
+            }
+
+            // Check if there's already a valid token
+            if (!string.IsNullOrEmpty(subscriber.ConfirmationToken) && 
+                subscriber.ConfirmationTokenExpiresAt.HasValue &&
+                subscriber.ConfirmationTokenExpiresAt.Value > DateTime.UtcNow)
+            {
+                return subscriber.ConfirmationToken;
+            }
+
+            subscriber.GenerateConfirmationToken();
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return subscriber.ConfirmationToken ?? throw new InvalidOperationException("Failed to generate token");
+        }, nameof(GenerateConfirmationTokenAsync));
     }
 
     public async Task<bool> HasValidUnsubscribeTokenAsync(string email, CancellationToken cancellationToken = default)
@@ -575,6 +605,14 @@ public class NewsRepository : INewsRepository
             nameof(GetSubscriberByTokenAsync));
     }
 
+    public async Task<NewsletterSubscriber?> GetSubscriberByConfirmationTokenAsync(string token, CancellationToken cancellationToken = default)
+    {
+        return await ExecuteWithRetryAsync(async () =>
+            await _context.NewsletterSubscribers
+                .FirstOrDefaultAsync(s => s.ConfirmationToken == token.ToLower(), cancellationToken),
+            nameof(GetSubscriberByConfirmationTokenAsync));
+    }
+
     public async Task<bool> UnsubscribeWithTokenAsync(string token, CancellationToken cancellationToken = default)
     {
         return await ExecuteWithRetryAsync(async () =>
@@ -600,6 +638,33 @@ public class NewsRepository : INewsRepository
 
             return true;
         }, nameof(UnsubscribeWithTokenAsync));
+    }
+
+    public async Task<bool> ConfirmSubscriptionAsync(string token, CancellationToken cancellationToken = default)
+    {
+        return await ExecuteWithRetryAsync(async () =>
+        {
+            var normalizedToken = token.ToLower();
+            var subscriber = await _context.NewsletterSubscribers
+                .FirstOrDefaultAsync(s => s.ConfirmationToken == normalizedToken, cancellationToken);
+
+            if (subscriber == null)
+            {
+                _logger.LogWarning("No subscriber found with confirmation token: {Token}", normalizedToken.Substring(0, Math.Min(10, normalizedToken.Length)));
+                return false;
+            }
+
+            if (!subscriber.IsConfirmationTokenValid(token))
+            {
+                _logger.LogWarning("Confirmation token invalid or expired for subscriber: {Email}", subscriber.Email);
+                return false;
+            }
+
+            subscriber.ConfirmSubscription();
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return true;
+        }, nameof(ConfirmSubscriptionAsync));
     }
 
     // Daily Newsletters

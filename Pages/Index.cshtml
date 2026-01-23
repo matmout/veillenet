@@ -60,12 +60,13 @@
                                             <span class="badge bg-@(release.Type == "Stable" ? "success" : release.Type == "Preview" ? "info" : "warning") me-2">
                                                 @release.Type
                                             </span>
-                                            <h5 class="card-title mb-0">@release.Version</h5>
+                                            <h5 class="card-title mb-0">
+                                                <a href="@release.Url" target="_blank" class="text-decoration-none">
+                                                    @release.Version <i class="bi bi-box-arrow-up-right small"></i>
+                                                </a>
+                                            </h5>
                                         </div>
                                         <p class="card-text small">@release.Description | <i class="bi bi-calendar"></i> @release.ReleaseDate.ToString("dd MMM yyyy")</p>
-                                        <a href="@release.Url" target="_blank" class="btn btn-sm btn-outline-primary">
-                                        Learn more <i class="bi bi-box-arrow-up-right"></i>
-                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -496,17 +497,6 @@
         </div>
     </div>
 
-    <!-- Fireworks Canvas for Success Animation -->
-    <canvas id="fireworks-canvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; display: none;"></canvas>
-
-    @if (ViewData["TriggerFireworks"] as string == "true")
-    {
-        <script>
-            // Set attribute to trigger fireworks animation
-            document.body.setAttribute('data-trigger-fireworks', 'true');
-        </script>
-    }
-
     @section Scripts {
-        <script src="~/js/fireworks.js"></script>
+        <!-- Scripts -->
     }

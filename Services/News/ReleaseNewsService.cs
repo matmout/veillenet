@@ -41,29 +41,29 @@ public class ReleaseNewsService : IReleaseNewsService
             },
             new ReleaseNews
             {
-                Version = ".NET 9.0",
-                Title = ".NET 9 Stable Release",
-                Description = "Official stable release of .NET 9 (STS) with platform updates and improvements",
+                Version = "GPT Codex 5.2",
+                Title = "GPT Codex 5.2 Release",
+                Description = "Agentic Coding, Large-scale Refactoring, Cybersecurity Defense, Long-horizon tasks.",
                 ReleaseDate = new DateTime(2024, 11, 12),
-                Url = "https://dotnet.microsoft.com/download/dotnet/9.0",
+                Url = "https://openai.com/index/introducing-gpt-5-2/",
                 Type = "Stable"
             },
             new ReleaseNews
             {
-                Version = "C# 13",
-                Title = "C# 13 Language Features",
-                Description = "New language features including collection expressions and primary constructors",
-                ReleaseDate = new DateTime(2024, 11, 12),
-                Url = "https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-13",
+                Version = "C# 14",
+                Title = "C# 14 Language Features",
+                Description = "New language features including extension member, field and more improvements",
+                ReleaseDate = new DateTime(2025, 11, 18),
+                Url = "https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-14",
                 Type = "Stable"
             },
             new ReleaseNews
             {
-                Version = "ASP.NET Core 9.0",
-                Title = "ASP.NET Core 9.0 Release",
-                Description = "Enhanced performance, new Blazor features, and improved minimal APIs",
-                ReleaseDate = new DateTime(2024, 11, 12),
-                Url = "https://learn.microsoft.com/en-us/aspnet/core/release-notes/aspnetcore-9.0",
+                Version = "Visual Studio 2026",
+                Title = "Latest version Visual Studio",
+                Description = "The new IDE brings all AI tools. Dream big. Achieve more.",
+                ReleaseDate = new DateTime(2025, 12, 20),
+                Url = "https://visualstudio.microsoft.com/?icid=SSM_AS_VisualStudio",
                 Type = "Stable"
             }
         };

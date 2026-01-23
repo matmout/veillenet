@@ -8,7 +8,7 @@ namespace VeilleNet.Services.News;
 
 public interface IFeedService
 {
-    Task<List<BaseNews>> FetchNewsFeedAsync(string source, string feedUrl, string defaultImage , string category = "General", Func<BaseNews, bool>? filter = null);
+    Task<List<BaseNews>> FetchNewsFeedAsync(string source, string feedUrl, string defaultImage, int newsCount, string category = "General", Func<BaseNews, bool>? filter = null);
     Task<List<Video>> FetchVideoFeedAsync(string channel, string feedUrl, Func<Video, bool>? filter = null);
 }
 
@@ -23,7 +23,7 @@ public class FeedService : IFeedService
         _logger = logger;
     }
 
-    public async Task<List<BaseNews>> FetchNewsFeedAsync(string source, string feedUrl, string defaultImage, string category = "General", Func<BaseNews, bool>? filter = null)
+    public async Task<List<BaseNews>> FetchNewsFeedAsync(string source, string feedUrl, string defaultImage,int newsCount, string category = "General", Func<BaseNews, bool>? filter = null)
     {
         var newsItems = new List<BaseNews>();
 
@@ -57,7 +57,7 @@ public class FeedService : IFeedService
             if (feed == null)
                 return newsItems;
 
-            foreach (var item in feed.Items.Take(10))
+            foreach (var item in feed.Items.Take(newsCount))
             {
                 var title = item.Title?.Text ?? "No title";
                 var summary = HtmlSanitizer.StripHtml(item.Summary?.Text);

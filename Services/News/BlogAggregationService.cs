@@ -46,7 +46,7 @@ public class BlogAggregationService : IBlogAggregationService
         {
             try
             {
-                var feedPosts = await _feedService.FetchNewsFeedAsync(name, url, defaultImage, "Microsoft");
+                var feedPosts = await _feedService.FetchNewsFeedAsync(name, url, defaultImage, 10, "Microsoft");
                 posts.AddRange(feedPosts);
             }
             catch (Exception ex)

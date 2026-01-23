@@ -117,4 +117,52 @@ public class NewsletterSubscriber
 
         return UnsubscribeToken.Equals(token, StringComparison.OrdinalIgnoreCase);
     }
+
+    [MaxLength(128)]
+    [Column("confirmation_token")]
+    public string? ConfirmationToken { get; set; }
+
+    [Column("confirmation_token_expires_at")]
+    public DateTime? ConfirmationTokenExpiresAt { get; set; }
+
+    /// <summary>
+    /// Generate confirmation token (128 characters)
+    /// </summary>
+    public void GenerateConfirmationToken()
+    {
+        // Generate 128-character secure token
+        var bytes = new byte[64]; // 64 bytes = 128 hex characters
+        using (var rng = System.Security.Cryptography.RandomNumberGenerator.Create())
+        {
+            rng.GetBytes(bytes);
+        }
+        ConfirmationToken = Convert.ToHexString(bytes).ToLower();
+        ConfirmationTokenExpiresAt = DateTime.UtcNow.AddHours(48); // Token valid for 48h
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    /// <summary>
+    /// Check if confirmation token is valid
+    /// </summary>
+    public bool IsConfirmationTokenValid(string token)
+    {
+        if (string.IsNullOrEmpty(ConfirmationToken) || string.IsNullOrEmpty(token))
+            return false;
+
+        if (ConfirmationTokenExpiresAt == null || ConfirmationTokenExpiresAt < DateTime.UtcNow)
+            return false;
+
+        return ConfirmationToken.Equals(token, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Confirm subscription
+    /// </summary>
+    public void ConfirmSubscription()
+    {
+        IsActive = true;
+        ConfirmationToken = null;
+        ConfirmationTokenExpiresAt = null;
+        UpdatedAt = DateTime.UtcNow;
+    }
 }
