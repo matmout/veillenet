@@ -6,10 +6,12 @@ using Amazon.SimpleEmail;
 using VeilleNet.Services.News;
 using VeilleNet.Services.Tools;
 using VeilleNet.Services.Agent;
+using VeilleNet.Services.Tools;
 using Amazon.Runtime;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using VeilleNet.Data;
+using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -167,9 +169,36 @@ builder.Services.AddSingleton<IAmazonSimpleEmailService>(sp =>
 });
 
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IJobExecutionLogger, JobExecutionLogger>();
 
-// Add background service for daily AI summarization
-builder.Services.AddHostedService<AiSummarizationBackgroundService>();
+// Quartz jobs
+builder.Services.AddQuartz(q =>
+{
+    q.UseMicrosoftDependencyInjectionJobFactory();
+
+    var aiSummaryJobKey = new JobKey("AiSummaryGenerationJob");
+    q.AddJob<AiSummaryGenerationJob>(opts => opts.WithIdentity(aiSummaryJobKey));
+    q.AddTrigger(opts => opts
+        .ForJob(aiSummaryJobKey)
+        .WithIdentity("AiSummaryGenerationJob-trigger")
+        .StartNow()
+        .WithSimpleSchedule(x => x
+            .WithInterval(TimeSpan.FromMinutes(10))
+            .RepeatForever()));
+
+    var newsletterJobKey = new JobKey("NewsletterSendJob");
+    q.AddJob<NewsletterSendJob>(opts => opts.WithIdentity(newsletterJobKey));
+    q.AddTrigger(opts => opts
+        .ForJob(newsletterJobKey)
+        .WithIdentity("NewsletterSendJob-trigger")
+        // Tous les jours à 17h00 (timezone locale du serveur)
+        .WithCronSchedule("0 0 17 ? * *"));
+});
+
+builder.Services.AddQuartzHostedService(options =>
+{
+    options.WaitForJobsToComplete = true;
+});
 
 // Add controllers for API endpoints
 builder.Services.AddControllers();

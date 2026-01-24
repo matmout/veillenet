@@ -197,7 +197,7 @@ namespace VeilleNet.Services.Tools
                 
                 var htmlBody = BuildUnsubscribeConfirmationEmail(email, unsubscribeUrl);
                 var textBody = BuildUnsubscribeConfirmationTextEmail(email, unsubscribeUrl);
-                var subject = "Contain'Sharp - Confirm Your Unsubscription";
+                var subject = "Contain'Sharp Newsletter · Confirm your unsubscription";
 
                 var sendRequest = new SendEmailRequest
                 {
@@ -259,7 +259,7 @@ namespace VeilleNet.Services.Tools
                 
                 var htmlBody = BuildSubscriptionConfirmationEmail(email, confirmationUrl);
                 var textBody = BuildSubscriptionConfirmationTextEmail(email, confirmationUrl);
-                var subject = "Contain'Sharp - Confirm Your Subscription";
+                var subject = "Contain'Sharp Newsletter · Confirm your subscription";
 
                 var sendRequest = new SendEmailRequest
                 {
@@ -310,45 +310,98 @@ namespace VeilleNet.Services.Tools
         private static string BuildSubscriptionConfirmationEmail(string email, string confirmationUrl)
         {
             var sb = new StringBuilder();
-            
+
             sb.AppendLine("<!DOCTYPE html>");
-            sb.AppendLine("<html lang=\"en\">");
-            sb.AppendLine("<head>");
+            sb.AppendLine("<html lang=\"en\">\n<head>");
             sb.AppendLine("    <meta charset=\"utf-8\" />");
-            sb.AppendLine("    <title>Confirm Your Subscription - Contain'Sharp</title>");
+            sb.AppendLine($"    <title>ContainSharp - {DateTime.UtcNow.DayOfWeek} Dev Stream {DateTime.UtcNow:yyyy-MM-dd}</title>");
             sb.AppendLine("    <style>");
-            sb.AppendLine("        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f5f5f5; margin: 0; padding: 20px; }");
-            sb.AppendLine("        .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }");
-            sb.AppendLine("        .header { background: linear-gradient(120deg, #007acc, #68217a); color: white; padding: 30px 20px; text-align: center; }");
+            sb.AppendLine("        body { font-family: 'Segoe UI', 'Segoe WPC', 'Helvetica Neue', Arial, sans-serif; background-color: #1e1e1e; color: #dcdcdc; margin: 0; padding: 0; }");
+            sb.AppendLine("        a { color: #4FC1FF; text-decoration: none; }");
+            sb.AppendLine("        a:hover { text-decoration: underline; }");
+            sb.AppendLine("        .container { max-width: 720px; margin: 0 auto; padding: 32px 24px; }");
+            sb.AppendLine("        .panel { background: #252526; border: 1px solid #3c3c3c; border-radius: 6px; box-shadow: 0 0 32px rgba(0,0,0,0.35); }");
+            sb.AppendLine("        .header { padding: 24px; border-bottom: 1px solid #3c3c3c; background: linear-gradient(120deg, #007acc, #68217a); color: #fff; border-radius: 6px 6px 0 0; }");
             sb.AppendLine("        .header h1 { margin: 0; font-size: 24px; }");
-            sb.AppendLine("        .content { padding: 30px 20px; }");
-            sb.AppendLine("        .content p { line-height: 1.6; color: #333; }");
-            sb.AppendLine("        .button { display: inline-block; background: #28a745; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 20px 0; }");
+            sb.AppendLine("        .header p { margin: 4px 0 0; font-size: 14px; opacity: 0.9; }");
+            sb.AppendLine("        .body { padding: 24px; }");
+            sb.AppendLine("        .meta { font-size: 13px; color: #9cdcfe; margin-bottom: 16px; }");
+            sb.AppendLine("        .cta { background: #1b1b1c; border: 1px solid #333; border-radius: 6px; padding: 18px 20px; }");
+            sb.AppendLine("        .cta p { margin: 0 0 12px; line-height: 1.6; color: #dcdcdc; }");
+            sb.AppendLine("        .button { display: inline-block; background: #28a745; color: #fff !important; padding: 12px 22px; text-decoration: none; border-radius: 5px; font-weight: 600; border: 1px solid rgba(255,255,255,0.08); }");
             sb.AppendLine("        .button:hover { background: #218838; }");
-            sb.AppendLine("        .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border-top: 1px solid #e9ecef; }");
+            sb.AppendLine("        .footer { font-size: 12px; color: #808080; text-align: center; padding: 16px 0 0; }");
             sb.AppendLine("    </style>");
-            sb.AppendLine("</head>");
-            sb.AppendLine("<body>");
-            sb.AppendLine("    <div class=\"container\">");
+            sb.AppendLine("</head>\n<body>\n<div class=\"container\">\n    <div class=\"panel\">\n");
             sb.AppendLine("        <div class=\"header\">");
-            sb.AppendLine("            <h1>📧 Confirm Your Subscription</h1>");
-            sb.AppendLine("        </div>");
-            sb.AppendLine("        <div class=\"content\">");
-            sb.AppendLine($"            <p>Hello,</p>");
-            sb.AppendLine($"            <p>You have requested to subscribe to the Contain'Sharp newsletter with the address <strong>{email}</strong>.</p>");
-            sb.AppendLine("            <p>To <strong>confirm your subscription</strong> and start receiving our daily .NET news, please click the button below:</p>");
-            sb.AppendLine($"            <center><a href=\"{confirmationUrl}\" class=\"button\">✅ Confirm Subscription</a></center>");
-            sb.AppendLine("            <p><small>This link is valid for <strong>48 hours</strong>.</small></p>");
-            sb.AppendLine("            <hr style=\"border: none; border-top: 1px solid #e9ecef; margin: 30px 0;\" />");
-            sb.AppendLine("            <p>If you did not request this subscription, you can safely ignore this email.</p>");
-            sb.AppendLine("        </div>");
-            sb.AppendLine("        <div class=\"footer\">");
-            sb.AppendLine("            <p>Contain'Sharp · Your Daily .NET and C# News</p>");
-            sb.AppendLine("        </div>");
+            sb.AppendLine("            <h1>Contain<span style=\"color:#4FC1FF\">('</span>C#<span style=\"color:#4FC1FF\">')</span> · " + DateTime.UtcNow.DayOfWeek.ToString() + " Dev Stream</h1>");
+            sb.AppendLine($"            <p>{DateTime.UtcNow:dddd, dd MMM yyyy · HH:mm} UTC</p>");
+            sb.AppendLine("        </div>\n        <div class=\"body\">");
+            sb.AppendLine("            <div class=\"meta\">Subscription confirmation</div>");
+            sb.AppendLine("            <div class=\"cta\">");
+            sb.AppendLine($"                <p>Hello,</p>");
+            sb.AppendLine($"                <p>You requested to subscribe with <strong>{email}</strong>.</p>");
+            sb.AppendLine("                <p>To confirm and start receiving the daily Dev Stream, click below:</p>");
+            sb.AppendLine($"                <p style=\"text-align:center;margin:18px 0 0;\"><a href=\"{confirmationUrl}\" class=\"button\">✅ Confirm Subscription</a></p>");
+            sb.AppendLine("                <p style=\"margin-top:14px; font-size:12px; color:#a6a6a6;\">This link is valid for <strong>48 hours</strong>.</p>");
+            sb.AppendLine("                <p style=\"margin-top:14px; font-size:12px; color:#a6a6a6;\">If you did not request this, you can ignore this email.</p>");
+            sb.AppendLine("            </div>");
+            sb.AppendLine("        </div>\n    </div>");
+            sb.AppendLine("    <div class=\"footer\">");
+            sb.AppendLine("        <p style=\"margin:0 0 8px;\">ContainSharp · Your Daily Dev Stream</p>");
+            sb.AppendLine("        <p style=\"margin:8px 0 0;font-size:11px;color:#666;\"><a href=\"https://www.containsharp.com/Newsletter\" style=\"color:#666;\">Unsubscribe</a> (secure 2-step process)</p>");
             sb.AppendLine("    </div>");
-            sb.AppendLine("</body>");
-            sb.AppendLine("</html>");
+            sb.AppendLine("</div>\n</body>\n</html>");
             
+            return sb.ToString();
+        }
+
+        private static string BuildUnsubscribeConfirmationEmail(string email, string unsubscribeUrl)
+        {
+            var sb = new StringBuilder();
+
+            sb.AppendLine("<!DOCTYPE html>");
+            sb.AppendLine("<html lang=\"en\">\n<head>");
+            sb.AppendLine("    <meta charset=\"utf-8\" />");
+            sb.AppendLine($"    <title>ContainSharp - {DateTime.UtcNow.DayOfWeek} Dev Stream {DateTime.UtcNow:yyyy-MM-dd}</title>");
+            sb.AppendLine("    <style>");
+            sb.AppendLine("        body { font-family: 'Segoe UI', 'Segoe WPC', 'Helvetica Neue', Arial, sans-serif; background-color: #1e1e1e; color: #dcdcdc; margin: 0; padding: 0; }");
+            sb.AppendLine("        a { color: #4FC1FF; text-decoration: none; }");
+            sb.AppendLine("        a:hover { text-decoration: underline; }");
+            sb.AppendLine("        .container { max-width: 720px; margin: 0 auto; padding: 32px 24px; }");
+            sb.AppendLine("        .panel { background: #252526; border: 1px solid #3c3c3c; border-radius: 6px; box-shadow: 0 0 32px rgba(0,0,0,0.35); }");
+            sb.AppendLine("        .header { padding: 24px; border-bottom: 1px solid #3c3c3c; background: linear-gradient(120deg, #007acc, #68217a); color: #fff; border-radius: 6px 6px 0 0; }");
+            sb.AppendLine("        .header h1 { margin: 0; font-size: 24px; }");
+            sb.AppendLine("        .header p { margin: 4px 0 0; font-size: 14px; opacity: 0.9; }");
+            sb.AppendLine("        .body { padding: 24px; }");
+            sb.AppendLine("        .meta { font-size: 13px; color: #9cdcfe; margin-bottom: 16px; }");
+            sb.AppendLine("        .cta { background: #1b1b1c; border: 1px solid #333; border-radius: 6px; padding: 18px 20px; }");
+            sb.AppendLine("        .cta p { margin: 0 0 12px; line-height: 1.6; color: #dcdcdc; }");
+            sb.AppendLine("        .button { display: inline-block; background: #d13438; color: #fff !important; padding: 12px 22px; text-decoration: none; border-radius: 5px; font-weight: 600; border: 1px solid rgba(255,255,255,0.08); }");
+            sb.AppendLine("        .button:hover { background: #b0262a; }");
+            sb.AppendLine("        .footer { font-size: 12px; color: #808080; text-align: center; padding: 16px 0 0; }");
+            sb.AppendLine("    </style>");
+            sb.AppendLine("</head>\n<body>\n<div class=\"container\">\n    <div class=\"panel\">\n");
+            sb.AppendLine("        <div class=\"header\">");
+            sb.AppendLine("            <h1>Contain<span style=\"color:#4FC1FF\">('</span>C#<span style=\"color:#4FC1FF\">')</span> · " + DateTime.UtcNow.DayOfWeek.ToString() + " Dev Stream</h1>");
+            sb.AppendLine($"            <p>{DateTime.UtcNow:dddd, dd MMM yyyy · HH:mm} UTC</p>");
+            sb.AppendLine("        </div>\n        <div class=\"body\">");
+            sb.AppendLine("            <div class=\"meta\">Unsubscribe confirmation</div>");
+            sb.AppendLine("            <div class=\"cta\">");
+            sb.AppendLine("                <p>Hello,</p>");
+            sb.AppendLine($"                <p>You requested to unsubscribe <strong>{email}</strong>.</p>");
+            sb.AppendLine("                <p>To confirm and stop receiving the daily Dev Stream, click below:</p>");
+            sb.AppendLine($"                <p style=\"text-align:center;margin:18px 0 0;\"><a href=\"{unsubscribeUrl}\" class=\"button\">🛑 Confirm Unsubscribe</a></p>");
+            sb.AppendLine("                <p style=\"margin-top:14px; font-size:12px; color:#a6a6a6;\">This link is valid for <strong>24 hours</strong>.</p>");
+            sb.AppendLine("                <p style=\"margin-top:14px; font-size:12px; color:#a6a6a6;\">If you changed your mind, ignore this email and no action will be taken.</p>");
+            sb.AppendLine("            </div>");
+            sb.AppendLine("        </div>\n    </div>");
+            sb.AppendLine("    <div class=\"footer\">");
+            sb.AppendLine("        <p style=\"margin:0 0 8px;\">ContainSharp · Your Daily Dev Stream</p>");
+            sb.AppendLine("        <p style=\"margin:8px 0 0;font-size:11px;color:#666;\"><a href=\"https://www.containsharp.com/Newsletter\" style=\"color:#666;\">Unsubscribe</a> (secure 2-step process)</p>");
+            sb.AppendLine("    </div>");
+            sb.AppendLine("</div>\n</body>\n</html>");
+
             return sb.ToString();
         }
 
@@ -475,7 +528,7 @@ namespace VeilleNet.Services.Tools
             sb.AppendLine("    </style>");
             sb.AppendLine("</head>\n<body>\n<div class=\"container\">\n    <div class=\"panel\">\n");
             sb.AppendLine("        <div class=\"header\">");
-            sb.AppendLine("            <h1>Contain<span style=\"color:#4FC1FF\">('</span><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAQCAYAAAB3cLZPAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAABdElEQVR42u2Wy2rCMBiGv0JYV7j0dVjM3GfC2ySgWcQb1cBzJYwD2o7m3YI0GxI3w3sIhWm1h5mHfVwC4H+QKQvQmJYw3X2M9p8sYQv2YwQ2sVfVv9x5NwCprm3yqB8yI9mPjYQkCk7TqkEw5RpVvI9mF1A1Vb4y5k4CwCkYwqgOeTq2pQhKqgq2GmWw2i8zE1lUjz8pI7oQyJH+5y2XJH9D9g5o6zV2f5rDkzVJk1wQ7VtA8mOeYp4i6Tq2oWwA0j7Qw8eB6Ew8mQpGkCkGgEwMZVv3j4yGkYIYHh4fGQYbJZ5QfCwGg2v1oEoVbFZVYZvT2uM7u2WkslEJvYV4dH3fVjvWkWwV1Xz+VmxqJgqLwWgQwGg0GgqIoKqoq6rqmZr5pKZpU2bP8IYhD5ZpP3f9V6p9ePp2Z2YkA1G2CwCwCw7u7u+Pj49dQWw1j8fHxwcHBwZp+5GQb+g0EoNfr9fDg8PJycnKc7i3b6oZqvQ0EoJfLy8sLCwqKiop3XdrstbYvA+2N7vQ1VVXW5ubpKSkpCQkPj6+rqmpqf3Q2rWmYJgP8mJgYHh0dDQkAAoFAoH0q7oCwBvJH2G6V6n0Wg02k0uZmZmYcHBwQh8TnQd1sFxcXJ1VVVf8BvXWcJvY1oAAAAAElFTkSuQmCC\" alt=\"ContainSharp\" style=\"vertical-align:middle;height:32px;margin:0 4px;\" /><span style=\"color:#4FC1FF\">')</span> · " + DateTime.UtcNow.DayOfWeek.ToString() + " Dev Stream</h1>");
+            sb.AppendLine("            <h1>Contain<span style=\"color:#4FC1FF\">('</span>C#<span style=\"color:#4FC1FF\">')</span> · " + DateTime.UtcNow.DayOfWeek.ToString() + " Dev Stream</h1>");
             sb.AppendLine($"            <p>{DateTime.UtcNow:dddd, dd MMM yyyy · HH:mm} UTC</p>");
             sb.AppendLine("        </div>\n        <div class=\"body\">");
             sb.AppendLine($"            <div class=\"meta\">Summaries generated: {summaryList.Count}</div>");
@@ -551,57 +604,6 @@ namespace VeilleNet.Services.Tools
             sb.AppendLine("Unsubscribe: https://containsharp.com/Newsletter");
             sb.AppendLine("(secure 2-step process)");
 
-            return sb.ToString();
-        }
-
-        private static string BuildUnsubscribeConfirmationEmail(string email, string unsubscribeUrl)
-        {
-            var sb = new StringBuilder();
-            
-            sb.AppendLine("<!DOCTYPE html>");
-            sb.AppendLine("<html lang=\"en\">");
-            sb.AppendLine("<head>");
-            sb.AppendLine("    <meta charset=\"utf-8\" />");
-            sb.AppendLine("    <title>Confirm Your Unsubscription - Contain'Sharp</title>");
-            sb.AppendLine("    <style>");
-            sb.AppendLine("        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f5f5f5; margin: 0; padding: 20px; }");
-            sb.AppendLine("        .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }");
-            sb.AppendLine("        .header { background: linear-gradient(120deg, #007acc, #68217a); color: white; padding: 30px 20px; text-align: center; }");
-            sb.AppendLine("        .header h1 { margin: 0; font-size: 24px; }");
-            sb.AppendLine("        .content { padding: 30px 20px; }");
-            sb.AppendLine("        .content p { line-height: 1.6; color: #333; }");
-            sb.AppendLine("        .button { display: inline-block; background: #dc3545; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 20px 0; }");
-            sb.AppendLine("        .button:hover { background: #c82333; }");
-            sb.AppendLine("        .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; border-top: 1px solid #e9ecef; }");
-            sb.AppendLine("        .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; }");
-            sb.AppendLine("    </style>");
-            sb.AppendLine("</head>");
-            sb.AppendLine("<body>");
-            sb.AppendLine("    <div class=\"container\">");
-            sb.AppendLine("        <div class=\"header\">");
-            sb.AppendLine("            <h1>🚪 Confirm Your Unsubscription</h1>");
-            sb.AppendLine("        </div>");
-            sb.AppendLine("        <div class=\"content\">");
-            sb.AppendLine($"            <p>Hello,</p>");
-            sb.AppendLine($"            <p>You have requested to unsubscribe from the Contain'Sharp newsletter for the address <strong>{email}</strong>.</p>");
-            sb.AppendLine("            <div class=\"warning\">");
-            sb.AppendLine("                <strong>⚠️ Warning:</strong> By clicking the button below, you will no longer receive our daily newsletters with the latest .NET and C# news.");
-            sb.AppendLine("            </div>");
-            sb.AppendLine("            <p>To <strong>confirm your unsubscription</strong>, please click the button below:</p>");
-            sb.AppendLine($"            <center><a href=\"{unsubscribeUrl}\" class=\"button\">✅ Confirm Unsubscription</a></center>");
-            sb.AppendLine("            <p><small>This link is valid for <strong>24 hours</strong>.</small></p>");
-            sb.AppendLine("            <hr style=\"border: none; border-top: 1px solid #e9ecef; margin: 30px 0;\" />");
-            sb.AppendLine("            <p><strong>Changed your mind?</strong></p>");
-            sb.AppendLine("            <p>If you wish to remain subscribed, simply ignore this email. No action will be taken.</p>");
-            sb.AppendLine("        </div>");
-            sb.AppendLine("        <div class=\"footer\">");
-            sb.AppendLine("            <p>Contain'Sharp · Your Daily .NET and C# News</p>");
-            sb.AppendLine($"            <p>If you did not request this unsubscription, you can safely ignore this email.</p>");
-            sb.AppendLine("        </div>");
-            sb.AppendLine("    </div>");
-            sb.AppendLine("</body>");
-            sb.AppendLine("</html>");
-            
             return sb.ToString();
         }
 

@@ -15,6 +15,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<NewsletterSubscriber> NewsletterSubscribers { get; set; }
     public DbSet<DailyNewsletter> DailyNewsletters { get; set; }
     public DbSet<DominantTheme> DominantThemes { get; set; }
+    public DbSet<JobExecutionLog> JobExecutionLogs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -108,6 +109,28 @@ public class ApplicationDbContext : DbContext
                 .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
             entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+        });
+
+        // Configure JobExecutionLog
+        modelBuilder.Entity<JobExecutionLog>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.JobName);
+            entity.HasIndex(e => e.StartedAt);
+            entity.HasIndex(e => e.Status);
+
+            entity.Property(e => e.JobName)
+                .HasMaxLength(200)
+                .IsRequired();
+
+            entity.Property(e => e.TriggerName)
+                .HasMaxLength(200);
+
+            entity.Property(e => e.ErrorMessage)
+                .HasMaxLength(2000);
+
+            entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP");
         });
     }

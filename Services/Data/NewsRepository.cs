@@ -176,13 +176,14 @@ public class NewsRepository : INewsRepository
             if (startDate.HasValue)
             {
                 var startUtc = EnsureUtc(startDate.Value);
-                query = query.Where(n => n.PublishedDate >= startUtc);
+                query = query.Where(n => n.PublishedDate.Date >= startUtc);
             }
 
             if (endDate.HasValue)
             {
-                var endUtc = EnsureUtc(endDate.Value);
-                query = query.Where(n => n.PublishedDate <= endUtc);
+                var endOfDayLocal = endDate.Value.Date.AddDays(1);
+                var endUtc = EnsureUtc(endOfDayLocal);
+                query = query.Where(n => n.PublishedDate.Date <= endUtc);
             }
 
             if (!string.IsNullOrWhiteSpace(source))

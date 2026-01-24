@@ -137,7 +137,6 @@ public class AiSummarizationService : IAiSummarizationService
         var posts = (await _blogAggregationService.GetLatestPostsAsync()).Where(w=>w.PublishedDate >= DateTime.Today.AddDays(-1)).ToList();
         var aiNewsTask = (await _aiNewsService.GetLatestAINewsAsync()).Where(w => w.PublishedDate >= DateTime.Today.AddDays(-1)).ToList();
         var winFormTask = (await _winFormNewsService.GetLatestWinFormNewsAsync()).Where(w => w.PublishedDate >= DateTime.Today.AddDays(-1)).ToList();
-        //var videoTask = (await _videoService.GetLatestVideosAsync()).Where(w => w.PublishedDate >= DateTime.Today.AddDays(-1)).ToList(); TO be implemented after
 
         if (posts.Count == 0 && aiNewsTask.Count == 0 && winFormTask.Count == 0)
         {
