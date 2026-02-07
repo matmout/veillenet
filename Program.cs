@@ -100,6 +100,9 @@ builder.Services.AddMemoryCache();
 builder.Services.Configure<VeilleNet.Models.DatabaseOptions>(
     builder.Configuration.GetSection(VeilleNet.Models.DatabaseOptions.SectionName));
 
+builder.Services.Configure<VeilleNet.Models.XApiOptions>(
+    builder.Configuration.GetSection(VeilleNet.Models.XApiOptions.SectionName));
+
 builder.Services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
 {
     var dbOptions = serviceProvider.GetRequiredService<IOptions<VeilleNet.Models.DatabaseOptions>>().Value;
@@ -142,6 +145,7 @@ builder.Services.AddScoped<IAINewsService, AINewsService>();
 builder.Services.AddScoped<IWinFormNewsService, WinFormNewsService>();
 builder.Services.AddScoped<IVideoService, VideoService>();
 builder.Services.AddScoped<IStackOverflowService, StackOverflowService>();
+builder.Services.AddScoped<IXPostsService, XPostsService>();
 builder.Services.AddScoped<ILLMService, LLMService>();
 builder.Services.AddSingleton<IQuestionService, QuestionService>();
 builder.Services.AddScoped<INewsHistoryService, NewsHistoryService>();

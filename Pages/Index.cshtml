@@ -198,6 +198,81 @@
         </div>
     </div>
 
+    <!-- Official X Posts Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header text-white" style="background: #0f0f0f;">
+                    <h2 class="h4 mb-0">
+                        <i class="bi bi-twitter-x"></i> Latest Posts
+                    </h2>
+                </div>
+                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                    @if (Model.OfficialXPosts.Any())
+                    {
+                        <div class="row g-3">
+                            @foreach (var post in Model.OfficialXPosts)
+                            {
+                                var previewImage = !string.IsNullOrEmpty(post.VideoPreviewImageUrl) ? post.VideoPreviewImageUrl : post.MediaUrl;
+                                <div class="col-md-6">
+                                    <div class="list-group-item px-0" style="overflow: visible;">
+                                        <div class="d-flex w-100 align-items-start">
+                                            @if (!string.IsNullOrEmpty(previewImage))
+                                            {
+                                                <div class="me-3 flex-shrink-0">
+                                                    <a href="@post.Url" target="_blank" class="text-decoration-none">
+                                                        <div class="x-video-thumb">
+                                                            <img src="@previewImage" alt="Post media" class="x-video-thumb-img" />
+                                                            @if (!string.IsNullOrEmpty(post.VideoUrl) || !string.IsNullOrEmpty(post.VideoPreviewImageUrl))
+                                                            {
+                                                                <span class="x-video-play"><i class="bi bi-play-fill"></i></span>
+                                                            }
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            }
+                                            else if (!string.IsNullOrEmpty(post.ProfileImageUrl))
+                                            {
+                                                <div class="me-3 flex-shrink-0">
+                                                    <img src="@post.ProfileImageUrl" alt="@post.Author" style="width: 60px; height: 45px; object-fit: cover; border-radius: 4px;" />
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="me-3 flex-shrink-0 d-flex align-items-center justify-content-center bg-secondary bg-opacity-10" style="width: 60px; height: 45px; border-radius: 4px;">
+                                                    <i class="bi bi-twitter-x" style="font-size: 1.25rem; color: #6c757d;"></i>
+                                                </div>
+                                            }
+                                            <div class="flex-grow-1">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <h6 class="mb-1 flex-grow-1">
+                                                        <a href="@post.Url" target="_blank" class="text-decoration-none">View on X</a>
+                                                    </h6>
+                                                </div>
+                                                <div class="mb-1 small text-muted ai-summary-content" style="line-height:1.6;">
+                                                    @post.Text
+                                                </div>
+                                                <small class="text-muted">
+                                                    <i class="bi bi-person"></i> @post.Author |
+                                                    <i class="bi bi-tag"></i> X |
+                                                    <i class="bi bi-calendar"></i> @post.PublishedDate.ToString("dd MMM yyyy HH:mm")
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center">Loading official X posts...</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- StackOverflow and WinForms Row -->
     <div class="row mb-4">
         <!-- Official .NET Blogs (moved to StackOverflow position, size swapped to 400px) -->
@@ -493,5 +568,33 @@
     </div>
 
     @section Scripts {
-        <!-- Scripts -->
+        <style>
+            .x-video-thumb {
+                position: relative;
+                width: 60px;
+                height: 45px;
+            }
+
+            .x-video-thumb-img {
+                width: 60px;
+                height: 45px;
+                object-fit: cover;
+                border-radius: 4px;
+            }
+
+            .x-video-play {
+                position: absolute;
+                inset: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #fff;
+                font-size: 1.5rem;
+                background: rgba(0, 0, 0, 0.35);
+                border-radius: 4px;
+            }
+
+        </style>
+        <script>
+        </script>
     }

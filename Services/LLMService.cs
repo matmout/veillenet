@@ -221,11 +221,29 @@ public class LLMService : ILLMService
             },
             new LLM
             {
+                Name = "Kimi K2.5",
+                Description = "K2.5: next-generation Kimi model with improved reasoning and multimodal capabilities.",
+                Link = "https://www.kimi.com/",
+                Author = "Kimi",
+                DateRelease = new DateTime(2026, 1, 27),
+                ScoreIA = "N/A"
+            },
+            new LLM
+            {
                 Name = "GPT 5.1",
                 Description = "Iterative improvement of GPT-5, offering better reliability and more nuanced responses.",
                 Link = "https://openai.com/",
                 Author = "OpenAI",
                 DateRelease = new DateTime(2025, 11, 12),
+                ScoreIA = "N/A"
+            },
+            new LLM
+            {
+                Name = "GPT Codex 5.3",
+                Description = "Codex series specialized for code generation and developer workflows, v5.3 release.",
+                Link = "https://openai.com/",
+                Author = "OpenAI",
+                DateRelease = new DateTime(2026, 2, 6),
                 ScoreIA = "N/A"
             },
             new LLM

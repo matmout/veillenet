@@ -19,6 +19,7 @@ public class IndexModel : PageModel
     private readonly IWinFormNewsService _winFormNewsService;
     private readonly IVideoService _videoService;
     private readonly IStackOverflowService _stackOverflowService;
+    private readonly IXPostsService _xPostsService;
     private readonly ICacheService _cacheService;
     private readonly INewsletterService _newsletterService;
     private readonly INewsRepository _newsRepository;
@@ -31,6 +32,7 @@ public class IndexModel : PageModel
     public List<BaseNews> WinFormNews { get; set; } = new();
     public List<Video> Videos { get; set; } = new();
     public List<StackOverflowQuestion> StackOverflowQuestions { get; set; } = new();
+    public List<XPost> OfficialXPosts { get; set; } = new();
 
     public int ActiveNewsletterSubscribersCount { get; private set; }
 
@@ -45,6 +47,7 @@ public class IndexModel : PageModel
         IWinFormNewsService winFormNewsService,
         IVideoService videoService,
         IStackOverflowService stackOverflowService,
+        IXPostsService xPostsService,
         ICacheService cacheService,
         INewsletterService newsletterService,
         INewsRepository newsRepository,
@@ -57,6 +60,7 @@ public class IndexModel : PageModel
         _winFormNewsService = winFormNewsService;
         _videoService = videoService;
         _stackOverflowService = stackOverflowService;
+        _xPostsService = xPostsService;
         _cacheService = cacheService;
         _newsletterService = newsletterService;
         _newsRepository = newsRepository;
@@ -73,9 +77,10 @@ public class IndexModel : PageModel
         var winFormTask = _winFormNewsService.GetLatestWinFormNewsAsync();
         var videoTask = _videoService.GetLatestVideosAsync();
         var stackOverflowTask = _stackOverflowService.GetLatestQuestionsAsync();
+        var xPostsTask = _xPostsService.GetLatestOfficialPostsAsync();
         var subscribersCountTask = _newsletterService.GetActiveSubscribersCountAsync();
 
-        await Task.WhenAll(blogTask, githubTask, releaseTask, aiNewsTask, winFormTask, videoTask, stackOverflowTask, subscribersCountTask);
+        await Task.WhenAll(blogTask, githubTask, releaseTask, aiNewsTask, winFormTask, videoTask, stackOverflowTask, xPostsTask, subscribersCountTask);
 
         BlogPosts = await blogTask;
         TrendingProjects = await githubTask;
@@ -84,6 +89,7 @@ public class IndexModel : PageModel
         WinFormNews = await winFormTask;
         Videos = await videoTask;
         StackOverflowQuestions = await stackOverflowTask;
+        OfficialXPosts = await xPostsTask;
         ActiveNewsletterSubscribersCount = await subscribersCountTask;
 
         // Load AI summaries from database for all news items
