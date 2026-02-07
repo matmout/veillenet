@@ -204,7 +204,7 @@
             <div class="card shadow-sm">
                 <div class="card-header text-white" style="background: #0f0f0f;">
                     <h2 class="h4 mb-0">
-                        <i class="bi bi-twitter-x"></i> Latest Posts
+                        <i class="bi bi-twitter-x"></i> Latest Posts  <span class="badge bg-warning text-dark ms-1" style="font-size:0.7rem; vertical-align:middle;">New</span>
                     </h2>
                 </div>
                 <div class="card-body" style="max-height: 400px; overflow-y: auto;">
@@ -233,8 +233,8 @@
                                             }
                                             else if (!string.IsNullOrEmpty(post.ProfileImageUrl))
                                             {
-                                                <div class="me-3 flex-shrink-0">
-                                                    <img src="@post.ProfileImageUrl" alt="@post.Author" style="width: 60px; height: 45px; object-fit: cover; border-radius: 4px;" />
+                                                <div class="me-3 flex-shrink-0 x-post-avatar-wrapper">
+                                                    <img src="@post.ProfileImageUrl" alt="@post.Author" class="x-post-avatar" />
                                                 </div>
                                             }
                                             else
@@ -244,18 +244,17 @@
                                                 </div>
                                             }
                                             <div class="flex-grow-1">
-                                                <div class="d-flex justify-content-between align-items-start">
+@*                                                 <div class="d-flex justify-content-between align-items-start">
                                                     <h6 class="mb-1 flex-grow-1">
                                                         <a href="@post.Url" target="_blank" class="text-decoration-none">View on X</a>
                                                     </h6>
-                                                </div>
+                                                </div> *@
                                                 <div class="mb-1 small text-muted ai-summary-content" style="line-height:1.6;">
                                                     @post.Text
                                                 </div>
                                                 <small class="text-muted">
                                                     <i class="bi bi-person"></i> @post.Author |
-                                                    <i class="bi bi-tag"></i> X |
-                                                    <i class="bi bi-calendar"></i> @post.PublishedDate.ToString("dd MMM yyyy HH:mm")
+                                                    <i class="bi bi-calendar"></i> @post.PublishedDate.ToString("dd MMM yyyy HH:mm") | <a href="@post.Url" target="_blank" class="text-decoration-none">View on X</a>
                                                 </small>
                                             </div>
                                         </div>
@@ -580,6 +579,18 @@
                 height: 45px;
                 object-fit: cover;
                 border-radius: 4px;
+            }
+
+            .x-post-avatar-wrapper {
+                background: transparent;
+            }
+
+            .x-post-avatar {
+                width: 60px;
+                height: 45px;
+                object-fit: contain;
+                border-radius: 4px;
+                background: transparent;
             }
 
             .x-video-play {
