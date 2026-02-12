@@ -103,31 +103,22 @@ builder.Services.Configure<VeilleNet.Models.DatabaseOptions>(
 builder.Services.Configure<VeilleNet.Models.XApiOptions>(
     builder.Configuration.GetSection(VeilleNet.Models.XApiOptions.SectionName));
 
-builder.Services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
+builder.Services.AddDbContextFactory<ApplicationDbContext>((serviceProvider, options) =>
 {
     var dbOptions = serviceProvider.GetRequiredService<IOptions<VeilleNet.Models.DatabaseOptions>>().Value;
-    
+
     options.UseNpgsql(dbOptions.ConnectionString, npgsqlOptions =>
     {
         npgsqlOptions.EnableRetryOnFailure(
             maxRetryCount: dbOptions.MaxRetryCount,
             maxRetryDelay: TimeSpan.FromSeconds(dbOptions.MaxRetryDelay),
             errorCodesToAdd: null);
-        
+
         npgsqlOptions.CommandTimeout(dbOptions.CommandTimeout);
     });
 
-    if (dbOptions.EnableSensitiveDataLogging)
-    {
-        options.EnableSensitiveDataLogging();
-    }
-
-    if (dbOptions.EnableDetailedErrors)
-    {
-        options.EnableDetailedErrors();
-    }
-
-    // Don't set NoTracking globally - let repository methods control this
+    if (dbOptions.EnableSensitiveDataLogging) options.EnableSensitiveDataLogging();
+    if (dbOptions.EnableDetailedErrors) options.EnableDetailedErrors();
 });
 
 // Add HttpClient factory
@@ -149,6 +140,7 @@ builder.Services.AddScoped<IXPostsService, XPostsService>();
 builder.Services.AddScoped<ILLMService, LLMService>();
 builder.Services.AddSingleton<IQuestionService, QuestionService>();
 builder.Services.AddScoped<INewsHistoryService, NewsHistoryService>();
+builder.Services.AddScoped<INewsDeduplicationService, NewsDeduplicationService>();
 
 // Data services
 builder.Services.AddScoped<VeilleNet.Services.Data.INewsRepository, VeilleNet.Services.Data.NewsRepository>();
@@ -195,7 +187,7 @@ builder.Services.AddQuartz(q =>
     q.AddTrigger(opts => opts
         .ForJob(newsletterJobKey)
         .WithIdentity("NewsletterSendJob-trigger")
-        // Tous les jours à 17h00 (timezone locale du serveur)
+        // Tous les jours ï¿½ 17h00 (timezone locale du serveur)
         .WithCronSchedule("0 0 17 ? * *"));
 });
 

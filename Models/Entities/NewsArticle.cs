@@ -49,8 +49,9 @@ public class NewsArticle
     [Column("updated_at")]
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-    // Navigation property
+    // Navigation properties
     public virtual AiSummaryEntity? AiSummary { get; set; }
+    public virtual ICollection<NamedEntity> Entities { get; set; } = new List<NamedEntity>();
 
     // Helper method to create from BaseNews
     public static NewsArticle FromBaseNews(BaseNews news)

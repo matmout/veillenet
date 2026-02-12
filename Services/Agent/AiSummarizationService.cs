@@ -16,6 +16,7 @@ public interface IAiSummarizationService
     Task<List<AiContentSummary>> GetLatestBlogSummariesAsync(int count = 10, CancellationToken cancellationToken = default);
     Task<List<AiContentSummary>> GetLatestBlogSummariesFromDatabaseAsync(int count = 10, CancellationToken cancellationToken = default);
     Task<string?> GetDominantThemeFromRecentNewsAsync(CancellationToken cancellationToken = default);
+    Task BackfillEntitiesAsync(CancellationToken cancellationToken = default);
 }
 
 public class AiSummarizationService : IAiSummarizationService
@@ -30,6 +31,8 @@ public class AiSummarizationService : IAiSummarizationService
     private readonly INewsRepository _newsRepository;
     private readonly MistralOptions _options;
     private readonly ILogger<AiSummarizationService> _logger;
+    private readonly IServiceScopeFactory _scopeFactory;
+    private readonly INewsDeduplicationService _deduplicationService;
 
     public AiSummarizationService(
         IBlogAggregationService blogAggregationService,
@@ -41,7 +44,9 @@ public class AiSummarizationService : IAiSummarizationService
         IVideoService videoService,
         INewsRepository newsRepository,
         IOptions<MistralOptions> options,
-        ILogger<AiSummarizationService> logger)
+        ILogger<AiSummarizationService> logger,
+        IServiceScopeFactory scopeFactory,
+        INewsDeduplicationService deduplicationService)
     {
         _blogAggregationService = blogAggregationService;
         _cacheService = cacheService;
@@ -53,6 +58,8 @@ public class AiSummarizationService : IAiSummarizationService
         _newsRepository = newsRepository;
         _options = options.Value;
         _logger = logger;
+        _scopeFactory = scopeFactory;
+        _deduplicationService = deduplicationService;
     }
 
     public async Task<List<AiContentSummary>> GetLatestBlogSummariesFromDatabaseAsync(int count = 10, CancellationToken cancellationToken = default)
@@ -148,6 +155,29 @@ public class AiSummarizationService : IAiSummarizationService
         globalPosts.AddRange(winFormTask);
         //posts.AddRange(videoTask); TO be implemented after
 
+        // Deduplicate news
+        var recentArticles = await _newsRepository.GetRecentNewsArticlesAsync(200, cancellationToken);
+        var uniquePosts = new List<BaseNews>();
+
+        foreach (var post in globalPosts)
+        {
+            if (!_deduplicationService.IsDuplicate(post, recentArticles))
+            {
+                uniquePosts.Add(post);
+            }
+            else
+            {
+                _logger.LogInformation("Skipping duplicate news: {Title} ({Url})", post.Title, post.Url);
+            }
+        }
+        
+        globalPosts = uniquePosts;
+
+        if (globalPosts.Count == 0)
+        {
+             return new List<AiContentSummary>();
+        }
+
         // Save news articles to database
         try
         {
@@ -198,7 +228,68 @@ public class AiSummarizationService : IAiSummarizationService
             _logger.LogError(ex, "Error saving AI summaries to database");
         }
 
+        // Trigger backfill if no entities exist, using a background scope to avoid DbContext concurrency issues
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                using var scope = _scopeFactory.CreateScope();
+                var scopedRepo = scope.ServiceProvider.GetRequiredService<INewsRepository>();
+                var scopedAiService = scope.ServiceProvider.GetRequiredService<IAiSummarizationService>();
+
+                var entityCount = await scopedRepo.GetNamedEntityCountAsync(CancellationToken.None);
+                if (entityCount == 0)
+                {
+                    await scopedAiService.BackfillEntitiesAsync(CancellationToken.None);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error triggering background backfill");
+            }
+        });
+
         return summaries;
+    }
+
+    public async Task BackfillEntitiesAsync(CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Starting backfill for named entities...");
+        var chatClient = _chatClientFactory.TryCreate();
+        if (chatClient is null) return;
+
+        var articles = await _newsRepository.GetRecentNewsArticlesAsync(30, cancellationToken);
+        foreach (var article in articles)
+        {
+            try
+            {
+                // Check if article already has entities
+                // We need to load them if they were not included
+                // But since we just want to backfill if empty, we can just process those without any
+                if (article.Entities != null && article.Entities.Any()) continue;
+
+                _logger.LogInformation("Backfilling entities for article: {Title}", article.Title);
+
+                var messages = new List<ChatMessage>
+                {
+                    new(ChatRole.System, "You are an expert in .NET and software engineering. Extract 3 to 7 key technologies, frameworks, or concepts mentioned in the provided title and summary as named entities. Respond ONLY with a comma-separated list of entities."),
+                    new(ChatRole.User, $"Title: {article.Title}\nSummary: {article.Summary}")
+                };
+
+                var response = await chatClient.GetResponseAsync(messages, cancellationToken: cancellationToken);
+                var entities = response.Text?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
+
+                if (entities != null && entities.Any())
+                {
+                    await _newsRepository.AddEntitiesToArticleAsync(article.Id, entities, cancellationToken);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error backfilling article: {Id}", article.Id);
+            }
+        }
+        _logger.LogInformation("Backfill completed.");
     }
 
     private async Task<AiContentSummary?> SummarizePostAsync(IChatClient chatClient, BaseNews post, CancellationToken cancellationToken)
@@ -262,7 +353,12 @@ public class AiSummarizationService : IAiSummarizationService
         var messages = new List<ChatMessage>
         {
             new(ChatRole.System,  @"You are a professional .NET technology watch assistant. 
-    Your goal is to produce a concise, expert-level summary of each article.\n\n
+    Your goal is to produce a concise, expert-level summary of each article and extract key named entities.\n\n
+    Response format:\n
+    [SUMMARY]\n
+    (The summary following the architecture below)\n
+    [ENTITIES]\n
+    (Comma-separated list of 3-7 key technologies, frameworks, or concepts mentioned)\n\n
     Summary architecture (must ALWAYS be the same, even if the content changes):\n
     1) Short context introduction (2–3 sentences) describing the main topic and its relevance to .NET or software engineering.\n
     2) Key insights: 2-4 bullet points, each starting with a strong verb (e.g., 'Explains', 'Introduces', 'Analyzes', 'Compares', 'Highlights').\n
@@ -276,13 +372,12 @@ public class AiSummarizationService : IAiSummarizationService
     - Emphasize .NET, C#, IA, cloud, architecture, performance, security, or tooling aspects when relevant.\n
     - Maximum length: 200 words. Be shorter if the article contains little valuable or novel information.\n
     - Never include code unless it is essential to understand the point, and keep any code extremely brief.\n"),
-            new(ChatRole.User, $"Titre: {post.Title}\nSource: {post.Source}\nURL: {post.Url}\n\nContenu (extrait):\n{content}\n\nTâche: Résume en 4-6 puces, puis une phrase 'Pourquoi c'est important'.")
+            new(ChatRole.User, $"Titre: {post.Title}\nSource: {post.Source}\nURL: {post.Url}\n\nContenu (extrait):\n{content}\n\nTâche: Résume en 4-6 puces, puis une phrase 'Pourquoi c'est important', et liste les entités.")
         };
 
         var chatOptions = new ChatOptions
         {
             Temperature = _options.Temperature
-            // MaxTokens is not available in ChatOptions, will be handled by the implementation
         };
 
         string responseText;
@@ -302,7 +397,13 @@ public class AiSummarizationService : IAiSummarizationService
             return null;
         }
 
-        string htmlReponseText = AddHtmlToText(responseText);
+        var parts = responseText.Split("[ENTITIES]", StringSplitOptions.RemoveEmptyEntries);
+        var summaryText = parts[0].Replace("[SUMMARY]", "").Trim();
+        var entitiesText = parts.Length > 1 ? parts[1].Trim() : "";
+
+        var entities = entitiesText.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
+
+        string htmlReponseText = AddHtmlToText(summaryText);
 
         var result = new AiContentSummary
         {
@@ -311,6 +412,7 @@ public class AiSummarizationService : IAiSummarizationService
             Source = post.Source,
             PublishedDate = post.PublishedDate,
             Summary = htmlReponseText,
+            Entities = entities,
             AiGenerated = true,
             SummaryDate = DateTime.UtcNow
         };

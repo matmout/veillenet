@@ -40,43 +40,6 @@
         </div>
     </div>
 
-    <!-- Release News Section -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h2 class="h4 mb-0">
-                        <i class="bi bi-megaphone"></i> Release News
-                    </h2>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        @foreach (var release in Model.ReleaseNews)
-                        {
-                            <div class="col-md-6 col-lg-3 mb-3">
-                                <div class="card h-100 border-0 bg-light">
-                                    <div class="card-body">
-                                        <div class="d-flex align-items-center mb-2">
-                                            <span class="badge bg-@(release.Type == "Stable" ? "success" : release.Type == "Preview" ? "info" : "warning") me-2">
-                                                @release.Type
-                                            </span>
-                                            <h5 class="card-title mb-0">
-                                                <a href="@release.Url" target="_blank" class="text-decoration-none">
-                                                    @release.Version <i class="bi bi-box-arrow-up-right small"></i>
-                                                </a>
-                                            </h5>
-                                        </div>
-                                        <p class="card-text small">@release.Description | <i class="bi bi-calendar"></i> @release.ReleaseDate.ToString("dd MMM yyyy")</p>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- AI News and Videos Row -->
     <div class="row mb-4">
         <!-- AI News Section -->
@@ -112,7 +75,7 @@
                                                 <h6 class="mb-1 flex-grow-1">
                                                     <a href="@news.Url" target="_blank" class="text-decoration-none">@news.Title</a>
                                                 </h6>
-                                                @if (Model.HasAiSummary(news.Url))
+                                                @if (news.HasAiSummary)
                                                 {
                                                     <a href="/AiSummary?url=@Uri.EscapeDataString(news.Url)" title="View AI Summary" class="ms-2 flex-shrink-0">
                                                         <img src="~/images/mcp/technologie-ia.png" alt="AI Summary Available" style="width: 24px; height: 24px;" />
@@ -309,7 +272,7 @@
                                                         @post.Title
                                                     </a>
                                                 </h6>
-                                                @if (Model.HasAiSummary(post.Url))
+                                                @if (post.HasAiSummary)
                                                 {
                                                     <a href="/AiSummary?url=@Uri.EscapeDataString(post.Url)" title="View AI Summary" class="ms-2 flex-shrink-0">
                                                         <img src="~/images/mcp/technologie-ia.png" alt="AI Summary Available" style="width: 24px; height: 24px;" />
@@ -373,7 +336,7 @@
                                                         @news.Title
                                                     </a>
                                                 </h6>
-                                                @if (Model.HasAiSummary(news.Url))
+                                                @if (news.HasAiSummary)
                                                 {
                                                     <a href="/AiSummary?url=@Uri.EscapeDataString(news.Url)" title="View AI Summary" class="ms-2 flex-shrink-0">
                                                         <img src="~/images/mcp/technologie-ia.png" alt="AI Summary Available" style="width: 24px; height: 24px;" />

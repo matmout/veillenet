@@ -26,6 +26,7 @@ public interface INewsRepository
     Task<AiSummaryEntity> UpdateAiSummaryAsync(AiSummaryEntity summary, CancellationToken cancellationToken = default);
     Task<AiSummaryEntity> AddOrUpdateAiSummaryAsync(AiContentSummary summary, CancellationToken cancellationToken = default);
     Task<List<AiSummaryEntity>> AddOrUpdateAiSummariesAsync(List<AiContentSummary> summaries, CancellationToken cancellationToken = default);
+    Task<HashSet<string>> GetExistingAiSummaryUrlsAsync(IEnumerable<string> urls, CancellationToken cancellationToken = default);
 
     // Newsletter Subscribers
     Task<NewsletterSubscriber?> GetSubscriberByEmailAsync(string email, CancellationToken cancellationToken = default);
@@ -51,4 +52,10 @@ public interface INewsRepository
     Task<DailyNewsletter> CreateOrUpdateNewsletterAsync(DailyNewsletter newsletter, CancellationToken cancellationToken = default);
     Task MarkNewsletterAsSentAsync(DateOnly date, int recipientCount, CancellationToken cancellationToken = default);
     Task<bool> HasNewsletterForDateAsync(DateOnly date, CancellationToken cancellationToken = default);
+
+    // Named Entities (NER)
+    Task<List<NamedEntity>> GetAllNamedEntitiesAsync(CancellationToken cancellationToken = default);
+    Task<List<NamedEntity>> GetEntitiesWithArticlesAsync(int articleCount = 100, CancellationToken cancellationToken = default);
+    Task AddEntitiesToArticleAsync(int articleId, List<string> entityNames, CancellationToken cancellationToken = default);
+    Task<int> GetNamedEntityCountAsync(CancellationToken cancellationToken = default);
 }

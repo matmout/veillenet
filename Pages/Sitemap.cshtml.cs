@@ -39,6 +39,55 @@ public class SitemapModel : PageModel
         // Utility pages
         Urls.Add(new SitemapUrl
         {
+            Loc = $"{baseUrl}/History",
+            LastMod = today,
+            ChangeFreq = "daily",
+            Priority = "0.8"
+        });
+        
+        Urls.Add(new SitemapUrl
+        {
+            Loc = $"{baseUrl}/KnowledgeGraph",
+            LastMod = today,
+            ChangeFreq = "daily",
+            Priority = "0.9"
+        });
+        
+        Urls.Add(new SitemapUrl
+        {
+            Loc = $"{baseUrl}/Roadmap",
+            LastMod = today,
+            ChangeFreq = "weekly",
+            Priority = "0.7"
+        });
+        
+        Urls.Add(new SitemapUrl
+        {
+            Loc = $"{baseUrl}/Training",
+            LastMod = today,
+            ChangeFreq = "weekly",
+            Priority = "0.7"
+        });
+        
+        Urls.Add(new SitemapUrl
+        {
+            Loc = $"{baseUrl}/MCP",
+            LastMod = today,
+            ChangeFreq = "weekly",
+            Priority = "0.7"
+        });
+        
+        Urls.Add(new SitemapUrl
+        {
+            Loc = $"{baseUrl}/LatestLLM",
+            LastMod = today,
+            ChangeFreq = "daily",
+            Priority = "0.8"
+        });
+
+        // Utility pages
+        Urls.Add(new SitemapUrl
+        {
             Loc = $"{baseUrl}/Sitemap",
             LastMod = today,
             ChangeFreq = "monthly",

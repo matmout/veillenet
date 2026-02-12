@@ -7,6 +7,7 @@ public class AiContentSummary
     public string Source { get; set; } = string.Empty;
     public DateTime PublishedDate { get; set; }
     public string Summary { get; set; } = string.Empty;
+    public List<string> Entities { get; set; } = new();
     public bool AiGenerated { get; set; } = false;
     public DateTime SummaryDate { get; set; } = DateTime.UtcNow;
 }

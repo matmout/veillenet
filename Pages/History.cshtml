@@ -93,7 +93,7 @@
                                 <div class="d-flex justify-content-between align-items-start">
                                     <h5 class="card-title mb-1"><a href="@news.Url" target="_blank" class="text-decoration-none">@news.Title</a></h5>
                                     <div class="d-flex align-items-center ms-2" style="gap:6px;">
-                                        @if (Model.HasAiSummary(news.Url))
+                                        @if (news.HasAiSummary)
                                         {
                                             <a href="/AiSummary?url=@Uri.EscapeDataString(news.Url)" title="View AI Summary" class="flex-shrink-0">
                                                 <img src="~/images/mcp/technologie-ia.png" alt="AI Summary Available" style="width: 24px; height: 24px;" />

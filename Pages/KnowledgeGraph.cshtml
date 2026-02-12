@@ -1,0 +1,1000 @@
+@page
+@model VeilleNet.Pages.KnowledgeGraphModel
+@{
+    ViewData["Title"] = "Graph";
+}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+<script src="https://unpkg.com/d3@7.8.5/dist/d3.min.js"></script>
+<script src="https://unpkg.com/three-spritetext@1.9.1/dist/three-spritetext.min.js"></script>
+<script src="https://unpkg.com/3d-force-graph@1.73.0/dist/3d-force-graph.min.js"></script>
+
+<style>
+    /* Scoped styles for the graph page to avoid conflicts with Navbar */
+    .graph-wrapper {
+        margin: 0;
+        min-height: calc(100vh - 70px); /* Adjust for navbar height approx */
+        width: 100%;
+        background: radial-gradient(ellipse at center, #0f1419 0%, #05070a 100%);
+        color: #e2e8f0;
+        font-family: 'Inter', sans-serif;
+        overflow: hidden;
+        position: relative;
+        /* Ensure it breaks out of container padding if needed, or we just rely on 100vw elements inside */
+    }
+
+    #graph {
+        width: 100vw;
+        height: 100vh;
+        position: relative;
+    }
+
+    /* Glassmorphism UI Elements */
+    .glass-panel {
+        background: rgba(15, 23, 42, 0.75);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(148, 163, 184, 0.1);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Info Box - Floating Card */
+    .info-box {
+        position: fixed;
+        top: 72px;
+        left: 24px;
+        z-index: 100;
+        max-width: 380px;
+        padding: 24px;
+        border-radius: 16px;
+        border-left: 4px solid #3b82f6;
+        animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @@keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .info-box h3 {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #3b82f6;
+        margin: 0 0 12px 0;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .info-box h3::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: #3b82f6;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #3b82f6;
+            animation: pulse 2s infinite;
+        }
+
+    @@keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.5;
+        }
+    }
+
+    .info-box p {
+        font-size: 0.875rem;
+        color: #94a3b8;
+        margin: 0;
+        line-height: 1.6;
+        font-weight: 300;
+    }
+
+    .info-box .close-info {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        cursor: pointer;
+        color: #64748b;
+        font-size: 1.25rem;
+        line-height: 1;
+        transition: all 0.2s ease;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+    }
+
+        .info-box .close-info:hover {
+            color: #e2e8f0;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+    /* Stats Badge */
+    .stats-badge {
+        position: fixed;
+        top: 72px;
+        right: 24px;
+        z-index: 100;
+        display: flex;
+        gap: 16px;
+    }
+
+    .stat-item {
+        padding: 12px 20px;
+        border-radius: 12px;
+        text-align: center;
+        min-width: 100px;
+    }
+
+    .stat-value {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 1.5rem;
+        font-weight: 500;
+        color: #3b82f6;
+        display: block;
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-top: 4px;
+    }
+
+    /* Side Panel - Modern Drawer */
+    .side-panel {
+        position: fixed;
+        right: -480px;
+        top: 72px;
+        width: 480px;
+        height: calc(100vh - 72px);
+        background: rgba(15, 23, 42, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-left: 1px solid rgba(148, 163, 184, 0.1);
+        transition: right 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        overflow-y: auto;
+        z-index: 1000;
+        box-shadow: -20px 0 60px rgba(0, 0, 0, 0.8);
+    }
+
+        .side-panel.open {
+            right: 0;
+        }
+
+    .panel-header {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(15, 23, 42, 0) 100%);
+        padding: 32px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+        position: sticky;
+        top: 0;
+        z-index: 1001;
+        backdrop-filter: blur(10px);
+    }
+
+        .panel-header h2 {
+            font-size: 1.25rem;
+            font-weight: 500;
+            margin: 0;
+            color: #f8fafc;
+            line-height: 1.4;
+            padding-right: 40px;
+        }
+
+    .close-btn {
+        position: absolute;
+        top: 32px;
+        right: 32px;
+        cursor: pointer;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        color: #94a3b8;
+        font-size: 1.25rem;
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+
+        .close-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            transform: rotate(90deg);
+        }
+
+    .panel-content {
+        padding: 32px;
+    }
+
+    /* Article Card Styling */
+    .article-card {
+        background: rgba(30, 41, 59, 0.5);
+        border: 1px solid rgba(148, 163, 184, 0.1);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+    }
+
+        .article-card:hover {
+            border-color: rgba(59, 130, 246, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+    .article-meta {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+    }
+
+    .meta-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        background: rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        border-radius: 20px;
+        font-size: 0.75rem;
+        color: #60a5fa;
+        font-family: 'JetBrains Mono', monospace;
+    }
+
+        .meta-tag.date {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+        }
+
+    .article-summary {
+        line-height: 1.8;
+        font-size: 0.9375rem;
+        color: #cbd5e1;
+        font-weight: 300;
+    }
+
+        .article-summary strong {
+            color: #60a5fa;
+            font-weight: 500;
+        }
+
+    .btn-visit {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 24px;
+        padding: 14px 28px;
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+    }
+
+        .btn-visit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.4);
+        color: white;
+        }
+
+    /* Entity Articles List */
+    .entity-stats {
+        background: rgba(30, 41, 59, 0.5);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .entity-stats-icon {
+        width: 48px;
+        height: 48px;
+        background: rgba(59, 130, 246, 0.2);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #3b82f6;
+        font-size: 1.5rem;
+    }
+
+    .entity-stats-text {
+        flex: 1;
+    }
+
+    .entity-stats-count {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 1.5rem;
+        font-weight: 500;
+        color: #f8fafc;
+    }
+
+    .entity-stats-label {
+        font-size: 0.875rem;
+        color: #64748b;
+    }
+
+    .entity-article-item {
+        background: rgba(30, 41, 59, 0.3);
+        border: 1px solid rgba(148, 163, 184, 0.1);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 16px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+        .entity-article-item:hover {
+            background: rgba(30, 41, 59, 0.6);
+            border-color: rgba(59, 130, 246, 0.3);
+            transform: translateX(4px);
+        }
+
+        .entity-article-item h4 {
+            font-size: 0.9375rem;
+            font-weight: 500;
+            margin: 0 0 12px 0;
+            color: #f8fafc;
+            line-height: 1.5;
+        }
+
+        .entity-article-item .item-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-bottom: 12px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .entity-article-item .item-summary {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            line-height: 1.6;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+    .read-more {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 12px;
+        font-size: 0.875rem;
+        color: #3b82f6;
+        text-decoration: none;
+        font-weight: 500;
+        transition: gap 0.2s ease;
+    }
+
+        .read-more:hover {
+            gap: 8px;
+        }
+
+    /* Timeline - Floating Control */
+    .timeline-container {
+        position: fixed;
+        bottom: 32px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 100;
+        padding: 24px 32px;
+        border-radius: 20px;
+        width: 90%;
+        max-width: 800px;
+    }
+
+    .timeline-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+
+    .timeline-title {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .date-range-display {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.875rem;
+        color: #3b82f6;
+        background: rgba(59, 130, 246, 0.1);
+        padding: 6px 12px;
+        border-radius: 8px;
+    }
+
+    .timeline-controls {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .timeline-slider {
+        flex-grow: 1;
+        -webkit-appearance: none;
+        height: 6px;
+        background: rgba(148, 163, 184, 0.2);
+        outline: none;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+        .timeline-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            cursor: pointer;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+            border: 2px solid #0f172a;
+            transition: transform 0.2s ease;
+        }
+
+            .timeline-slider::-webkit-slider-thumb:hover {
+                transform: scale(1.2);
+            }
+
+    .date-display {
+        min-width: 140px;
+        text-align: center;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 1rem;
+        color: #f8fafc;
+        font-weight: 500;
+    }
+
+    /* Loading Screen - Cyberpunk Style */
+    .loading-overlay {
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(ellipse at center, #0f172a 0%, #020617 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+        transition: opacity 0.8s ease;
+    }
+
+    .loader-container {
+        text-align: center;
+    }
+
+    .loader-ring {
+        width: 120px;
+        height: 120px;
+        border: 3px solid transparent;
+        border-top-color: #3b82f6;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        position: relative;
+        margin-bottom: 32px;
+    }
+
+        .loader-ring::before,
+        .loader-ring::after {
+            content: '';
+            position: absolute;
+            border: 3px solid transparent;
+            border-radius: 50%;
+        }
+
+        .loader-ring::before {
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            border-top-color: #60a5fa;
+            animation: spin 2s linear infinite;
+        }
+
+        .loader-ring::after {
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            bottom: 15px;
+            border-top-color: #93c5fd;
+            animation: spin 3s linear infinite;
+        }
+
+    @@keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .loader-text {
+        font-family: 'JetBrains Mono', monospace;
+        color: #3b82f6;
+        font-size: 0.875rem;
+        margin-bottom: 16px;
+    }
+
+    .loader-progress {
+        font-family: 'JetBrains Mono', monospace;
+        color: #60a5fa;
+        font-size: 2rem;
+        font-weight: 500;
+    }
+
+    .loader-status {
+        margin-top: 24px;
+        font-size: 0.75rem;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+    }
+
+    /* Graph Controls */
+    .graph-controls {
+        position: fixed;
+        bottom: 140px;
+        right: 24px;
+        z-index: 100;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .control-btn {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        color: #94a3b8;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+    }
+
+        .control-btn:hover {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.4);
+            color: #3b82f6;
+            transform: scale(1.1);
+        }
+
+    /* Scrollbar Styling */
+    .side-panel::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .side-panel::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .side-panel::-webkit-scrollbar-thumb {
+        background: rgba(148, 163, 184, 0.2);
+        border-radius: 4px;
+    }
+
+        .side-panel::-webkit-scrollbar-thumb:hover {
+            background: rgba(148, 163, 184, 0.4);
+        }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .side-panel {
+            width: 100%;
+            right: -100%;
+            top: 72px;
+            height: calc(100vh - 72px);
+        }
+
+        .info-box {
+            max-width: calc(100vw - 48px);
+        }
+
+        .stats-badge {
+            display: none;
+        }
+    }
+</style>
+
+<div class="graph-wrapper">
+<div class="loading-overlay" id="loader">
+    <div class="loader-container">
+        <div class="loader-ring"></div>
+        <div class="loader-text" id="loader-text">Initializing Neural Network</div>
+        <div class="loader-progress" id="loader-progress">0%</div>
+        <div class="loader-status">System Loading</div>
+    </div>
+</div>
+
+<div class="info-box glass-panel" id="info-box">
+    <span class="close-info" onclick="document.getElementById('info-box').style.display='none'">&times;</span>
+    <h3>Neural Explorer</h3>
+    <p>
+        Navigate the .NET ecosystem knowledge graph. Click nodes to explore AI-generated summaries and discover connections between technologies, frameworks, and latest news.
+    </p>
+</div>
+
+<div class="stats-badge">
+    <div class="stat-item glass-panel">
+        <span class="stat-value" id="node-count">0</span>
+        <div class="stat-label">Nodes</div>
+    </div>
+    <div class="stat-item glass-panel">
+        <span class="stat-value" id="link-count">0</span>
+        <div class="stat-label">Connections</div>
+    </div>
+</div>
+
+<div id="graph"></div>
+
+<div class="graph-controls">
+    <button class="control-btn" onclick="resetCamera()" title="Reset View">
+        ⟲
+    </button>
+</div>
+
+<div class="timeline-container glass-panel">
+    <div class="timeline-header">
+        <span class="timeline-title">Time Filter</span>
+        <span class="date-range-display" id="date-range">Last 30 Days</span>
+    </div>
+    <div class="timeline-controls">
+        <div class="date-display" id="date-label">Latest</div>
+        <input type="range" min="0" max="100" value="100" class="timeline-slider" id="timeline">
+    </div>
+</div>
+
+<div class="side-panel" id="side-panel">
+    <div class="panel-header">
+        <h2 id="panel-title">Article Details</h2>
+        <button class="close-btn" onclick="closePanel()">&times;</button>
+    </div>
+    <div class="panel-content" id="panel-content">
+    </div>
+</div>
+</div>
+
+@section Scripts {
+    <script>
+        let graphData = null;
+        let Graph = null;
+        const panel = document.getElementById('side-panel');
+        const content = document.getElementById('panel-content');
+        const title = document.getElementById('panel-title');
+        const loader = document.getElementById('loader');
+        const loaderProgress = document.getElementById('loader-progress');
+        const loaderText = document.getElementById('loader-text');
+        const timeline = document.getElementById('timeline');
+        const dateLabel = document.getElementById('date-label');
+
+        async function init() {
+            try {
+                loaderText.innerText = 'Fetching Knowledge Graph Data';
+                const response = await fetch('/api/GraphApi/data');
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+                loaderProgress.innerText = '60%';
+                loaderText.innerText = 'Processing Graph Structure';
+
+                graphData = await response.json();
+
+                // Update stats
+                document.getElementById('node-count').innerText = graphData.nodes.length;
+                document.getElementById('link-count').innerText = graphData.links.length;
+
+                loaderProgress.innerText = '100%';
+                loaderText.innerText = 'Rendering Complete';
+
+                setTimeout(() => {
+                    loader.style.opacity = '0';
+                    setTimeout(() => loader.remove(), 800);
+                }, 500);
+
+                renderGraph(graphData);
+                initTimeline();
+            } catch (err) {
+                console.error("Failed to load graph data", err);
+                loaderText.innerText = 'Connection Failed';
+                loaderText.style.color = '#ef4444';
+                loaderProgress.style.color = '#ef4444';
+            }
+        }
+
+        function renderGraph(data) {
+            const entityLinkCounts = new Map();
+            data.links.forEach(link => {
+                const sourceId = typeof link.source === 'object' ? link.source.id : link.source;
+                const targetId = typeof link.target === 'object' ? link.target.id : link.target;
+                const sourceNode = data.nodes.find(n => n.id === sourceId);
+                const targetNode = data.nodes.find(n => n.id === targetId);
+
+                if (sourceNode?.type === 'entity' && targetNode?.type === 'article') {
+                    entityLinkCounts.set(sourceId, (entityLinkCounts.get(sourceId) ?? 0) + 1);
+                }
+                if (targetNode?.type === 'entity' && sourceNode?.type === 'article') {
+                    entityLinkCounts.set(targetId, (entityLinkCounts.get(targetId) ?? 0) + 1);
+                }
+            });
+
+            Graph = ForceGraph3D()(document.getElementById('graph'))
+                .graphData(data)
+                .backgroundColor('rgba(0,0,0,0)')
+                .nodeLabel('label')
+                .nodeAutoColorBy('type')
+                .nodeVal(node => {
+                    if (node.type === 'entity') {
+                        const count = entityLinkCounts.get(node.id) ?? 0;
+                        return 4 + Math.min(count, 20) * 0.8;
+                    }
+                    return 2;
+                })
+                .linkWidth(link => {
+                    // Thicker links for stronger connections
+                    const sourceNode = data.nodes.find(n => n.id === (typeof link.source === 'object' ? link.source.id : link.source));
+                    const targetNode = data.nodes.find(n => n.id === (typeof link.target === 'object' ? link.target.id : link.target));
+                    if (sourceNode?.type === 'entity' && targetNode?.type === 'entity') return 2;
+                    return 1;
+                })
+                .linkDirectionalParticles(2)
+                .linkDirectionalParticleSpeed(0.008)
+                .linkDirectionalParticleWidth(2)
+                .linkDirectionalParticleColor(() => '#3b82f6')
+                .linkColor(() => 'rgba(148, 163, 184, 0.2)')
+                .nodeThreeObject(node => {
+                    if (node.type === 'entity') {
+                        const count = entityLinkCounts.get(node.id) ?? 0;
+                        const sizeBoost = Math.min(count, 20) * 0.3;
+                        const sprite = new SpriteText(node.label);
+                        sprite.color = '#60a5fa';
+                        sprite.textHeight = 6 + sizeBoost;
+                        sprite.backgroundColor = 'rgba(15, 23, 42, 0.8)';
+                        sprite.padding = 4;
+                        sprite.borderRadius = 8;
+                        sprite.fontFace = 'Inter';
+                        return sprite;
+                    }
+                    return false;
+                })
+                .onNodeClick(node => {
+                    const distance = 120;
+                    const distRatio = 1 + distance/Math.hypot(node.x, node.y, node.z);
+
+                    Graph.cameraPosition(
+                        { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio },
+                        node,
+                        1200
+                    );
+
+                    if (node.type === 'article') {
+                        openArticlePanel(node);
+                    } else if (node.type === 'entity') {
+                        openEntityPanel(node);
+                    }
+                })
+                .onNodeHover(node => {
+                    document.body.style.cursor = node ? 'pointer' : 'default';
+                });
+
+            // Enhanced physics
+            Graph.d3Force('charge').strength(-150);
+            Graph.d3Force('link').distance(60);
+            Graph.d3Force('center', d3.forceCenter(0, 0, 0));
+
+            // Add collision detection for better spacing
+            Graph.d3Force('collide', d3.forceCollide().radius(node => {
+                return node.type === 'entity' ? 20 : 8;
+            }).strength(0.5));
+
+        }
+
+        function resetCamera() {
+            if (!Graph) return;
+            Graph.cameraPosition(
+                { x: 0, y: 0, z: 300 },
+                { x: 0, y: 0, z: 0 },
+                1500
+            );
+        }
+
+
+        function openArticlePanel(node) {
+            title.innerText = node.label;
+            content.innerHTML = `
+                <div class="article-card">
+                    <div class="article-meta">
+                        <span class="meta-tag">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            ${node.source}
+                        </span>
+                        <span class="meta-tag date">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            ${new Date(node.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                        </span>
+                    </div>
+                    <div class="article-summary">
+                        ${node.summary}
+                    </div>
+                    <a href="${node.url}" target="_blank" class="btn-visit">
+                        Read Original Article
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                            <polyline points="15 3 21 3 21 9"></polyline>
+                            <line x1="10" y1="14" x2="21" y2="3"></line>
+                        </svg>
+                    </a>
+                </div>
+            `;
+            panel.classList.add('open');
+        }
+
+        function openEntityPanel(node) {
+            title.innerText = node.label;
+
+            let articlesHtml = "";
+            if (node.articles && node.articles.length > 0) {
+                const sortedArticles = [...node.articles].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                articlesHtml = sortedArticles.map(article => `
+                    <div class="entity-article-item" onclick="window.open('${article.url}', '_blank')">
+                        <h4>${article.title}</h4>
+                        <div class="item-meta">
+                            <span>${article.source}</span>
+                            <span>•</span>
+                            <span>${new Date(article.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                        </div>
+                        <div class="item-summary">
+                            ${article.summary}
+                        </div>
+                        <span class="read-more">
+                            Read article
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </span>
+                    </div>
+                `).join('');
+            } else {
+                articlesHtml = "<p style='color: #64748b; text-align: center; padding: 40px;'>No articles found for this topic.</p>";
+            }
+
+            content.innerHTML = `
+                <div class="entity-stats">
+                    <div class="entity-stats-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="entity-stats-text">
+                        <div class="entity-stats-count">${node.articles ? node.articles.length : 0}</div>
+                        <div class="entity-stats-label">Related Articles</div>
+                    </div>
+                </div>
+                <div class="articles-list">
+                    ${articlesHtml}
+                </div>
+            `;
+            panel.classList.add('open');
+        }
+
+        function closePanel() {
+            panel.classList.remove('open');
+        }
+
+        function initTimeline() {
+            if (!graphData || !graphData.nodes) return;
+
+            const articleNodes = graphData.nodes.filter(n => n.type === 'article');
+            if (articleNodes.length === 0) return;
+
+            const dates = articleNodes.map(n => new Date(n.date).getTime()).sort((a, b) => a - b);
+            const minDate = dates[0];
+            const maxDate = dates[dates.length - 1];
+
+            timeline.addEventListener('input', (e) => {
+                const percent = e.target.value / 100;
+                const currentDateThreshold = minDate + (maxDate - minDate) * percent;
+
+                const date = new Date(currentDateThreshold);
+                dateLabel.innerText = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+                const filteredData = {
+                    nodes: graphData.nodes.filter(n => {
+                        if (n.type === 'entity') return true;
+                        return new Date(n.date).getTime() <= currentDateThreshold;
+                    }),
+                    links: graphData.links.filter(l => {
+                        const sourceNode = graphData.nodes.find(n => n.id === (typeof l.source === 'object' ? l.source.id : l.source));
+                        const targetNode = graphData.nodes.find(n => n.id === (typeof l.target === 'object' ? l.target.id : l.target));
+
+                        if (!sourceNode || !targetNode) return false;
+
+                        const isSourceOk = sourceNode.type !== 'article' || new Date(sourceNode.date).getTime() <= currentDateThreshold;
+                        const isTargetOk = targetNode.type !== 'article' || new Date(targetNode.date).getTime() <= currentDateThreshold;
+
+                        return isSourceOk && isTargetOk;
+                    })
+                };
+
+                const activeNodeIds = new Set();
+                filteredData.links.forEach(l => {
+                    activeNodeIds.add(typeof l.source === 'object' ? l.source.id : l.source);
+                    activeNodeIds.add(typeof l.target === 'object' ? l.target.id : l.target);
+                });
+
+                filteredData.nodes = filteredData.nodes.filter(n => n.type === 'article' || activeNodeIds.has(n.id));
+
+                Graph.graphData(filteredData);
+
+                // Update stats
+                document.getElementById('node-count').innerText = filteredData.nodes.length;
+                document.getElementById('link-count').innerText = filteredData.links.length;
+            });
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closePanel();
+            if (e.key === 'r' || e.key === 'R') resetCamera();
+        });
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+}

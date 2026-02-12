@@ -2,6 +2,7 @@ using System.ServiceModel.Syndication;
 using System.Xml;
 using VeilleNet.Models;
 using VeilleNet.Services.Tools;
+using VeilleNet.Services.Data;
 
 namespace VeilleNet.Services.News;
 
@@ -24,10 +25,13 @@ public class WinFormNewsService : IWinFormNewsService
         ("DevExpress", "https://community.devexpress.com/Blogs/MainFeed", "DevExpress", "https://www.devexpress.com/favicon.ico")
     };
 
-    public WinFormNewsService(ICacheService cacheService, IFeedService feedService)
+    private readonly INewsRepository _newsRepository;
+
+    public WinFormNewsService(ICacheService cacheService, IFeedService feedService, INewsRepository newsRepository)
     {
         _cacheService = cacheService;
         _feedService = feedService;
+        _newsRepository = newsRepository;
     }
 
     public async Task<List<BaseNews>> GetLatestWinFormNewsAsync()
@@ -55,6 +59,16 @@ public class WinFormNewsService : IWinFormNewsService
         }
 
         winFormNews = winFormNews.OrderByDescending(n => n.PublishedDate).Take(20).ToList();
+        
+        // Enrich with HasAiSummary (optimization: batch check)
+        var urls = winFormNews.Select(n => n.Url).ToList();
+        var existingSummaries = await _newsRepository.GetExistingAiSummaryUrlsAsync(urls);
+
+        foreach (var news in winFormNews)
+        {
+            news.HasAiSummary = existingSummaries.Contains(news.Url);
+        }
+
         _cacheService.Set(CacheKey, winFormNews, CacheExpiration);
 
         return winFormNews;

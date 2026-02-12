@@ -7,12 +7,12 @@ namespace VeilleNet.Services.Data;
 
 public class NewsRepository : INewsRepository
 {
-    private readonly ApplicationDbContext _context;
+    private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
     private readonly ILogger<NewsRepository> _logger;
 
-    public NewsRepository(ApplicationDbContext context, ILogger<NewsRepository> logger)
+    public NewsRepository(IDbContextFactory<ApplicationDbContext> contextFactory, ILogger<NewsRepository> logger)
     {
-        _context = context;
+        _contextFactory = contextFactory;
         _logger = logger;
     }
 
@@ -27,6 +27,15 @@ public class NewsRepository : INewsRepository
             _logger.LogError(ex, "Database operation failed: {OperationName}", operationName);
             throw;
         }
+    }
+
+    private async Task<T> ExecuteWithContextAsync<T>(Func<ApplicationDbContext, Task<T>> operation, string operationName, CancellationToken cancellationToken = default)
+    {
+        return await ExecuteWithRetryAsync(async () =>
+        {
+            await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+            return await operation(context);
+        }, operationName);
     }
 
     /// <summary>
@@ -61,51 +70,51 @@ public class NewsRepository : INewsRepository
     // News Articles
     public async Task<NewsArticle?> GetNewsArticleByUrlAsync(string url, CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
-            await _context.NewsArticles
-                .AsNoTracking()
-                .FirstOrDefaultAsync(n => n.Url == url, cancellationToken),
-            nameof(GetNewsArticleByUrlAsync));
+        return await ExecuteWithContextAsync(async context =>
+                await context.NewsArticles
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(n => n.Url == url, cancellationToken),
+            nameof(GetNewsArticleByUrlAsync), cancellationToken);
     }
 
     public async Task<List<NewsArticle>> GetRecentNewsArticlesAsync(int count = 50, CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
-            await _context.NewsArticles
-                .AsNoTracking()
-                .OrderByDescending(n => n.PublishedDate)
-                .Take(count)
-                .ToListAsync(cancellationToken),
-            nameof(GetRecentNewsArticlesAsync));
+        return await ExecuteWithContextAsync(async context =>
+                await context.NewsArticles
+                    .AsNoTracking()
+                    .OrderByDescending(n => n.PublishedDate)
+                    .Take(count)
+                    .ToListAsync(cancellationToken),
+            nameof(GetRecentNewsArticlesAsync), cancellationToken);
     }
 
     public async Task<NewsArticle> AddNewsArticleAsync(NewsArticle article, CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
+        return await ExecuteWithContextAsync(async context =>
         {
             // Ensure all DateTime values are UTC
             article.PublishedDate = EnsureUtc(article.PublishedDate);
             article.CreatedAt = EnsureUtc(article.CreatedAt);
             article.UpdatedAt = EnsureUtc(article.UpdatedAt);
 
-            _context.NewsArticles.Add(article);
-            await _context.SaveChangesAsync(cancellationToken);
+            context.NewsArticles.Add(article);
+            await context.SaveChangesAsync(cancellationToken);
             return article;
-        }, nameof(AddNewsArticleAsync));
+        }, nameof(AddNewsArticleAsync), cancellationToken);
     }
 
     public async Task<NewsArticle> UpdateNewsArticleAsync(NewsArticle article, CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
+        return await ExecuteWithContextAsync(async context =>
         {
             // Ensure all DateTime values are UTC
             article.PublishedDate = EnsureUtc(article.PublishedDate);
             article.UpdatedAt = EnsureUtc(DateTime.UtcNow);
 
-            _context.Entry(article).State = EntityState.Modified;
-            await _context.SaveChangesAsync(cancellationToken);
+            context.Entry(article).State = EntityState.Modified;
+            await context.SaveChangesAsync(cancellationToken);
             return article;
-        }, nameof(UpdateNewsArticleAsync));
+        }, nameof(UpdateNewsArticleAsync), cancellationToken);
     }
 
     public async Task<List<NewsArticle>> AddOrUpdateNewsArticlesAsync(List<BaseNews> news, CancellationToken cancellationToken = default)
@@ -115,13 +124,13 @@ public class NewsRepository : INewsRepository
             return new List<NewsArticle>();
         }
 
-        return await ExecuteWithRetryAsync(async () =>
+        return await ExecuteWithContextAsync(async context =>
         {
             var results = new List<NewsArticle>();
             
             // Get all URLs to check in one query
             var urls = news.Select(n => n.Url).ToList();
-            var existingArticles = await _context.NewsArticles
+            var existingArticles = await context.NewsArticles
                 .Where(n => urls.Contains(n.Url))
                 .ToListAsync(cancellationToken);
 
@@ -150,22 +159,22 @@ public class NewsRepository : INewsRepository
                     newArticle.PublishedDate = EnsureUtc(newArticle.PublishedDate);
                     newArticle.CreatedAt = DateTime.UtcNow;
                     newArticle.UpdatedAt = DateTime.UtcNow;
-                    
-                    _context.NewsArticles.Add(newArticle);
+
+                    context.NewsArticles.Add(newArticle);
                     results.Add(newArticle);
                 }
             }
 
-            await _context.SaveChangesAsync(cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
             return results;
-        }, nameof(AddOrUpdateNewsArticlesAsync));
+        }, nameof(AddOrUpdateNewsArticlesAsync), cancellationToken);
     }
 
     public async Task<(List<NewsArticle> Items, int TotalCount)> SearchNewsArticlesAsync(string? keyword, DateTime? startDate, DateTime? endDate, string? source, int skip = 0, int take = 20, CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
+        return await ExecuteWithContextAsync(async context =>
         {
-            var query = _context.NewsArticles.AsNoTracking();
+            var query = context.NewsArticles.AsNoTracking();
 
             if (!string.IsNullOrWhiteSpace(keyword))
             {
@@ -203,55 +212,55 @@ public class NewsRepository : INewsRepository
                 .ToListAsync(cancellationToken);
 
             return (items, totalCount);
-        }, nameof(SearchNewsArticlesAsync));
+        }, nameof(SearchNewsArticlesAsync), cancellationToken);
     }
 
     public async Task<List<string>> GetAllNewsSourcesAsync(CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
-            await _context.NewsArticles
-                .AsNoTracking()
-                .Select(n => n.Source)
-                .Distinct()
-                .OrderBy(s => s)
-                .ToListAsync(cancellationToken),
-            nameof(GetAllNewsSourcesAsync));
+        return await ExecuteWithContextAsync(async context =>
+                await context.NewsArticles
+                    .AsNoTracking()
+                    .Select(n => n.Source)
+                    .Distinct()
+                    .OrderBy(s => s)
+                    .ToListAsync(cancellationToken),
+            nameof(GetAllNewsSourcesAsync), cancellationToken);
     }
 
     // AI Summaries
     public async Task<AiSummaryEntity?> GetAiSummaryByUrlAsync(string url, CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
-            await _context.AiSummaries
-                .FirstOrDefaultAsync(s => s.Url == url, cancellationToken),
-            nameof(GetAiSummaryByUrlAsync));
+        return await ExecuteWithContextAsync(async context =>
+                await context.AiSummaries
+                    .FirstOrDefaultAsync(s => s.Url == url, cancellationToken),
+            nameof(GetAiSummaryByUrlAsync), cancellationToken);
     }
 
     public async Task<List<AiSummaryEntity>> GetRecentAiSummariesAsync(int count = 50, CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
-            await _context.AiSummaries
-                .AsNoTracking()
-                .OrderByDescending(s => s.SummaryDate)
-                .Take(count)
-                .ToListAsync(cancellationToken),
-            nameof(GetRecentAiSummariesAsync));
+        return await ExecuteWithContextAsync(async context =>
+                await context.AiSummaries
+                    .AsNoTracking()
+                    .OrderByDescending(s => s.SummaryDate)
+                    .Take(count)
+                    .ToListAsync(cancellationToken),
+            nameof(GetRecentAiSummariesAsync), cancellationToken);
     }
 
     public async Task<List<AiSummaryEntity>> GetAiSummariesByDateRangeAsync(DateTime startDate, DateTime endDate, CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
-            await _context.AiSummaries
-                .AsNoTracking()
-                .Where(s => s.SummaryDate >= startDate && s.SummaryDate <= endDate)
-                .OrderByDescending(s => s.SummaryDate)
-                .ToListAsync(cancellationToken),
-            nameof(GetAiSummariesByDateRangeAsync));
+        return await ExecuteWithContextAsync(async context =>
+                await context.AiSummaries
+                    .AsNoTracking()
+                    .Where(s => s.SummaryDate >= startDate && s.SummaryDate <= endDate)
+                    .OrderByDescending(s => s.SummaryDate)
+                    .ToListAsync(cancellationToken),
+            nameof(GetAiSummariesByDateRangeAsync), cancellationToken);
     }
 
     public async Task<AiSummaryEntity> AddAiSummaryAsync(AiSummaryEntity summary, CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
+        return await ExecuteWithContextAsync(async context =>
         {
             // Ensure all DateTime values are UTC
             summary.PublishedDate = EnsureUtc(summary.PublishedDate);
@@ -259,36 +268,36 @@ public class NewsRepository : INewsRepository
             summary.CreatedAt = DateTime.UtcNow;
             summary.UpdatedAt = DateTime.UtcNow;
 
-            _context.AiSummaries.Add(summary);
-            await _context.SaveChangesAsync(cancellationToken);
+            context.AiSummaries.Add(summary);
+            await context.SaveChangesAsync(cancellationToken);
             return summary;
-        }, nameof(AddAiSummaryAsync));
+        }, nameof(AddAiSummaryAsync), cancellationToken);
     }
 
     public async Task<AiSummaryEntity> UpdateAiSummaryAsync(AiSummaryEntity summary, CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
+        return await ExecuteWithContextAsync(async context =>
         {
             // Ensure all DateTime values are UTC
             summary.PublishedDate = EnsureUtc(summary.PublishedDate);
             summary.SummaryDate = EnsureUtc(summary.SummaryDate);
             summary.UpdatedAt = DateTime.UtcNow;
 
-            _context.Entry(summary).State = EntityState.Modified;
-            await _context.SaveChangesAsync(cancellationToken);
+            context.Entry(summary).State = EntityState.Modified;
+            await context.SaveChangesAsync(cancellationToken);
             return summary;
-        }, nameof(UpdateAiSummaryAsync));
+        }, nameof(UpdateAiSummaryAsync), cancellationToken);
     }
 
     public async Task<AiSummaryEntity> AddOrUpdateAiSummaryAsync(AiContentSummary summary, CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
+        return await ExecuteWithContextAsync(async context =>
         {
-            var existing = await _context.AiSummaries
+            var existing = await context.AiSummaries
                 .FirstOrDefaultAsync(s => s.Url == summary.Url, cancellationToken);
 
             // Get the corresponding news article
-            var newsArticle = await _context.NewsArticles
+            var newsArticle = await context.NewsArticles
                 .FirstOrDefaultAsync(n => n.Url == summary.Url, cancellationToken);
 
             int? newsArticleId = newsArticle?.Id;
@@ -305,7 +314,7 @@ public class NewsRepository : INewsRepository
                 existing.UpdatedAt = DateTime.UtcNow;
                 existing.NewsArticleId = newsArticleId; // Link to news article
 
-                await _context.SaveChangesAsync(cancellationToken);
+                await context.SaveChangesAsync(cancellationToken);
                 return existing;
             }
             else
@@ -317,11 +326,11 @@ public class NewsRepository : INewsRepository
                 newSummary.CreatedAt = DateTime.UtcNow;
                 newSummary.UpdatedAt = DateTime.UtcNow;
 
-                _context.AiSummaries.Add(newSummary);
-                await _context.SaveChangesAsync(cancellationToken);
+                context.AiSummaries.Add(newSummary);
+                await context.SaveChangesAsync(cancellationToken);
                 return newSummary;
             }
-        }, nameof(AddOrUpdateAiSummaryAsync));
+        }, nameof(AddOrUpdateAiSummaryAsync), cancellationToken);
     }
 
     public async Task<List<AiSummaryEntity>> AddOrUpdateAiSummariesAsync(List<AiContentSummary> summaries, CancellationToken cancellationToken = default)
@@ -331,7 +340,7 @@ public class NewsRepository : INewsRepository
             return new List<AiSummaryEntity>();
         }
 
-        return await ExecuteWithRetryAsync(async () =>
+        return await ExecuteWithContextAsync(async context =>
         {
             var results = new List<AiSummaryEntity>();
 
@@ -339,12 +348,12 @@ public class NewsRepository : INewsRepository
             var urls = summaries.Select(s => s.Url).ToList();
             
             // Get existing summaries
-            var existingSummaries = await _context.AiSummaries
+            var existingSummaries = await context.AiSummaries
                 .Where(s => urls.Contains(s.Url))
                 .ToListAsync(cancellationToken);
 
             // Get corresponding news articles to link them
-            var newsArticles = await _context.NewsArticles
+            var newsArticles = await context.NewsArticles
                 .Where(n => urls.Contains(n.Url))
                 .ToListAsync(cancellationToken);
 
@@ -383,8 +392,18 @@ public class NewsRepository : INewsRepository
                         newSummary.CreatedAt = DateTime.UtcNow;
                         newSummary.UpdatedAt = DateTime.UtcNow;
 
-                        _context.AiSummaries.Add(newSummary);
+                        context.AiSummaries.Add(newSummary);
                         results.Add(newSummary);
+                    }
+
+                    // Save entities if present
+                    if (summary.Entities != null && summary.Entities.Any())
+                    {
+                        var article = newsArticle ?? await context.NewsArticles.FirstOrDefaultAsync(n => n.Url == summary.Url, cancellationToken);
+                        if (article != null)
+                        {
+                            await AddEntitiesToArticleAsync(article.Id, summary.Entities, cancellationToken);
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -393,47 +412,64 @@ public class NewsRepository : INewsRepository
                 }
             }
 
-            await _context.SaveChangesAsync(cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
             return results;
-        }, nameof(AddOrUpdateAiSummariesAsync));
+        }, nameof(AddOrUpdateAiSummariesAsync), cancellationToken);
+    }
+
+    public async Task<HashSet<string>> GetExistingAiSummaryUrlsAsync(IEnumerable<string> urls, CancellationToken cancellationToken = default)
+    {
+        return await ExecuteWithContextAsync(async context =>
+        {
+            var uniqueUrls = urls.Where(u => !string.IsNullOrWhiteSpace(u)).Distinct().ToList();
+            if (!uniqueUrls.Any()) return new HashSet<string>();
+
+            var existingUrls = await context.AiSummaries
+                .AsNoTracking()
+                .Where(s => uniqueUrls.Contains(s.Url))
+                .Select(s => s.Url)
+                .ToListAsync(cancellationToken);
+
+            return new HashSet<string>(existingUrls);
+        }, nameof(GetExistingAiSummaryUrlsAsync), cancellationToken);
     }
 
     // Newsletter Subscribers
     public async Task<NewsletterSubscriber?> GetSubscriberByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
-            await _context.NewsletterSubscribers
-                .AsNoTracking()
-                .FirstOrDefaultAsync(s => s.Email.ToLower() == email.ToLower(), cancellationToken),
-            nameof(GetSubscriberByEmailAsync));
+        return await ExecuteWithContextAsync(async context =>
+                await context.NewsletterSubscribers
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(s => s.Email.ToLower() == email.ToLower(), cancellationToken),
+            nameof(GetSubscriberByEmailAsync), cancellationToken);
     }
 
     public async Task<List<NewsletterSubscriber>> GetActiveSubscribersAsync(CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
-            await _context.NewsletterSubscribers
-                .AsNoTracking()
-                .Where(s => s.IsActive)
-                .OrderBy(s => s.Email)
-                .ToListAsync(cancellationToken),
-            nameof(GetActiveSubscribersAsync));
+        return await ExecuteWithContextAsync(async context =>
+                await context.NewsletterSubscribers
+                    .AsNoTracking()
+                    .Where(s => s.IsActive)
+                    .OrderBy(s => s.Email)
+                    .ToListAsync(cancellationToken),
+            nameof(GetActiveSubscribersAsync), cancellationToken);
     }
 
     public async Task<List<NewsletterSubscriber>> GetAllSubscribersAsync(CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
-            await _context.NewsletterSubscribers
-                .AsNoTracking()
-                .OrderByDescending(s => s.SubscribedAt)
-                .ToListAsync(cancellationToken),
-            nameof(GetAllSubscribersAsync));
+        return await ExecuteWithContextAsync(async context =>
+                await context.NewsletterSubscribers
+                    .AsNoTracking()
+                    .OrderByDescending(s => s.SubscribedAt)
+                    .ToListAsync(cancellationToken),
+            nameof(GetAllSubscribersAsync), cancellationToken);
     }
 
     public async Task<NewsletterSubscriber> SubscribeAsync(string email, string source = "Website", bool isActive = true, CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
+        return await ExecuteWithContextAsync(async context =>
         {
-            var existing = await _context.NewsletterSubscribers
+            var existing = await context.NewsletterSubscribers
                 .FirstOrDefaultAsync(s => s.Email.ToLower() == email.ToLower(), cancellationToken);
 
             if (existing != null)
@@ -447,7 +483,7 @@ public class NewsRepository : INewsRepository
                 if (!existing.IsActive && isActive)
                 {
                     existing.Resubscribe();
-                    await _context.SaveChangesAsync(cancellationToken);
+                    await context.SaveChangesAsync(cancellationToken);
                 }
                 return existing;
             }
@@ -463,17 +499,17 @@ public class NewsRepository : INewsRepository
                 UpdatedAt = DateTime.UtcNow
             };
 
-            _context.NewsletterSubscribers.Add(subscriber);
-            await _context.SaveChangesAsync(cancellationToken);
+            context.NewsletterSubscribers.Add(subscriber);
+            await context.SaveChangesAsync(cancellationToken);
             return subscriber;
-        }, nameof(SubscribeAsync));
+        }, nameof(SubscribeAsync), cancellationToken);
     }
 
     public async Task<NewsletterSubscriber> UnsubscribeAsync(string email, string? reason = null, CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
+        return await ExecuteWithContextAsync(async context =>
         {
-            var subscriber = await _context.NewsletterSubscribers
+            var subscriber = await context.NewsletterSubscribers
                 .FirstOrDefaultAsync(s => s.Email.ToLower() == email.ToLower(), cancellationToken);
 
             if (subscriber == null)
@@ -482,53 +518,53 @@ public class NewsRepository : INewsRepository
             }
 
             subscriber.Unsubscribe(reason);
-            await _context.SaveChangesAsync(cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
             return subscriber;
-        }, nameof(UnsubscribeAsync));
+        }, nameof(UnsubscribeAsync), cancellationToken);
     }
 
     public async Task<bool> IsSubscribedAsync(string email, CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
+        return await ExecuteWithContextAsync(async context =>
         {
-            var subscriber = await _context.NewsletterSubscribers
+            var subscriber = await context.NewsletterSubscribers
                 .AsNoTracking()
                 .FirstOrDefaultAsync(s => s.Email.ToLower() == email.ToLower(), cancellationToken);
 
             return subscriber != null && subscriber.IsActive;
-        }, nameof(IsSubscribedAsync));
+        }, nameof(IsSubscribedAsync), cancellationToken);
     }
 
     public async Task IncrementEmailSentAsync(string email, CancellationToken cancellationToken = default)
     {
-        await ExecuteWithRetryAsync(async () =>
+        await ExecuteWithContextAsync(async context =>
         {
-            var subscriber = await _context.NewsletterSubscribers
+            var subscriber = await context.NewsletterSubscribers
                 .FirstOrDefaultAsync(s => s.Email.ToLower() == email.ToLower(), cancellationToken);
 
             if (subscriber != null && subscriber.IsActive)
             {
                 subscriber.IncrementEmailSent();
-                await _context.SaveChangesAsync(cancellationToken);
+                await context.SaveChangesAsync(cancellationToken);
             }
 
             return Task.CompletedTask;
-        }, nameof(IncrementEmailSentAsync));
+        }, nameof(IncrementEmailSentAsync), cancellationToken);
     }
 
     public async Task<int> GetActiveSubscribersCountAsync(CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
-            await _context.NewsletterSubscribers
-                .CountAsync(s => s.IsActive, cancellationToken),
-            nameof(GetActiveSubscribersCountAsync));
+        return await ExecuteWithContextAsync(async context =>
+                await context.NewsletterSubscribers
+                    .CountAsync(s => s.IsActive, cancellationToken),
+            nameof(GetActiveSubscribersCountAsync), cancellationToken);
     }
 
     public async Task<string> GenerateUnsubscribeTokenAsync(string email, CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
+        return await ExecuteWithContextAsync(async context =>
         {
-            var subscriber = await _context.NewsletterSubscribers
+            var subscriber = await context.NewsletterSubscribers
                 .FirstOrDefaultAsync(s => s.Email.ToLower() == email.ToLower(), cancellationToken);
 
             if (subscriber == null)
@@ -545,17 +581,17 @@ public class NewsRepository : INewsRepository
             }
 
             subscriber.GenerateUnsubscribeToken();
-            await _context.SaveChangesAsync(cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
 
             return subscriber.UnsubscribeToken ?? throw new InvalidOperationException("Failed to generate token");
-        }, nameof(GenerateUnsubscribeTokenAsync));
+        }, nameof(GenerateUnsubscribeTokenAsync), cancellationToken);
     }
 
     public async Task<string> GenerateConfirmationTokenAsync(string email, CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
+        return await ExecuteWithContextAsync(async context =>
         {
-            var subscriber = await _context.NewsletterSubscribers
+            var subscriber = await context.NewsletterSubscribers
                 .FirstOrDefaultAsync(s => s.Email.ToLower() == email.ToLower(), cancellationToken);
 
             if (subscriber == null)
@@ -572,17 +608,17 @@ public class NewsRepository : INewsRepository
             }
 
             subscriber.GenerateConfirmationToken();
-            await _context.SaveChangesAsync(cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
 
             return subscriber.ConfirmationToken ?? throw new InvalidOperationException("Failed to generate token");
-        }, nameof(GenerateConfirmationTokenAsync));
+        }, nameof(GenerateConfirmationTokenAsync), cancellationToken);
     }
 
     public async Task<bool> HasValidUnsubscribeTokenAsync(string email, CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
+        return await ExecuteWithContextAsync(async context =>
         {
-            var subscriber = await _context.NewsletterSubscribers
+            var subscriber = await context.NewsletterSubscribers
                 .AsNoTracking()
                 .FirstOrDefaultAsync(s => s.Email.ToLower() == email.ToLower(), cancellationToken);
 
@@ -594,32 +630,32 @@ public class NewsRepository : INewsRepository
             return !string.IsNullOrEmpty(subscriber.UnsubscribeToken) &&
                    subscriber.UnsubscribeTokenExpiresAt.HasValue &&
                    subscriber.UnsubscribeTokenExpiresAt.Value > DateTime.UtcNow;
-        }, nameof(HasValidUnsubscribeTokenAsync));
+        }, nameof(HasValidUnsubscribeTokenAsync), cancellationToken);
     }
 
     public async Task<NewsletterSubscriber?> GetSubscriberByTokenAsync(string token, CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
-            await _context.NewsletterSubscribers
-                .AsNoTracking()
-                .FirstOrDefaultAsync(s => s.UnsubscribeToken == token.ToLower(), cancellationToken),
-            nameof(GetSubscriberByTokenAsync));
+        return await ExecuteWithContextAsync(async context =>
+                await context.NewsletterSubscribers
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(s => s.UnsubscribeToken == token.ToLower(), cancellationToken),
+            nameof(GetSubscriberByTokenAsync), cancellationToken);
     }
 
     public async Task<NewsletterSubscriber?> GetSubscriberByConfirmationTokenAsync(string token, CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
-            await _context.NewsletterSubscribers
-                .FirstOrDefaultAsync(s => s.ConfirmationToken == token.ToLower(), cancellationToken),
-            nameof(GetSubscriberByConfirmationTokenAsync));
+        return await ExecuteWithContextAsync(async context =>
+                await context.NewsletterSubscribers
+                    .FirstOrDefaultAsync(s => s.ConfirmationToken == token.ToLower(), cancellationToken),
+            nameof(GetSubscriberByConfirmationTokenAsync), cancellationToken);
     }
 
     public async Task<bool> UnsubscribeWithTokenAsync(string token, CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
+        return await ExecuteWithContextAsync(async context =>
         {
             var normalizedToken = token.ToLower();
-            var subscriber = await _context.NewsletterSubscribers
+            var subscriber = await context.NewsletterSubscribers
                 .FirstOrDefaultAsync(s => s.UnsubscribeToken == normalizedToken, cancellationToken);
 
             if (subscriber == null)
@@ -635,18 +671,18 @@ public class NewsRepository : INewsRepository
             }
 
             subscriber.Unsubscribe("Unsubscribed via email link");
-            await _context.SaveChangesAsync(cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
 
             return true;
-        }, nameof(UnsubscribeWithTokenAsync));
+        }, nameof(UnsubscribeWithTokenAsync), cancellationToken);
     }
 
     public async Task<bool> ConfirmSubscriptionAsync(string token, CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
+        return await ExecuteWithContextAsync(async context =>
         {
             var normalizedToken = token.ToLower();
-            var subscriber = await _context.NewsletterSubscribers
+            var subscriber = await context.NewsletterSubscribers
                 .FirstOrDefaultAsync(s => s.ConfirmationToken == normalizedToken, cancellationToken);
 
             if (subscriber == null)
@@ -662,20 +698,20 @@ public class NewsRepository : INewsRepository
             }
 
             subscriber.ConfirmSubscription();
-            await _context.SaveChangesAsync(cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
 
             return true;
-        }, nameof(ConfirmSubscriptionAsync));
+        }, nameof(ConfirmSubscriptionAsync), cancellationToken);
     }
 
     // Daily Newsletters
     public async Task<DailyNewsletter?> GetNewsletterByDateAsync(DateOnly date, CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
-            await _context.DailyNewsletters
-                .AsNoTracking()
-                .FirstOrDefaultAsync(n => n.NewsletterDate == date, cancellationToken),
-            nameof(GetNewsletterByDateAsync));
+        return await ExecuteWithContextAsync(async context =>
+                await context.DailyNewsletters
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(n => n.NewsletterDate == date, cancellationToken),
+            nameof(GetNewsletterByDateAsync), cancellationToken);
     }
 
     public async Task<DailyNewsletter?> GetTodayNewsletterAsync(CancellationToken cancellationToken = default)
@@ -686,20 +722,20 @@ public class NewsRepository : INewsRepository
 
     public async Task<List<DailyNewsletter>> GetRecentNewslettersAsync(int count = 30, CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
-            await _context.DailyNewsletters
-                .AsNoTracking()
-                .OrderByDescending(n => n.NewsletterDate)
-                .Take(count)
-                .ToListAsync(cancellationToken),
-            nameof(GetRecentNewslettersAsync));
+        return await ExecuteWithContextAsync(async context =>
+                await context.DailyNewsletters
+                    .AsNoTracking()
+                    .OrderByDescending(n => n.NewsletterDate)
+                    .Take(count)
+                    .ToListAsync(cancellationToken),
+            nameof(GetRecentNewslettersAsync), cancellationToken);
     }
 
     public async Task<DailyNewsletter> CreateOrUpdateNewsletterAsync(DailyNewsletter newsletter, CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
+        return await ExecuteWithContextAsync(async context =>
         {
-            var existing = await _context.DailyNewsletters
+            var existing = await context.DailyNewsletters
                 .FirstOrDefaultAsync(n => n.NewsletterDate == newsletter.NewsletterDate, cancellationToken);
 
             if (existing != null)
@@ -712,8 +748,8 @@ public class NewsRepository : INewsRepository
                     existing.TextContent = newsletter.TextContent;
                     existing.SummaryCount = newsletter.SummaryCount;
                     existing.UpdatedAt = DateTime.UtcNow;
-                    
-                    await _context.SaveChangesAsync(cancellationToken);
+
+                    await context.SaveChangesAsync(cancellationToken);
                     return existing;
                 }
                 else
@@ -723,51 +759,51 @@ public class NewsRepository : INewsRepository
             }
 
             // Create new newsletter
-            _context.DailyNewsletters.Add(newsletter);
-            await _context.SaveChangesAsync(cancellationToken);
+            context.DailyNewsletters.Add(newsletter);
+            await context.SaveChangesAsync(cancellationToken);
             return newsletter;
-        }, nameof(CreateOrUpdateNewsletterAsync));
+        }, nameof(CreateOrUpdateNewsletterAsync), cancellationToken);
     }
 
     public async Task MarkNewsletterAsSentAsync(DateOnly date, int recipientCount, CancellationToken cancellationToken = default)
     {
-        await ExecuteWithRetryAsync(async () =>
+        await ExecuteWithContextAsync(async context =>
         {
-            var newsletter = await _context.DailyNewsletters
+            var newsletter = await context.DailyNewsletters
                 .FirstOrDefaultAsync(n => n.NewsletterDate == date, cancellationToken);
 
             if (newsletter != null)
             {
                 newsletter.MarkAsSent(recipientCount);
-                await _context.SaveChangesAsync(cancellationToken);
+                await context.SaveChangesAsync(cancellationToken);
             }
 
             return Task.CompletedTask;
-        }, nameof(MarkNewsletterAsSentAsync));
+        }, nameof(MarkNewsletterAsSentAsync), cancellationToken);
     }
 
     public async Task<bool> HasNewsletterForDateAsync(DateOnly date, CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
-            await _context.DailyNewsletters
-                .AnyAsync(n => n.NewsletterDate == date, cancellationToken),
-            nameof(HasNewsletterForDateAsync));
+        return await ExecuteWithContextAsync(async context =>
+                await context.DailyNewsletters
+                    .AnyAsync(n => n.NewsletterDate == date, cancellationToken),
+            nameof(HasNewsletterForDateAsync), cancellationToken);
     }
 
     public async Task<DominantTheme?> GetDominantThemeByDateAsync(DateOnly generationDate, CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
-            await _context.DominantThemes
-                .AsNoTracking()
-                .FirstOrDefaultAsync(t => t.GenerationDate == generationDate, cancellationToken),
-            nameof(GetDominantThemeByDateAsync));
+        return await ExecuteWithContextAsync(async context =>
+                await context.DominantThemes
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(t => t.GenerationDate == generationDate, cancellationToken),
+            nameof(GetDominantThemeByDateAsync), cancellationToken);
     }
 
     public async Task<DominantTheme> AddOrUpdateDominantThemeAsync(DateOnly generationDate, string theme, string? rationale, CancellationToken cancellationToken = default)
     {
-        return await ExecuteWithRetryAsync(async () =>
+        return await ExecuteWithContextAsync(async context =>
         {
-            var existing = await _context.DominantThemes
+            var existing = await context.DominantThemes
                 .FirstOrDefaultAsync(t => t.GenerationDate == generationDate, cancellationToken);
 
             if (existing != null)
@@ -776,14 +812,79 @@ public class NewsRepository : INewsRepository
                 existing.Rationale = rationale;
                 existing.UpdatedAt = DateTime.UtcNow;
 
-                await _context.SaveChangesAsync(cancellationToken);
+                await context.SaveChangesAsync(cancellationToken);
                 return existing;
             }
 
             var entity = DominantTheme.Create(generationDate, theme, rationale);
-            _context.DominantThemes.Add(entity);
-            await _context.SaveChangesAsync(cancellationToken);
+            context.DominantThemes.Add(entity);
+            await context.SaveChangesAsync(cancellationToken);
             return entity;
-        }, nameof(AddOrUpdateDominantThemeAsync));
+        }, nameof(AddOrUpdateDominantThemeAsync), cancellationToken);
+    }
+
+    // Named Entities (NER)
+    public async Task<List<NamedEntity>> GetAllNamedEntitiesAsync(CancellationToken cancellationToken = default)
+    {
+        return await ExecuteWithContextAsync(async context =>
+                await context.NamedEntities
+                    .AsNoTracking()
+                    .OrderBy(e => e.Name)
+                    .ToListAsync(cancellationToken),
+            nameof(GetAllNamedEntitiesAsync), cancellationToken);
+    }
+
+    public async Task<List<NamedEntity>> GetEntitiesWithArticlesAsync(int articleCount = 100, CancellationToken cancellationToken = default)
+    {
+        return await ExecuteWithContextAsync(async context =>
+                await context.NamedEntities
+                    .Include(e => e.Articles.OrderByDescending(a => a.PublishedDate).Take(articleCount))
+                    .Where(e => e.Articles.Any())
+                    .ToListAsync(cancellationToken),
+            nameof(GetEntitiesWithArticlesAsync), cancellationToken);
+    }
+
+    public async Task AddEntitiesToArticleAsync(int articleId, List<string> entityNames, CancellationToken cancellationToken = default)
+    {
+        if (entityNames == null || !entityNames.Any()) return;
+
+        await ExecuteWithContextAsync(async context =>
+        {
+            var article = await context.NewsArticles
+                .Include(a => a.Entities)
+                .FirstOrDefaultAsync(a => a.Id == articleId, cancellationToken);
+
+            if (article == null) return Task.CompletedTask;
+
+            foreach (var name in entityNames)
+            {
+                var normalizedName = name.Trim();
+                if (string.IsNullOrEmpty(normalizedName)) continue;
+
+                var entity = await context.NamedEntities
+                    .FirstOrDefaultAsync(e => e.Name == normalizedName, cancellationToken);
+
+                if (entity == null)
+                {
+                    entity = new NamedEntity { Name = normalizedName };
+                    context.NamedEntities.Add(entity);
+                }
+
+                if (!article.Entities.Any(e => e.Name == normalizedName))
+                {
+                    article.Entities.Add(entity);
+                }
+            }
+
+            await context.SaveChangesAsync(cancellationToken);
+            return Task.CompletedTask;
+        }, nameof(AddEntitiesToArticleAsync), cancellationToken);
+    }
+
+    public async Task<int> GetNamedEntityCountAsync(CancellationToken cancellationToken = default)
+    {
+        return await ExecuteWithContextAsync(async context =>
+                await context.NamedEntities.CountAsync(cancellationToken),
+            nameof(GetNamedEntityCountAsync), cancellationToken);
     }
 }

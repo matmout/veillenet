@@ -2,6 +2,7 @@ using System.ServiceModel.Syndication;
 using System.Xml;
 using VeilleNet.Models;
 using VeilleNet.Services.Tools;
+using VeilleNet.Services.Data;
 
 namespace VeilleNet.Services.News;
 
@@ -26,10 +27,13 @@ public class BlogAggregationService : IBlogAggregationService
         ("C# Blog", "https://devblogs.microsoft.com/dotnet/category/csharp/feed/", DefaultMicrosoftImage)
     };
 
-    public BlogAggregationService(ICacheService cacheService, IFeedService feedService)
+    private readonly INewsRepository _newsRepository;
+
+    public BlogAggregationService(ICacheService cacheService, IFeedService feedService, INewsRepository newsRepository)
     {
         _cacheService = cacheService;
         _feedService = feedService;
+        _newsRepository = newsRepository;
     }
 
     public async Task<List<BaseNews>> GetLatestPostsAsync()
@@ -57,6 +61,16 @@ public class BlogAggregationService : IBlogAggregationService
         }
 
         posts = posts.OrderByDescending(p => p.PublishedDate).Take(20).ToList();
+        
+        // Enrich with HasAiSummary (optimization: batch check)
+        var urls = posts.Select(p => p.Url).ToList();
+        var existingSummaries = await _newsRepository.GetExistingAiSummaryUrlsAsync(urls);
+        
+        foreach (var post in posts)
+        {
+            post.HasAiSummary = existingSummaries.Contains(post.Url);
+        }
+
         _cacheService.Set(CacheKey, posts, CacheExpiration);
 
         return posts;

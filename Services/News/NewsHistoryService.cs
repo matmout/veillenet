@@ -27,14 +27,36 @@ public class NewsHistoryService : INewsHistoryService
         var skip = Math.Max(0, (page - 1) * take);
 
         var (items, total) = await _newsRepository.SearchNewsArticlesAsync(keyword, startDate, endDate, source, skip, take, cancellationToken);
+        
         var mapped = items.Select(MapToBaseNews).ToList();
+        
+         // Enrich with HasAiSummary
+        var urls = mapped.Select(n => n.Url).ToList();
+        var existingSummaries = await _newsRepository.GetExistingAiSummaryUrlsAsync(urls, cancellationToken);
+        
+        foreach (var news in mapped)
+        {
+            news.HasAiSummary = existingSummaries.Contains(news.Url);
+        }
+        
         return new NewsSearchResult(mapped, total);
     }
 
     public async Task<List<BaseNews>> GetRecentAsync(int count = 20, CancellationToken cancellationToken = default)
     {
         var (items, _) = await _newsRepository.SearchNewsArticlesAsync(null, null, null, null, 0, Math.Clamp(count, 1, 200), cancellationToken);
-        return items.Select(MapToBaseNews).ToList();
+        var mapped = items.Select(MapToBaseNews).ToList();
+
+        // Enrich with HasAiSummary
+        var urls = mapped.Select(n => n.Url).ToList();
+        var existingSummaries = await _newsRepository.GetExistingAiSummaryUrlsAsync(urls, cancellationToken);
+        
+        foreach (var news in mapped)
+        {
+            news.HasAiSummary = existingSummaries.Contains(news.Url);
+        }
+
+        return mapped;
     }
 
     public Task<List<string>> GetSourcesAsync(CancellationToken cancellationToken = default)

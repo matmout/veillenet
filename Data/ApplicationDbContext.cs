@@ -16,10 +16,18 @@ public class ApplicationDbContext : DbContext
     public DbSet<DailyNewsletter> DailyNewsletters { get; set; }
     public DbSet<DominantTheme> DominantThemes { get; set; }
     public DbSet<JobExecutionLog> JobExecutionLogs { get; set; }
+    public DbSet<NamedEntity> NamedEntities { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        // Configure NamedEntity
+        modelBuilder.Entity<NamedEntity>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.Name).IsUnique();
+        });
 
         // Configure NewsArticle
         modelBuilder.Entity<NewsArticle>(entity =>
@@ -35,6 +43,19 @@ public class ApplicationDbContext : DbContext
 
             entity.Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            // Many-to-many relationship with NamedEntity
+            entity.HasMany(e => e.Entities)
+                .WithMany(e => e.Articles)
+                .UsingEntity<Dictionary<string, object>>(
+                    "article_entities",
+                    j => j.HasOne<NamedEntity>().WithMany().HasForeignKey("entity_id"),
+                    j => j.HasOne<NewsArticle>().WithMany().HasForeignKey("article_id"),
+                    j =>
+                    {
+                        j.ToTable("article_entities", "containsharp");
+                        j.HasKey("article_id", "entity_id");
+                    });
         });
 
         // Configure AiSummaryEntity

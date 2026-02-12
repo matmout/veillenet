@@ -10,4 +10,5 @@ public class BaseNews
     public string Source { get; set; } = string.Empty;
     public string Category { get; set; } = string.Empty; // e.g., "Microsoft", "DevExpress"
     public string Image { get; set; } = string.Empty;
+    public bool HasAiSummary { get; set; }
 }

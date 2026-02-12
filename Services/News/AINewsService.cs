@@ -2,6 +2,7 @@ using System.ServiceModel.Syndication;
 using System.Xml;
 using VeilleNet.Models;
 using VeilleNet.Services.Tools;
+using VeilleNet.Services.Data;
 
 namespace VeilleNet.Services.News;
 
@@ -30,10 +31,13 @@ public class AINewsService : IAINewsService
        // ("Google Developers Tool","https://blog.google/innovation-and-ai/technology/developers-tools/rss/","AI/Tool",string.Empty)
     };
 
-    public AINewsService(ICacheService cacheService, IFeedService feedService)
+    private readonly INewsRepository _newsRepository;
+
+    public AINewsService(ICacheService cacheService, IFeedService feedService, INewsRepository newsRepository)
     {
         _cacheService = cacheService;
         _feedService = feedService;
+        _newsRepository = newsRepository;
     }
 
     public async Task<List<BaseNews>> GetLatestAINewsAsync()
@@ -61,6 +65,16 @@ public class AINewsService : IAINewsService
         }
 
         aiNews = aiNews.OrderByDescending(n => n.PublishedDate).Take(20).ToList();
+        
+        // Enrich with HasAiSummary (optimization: batch check)
+        var urls = aiNews.Select(n => n.Url).ToList();
+        var existingSummaries = await _newsRepository.GetExistingAiSummaryUrlsAsync(urls);
+        
+        foreach (var news in aiNews)
+        {
+            news.HasAiSummary = existingSummaries.Contains(news.Url);
+        }
+
         _cacheService.Set(CacheKey, aiNews, CacheExpiration);
 
         return aiNews;
