@@ -88,6 +88,26 @@ public class NewsRepository : INewsRepository
             nameof(GetRecentNewsArticlesAsync), cancellationToken);
     }
 
+    public async Task<List<NewsArticle>> GetRecentAiSummarizedNewsArticlesAsync(int count = 100, CancellationToken cancellationToken = default)
+    {
+        count = Math.Clamp(count, 1, 500);
+
+        return await ExecuteWithContextAsync(async context =>
+        {
+            var articles = await context.AiSummaries
+                .AsNoTracking()
+                .Where(s => s.NewsArticleId != null)
+                .OrderByDescending(s => s.SummaryDate)
+                .Select(s => s.NewsArticle!)
+                .Distinct()
+                .Take(count)
+                .Include(a => a.Entities)
+                .ToListAsync(cancellationToken);
+
+            return articles;
+        }, nameof(GetRecentAiSummarizedNewsArticlesAsync), cancellationToken);
+    }
+
     public async Task<NewsArticle> AddNewsArticleAsync(NewsArticle article, CancellationToken cancellationToken = default)
     {
         return await ExecuteWithContextAsync(async context =>

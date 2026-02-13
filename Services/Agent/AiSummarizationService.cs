@@ -17,10 +17,12 @@ public interface IAiSummarizationService
     Task<List<AiContentSummary>> GetLatestBlogSummariesFromDatabaseAsync(int count = 10, CancellationToken cancellationToken = default);
     Task<string?> GetDominantThemeFromRecentNewsAsync(CancellationToken cancellationToken = default);
     Task BackfillEntitiesAsync(CancellationToken cancellationToken = default);
+    Task BackfillKeywordsForLastAiSummarizedNewsOnceAsync(int count = 100, CancellationToken cancellationToken = default);
 }
 
 public class AiSummarizationService : IAiSummarizationService
 {
+    private static int _keywordsBackfillStarted;
     private readonly IBlogAggregationService _blogAggregationService;
     private readonly ICacheService _cacheService;
     private readonly IHttpClientFactory _httpClientFactory;
@@ -60,6 +62,56 @@ public class AiSummarizationService : IAiSummarizationService
         _logger = logger;
         _scopeFactory = scopeFactory;
         _deduplicationService = deduplicationService;
+    }
+
+    public async Task BackfillKeywordsForLastAiSummarizedNewsOnceAsync(int count = 100, CancellationToken cancellationToken = default)
+    {
+        if (Interlocked.Exchange(ref _keywordsBackfillStarted, 1) == 1)
+        {
+            return;
+        }
+
+        _logger.LogInformation("Starting one-shot keyword backfill for last {Count} AI summarized news...", count);
+
+        var chatClient = _chatClientFactory.TryCreate();
+        if (chatClient is null) return;
+
+        var articles = await _newsRepository.GetRecentAiSummarizedNewsArticlesAsync(count, cancellationToken);
+        var skipped = 0;
+        var processed = 0;
+        foreach (var article in articles)
+        {
+            try
+            {
+                if (article.Entities != null && article.Entities.Any())
+                {
+                    skipped++;
+                    continue;
+                }
+
+                processed++;
+
+                var messages = new List<ChatMessage>
+                {
+                    new(ChatRole.System, "You are an expert in .NET and software engineering. Extract 3 to 7 key technologies, frameworks, or concepts mentioned in the provided title and summary as named entities. Respond ONLY with a comma-separated list of entities."),
+                    new(ChatRole.User, $"Title: {article.Title}\nSummary: {article.Summary}")
+                };
+
+                var response = await chatClient.GetResponseAsync(messages, cancellationToken: cancellationToken);
+                var entities = response.Text?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
+
+                if (entities != null && entities.Any())
+                {
+                    await _newsRepository.AddEntitiesToArticleAsync(article.Id, entities, cancellationToken);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error backfilling keywords for article: {Id}", article.Id);
+            }
+        }
+
+        _logger.LogInformation("One-shot keyword backfill completed. Processed={Processed} SkippedAlreadyTagged={Skipped}", processed, skipped);
     }
 
     public async Task<List<AiContentSummary>> GetLatestBlogSummariesFromDatabaseAsync(int count = 10, CancellationToken cancellationToken = default)

@@ -17,6 +17,7 @@ public class AiSummaryModel : PageModel
 
     public async Task OnGetAsync()
     {
+        _ = Task.Run(() => _aiSummarizationService.BackfillKeywordsForLastAiSummarizedNewsOnceAsync(100));
         Summaries = await _aiSummarizationService.GetLatestBlogSummariesAsync(12);
     }
 }

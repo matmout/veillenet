@@ -15,6 +15,9 @@ using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Ensure environment variables (e.g. Railway `Database__ConnectionString`) override appsettings.
+builder.Configuration.AddEnvironmentVariables();
+
 // Logging: be verbose only in Development
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();

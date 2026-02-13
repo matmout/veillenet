@@ -8,6 +8,7 @@ public interface INewsRepository
     // News Articles
     Task<NewsArticle?> GetNewsArticleByUrlAsync(string url, CancellationToken cancellationToken = default);
     Task<List<NewsArticle>> GetRecentNewsArticlesAsync(int count = 50, CancellationToken cancellationToken = default);
+    Task<List<NewsArticle>> GetRecentAiSummarizedNewsArticlesAsync(int count = 100, CancellationToken cancellationToken = default);
     Task<NewsArticle> AddNewsArticleAsync(NewsArticle article, CancellationToken cancellationToken = default);
     Task<NewsArticle> UpdateNewsArticleAsync(NewsArticle article, CancellationToken cancellationToken = default);
     Task<List<NewsArticle>> AddOrUpdateNewsArticlesAsync(List<BaseNews> news, CancellationToken cancellationToken = default);
