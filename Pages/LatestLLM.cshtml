@@ -7,16 +7,7 @@
 }
 
 <div class="container-fluid">
-    <div class="row mb-4">
-        <div class="col-12">
-            <h1 class="display-4 text-center mb-3">
-                <i class="bi bi-cpu"></i> Latest LLM
-            </h1>
-            <p class="lead text-center text-muted">
-                Explore the latest Large Language Models available for AI-powered development
-            </p>
-        </div>
-    </div>
+    <partial name="_PageHeaderPartial" view-data='@(new ViewDataDictionary(ViewData) { { "Icon", "cpu" }, { "HeaderTitle", "Latest LLM" }, { "HeaderDescription", "Explore the latest Large Language Models available for AI-powered development" } })' />
 
     <!-- LLM Cards Grid -->
     <div class="row g-4">

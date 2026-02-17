@@ -142,6 +142,7 @@ builder.Services.AddScoped<IStackOverflowService, StackOverflowService>();
 builder.Services.AddScoped<IXPostsService, XPostsService>();
 builder.Services.AddScoped<ILLMService, LLMService>();
 builder.Services.AddSingleton<IQuestionService, QuestionService>();
+builder.Services.AddSingleton<IFrameworkVersionService, FrameworkVersionService>();
 builder.Services.AddScoped<INewsHistoryService, NewsHistoryService>();
 builder.Services.AddScoped<INewsDeduplicationService, NewsDeduplicationService>();
 
@@ -266,6 +267,18 @@ using (var scope = app.Services.CreateScope())
 // Configure the HTTP request pipeline.
 // Use response compression early in the pipeline
 app.UseResponseCompression();
+
+app.Use(async (context, next) =>
+{
+    if (string.Equals(context.Request.Host.Host, "containsharp.com", StringComparison.OrdinalIgnoreCase))
+    {
+        var target = $"https://www.containsharp.com{context.Request.Path}{context.Request.QueryString}";
+        context.Response.Redirect(target, permanent: true);
+        return;
+    }
+
+    await next();
+});
 
 // Configure status code pages for 404
 app.UseStatusCodePagesWithReExecute("/Error404");

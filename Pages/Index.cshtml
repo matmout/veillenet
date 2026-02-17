@@ -1,5 +1,6 @@
 ﻿@page
 @model IndexModel
+@using VeilleNet.Models.ViewModels
 @{
     ViewData["Title"] = "Dashboard";
     ViewData["Description"] = "ContainSharp Dashboard - Your daily C# news hub. Track latest .NET releases, AI coding tools, WinForms updates, official blogs, GitHub trending projects and C# video tutorials.";
@@ -44,66 +45,16 @@
     <div class="row mb-4">
         <!-- AI News Section -->
         <div class="col-lg-6 mb-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-header bg-warning text-dark">
-                    <h2 class="h4 mb-0">
-                        <i class="bi bi-robot"></i> Coding Agents - AI News
-                    </h2>
-                </div>
-                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
-                    @if (Model.AINews.Any())
-                    {
-                        <div class="list-group list-group-flush">
-                            @foreach (var news in Model.AINews)
-                            {
-                                <div class="list-group-item px-0" style="overflow: visible;">
-                                    <div class="d-flex w-100 align-items-start">
-                                        @if (!string.IsNullOrEmpty(news.Image))
-                                        {
-                                            <div class="me-3 flex-shrink-0">
-                                                <img src="@news.Image" alt="@news.Title" style="width: 60px; height: 45px; object-fit: cover; border-radius: 4px;" />
-                                            </div>
-                                        }
-                                        else
-                                        {
-                                            <div class="me-3 flex-shrink-0">
-                                                <img src="~/images/newsia.png" alt="@news.Title" style="width: 60px; height: 45px; object-fit: cover; border-radius: 4px;" />
-                                            </div>
-                                        }
-                                        <div class="flex-grow-1">
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <h6 class="mb-1 flex-grow-1">
-                                                    <a href="@news.Url" target="_blank" class="text-decoration-none">@news.Title</a>
-                                                </h6>
-                                                @if (news.HasAiSummary)
-                                                {
-                                                    <a href="/AiSummary?url=@Uri.EscapeDataString(news.Url)" title="View AI Summary" class="ms-2 flex-shrink-0">
-                                                        <img src="~/images/mcp/technologie-ia.png" alt="AI Summary Available" style="width: 24px; height: 24px;" />
-                                                    </a>
-                                                }
-                                            </div>
-                                            @if (!string.IsNullOrEmpty(news.Summary))
-                                            {
-                                                <div class="mb-1 small text-muted ai-summary-content news-summary">
-                                                    @Html.Raw(news.Summary)
-                                                </div>
-                                            }
-                                            <small class="text-muted">
-                                                <i class="bi bi-tag"></i> @news.Source |
-                                                <i class="bi bi-calendar"></i> @news.PublishedDate.ToString("dd MMM yyyy")
-                                            </small>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                    }
-                    else
-                    {
-                        <p class="text-muted text-center">Loading AI news...</p>
-                    }
-                </div>
-            </div>
+            @await Html.PartialAsync("_NewsBlockPartial", new NewsBlockViewModel
+            {
+                Title = "Coding Agents - AI News",
+                Icon = "bi-robot",
+                HeaderCssClass = "bg-warning text-dark",
+                DefaultImageUrl = "~/images/newsia.png",
+                ShowAuthor = false,
+                LoadingText = "Loading AI news...",
+                Items = Model.AINews
+            })
         </div>
 
         <!-- C# Videos Section -->
@@ -239,132 +190,31 @@
     <div class="row mb-4">
         <!-- Official .NET Blogs (moved to StackOverflow position, size swapped to 400px) -->
         <div class="col-lg-6 mb-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-header bg-success text-white">
-                    <h2 class="h4 mb-0">
-                        <i class="bi bi-rss"></i> Official .NET Blogs
-                    </h2>
-                </div>
-                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
-                    @if (Model.BlogPosts.Any())
-                    {
-                        <div class="list-group list-group-flush">
-                            @foreach (var post in Model.BlogPosts)
-                            {
-                                <div class="list-group-item px-0" style="overflow: visible;">
-                                    <div class="d-flex w-100 align-items-start">
-                                        @if (!string.IsNullOrEmpty(post.Image))
-                                        {
-                                            <div class="me-3 flex-shrink-0">
-                                                <img src="@post.Image" alt="@post.Title" style="width: 60px; height: 45px; object-fit: cover; border-radius: 4px;" />
-                                            </div>
-                                        }
-                                        else
-                                        {
-                                            <div class="me-3 flex-shrink-0 d-flex align-items-center justify-content-center bg-secondary bg-opacity-10" style="width: 60px; height: 45px; border-radius: 4px;">
-                                                <i class="bi bi-newspaper" style="font-size: 1.5rem; color: #6c757d;"></i>
-                                            </div>
-                                        }
-                                        <div class="flex-grow-1">
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <h6 class="mb-1 flex-grow-1">
-                                                    <a href="@post.Url" target="_blank" class="text-decoration-none">
-                                                        @post.Title
-                                                    </a>
-                                                </h6>
-                                                @if (post.HasAiSummary)
-                                                {
-                                                    <a href="/AiSummary?url=@Uri.EscapeDataString(post.Url)" title="View AI Summary" class="ms-2 flex-shrink-0">
-                                                        <img src="~/images/mcp/technologie-ia.png" alt="AI Summary Available" style="width: 24px; height: 24px;" />
-                                                    </a>
-                                                }
-                                            </div>
-                                            <div class="mb-1 small text-muted ai-summary-content" style="line-height:1.6;">
-                                                @Html.Raw(post.Summary)
-                                            </div>
-                                            <small class="text-muted">
-                                                <i class="bi bi-person"></i> @post.Author | 
-                                                <i class="bi bi-tag"></i> @post.Source | 
-                                                <i class="bi bi-calendar"></i> @post.PublishedDate.ToString("dd MMM yyyy")
-                                            </small>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                    }
-                    else
-                    {
-                        <p class="text-muted text-center">Loading posts...</p>
-                    }
-                </div>
-            </div>
+            @await Html.PartialAsync("_NewsBlockPartial", new NewsBlockViewModel
+            {
+                Title = "Official .NET Blogs",
+                Icon = "bi-rss",
+                HeaderCssClass = "bg-success text-white",
+                DefaultIconClass = "bi-newspaper",
+                ShowAuthor = true,
+                LoadingText = "Loading posts...",
+                Items = Model.BlogPosts
+            })
         </div>
 
         <!-- WinForm News Section -->
         <div class="col-lg-6 mb-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-header bg-warning text-dark">
-                    <h2 class="h4 mb-0">
-                        <i class="bi bi-window-desktop"></i> DevExpress - News
-                    </h2>
-                </div>
-                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
-                    @if (Model.WinFormNews.Any())
-                    {
-                        <div class="list-group list-group-flush">
-                            @foreach (var news in Model.WinFormNews)
-                            {
-                                <div class="list-group-item px-0" style="overflow: visible;">
-                                    <div class="d-flex w-100 align-items-start">
-                                        @if (!string.IsNullOrEmpty(news.Image))
-                                        {
-                                            <div class="me-3 flex-shrink-0">
-                                                <img src="@news.Image" alt="@news.Title" style="width: 60px; height: 45px; object-fit: cover; border-radius: 4px;" />
-                                            </div>
-                                        }
-                                        else
-                                        {
-                                            <div class="me-3 flex-shrink-0 d-flex align-items-center justify-content-center bg-secondary bg-opacity-10" style="width: 60px; height: 45px; border-radius: 4px;">
-                                                <i class="bi bi-newspaper" style="font-size: 1.5rem; color: #6c757d;"></i>
-                                            </div>
-                                        }
-                                        <div class="flex-grow-1">
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <h6 class="mb-1 flex-grow-1">
-                                                    <a href="@news.Url" target="_blank" class="text-decoration-none">
-                                                        @news.Title
-                                                    </a>
-                                                </h6>
-                                                @if (news.HasAiSummary)
-                                                {
-                                                    <a href="/AiSummary?url=@Uri.EscapeDataString(news.Url)" title="View AI Summary" class="ms-2 flex-shrink-0">
-                                                        <img src="~/images/mcp/technologie-ia.png" alt="AI Summary Available" style="width: 24px; height: 24px;" />
-                                                    </a>
-                                                }
-                                            </div>
-                                            @if (!string.IsNullOrEmpty(news.Summary))
-                                            {
-                                                <div class="mb-1 small text-muted ai-summary-content" style="line-height:1.6;">
-                                                    @Html.Raw(news.Summary.Length > 200 ? news.Summary.Substring(0, 260) + "..." : news.Summary)
-                                                </div>
-                                            }
-                                            <small class="text-muted">
-                                                <i class="bi bi-tag"></i> @news.Source |
-                                                <i class="bi bi-calendar"></i> @news.PublishedDate.ToString("dd MMM yyyy")
-                                            </small>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                    }
-                    else
-                    {
-                        <p class="text-muted text-center">Loading WinForms news...</p>
-                    }
-                </div>
-            </div>
+            @await Html.PartialAsync("_NewsBlockPartial", new NewsBlockViewModel
+            {
+                Title = "DevExpress - News",
+                Icon = "bi-window-desktop",
+                HeaderCssClass = "bg-warning text-dark",
+                DefaultIconClass = "bi-newspaper",
+                ShowAuthor = false,
+                SummaryMaxLength = 260,
+                LoadingText = "Loading WinForms news...",
+                Items = Model.WinFormNews
+            })
         </div>
     </div>
         <!-- Main Content Row -->

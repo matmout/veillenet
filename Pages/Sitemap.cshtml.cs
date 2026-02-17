@@ -85,6 +85,14 @@ public class SitemapModel : PageModel
             Priority = "0.8"
         });
 
+        Urls.Add(new SitemapUrl
+        {
+            Loc = $"{baseUrl}/Radar",
+            LastMod = today,
+            ChangeFreq = "weekly",
+            Priority = "0.8"
+        });
+
         // Utility pages
         Urls.Add(new SitemapUrl
         {

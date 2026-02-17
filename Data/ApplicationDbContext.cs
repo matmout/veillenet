@@ -17,6 +17,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<DominantTheme> DominantThemes { get; set; }
     public DbSet<JobExecutionLog> JobExecutionLogs { get; set; }
     public DbSet<NamedEntity> NamedEntities { get; set; }
+    public DbSet<XTrackedAccount> XTrackedAccounts { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

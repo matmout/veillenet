@@ -6,6 +6,10 @@ using Microsoft.Extensions.Options;
 using VeilleNet.Models;
 using VeilleNet.Services.Tools;
 
+using Microsoft.EntityFrameworkCore;
+using VeilleNet.Data;
+using VeilleNet.Models.Entities;
+
 namespace VeilleNet.Services.News;
 
 public interface IXPostsService
@@ -21,6 +25,7 @@ public class XPostsService : IXPostsService
     private readonly ICacheService _cacheService;
     private readonly XApiOptions _options;
     private readonly ILogger<XPostsService> _logger;
+    private readonly ApplicationDbContext _dbContext;
     private readonly string _cacheFilePath;
 
     private readonly List<XAccount> _accounts =
@@ -37,12 +42,14 @@ public class XPostsService : IXPostsService
         ICacheService cacheService,
         IOptions<XApiOptions> options,
         ILogger<XPostsService> logger,
-        IHostEnvironment hostEnvironment)
+        IHostEnvironment hostEnvironment,
+        ApplicationDbContext dbContext)
     {
         _httpClientFactory = httpClientFactory;
         _cacheService = cacheService;
         _options = options.Value;
         _logger = logger;
+        _dbContext = dbContext;
 
         var cacheDirectory = Path.Combine(hostEnvironment.ContentRootPath, "cache");
         Directory.CreateDirectory(cacheDirectory);
@@ -75,18 +82,20 @@ public class XPostsService : IXPostsService
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _options.BearerToken);
         httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Containsharp/1.0");
 
+        // Batch-resolve all user accounts in a single API call instead of N individual calls
+        var userMap = await GetOrUpdateUsersAsync(httpClient, _accounts);
+
         var posts = new List<XPost>();
         var maxResults = _options.PostsPerUser > 0 ? _options.PostsPerUser : 4;
 
         foreach (var account in _accounts)
         {
-            var user = await GetUserAsync(httpClient, account.Username);
-            if (user == null)
+            if (!userMap.TryGetValue(account.Username, out var user) || user == null)
             {
                 continue;
             }
 
-            var accountPosts = await GetUserPostsAsync(httpClient, user.Id, account, user.ProfileImageUrl, maxResults);
+            var accountPosts = await GetUserPostsAsync(httpClient, user.AccountId, account, user.ProfileImageUrl, maxResults);
             posts.AddRange(accountPosts);
         }
 
@@ -164,26 +173,110 @@ public class XPostsService : IXPostsService
         }
     }
 
-    private async Task<XUserData?> GetUserAsync(HttpClient httpClient, string username)
+    /// <summary>
+    /// Batch-resolve X user accounts. Uses DB cache for fresh entries, then fetches
+    /// stale/missing users in a single API call (GET /2/users/by?usernames=...) instead
+    /// of N individual lookups.
+    /// </summary>
+    private async Task<Dictionary<string, XTrackedAccount?>> GetOrUpdateUsersAsync(
+        HttpClient httpClient, List<XAccount> accounts)
     {
+        var result = new Dictionary<string, XTrackedAccount?>(StringComparer.OrdinalIgnoreCase);
+        var staleUsernames = new List<string>();
+
+        // 1. Check DB for all accounts
+        foreach (var account in accounts)
+        {
+            try
+            {
+                var trackedAccount = await _dbContext.XTrackedAccounts
+                    .FirstOrDefaultAsync(x => x.Username == account.Username);
+
+                if (trackedAccount != null && trackedAccount.LastUpdated > DateTime.UtcNow.AddDays(-30))
+                {
+                    // Fresh in DB — no API call needed
+                    result[account.Username] = trackedAccount;
+                }
+                else
+                {
+                    // Stale or missing — will need API fetch
+                    result[account.Username] = trackedAccount; // keep stale record as fallback
+                    staleUsernames.Add(account.Username);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Error checking DB for X user {Username}", account.Username);
+                staleUsernames.Add(account.Username);
+            }
+        }
+
+        // 2. If all accounts are fresh, skip API entirely
+        if (staleUsernames.Count == 0)
+        {
+            _logger.LogInformation("All {Count} X user profiles are fresh in DB, skipping API call", accounts.Count);
+            return result;
+        }
+
+        // 3. Batch fetch stale/missing users in a single API call
         try
         {
-            using var response = await httpClient.GetAsync($"users/by/username/{username}?user.fields=profile_image_url,name");
+            var usernames = string.Join(",", staleUsernames);
+            var url = $"users/by?usernames={usernames}&user.fields=profile_image_url,name";
+            
+            _logger.LogInformation("Batch-fetching {Count} X user profiles: {Usernames}", staleUsernames.Count, usernames);
+            
+            using var response = await httpClient.GetAsync(url);
             if (!response.IsSuccessStatusCode)
             {
-                _logger.LogWarning("X API user lookup failed for {Username}: {StatusCode}", username, response.StatusCode);
-                return null;
+                _logger.LogWarning("X API batch user lookup failed: {StatusCode}", response.StatusCode);
+                return result; // Return with stale/null records
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            var userResponse = JsonSerializer.Deserialize<XUserResponse>(json, JsonOptions);
-            return userResponse?.Data;
+            var batchResponse = JsonSerializer.Deserialize<XBatchUserResponse>(json, JsonOptions);
+
+            if (batchResponse?.Data == null || batchResponse.Data.Count == 0)
+            {
+                return result;
+            }
+
+            // 4. Update or insert each returned user
+            foreach (var userData in batchResponse.Data)
+            {
+                var username = userData.Username;
+                var existing = result.GetValueOrDefault(username);
+
+                if (existing == null)
+                {
+                    var newAccount = new XTrackedAccount
+                    {
+                        Username = username,
+                        AccountId = userData.Id,
+                        ProfileImageUrl = userData.ProfileImageUrl,
+                        LastUpdated = DateTime.UtcNow
+                    };
+                    _dbContext.XTrackedAccounts.Add(newAccount);
+                    result[username] = newAccount;
+                }
+                else
+                {
+                    existing.AccountId = userData.Id;
+                    existing.ProfileImageUrl = userData.ProfileImageUrl;
+                    existing.LastUpdated = DateTime.UtcNow;
+                    _dbContext.XTrackedAccounts.Update(existing);
+                    result[username] = existing;
+                }
+            }
+
+            await _dbContext.SaveChangesAsync();
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Error fetching X user profile for {Username}", username);
-            return null;
+            _logger.LogWarning(ex, "Error batch-fetching X user profiles");
         }
+
+        return result;
     }
 
     private async Task<List<XPost>> GetUserPostsAsync(HttpClient httpClient, string userId, XAccount account, string profileImageUrl, int maxResults)
@@ -292,6 +385,16 @@ public class XPostsService : IXPostsService
     {
         [JsonPropertyName("data")]
         public XUserData? Data { get; set; }
+    }
+
+    /// <summary>
+    /// Response model for batch user lookup (GET /2/users/by?usernames=...)
+    /// Returns a list of users instead of a single user.
+    /// </summary>
+    private sealed class XBatchUserResponse
+    {
+        [JsonPropertyName("data")]
+        public List<XUserData> Data { get; set; } = [];
     }
 
     private sealed class XUserData

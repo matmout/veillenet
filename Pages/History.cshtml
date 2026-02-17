@@ -28,12 +28,7 @@
 </style>
 
 <div class="container-fluid">
-    <div class="row mb-4">
-        <div class="col-12 text-center">
-            <h1 class="display-5 mb-2">News Archive</h1>
-            <p class="text-muted">Search by keywords, publication date, or publisher across all stored articles.</p>
-        </div>
-    </div>
+    <partial name="_PageHeaderPartial" view-data='@(new ViewDataDictionary(ViewData) { { "Icon", "archive" }, { "HeaderTitle", "News Archive" }, { "HeaderDescription", "Search by keywords, publication date, or publisher across all stored articles." } })' />
 
     <div class="row mb-4">
         <div class="col-12">

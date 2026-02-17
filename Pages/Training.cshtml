@@ -8,16 +8,7 @@
 }
 
 <div class="container-fluid">
-    <div class="row mb-4">
-        <div class="col-12">
-            <h1 class="display-4 text-center mb-3">
-                <i class="bi bi-mortarboard"></i> Training
-            </h1>
-            <p class="lead text-center text-muted">
-                Test your C# and .NET knowledge with random questions
-            </p>
-        </div>
-    </div>
+    <partial name="_PageHeaderPartial" view-data='@(new ViewDataDictionary(ViewData) { { "Icon", "mortarboard" }, { "HeaderTitle", "Training" }, { "HeaderDescription", "Test your C# and .NET knowledge with random questions" } })' />
 
     <!-- Stats Card -->
     <div class="row mb-4">

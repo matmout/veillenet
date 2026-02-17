@@ -1,0 +1,348 @@
+@page
+@using VeilleNet.Models
+@model RadarModel
+@{
+    ViewData["Title"] = "Version Radar";
+    ViewData["Description"] = "Interactive timeline and radar of .NET ecosystem versions. Track .NET, ASP.NET Core, EF Core, MAUI, C#, Blazor, and Visual Studio lifecycle, support status, and migration paths.";
+
+    var today = DateTime.Today;
+    var timelineStart = new DateTime(2009, 1, 1);
+    var timelineEnd = new DateTime(2035, 1, 1);
+    var totalDays = (timelineEnd - timelineStart).TotalDays;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/radar.css" asp-append-version="true" />
+}
+
+<div class="container-fluid" id="radar-page">
+
+    <!-- Header -->
+    <partial name="_PageHeaderPartial" view-data='@(new ViewDataDictionary(ViewData) { { "Icon", "broadcast-pin" }, { "HeaderTitle", "Version Radar" }, { "HeaderDescription", ".NET Ecosystem Lifecycle Tracker" } })' />
+
+    <!-- End-of-Support Alerts -->
+    @if (Model.EndingSoonVersions.Any())
+    {
+        <div class="alert-banner mb-4" id="eol-alerts">
+            <div class="alert-banner-header">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <span>End of Support Approaching</span>
+            </div>
+            <div class="alert-banner-body">
+                @foreach (var v in Model.EndingSoonVersions)
+                {
+                    var daysLeft = (v.EndOfSupportDate!.Value - today).Days;
+                    <div class="alert-item">
+                        <span class="alert-item-name">@v.DisplayName</span>
+                        <span class="alert-item-date">
+                            <i class="bi bi-calendar-x"></i>
+                            @v.EndOfSupportDate.Value.ToString("MMM dd, yyyy")
+                            <span class="badge-days-left">@daysLeft days left</span>
+                        </span>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- Filter Bar -->
+    <div class="filter-bar mb-4" id="filter-bar" role="toolbar" aria-label="Framework filter">
+        <button class="filter-btn active" data-framework="all" onclick="filterFramework('all', this)">
+            <i class="bi bi-grid-3x3-gap"></i> All
+        </button>
+        @foreach (var fw in Model.Frameworks)
+        {
+            var icon = fw switch
+            {
+                ".NET" => "bi-diamond-fill",
+                ".NET Framework" => "bi-diamond",
+                "ASP.NET Core" => "bi-globe2",
+                "EF Core" => "bi-database",
+                "MAUI" => "bi-phone",
+                "C#" => "bi-code-slash",
+                "Visual Studio" => "bi-window-stack",
+                "Blazor" => "bi-lightning-charge",
+                ".NET Aspire" => "bi-cloud",
+                "Windows" => "bi-windows",
+                "Windows Server" => "bi-hdd-rack",
+                _ => "bi-box"
+            };
+            <button class="filter-btn" data-framework="@fw" onclick="filterFramework('@fw', this)">
+                <i class="bi @icon"></i> @fw
+            </button>
+        }
+    </div>
+
+    <!-- Legend -->
+    <div class="legend-bar mb-4" id="legend">
+        <div class="legend-item">
+            <span class="legend-dot legend-active"></span>
+            <span>Active</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-dot legend-ending-soon"></span>
+            <span>Ending Soon</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-dot legend-eol"></span>
+            <span>End of Life</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-dot legend-preview"></span>
+            <span>Preview</span>
+        </div>
+        <div class="legend-item">
+            <span class="legend-dot legend-legacy"></span>
+            <span>Legacy</span>
+        </div>
+        <div class="legend-separator"></div>
+        <div class="legend-item">
+            <span class="badge-adoption badge-recommended-sm">Recommended</span>
+        </div>
+        <div class="legend-item">
+            <span class="badge-adoption badge-test-sm">Test Only</span>
+        </div>
+        <div class="legend-item">
+            <span class="badge-adoption badge-avoid-sm">Avoid</span>
+        </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="timeline-container" id="timeline-container">
+        <div class="timeline-scroll" id="timeline-scroll">
+            <div class="timeline-canvas" id="timeline-canvas"
+                 data-start="@timelineStart.ToString("yyyy-MM-dd")"
+                 data-end="@timelineEnd.ToString("yyyy-MM-dd")"
+                 data-total-days="@totalDays">
+
+                <!-- Year Grid Lines & Labels -->
+                @for (var year = timelineStart.Year; year <= timelineEnd.Year; year++)
+                {
+                    var yearDate = new DateTime(year, 1, 1);
+                    var leftPercent = ((yearDate - timelineStart).TotalDays / totalDays) * 100;
+                    <div class="timeline-year-line" style="left: @leftPercent.ToString("F4")%;">
+                        <span class="timeline-year-label">@year</span>
+                    </div>
+                }
+
+                <!-- Today Marker -->
+                @{
+                    var todayPercent = ((today - timelineStart).TotalDays / totalDays) * 100;
+                }
+                <div class="timeline-today-marker" style="left: @todayPercent.ToString("F4")%;" id="today-marker">
+                    <div class="timeline-today-line"></div>
+                </div>
+
+                <!-- Framework Rows -->
+                @{
+                    var groupedVersions = Model.Versions
+                        .GroupBy(v => v.Framework)
+                        .OrderBy(g => g.Key);
+                    var rowIndex = 0;
+                }
+                @foreach (var group in groupedVersions)
+                {
+                    <div class="timeline-row" data-framework="@group.Key" style="top: @(70 + rowIndex * 58)px;">
+                        <div class="timeline-row-label">@group.Key</div>
+                        @foreach (var version in group.OrderBy(v => v.ReleaseDate))
+                        {
+                            var startPercent = ((version.ReleaseDate - timelineStart).TotalDays / totalDays) * 100;
+                            var endDate = version.EndOfSupportDate ?? timelineEnd;
+                            var endPercent = ((endDate - timelineStart).TotalDays / totalDays) * 100;
+                            var widthPercent = endPercent - startPercent;
+
+                            var statusClass = version.Status switch
+                            {
+                                SupportStatus.Active => "bar-active",
+                                SupportStatus.EndingSoon => "bar-ending-soon",
+                                SupportStatus.EndOfLife => "bar-eol",
+                                SupportStatus.Preview => "bar-preview",
+                                _ => "bar-active"
+                            };
+
+                            if (version.SupportType == SupportType.Legacy)
+                            {
+                                statusClass = "bar-legacy";
+                            }
+
+                            var adoptionClass = version.AdoptionLabel switch
+                            {
+                                AdoptionLabel.Recommended => "badge-recommended",
+                                AdoptionLabel.TestOnly => "badge-test",
+                                AdoptionLabel.AvoidForProd => "badge-avoid",
+                                _ => ""
+                            };
+
+                            var adoptionText = version.AdoptionLabel switch
+                            {
+                                AdoptionLabel.Recommended => "✓ Recommended",
+                                AdoptionLabel.TestOnly => "⚡ Test Only",
+                                AdoptionLabel.AvoidForProd => "✗ Avoid",
+                                _ => ""
+                            };
+
+                            var supportLabel = version.SupportType switch
+                            {
+                                SupportType.LTS => "LTS",
+                                SupportType.STS => "STS",
+                                SupportType.Preview => "Preview",
+                                SupportType.Legacy => "Legacy",
+                                _ => ""
+                            };
+
+                            <div class="timeline-bar @statusClass"
+                                 style="left: @startPercent.ToString("F4")%; width: @widthPercent.ToString("F4")%;"
+                                 data-framework="@version.Framework"
+                                 data-version="@version.Version"
+                                 data-display="@version.DisplayName"
+                                 data-release="@version.ReleaseDate.ToString("MMM dd, yyyy")"
+                                 data-eos="@(version.EndOfSupportDate?.ToString("MMM dd, yyyy") ?? "Indefinite")"
+                                 data-features="@version.KeyFeatures"
+                                 data-url="@version.Url"
+                                 data-migration="@(version.MigrationGuideUrl ?? "")"
+                                 data-support="@supportLabel"
+                                 data-adoption="@adoptionText"
+                                 data-adoption-class="@adoptionClass"
+                                 data-status="@version.Status">
+                                <span class="bar-label">@version.Version</span>
+                                @if (version.SupportType == SupportType.LTS)
+                                {
+                                    <span class="bar-badge-lts">LTS</span>
+                                }
+                            </div>
+                        }
+                    </div>
+                    rowIndex++;
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Tooltip (hidden, positioned via JS) -->
+    <div class="radar-tooltip" id="radar-tooltip" style="display: none;">
+        <div class="tooltip-header">
+            <span class="tooltip-title" id="tooltip-title"></span>
+            <span class="tooltip-badge" id="tooltip-badge"></span>
+        </div>
+        <div class="tooltip-body">
+            <div class="tooltip-row">
+                <i class="bi bi-calendar-check"></i>
+                <span>Release: <strong id="tooltip-release"></strong></span>
+            </div>
+            <div class="tooltip-row">
+                <i class="bi bi-calendar-x"></i>
+                <span>End of Support: <strong id="tooltip-eos"></strong></span>
+            </div>
+            <div class="tooltip-row">
+                <i class="bi bi-shield-check"></i>
+                <span>Support: <strong id="tooltip-support"></strong></span>
+            </div>
+            <div class="tooltip-row tooltip-adoption-row">
+                <span id="tooltip-adoption"></span>
+            </div>
+            <div class="tooltip-features" id="tooltip-features"></div>
+            <div class="tooltip-links" id="tooltip-links"></div>
+        </div>
+    </div>
+
+    <!-- Version Cards Grid -->
+    <h2 class="h4 mt-5 mb-3">
+        <i class="bi bi-grid-3x3-gap-fill"></i> Version Details
+    </h2>
+    <div class="version-cards-grid" id="version-cards">
+        @foreach (var version in Model.Versions.OrderByDescending(v => v.ReleaseDate))
+        {
+            var statusClass = version.Status switch
+            {
+                SupportStatus.Active => "card-status-active",
+                SupportStatus.EndingSoon => "card-status-ending",
+                SupportStatus.EndOfLife => "card-status-eol",
+                SupportStatus.Preview => "card-status-preview",
+                _ => ""
+            };
+
+            if (version.SupportType == SupportType.Legacy)
+            {
+                statusClass = "card-status-legacy";
+            }
+
+            var adoptionBadge = version.AdoptionLabel switch
+            {
+                AdoptionLabel.Recommended => "badge-recommended",
+                AdoptionLabel.TestOnly => "badge-test",
+                AdoptionLabel.AvoidForProd => "badge-avoid",
+                _ => ""
+            };
+
+            var adoptionText = version.AdoptionLabel switch
+            {
+                AdoptionLabel.Recommended => "✓ Recommended",
+                AdoptionLabel.TestOnly => "⚡ Test Only",
+                AdoptionLabel.AvoidForProd => "✗ Avoid for Prod",
+                _ => ""
+            };
+
+            var supportBadge = version.SupportType switch
+            {
+                SupportType.LTS => "badge-lts",
+                SupportType.STS => "badge-sts",
+                SupportType.Preview => "badge-preview-card",
+                SupportType.Legacy => "badge-legacy",
+                _ => ""
+            };
+
+            <div class="version-card @statusClass" data-framework="@version.Framework" data-version="@version.Version">
+                <div class="version-card-header">
+                    <div class="version-card-title">
+                        <h3 class="h6 mb-0">@version.DisplayName</h3>
+                        <div class="version-card-badges">
+                            <span class="badge-type @supportBadge">@version.SupportType</span>
+                            <span class="badge-adoption @adoptionBadge">@adoptionText</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="version-card-body">
+                    <div class="version-card-dates">
+                        <div class="date-item">
+                            <i class="bi bi-calendar-check text-success"></i>
+                            <span>@version.ReleaseDate.ToString("MMM dd, yyyy")</span>
+                        </div>
+                        <div class="date-item">
+                            <i class="bi bi-calendar-x @(version.Status == SupportStatus.EndOfLife ? "text-danger" : version.Status == SupportStatus.EndingSoon ? "text-warning" : "text-muted")"></i>
+                            <span>@(version.EndOfSupportDate?.ToString("MMM dd, yyyy") ?? "Indefinite")</span>
+                        </div>
+                    </div>
+                    @if (version.Status == SupportStatus.EndingSoon && version.EndOfSupportDate.HasValue)
+                    {
+                        var daysRemaining = (version.EndOfSupportDate.Value - today).Days;
+                        <div class="eol-countdown">
+                            <i class="bi bi-hourglass-split"></i>
+                            <span>@daysRemaining days remaining</span>
+                        </div>
+                    }
+                    <div class="version-card-features">
+                        @foreach (var feature in version.KeyFeatures.Split(',', StringSplitOptions.TrimEntries).Take(4))
+                        {
+                            <span class="feature-tag">@feature</span>
+                        }
+                    </div>
+                    <div class="version-card-links">
+                        <a href="@version.Url" target="_blank" rel="noopener noreferrer" class="card-link-btn">
+                            <i class="bi bi-box-arrow-up-right"></i> Docs
+                        </a>
+                        @if (!string.IsNullOrEmpty(version.MigrationGuideUrl))
+                        {
+                            <a href="@version.MigrationGuideUrl" target="_blank" rel="noopener noreferrer" class="card-link-btn card-link-migration">
+                                <i class="bi bi-arrow-up-circle"></i> Migration Guide
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/radar.js" asp-append-version="true"></script>
+}

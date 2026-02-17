@@ -7,16 +7,7 @@
 }
 
 <div class="container-fluid">
-    <div class="row mb-4">
-        <div class="col-12">
-            <h1 class="display-4 text-center mb-3">
-                <i class="bi bi-link-45deg"></i> Useful Links
-            </h1>
-            <p class="lead text-center text-muted">
-                Essential resources for C# developers - Organized by category
-            </p>
-        </div>
-    </div>
+    <partial name="_PageHeaderPartial" view-data='@(new ViewDataDictionary(ViewData) { { "Icon", "link-45deg" }, { "HeaderTitle", "Useful Links" }, { "HeaderDescription", "Essential resources for C# developers - Organized by category" } })' />
 
     <!-- Categories Grid -->
     <div class="row g-4">

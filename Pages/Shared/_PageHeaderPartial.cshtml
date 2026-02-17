@@ -1,0 +1,22 @@
+@* Partial view for consistent page title headers *@
+@* Parameters: Icon (Bootstrap icon class without 'bi-' prefix), Title, Description *@
+
+@{
+    var icon = ViewData["Icon"] as string ?? "file-text";
+    var title = ViewData["HeaderTitle"] as string ?? "Page Title";
+    var description = ViewData["HeaderDescription"] as string ?? "";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="display-4 text-center mb-3">
+            <i class="bi bi-@icon"></i> @title
+        </h1>
+        @if (!string.IsNullOrEmpty(description))
+        {
+            <p class="lead text-center text-muted">
+                @description
+            </p>
+        }
+    </div>
+</div>

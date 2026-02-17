@@ -7,16 +7,7 @@
 }
 
 <div class="container-fluid">
-    <div class="row mb-4">
-        <div class="col-12">
-            <h1 class="display-4 text-center mb-3">
-                <i class="bi bi-plugin"></i> MCP Tools
-            </h1>
-            <p class="lead text-center text-muted">
-                Model Context Protocol servers to enhance your AI-powered development workflow
-            </p>
-        </div>
-    </div>
+    <partial name="_PageHeaderPartial" view-data='@(new ViewDataDictionary(ViewData) { { "Icon", "plugin" }, { "HeaderTitle", "MCP Tools" }, { "HeaderDescription", "Model Context Protocol servers to enhance your AI-powered development workflow" } })' />
 
     <!-- Categories Grid -->
     <div class="row g-4">

@@ -31,7 +31,7 @@ public sealed class NewsletterSendJob : IJob
             var today = DailyNewsletter.GetNewsletterDateFromUtc(DateTime.UtcNow);
             _logger.LogInformation("Newsletter send job started for {Date}", today);
 
-            var summaries = await _aiSummarizationService.GetLatestBlogSummariesAsync(10, ct);
+            var summaries = await _aiSummarizationService.GetLatestBlogSummariesFromDatabaseAsync(10, ct);
 
             // Filter summaries to max 5 items while maximizing distinct sources
             var filteredSummaries = SummaryFilter.SelectMaxDistinctSources(summaries, 5);

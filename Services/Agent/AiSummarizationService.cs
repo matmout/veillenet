@@ -23,6 +23,7 @@ public interface IAiSummarizationService
 public class AiSummarizationService : IAiSummarizationService
 {
     private static int _keywordsBackfillStarted;
+    private static int _entitiesBackfillStarted;
     private readonly IBlogAggregationService _blogAggregationService;
     private readonly ICacheService _cacheService;
     private readonly IHttpClientFactory _httpClientFactory;
@@ -99,6 +100,9 @@ public class AiSummarizationService : IAiSummarizationService
 
                 var response = await chatClient.GetResponseAsync(messages, cancellationToken: cancellationToken);
                 var entities = response.Text?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
+
+                // Rate limiting: avoid Mistral API burst
+                await Task.Delay(500, cancellationToken);
 
                 if (entities != null && entities.Any())
                 {
@@ -281,25 +285,33 @@ public class AiSummarizationService : IAiSummarizationService
         }
 
         // Trigger backfill if no entities exist, using a background scope to avoid DbContext concurrency issues
-        _ = Task.Run(async () =>
+        // Guard: only one backfill can run at a time across all instances
+        if (Interlocked.CompareExchange(ref _entitiesBackfillStarted, 1, 0) == 0)
         {
-            try
+            _ = Task.Run(async () =>
             {
-                using var scope = _scopeFactory.CreateScope();
-                var scopedRepo = scope.ServiceProvider.GetRequiredService<INewsRepository>();
-                var scopedAiService = scope.ServiceProvider.GetRequiredService<IAiSummarizationService>();
-
-                var entityCount = await scopedRepo.GetNamedEntityCountAsync(CancellationToken.None);
-                if (entityCount == 0)
+                try
                 {
-                    await scopedAiService.BackfillEntitiesAsync(CancellationToken.None);
+                    using var scope = _scopeFactory.CreateScope();
+                    var scopedRepo = scope.ServiceProvider.GetRequiredService<INewsRepository>();
+                    var scopedAiService = scope.ServiceProvider.GetRequiredService<IAiSummarizationService>();
+
+                    var entityCount = await scopedRepo.GetNamedEntityCountAsync(CancellationToken.None);
+                    if (entityCount == 0)
+                    {
+                        await scopedAiService.BackfillEntitiesAsync(CancellationToken.None);
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error triggering background backfill");
-            }
-        });
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error triggering background backfill");
+                }
+                finally
+                {
+                    Interlocked.Exchange(ref _entitiesBackfillStarted, 0);
+                }
+            });
+        }
 
         return summaries;
     }
@@ -311,15 +323,20 @@ public class AiSummarizationService : IAiSummarizationService
         if (chatClient is null) return;
 
         var articles = await _newsRepository.GetRecentNewsArticlesAsync(30, cancellationToken);
+        var processed = 0;
+        var skipped = 0;
         foreach (var article in articles)
         {
             try
             {
-                // Check if article already has entities
-                // We need to load them if they were not included
-                // But since we just want to backfill if empty, we can just process those without any
-                if (article.Entities != null && article.Entities.Any()) continue;
+                // Skip articles that already have entities — no need to call Mistral again
+                if (article.Entities != null && article.Entities.Any())
+                {
+                    skipped++;
+                    continue;
+                }
 
+                processed++;
                 _logger.LogInformation("Backfilling entities for article: {Title}", article.Title);
 
                 var messages = new List<ChatMessage>
@@ -335,13 +352,16 @@ public class AiSummarizationService : IAiSummarizationService
                 {
                     await _newsRepository.AddEntitiesToArticleAsync(article.Id, entities, cancellationToken);
                 }
+
+                // Rate limiting: avoid Mistral API burst
+                await Task.Delay(500, cancellationToken);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error backfilling article: {Id}", article.Id);
             }
         }
-        _logger.LogInformation("Backfill completed.");
+        _logger.LogInformation("Backfill completed. Processed={Processed} SkippedAlreadyTagged={Skipped}", processed, skipped);
     }
 
     private async Task<AiContentSummary?> SummarizePostAsync(IChatClient chatClient, BaseNews post, CancellationToken cancellationToken)
