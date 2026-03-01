@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace VeilleNet.Models.Entities;
 
 [Table("newsletter_subscribers", Schema = "containsharp")]
-public class NewsletterSubscriber
+public class NewsletterSubscriber : IHasTimestamps
 {
     [Key]
     [Column("id")]

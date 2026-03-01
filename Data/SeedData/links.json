@@ -1,0 +1,79 @@
+[
+  {
+    "name": "Official C#",
+    "description": "Microsoft official resources for C# and .NET",
+    "icon": "bi-microsoft",
+    "colorClass": "primary",
+    "links": [
+      { "name": "C# Documentation", "description": "Official C# docs with guides, tutorials, and API references", "url": "https://learn.microsoft.com/en-us/dotnet/csharp/", "icon": "bi-book", "isRecommended": false },
+      { "name": ".NET Blog", "description": "Official .NET team blog with the latest announcements and news", "url": "https://devblogs.microsoft.com/dotnet/", "icon": "bi-newspaper", "isRecommended": true },
+      { "name": "C# Language Specification", "description": "Full C# language specification", "url": "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/", "icon": "bi-file-text", "isRecommended": false },
+      { "name": ".NET Releases", "description": "Release schedule and notes for .NET", "url": "https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core", "icon": "bi-calendar-event", "isRecommended": false },
+      { "name": "GitHub .NET", "description": "Official .NET GitHub organization", "url": "https://github.com/dotnet", "icon": "bi-github", "isRecommended": false }
+    ]
+  },
+  {
+    "name": "Artificial Intelligence",
+    "description": "AI tools and resources for developers",
+    "icon": "bi-robot",
+    "colorClass": "info",
+    "links": [
+      { "name": "GitHub Copilot", "description": "AI-powered coding assistant for Visual Studio and VS Code", "url": "https://github.com/features/copilot", "icon": "bi-code-square", "isRecommended": true },
+      { "name": "ChatGPT", "description": "OpenAI conversational assistant for development and more", "url": "https://chat.openai.com/", "icon": "bi-chat-dots", "isRecommended": false },
+      { "name": "Claude AI", "description": "Anthropic AI assistant with advanced reasoning capabilities", "url": "https://claude.ai/", "icon": "bi-lightning", "isRecommended": false },
+      { "name": "Microsoft Copilot", "description": "Microsoft's AI tools suite integrated with Microsoft 365", "url": "https://copilot.microsoft.com/", "icon": "bi-stars", "isRecommended": false },
+      { "name": "Mistral AI", "description": "Open-source, high-performance AI models developed in France", "url": "https://mistral.ai/", "icon": "bi-cpu", "isRecommended": false }
+    ]
+  },
+  {
+    "name": "WinForms",
+    "description": "Resources for building Windows Forms applications",
+    "icon": "bi-window-desktop",
+    "colorClass": "warning",
+    "links": [
+      { "name": "WinForms Documentation", "description": "Microsoft official guide for Windows Forms .NET", "url": "https://learn.microsoft.com/en-us/dotnet/desktop/winforms/", "icon": "bi-book", "isRecommended": true },
+      { "name": "WinForms Designer", "description": "Documentation for the WinForms visual designer", "url": "https://learn.microsoft.com/en-us/dotnet/desktop/winforms/controls/", "icon": "bi-palette", "isRecommended": false },
+      { "name": "GitHub WinForms", "description": "Official Windows Forms GitHub repository", "url": "https://github.com/dotnet/winforms", "icon": "bi-github", "isRecommended": false },
+      { "name": "WinForms Samples", "description": "WinForms code samples and applications", "url": "https://github.com/dotnet/samples/tree/main/windowsforms", "icon": "bi-code-slash", "isRecommended": false }
+    ]
+  },
+  {
+    "name": "Coding & Games",
+    "description": "Platforms to learn while having fun",
+    "icon": "bi-joystick",
+    "colorClass": "success",
+    "links": [
+      { "name": "CodinGame", "description": "Learn to code by playing with multiplayer programming challenges", "url": "https://www.codingame.com/", "icon": "bi-controller", "isRecommended": true },
+      { "name": "Exercism", "description": "Programming exercises with free mentoring in C#", "url": "https://exercism.org/tracks/csharp", "icon": "bi-controller", "isRecommended": false },
+      { "name": "HackerRank", "description": "Programming challenges and technical interview prep", "url": "https://www.hackerrank.com/dashboard", "icon": "bi-controller", "isRecommended": false },
+      { "name": "LeetCode", "description": "Training platform with thousands of algorithmic problems", "url": "https://leetcode.com/", "icon": "bi-code", "isRecommended": true },
+      { "name": "Advent of Code", "description": "Advent calendar with daily coding challenges", "url": "https://adventofcode.com/", "icon": "bi-controller", "isRecommended": false }
+    ]
+  },
+  {
+    "name": "C# Tools",
+    "description": "Utilities and code generators",
+    "icon": "bi-tools",
+    "colorClass": "danger",
+    "links": [
+      { "name": "Json2CSharp", "description": "Generate C# classes from JSON", "url": "https://json2csharp.com/", "icon": "bi-braces", "isRecommended": false },
+      { "name": "SharpLab", "description": "Online C# compiler with IL and AST visualization", "url": "https://sharplab.io/", "icon": "bi-eye", "isRecommended": false },
+      { "name": ".NET Fiddle", "description": "Online IDE to test C# and .NET code", "url": "https://dotnetfiddle.net/", "icon": "bi-play-circle", "isRecommended": false },
+      { "name": "NuGet", "description": "Official package manager for .NET", "url": "https://www.nuget.org/", "icon": "bi-box-seam", "isRecommended": true },
+      { "name": "Regex101", "description": "Regex tester and debugger", "url": "https://regex101.com/", "icon": "bi-regex", "isRecommended": false }
+    ]
+  },
+  {
+    "name": "Algorithms",
+    "description": "Practice algorithms and data structures",
+    "icon": "bi-diagram-3",
+    "colorClass": "secondary",
+    "links": [
+      { "name": "Design Patterns - Refactoring Guru", "description": "The Catalog of C# Design Pattern Examples", "url": "https://refactoring.guru/design-patterns/csharp", "icon": "bi-mortarboard", "isRecommended": false },
+      { "name": "Algorithm Visualizer", "description": "Bring algorithms to life through visualization", "url": "https://algorithm-visualizer.org/", "icon": "bi-mortarboard", "isRecommended": false },
+      { "name": "Visualgo", "description": "Visualize algorithms and data structures", "url": "https://visualgo.net/", "icon": "bi-mortarboard", "isRecommended": false },
+      { "name": "Big-O Cheat Sheet", "description": "Quick reference for algorithmic complexities", "url": "https://www.bigocheatsheet.com/", "icon": "bi-table", "isRecommended": false },
+      { "name": "CsvIsTool", "description": "CS 1332 Data Structures & Algorithms Visualization Tool", "url": "https://csvistool.com/", "icon": "bi-mortarboard", "isRecommended": true }
+    ]
+  }
+]

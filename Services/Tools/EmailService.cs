@@ -25,24 +25,27 @@ namespace VeilleNet.Services.Tools
     {
         private readonly IAmazonSimpleEmailService _sesClient;
         private readonly EmailSettings _emailSettings;
-        private readonly INewsRepository _newsRepository;
+        private readonly ISubscriberRepository _subscriberRepository;
+        private readonly INewsletterRepository _newsletterRepository;
         private readonly ILogger<EmailService> _logger;
 
         public EmailService(
             IAmazonSimpleEmailService sesClient,
             IOptions<EmailSettings> emailSettings,
-            INewsRepository newsRepository,
+            ISubscriberRepository subscriberRepository,
+            INewsletterRepository newsletterRepository,
             ILogger<EmailService> logger)
         {
             _sesClient = sesClient;
             _emailSettings = emailSettings.Value;
-            _newsRepository = newsRepository;
+            _subscriberRepository = subscriberRepository;
+            _newsletterRepository = newsletterRepository;
             _logger = logger;
         }
 
         public async Task<int> GetSubscriberCountAsync()
         {
-            return await _newsRepository.GetActiveSubscribersCountAsync();
+            return await _subscriberRepository.GetActiveSubscribersCountAsync();
         }
 
         public async Task<bool> SendDailySummaryEmailAsync(List<AiContentSummary> summaries)
@@ -55,7 +58,7 @@ namespace VeilleNet.Services.Tools
 
             try
             {
-                var subscribers = await _newsRepository.GetActiveSubscribersAsync();
+                var subscribers = await _subscriberRepository.GetActiveSubscribersAsync();
                 var recipients = subscribers.Select(s => s.Email).ToList();
 
                 recipients.Add("matthieu.trachsel@gmail.com");
@@ -67,7 +70,7 @@ namespace VeilleNet.Services.Tools
                 }
 
                 var today = DailyNewsletter.GetNewsletterDateFromUtc(DateTime.UtcNow);
-                var existingNewsletter = await _newsRepository.GetTodayNewsletterAsync();
+                var existingNewsletter = await _newsletterRepository.GetTodayNewsletterAsync();
                 if (existingNewsletter != null && existingNewsletter.IsSent)
                 {
                     _logger.LogWarning("Newsletter for {Date} already sent. Skipping...", today);
@@ -82,7 +85,7 @@ namespace VeilleNet.Services.Tools
                 // Save newsletter to database BEFORE sending
                 
                 var newsletter = DailyNewsletter.CreateForToday(subject, htmlBody, textBody, summaries.Count);
-                await _newsRepository.CreateOrUpdateNewsletterAsync(newsletter);
+                await _newsletterRepository.CreateOrUpdateNewsletterAsync(newsletter);
 
                 _logger.LogInformation("Newsletter saved to database for {Date}", today);
 
@@ -94,7 +97,7 @@ namespace VeilleNet.Services.Tools
 
                 for (var i = 0; i < recipients.Count; i += batchSize)
                 {
-                    System.Threading.Thread.Sleep(1000);
+                    await Task.Delay(1000);
                     var batch = recipients.Skip(i).Take(batchSize).ToList();
 
                     var sendRequest = new SendEmailRequest
@@ -136,7 +139,7 @@ namespace VeilleNet.Services.Tools
                             {
                                 try
                                 {
-                                    await _newsRepository.IncrementEmailSentAsync(email);
+                                    await _subscriberRepository.IncrementEmailSentAsync(email);
                                 }
                                 catch (Exception ex)
                                 {
@@ -167,7 +170,7 @@ namespace VeilleNet.Services.Tools
                 {
                     _logger.LogInformation("Daily summary email sent to {Count} recipients (out of {Total})", totalSent, recipients.Count);
                     // Mark newsletter as sent with the actual number of recipients reached
-                    await _newsRepository.MarkNewsletterAsSentAsync(today, totalSent);
+                    await _newsletterRepository.MarkNewsletterAsSentAsync(today, totalSent);
                     return true;
                 }
                 else

@@ -1,0 +1,66 @@
+[
+  {
+    "name": "AI & Code Agents",
+    "description": "MCP servers for AI-powered coding assistance and development",
+    "icon": "bi-robot",
+    "colorClass": "info",
+    "tools": [
+      { "name": "GitHub MCP Server", "description": "Access GitHub repositories, issues, pull requests, and workflows directly from your AI assistant", "category": "AI & Code Agents", "icon": "bi-github", "guideUrl": "https://github.com/github/github-mcp-server", "imageUrl": "" },
+      { "name": "Playwright MCP Server", "description": "Browser automation and web testing capabilities through MCP", "category": "AI & Code Agents", "icon": "bi-browser-chrome", "guideUrl": "https://github.com/microsoft/playwright-mcp", "imageUrl": "" },
+      { "name": "Memory MCP Server", "description": "Knowledge graph-based persistent memory system for AI assistants", "category": "AI & Code Agents", "icon": "bi-diagram-3", "guideUrl": "https://github.com/modelcontextprotocol/servers/tree/main/src/memory", "imageUrl": "" },
+      { "name": "Fetch MCP Server", "description": "Web content fetching and processing for AI context", "category": "AI & Code Agents", "icon": "bi-download", "guideUrl": "https://github.com/modelcontextprotocol/servers/tree/main/src/fetch", "imageUrl": "" },
+      { "name": "Filesystem MCP Server", "description": "Secure file system operations with configurable access controls", "category": "AI & Code Agents", "icon": "bi-folder", "guideUrl": "https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem", "imageUrl": "" }
+    ]
+  },
+  {
+    "name": "Database Connections",
+    "description": "MCP servers for database querying and management",
+    "icon": "bi-database",
+    "colorClass": "primary",
+    "tools": [
+      { "name": "SQLite MCP Server", "description": "Query and manage SQLite databases with built-in safety features", "category": "Database Connections", "icon": "bi-database-check", "guideUrl": "https://github.com/modelcontextprotocol/servers/tree/main/src/sqlite", "imageUrl": "" },
+      { "name": "PostgreSQL MCP Server", "description": "Connect to PostgreSQL databases with secure query execution", "category": "Database Connections", "icon": "bi-database-gear", "guideUrl": "https://github.com/modelcontextprotocol/servers/tree/main/src/postgres", "imageUrl": "" },
+      { "name": "MySQL MCP Server", "description": "MySQL database integration for data operations through MCP", "category": "Database Connections", "icon": "bi-database-fill", "guideUrl": "https://github.com/modelcontextprotocol/servers/tree/main/src/sqlite", "imageUrl": "" },
+      { "name": "MongoDB MCP Server", "description": "NoSQL database access for MongoDB collections and documents", "category": "Database Connections", "icon": "bi-database-add", "guideUrl": "https://www.mongodb.com/docs/mcp-server/get-started/", "imageUrl": "" },
+      { "name": "Elasticsearch MCP Server", "description": "Official Elasticsearch MCP server for search and analytics operations", "category": "Database Connections", "icon": "bi-search", "guideUrl": "https://github.com/elastic/mcp-server-elasticsearch", "imageUrl": "" },
+      { "name": "Oracle Database MCP Server", "description": "Official Oracle Database integration for enterprise data operations", "category": "Database Connections", "icon": "bi-database-lock", "guideUrl": "https://github.com/oracle/mcp", "imageUrl": "" }
+    ]
+  },
+  {
+    "name": "Deployment & DevOps",
+    "description": "MCP servers for application deployment and infrastructure management",
+    "icon": "bi-cloud-upload",
+    "colorClass": "success",
+    "tools": [
+      { "name": "Docker MCP Server", "description": "Manage Docker containers, images, and orchestration", "category": "Deployment & DevOps", "icon": "bi-box-seam", "guideUrl": "https://github.com/ckreiling/mcp-server-docker", "imageUrl": "" },
+      { "name": "Kubernetes MCP Server", "description": "Kubernetes cluster management and deployment automation", "category": "Deployment & DevOps", "icon": "bi-boxes", "guideUrl": "https://github.com/Flux159/mcp-server-kubernetes", "imageUrl": "" },
+      { "name": "AWS MCP Server", "description": "AWS resource management and deployment through MCP", "category": "Deployment & DevOps", "icon": "bi-cloud", "guideUrl": "https://github.com/rishikavikondala/mcp-server-aws", "imageUrl": "" },
+      { "name": "Github MCP Server", "description": "Version control operations and Git workflow automation on GithHub", "category": "Deployment & DevOps", "icon": "bi-git", "guideUrl": "https://github.com/github/github-mcp-server", "imageUrl": "" },
+      { "name": "Sentry MCP Server", "description": "Error tracking and monitoring integration", "category": "Deployment & DevOps", "icon": "bi-bug", "guideUrl": "https://github.com/modelcontextprotocol/servers/tree/main/src/sentry", "imageUrl": "" },
+      { "name": "Railway MCP Server", "description": "Manage deployments, services, and variables on Railway", "category": "Deployment & DevOps", "icon": "bi-train-front", "guideUrl": "https://docs.railway.com/reference/mcp-server", "imageUrl": "" }
+    ]
+  },
+  {
+    "name": "Generative AI Models",
+    "description": "MCP servers for connecting with large language models and code generation tools",
+    "icon": "bi-cpu",
+    "colorClass": "warning",
+    "tools": [
+      { "name": "OpenAI (Codex)", "description": "Integration with OpenAI's models including Codex for code generation", "category": "Generative AI Models", "icon": "bi-code-square", "guideUrl": "https://developers.openai.com/codex/mcp/", "imageUrl": "/images/mcp/openai.svg" },
+      { "name": "Anthropic Claude", "description": "Integration with Anthropic's Claude models", "category": "Generative AI Models", "icon": "bi-chat-quote", "guideUrl": "https://www.anthropic.com/news/model-context-protocol", "imageUrl": "/images/mcp/claude.svg" },
+      { "name": "GitHub Copilot", "description": "AI pair programmer access and integration", "category": "Generative AI Models", "icon": "bi-github", "guideUrl": "https://github.com/features/copilot", "imageUrl": "" },
+      { "name": "Mistral AI", "description": "Open-weight models and API integration", "category": "Generative AI Models", "icon": "bi-lightning-charge", "guideUrl": "https://docs.mistral.ai", "imageUrl": "/images/mcp/mistral.svg" }
+    ]
+  },
+  {
+    "name": "Misc",
+    "description": "Miscellaneous official MCP servers and integrations",
+    "icon": "bi-ui-checks",
+    "colorClass": "secondary",
+    "tools": [
+      { "name": "Atlassian MCP Server", "description": "Official Atlassian Remote MCP Server for integrating with Atlassian products", "category": "Misc", "icon": "bi-gear", "guideUrl": "https://support.atlassian.com/atlassian-rovo-mcp-server/docs/getting-started-with-the-atlassian-remote-mcp-server/", "imageUrl": "" },
+      { "name": "GitLab MCP Server", "description": "Official GitLab MCP server for GitLab Duo and project operations", "category": "Misc", "icon": "bi-git", "guideUrl": "https://docs.gitlab.com/user/gitlab_duo/model_context_protocol/mcp_server/", "imageUrl": "" },
+      { "name": "Jenkins MCP Server", "description": "Official Jenkins MCP server plugin for CI/CD automation", "category": "Misc", "icon": "bi-tools", "guideUrl": "https://plugins.jenkins.io/mcp-server/", "imageUrl": "" }
+    ]
+  }
+]

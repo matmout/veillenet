@@ -6,14 +6,14 @@ namespace VeilleNet.Pages;
 
 public class ConfirmUnsubscribeModel : PageModel
 {
-    private readonly INewsRepository _newsRepository;
+    private readonly ISubscriberRepository _subscriberRepository;
     private readonly ILogger<ConfirmUnsubscribeModel> _logger;
 
     public ConfirmUnsubscribeModel(
-        INewsRepository newsRepository,
+        ISubscriberRepository subscriberRepository,
         ILogger<ConfirmUnsubscribeModel> logger)
     {
-        _newsRepository = newsRepository;
+        _subscriberRepository = subscriberRepository;
         _logger = logger;
     }
 
@@ -34,7 +34,7 @@ public class ConfirmUnsubscribeModel : PageModel
         {
             _logger.LogInformation("Processing unsubscribe token (first 20 chars): {TokenPrefix}", token.Length > 20 ? token.Substring(0, 20) : token);
             
-            var success = await _newsRepository.UnsubscribeWithTokenAsync(token);
+            var success = await _subscriberRepository.UnsubscribeWithTokenAsync(token);
             
             if (success)
             {

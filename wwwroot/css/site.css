@@ -815,6 +815,191 @@ small, .small {
   border-color: var(--vs-border);
 }
 
+/* ---- Navbar grouped dropdowns ---- */
+.nav-group > .nav-group-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: background 0.2s ease, border-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.nav-group > .nav-group-toggle:hover,
+.nav-group > .nav-group-toggle:focus,
+.nav-group.show > .nav-group-toggle {
+  background: var(--vs-panel);
+  border-color: var(--vs-border);
+  color: var(--vs-text) !important;
+}
+
+.nav-group-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Dropdown panel */
+.nav-dropdown-menu {
+  background: var(--vs-panel-alt) !important;
+  border: 1px solid var(--vs-border) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.45) !important;
+  padding: 0.4rem 0.35rem !important;
+  min-width: 160px;
+  margin-top: 4px !important;
+}
+
+.nav-dropdown-item {
+  color: var(--vs-muted) !important;
+  border-radius: 6px;
+  padding: 0.42rem 0.75rem !important;
+  font-size: 0.83rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.nav-dropdown-item:hover,
+.nav-dropdown-item:focus {
+  background: rgba(106,159,181,0.12) !important;
+  color: var(--vs-text) !important;
+}
+
+.nav-dropdown-item i {
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+  color: var(--vs-accent);
+  font-size: 0.9rem;
+}
+
+/* Remove Bootstrap arrow on dropdown toggle in navbar */
+.navbar .nav-group-toggle::after {
+  display: none;
+}
+
+/* Mobile: full-width items inside collapsed menu */
+@media (max-width: 991.98px) {
+  .nav-dropdown-menu {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 0 0 1rem !important;
+  }
+
+  .nav-dropdown-item {
+    color: rgba(255,255,255,0.75) !important;
+    padding: 0.35rem 0.5rem !important;
+  }
+
+  .nav-dropdown-item:hover {
+    color: #fff !important;
+    background: rgba(255,255,255,0.08) !important;
+  }
+}
+
+/* ---- Navbar end group (theme toggle + about dev) ---- */
+.navbar-end-group {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
+  margin-left: 0.5rem;
+}
+
+/* ---- Icon-only nav with label on hover ---- */
+.nav-icon-bar .nav-icon-item {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 2rem;          /* icon only */
+  transition: max-width 0.25s ease, padding 0.25s ease;
+  padding-right: 0.25rem;
+}
+
+.nav-icon-bar .nav-icon-item:hover,
+.nav-icon-bar .nav-icon-item:focus,
+.nav-icon-bar .nav-icon-item.active {
+  max-width: 10rem;         /* icon + label */
+}
+
+.nav-icon-bar .nav-label {
+  opacity: 0;
+  max-width: 0;
+  overflow: hidden;
+  transition: opacity 0.2s ease 0.05s, max-width 0.25s ease;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.nav-icon-bar .nav-icon-item:hover .nav-label,
+.nav-icon-bar .nav-icon-item:focus .nav-label,
+.nav-icon-bar .nav-icon-item.active .nav-label {
+  opacity: 1;
+  max-width: 8rem;
+}
+
+/* Badge NEW: always visible even when collapsed */
+.nav-icon-bar .nav-badge {
+  flex-shrink: 0;
+}
+
+/* On collapsed mobile menu, show labels fully */
+@media (max-width: 991.98px) {
+  .nav-icon-bar .nav-icon-item {
+    max-width: 100% !important;
+  }
+  .nav-icon-bar .nav-label {
+    opacity: 1 !important;
+    max-width: 100% !important;
+  }
+}
+
+/* Ensure in collapsed navbar (mobile) labels and dropdown items are visible and readable */
+@media (max-width: 991.98px) {
+  /* Show inline labels for top-level links */
+  .navbar-collapse .nav-label {
+    opacity: 1 !important;
+    max-width: 100% !important;
+    display: inline-block !important;
+    color: var(--vs-text) !important;
+    margin-left: 0.5rem;
+  }
+
+  /* Make dropdown menus flow as regular list inside collapse */
+  .navbar-collapse .nav-dropdown-menu {
+    position: static !important;
+    float: none !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding-left: 0.5rem !important;
+    margin-top: 0 !important;
+  }
+
+  .navbar-collapse .nav-dropdown-item {
+    color: var(--vs-text) !important;
+    padding-left: 0.5rem !important;
+  }
+
+  .navbar-collapse .nav-dropdown-item i {
+    color: var(--vs-accent) !important;
+  }
+
+  /* Ensure the dropdown toggle shows label too */
+  .navbar-collapse .nav-group-toggle .nav-group-label {
+    display: inline-block;
+    color: var(--vs-text) !important;
+    margin-left: 0.5rem;
+    opacity: 1 !important;
+  }
+}
+
 /* Dev typing animation in navbar */
 .dev-typer {
   width: 48px;
@@ -822,9 +1007,8 @@ small, .small {
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  position: absolute;
-  right: 12px;
-  top: 4px;
+  position: static;  /* removed absolute positioning — now in flex group */
+  flex-shrink: 0;
 }
 
 .dev {

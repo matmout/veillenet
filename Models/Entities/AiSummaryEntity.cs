@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace VeilleNet.Models.Entities;
 
 [Table("ai_summaries", Schema = "containsharp")]
-public class AiSummaryEntity
+public class AiSummaryEntity : IHasTimestamps
 {
     [Key]
     [Column("id")]

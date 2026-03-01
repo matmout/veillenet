@@ -1,0 +1,233 @@
+[
+  {
+    "step": 1,
+    "title": "C# & Object-Oriented Programming",
+    "description": "Language fundamentals and core object-oriented concepts you need to start building C# applications.",
+    "category": "Foundation",
+    "type": "Foundation",
+    "prerequisites": [],
+    "children": [
+      { "title": "Variables & Data Types", "description": "Built-in types, var/const, casting, nullable types", "type": "Foundation" },
+      { "title": "Control Flow & Operators", "description": "if/else, switch, loops (for/while/foreach), arithmetic and logical operators", "type": "Foundation" },
+      { "title": "Methods & Parameters", "description": "Method declaration, ref/out/in parameters, optional params, overloading", "type": "Foundation" },
+      { "title": "Strings & Text Manipulation", "description": "Interpolation, StringBuilder, formatting, basic parsing", "type": "Foundation" },
+      { "title": "Collections Basics", "description": "Array, List<T>, Dictionary<TKey,TValue>, basic iteration", "type": "Foundation" },
+      { "title": "Enums & Simple Types", "description": "Enums, flags, simple value types", "type": "Foundation" },
+      { "title": "Classes & OOP Fundamentals", "description": "Classes, properties, constructors, encapsulation, inheritance, interfaces (core OOP concepts)", "type": "Foundation" },
+      { "title": "Generics & Equality", "description": "Generic types, constraints, equality (Equals/GetHashCode, IEquatable<T>)", "type": "Advanced" }
+    ]
+  },
+  {
+    "step": 2,
+    "title": ".NET Platform & Tooling",
+    "description": "How .NET runs your code and how to work efficiently",
+    "category": "Foundation",
+    "type": "Foundation",
+    "prerequisites": [1],
+    "children": [
+      { "title": "dotnet CLI", "description": "build/test/run/publish, SDK-style projects", "type": "Foundation" },
+      { "title": "Runtime (CLR)", "description": "JIT, GC, managed vs unmanaged", "type": "Foundation" },
+      { "title": "NuGet", "description": "Dependencies, versioning, central package management (optional)", "type": "Foundation" },
+      { "title": "Git", "description": "Branching, PRs, code reviews", "type": "Foundation" },
+      { "title": "Project Structure", "description": "Solution, projects, namespaces, analyzers", "type": "Foundation" },
+      { "title": "Debugging", "description": "Breakpoints, watches, dumps basics", "type": "Foundation" }
+    ]
+  },
+  {
+    "step": 3,
+    "title": "Error Handling & Diagnostics",
+    "description": "Exceptions, logging, and observability",
+    "category": "Advanced",
+    "type": "Advanced",
+    "prerequisites": [1],
+    "children": [
+      { "title": "Exception Handling", "description": "try/catch/finally, best practices", "type": "Advanced" },
+      { "title": "Custom Exceptions", "description": "Domain-specific exceptions", "type": "Advanced" },
+      { "title": "Microsoft.Extensions.Logging", "description": "ILogger abstractions, providers, scopes", "type": "Advanced" },
+      { "title": "Serilog", "description": "Structured logs, sinks (console/file/seq), enrichment", "type": "Advanced" },
+      { "title": "log4net", "description": "Classic .NET logging (optional)", "type": "Advanced" },
+      { "title": "Tracing & Metrics", "description": "OpenTelemetry basics (optional)", "type": "Advanced" }
+    ]
+  },
+  {
+    "step": 4,
+    "title": "Collections & LINQ",
+    "description": "Working effectively with data in memory",
+    "category": "Advanced",
+    "type": "Advanced",
+    "prerequisites": [1],
+    "children": [
+      { "title": "Collections Deep Dive", "description": "HashSet, Queue/Stack, LinkedList, concurrent collections", "type": "Advanced" },
+      { "title": "LINQ", "description": "Deferred execution, projection, grouping, joins", "type": "Advanced" },
+      { "title": "IEnumerable vs IQueryable", "description": "In-memory vs provider queries", "type": "Advanced" },
+      { "title": "Streams", "description": "Stream, File I/O, async streams (overview)", "type": "Advanced" }
+    ]
+  },
+  {
+    "step": 5,
+    "title": "Async & Concurrency",
+    "description": "Asynchronous programming, threading and synchronization",
+    "category": "Advanced",
+    "type": "Advanced",
+    "prerequisites": [4],
+    "children": [
+      { "title": "Task & async/await", "description": "CancellationToken, Task.WhenAll, timeouts", "type": "Advanced" },
+      { "title": "Async Streams", "description": "IAsyncEnumerable, await foreach", "type": "Advanced" },
+      { "title": "Threading Basics", "description": "ThreadPool, SynchronizationContext", "type": "Advanced" },
+      { "title": "Synchronization", "description": "lock, SemaphoreSlim, Concurrent* collections", "type": "Advanced" },
+      { "title": "Parallelism", "description": "Parallel.ForEach, PLINQ (optional)", "type": "Advanced" }
+    ]
+  },
+  {
+    "step": 6,
+    "title": "Memory & Performance",
+    "description": "Write efficient code and understand allocations",
+    "category": "Advanced",
+    "type": "Advanced",
+    "prerequisites": [2, 4],
+    "children": [
+      { "title": "Allocation Awareness", "description": "Boxing, closures, string allocations", "type": "Advanced" },
+      { "title": "Span<T>/Memory<T>", "description": "High-performance memory access", "type": "Advanced" },
+      { "title": "Profiling", "description": "dotnet-trace, dotnet-counters, profilers", "type": "Advanced" },
+      { "title": "Interop", "description": "IDisposable, SafeHandle, P/Invoke basics (optional)", "type": "Advanced" }
+    ]
+  },
+  {
+    "step": 7,
+    "title": "Testing & Quality",
+    "description": "Build confidence and maintainability",
+    "category": "Foundation",
+    "type": "Foundation",
+    "prerequisites": [1, 3],
+    "children": [
+      { "title": "Unit Testing", "description": "xUnit/NUnit/MSTest, assertions", "type": "Foundation" },
+      { "title": "Mocking", "description": "Moq/NSubstitute, fakes, test doubles", "type": "Advanced" },
+      { "title": "Integration Testing", "description": "TestServer/WebApplicationFactory (optional)", "type": "Advanced" },
+      { "title": "Static Analysis", "description": "Analyzers, StyleCop, nullable warnings", "type": "Advanced" }
+    ]
+  },
+  {
+    "step": 8,
+    "title": "Data & Persistence",
+    "description": "SQL basics, ORMs, migrations, caching",
+    "category": "Specialization",
+    "type": "Specialization",
+    "prerequisites": [4, 5],
+    "children": [
+      { "title": "SQL Fundamentals", "description": "SELECT/JOIN/INDEX/STORED PROCEDURE/TRIGGER, transactions basics", "type": "Foundation" },
+      { "title": "Entity Framework Core", "description": "DbContext, tracking, migrations, performance", "type": "Specialization" },
+      { "title": "Dapper", "description": "Micro-ORM for hot paths (optional)", "type": "Specialization" },
+      { "title": "SQL Server", "description": "Microsoft SQL Server, T-SQL, SqlClient", "type": "Specialization" },
+      { "title": "PostgreSQL", "description": "Postgres, Npgsql driver, JSONB basics", "type": "Specialization" },
+      { "title": "Oracle", "description": "Oracle DB, ODP.NET / Oracle.ManagedDataAccess", "type": "Specialization" }
+    ]
+  },
+  {
+    "step": 9,
+    "title": "Caching",
+    "description": "In-memory + distributed caching patterns and tools",
+    "category": "Specialization",
+    "type": "Specialization",
+    "prerequisites": [8],
+    "children": [
+      { "title": "In-memory cache", "description": "IMemoryCache, cache-aside, TTL, eviction", "type": "Specialization" },
+      { "title": "Distributed cache", "description": "IDistributedCache, serialization, key design", "type": "Specialization" },
+      { "title": "Redis", "description": "Most common distributed cache (strings, hashes, pub/sub)", "type": "Specialization" },
+      { "title": "Memcached", "description": "Simple, widely-used distributed cache (key/value)", "type": "Specialization" },
+      { "title": "NCache", "description": ".NET-focused distributed cache (often used in enterprise)", "type": "Specialization" },
+      { "title": "Cache invalidation", "description": "Versioned keys, stampede protection, refresh-ahead", "type": "Advanced" }
+    ]
+  },
+  {
+    "step": 10,
+    "title": "ASP.NET Core Web",
+    "description": "Build production-grade web apps/APIs",
+    "category": "Specialization",
+    "type": "Specialization",
+    "prerequisites": [5, 7, 8],
+    "children": [
+      { "title": "HTTP & REST", "description": "Status codes, headers, idempotency", "type": "Specialization" },
+      { "title": "Razor Pages", "description": "Page model, handlers, routing", "type": "Specialization" },
+      { "title": "Minimal APIs", "description": "Endpoints, filters (optional)", "type": "Specialization" },
+      { "title": "Web API", "description": "Controllers, model binding, validation", "type": "Specialization" },
+      { "title": "Middleware", "description": "Pipeline, exception handling middleware", "type": "Specialization" },
+      { "title": "Dependency Injection", "description": "Service registration & lifetimes (Scoped, Transient, Singleton), options pattern and resolution", "type": "Specialization" },
+      { "title": ".NET Aspire", "description": "Guided mini-projects to build small end-to-end .NET apps and practice architecture, DI, testing, performance and deployment.", "type": "Specialization" },
+      { "title": "Swagger / OpenAPI", "description": "Auto-generate API docs and interactive UI", "type": "Specialization" },
+      { "title": "GraphQL", "description": "Flexible query API alternative to REST", "type": "Specialization" },
+      { "title": "Ocelot (API Gateway)", "description": "Lightweight API gateway for microservices routing", "type": "Specialization" },
+      { "title": ".NET MAUI", "description": "Cross-platform native apps for mobile & desktop", "type": "Specialization" }
+    ]
+  },
+  {
+    "step": 11,
+    "title": "Security",
+    "description": "Protect apps and data",
+    "category": "Advanced",
+    "type": "Advanced",
+    "prerequisites": [10],
+    "children": [
+      { "title": "Authentication", "description": "Cookies, JWT, OpenID Connect concepts", "type": "Advanced" },
+      { "title": "Authorization", "description": "Policies, roles, claims", "type": "Advanced" },
+      { "title": "Web Security", "description": "XSS, CSRF, CORS, headers", "type": "Advanced" },
+      { "title": "Secrets Management", "description": "User secrets, env vars, vaults (optional)", "type": "Advanced" }
+    ]
+  },
+  {
+    "step": 12,
+    "title": "Real-Time Communication",
+    "description": "Push, streaming and messaging in distributed systems",
+    "category": "Specialization",
+    "type": "Specialization",
+    "prerequisites": [10],
+    "children": [
+      { "title": "WebSockets", "description": "Persistent connections, basic realtime patterns", "type": "Specialization" },
+      { "title": "SignalR", "description": "Hubs, groups, scaling out, backplanes", "type": "Specialization" },
+      { "title": "RabbitMQ", "description": "Message broker, pub/sub, queues, background processing", "type": "Specialization" }
+    ]
+  },
+  {
+    "step": 13,
+    "title": "Design & Architecture",
+    "description": "Patterns and maintainable architectures",
+    "category": "Advanced",
+    "type": "Advanced",
+    "prerequisites": [1, 7, 9],
+    "children": [
+      { "title": "SOLID", "description": "Core OO design principles", "type": "Advanced" },
+      { "title": "Common Patterns", "description": "Factory, Strategy, Adapter, Decorator", "type": "Advanced" },
+      { "title": "Clean Architecture", "description": "Layering, boundaries, DTOs", "type": "Advanced" },
+      { "title": "CQRS/Eventing", "description": "Intro to CQRS, messages (optional)", "type": "Advanced" },
+      { "title": "Object Mapping", "description": "Converting one type to another (AutoMapper)", "type": "Advanced" }
+    ]
+  },
+  {
+    "step": 14,
+    "title": "Modern C# (C# 10-12+)",
+    "description": "Use modern language features effectively",
+    "category": "Advanced",
+    "type": "Advanced",
+    "prerequisites": [1],
+    "children": [
+      { "title": "Records", "description": "Value-like types, immutable models", "type": "Advanced" },
+      { "title": "Pattern Matching", "description": "switch expressions, property patterns", "type": "Advanced" },
+      { "title": "Nullable Reference Types", "description": "Avoid null bugs", "type": "Advanced" },
+      { "title": "Source Generators", "description": "Compile-time code generation (optional)", "type": "Advanced" }
+    ]
+  },
+  {
+    "step": 15,
+    "title": "Dev Workflow & Delivery",
+    "description": "Ship software reliably",
+    "category": "Foundation",
+    "type": "Foundation",
+    "prerequisites": [2],
+    "children": [
+      { "title": "Build & CI", "description": "dotnet test, pipelines, GitHub Actions", "type": "Foundation" },
+      { "title": "Docker", "description": "Images, containers, compose (optional)", "type": "Foundation" },
+      { "title": "Deployment", "description": "Hosting basics, configs, environments (optional)", "type": "Foundation" },
+      { "title": "SonarQube", "description": "Continuous code quality and static analysis", "type": "Foundation" },
+      { "title": "Exception Monitoring", "description": "Production error tracking (Sentry, App Insights)", "type": "Foundation" }
+    ]
+  }
+]

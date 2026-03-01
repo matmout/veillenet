@@ -147,7 +147,12 @@ builder.Services.AddScoped<INewsHistoryService, NewsHistoryService>();
 builder.Services.AddScoped<INewsDeduplicationService, NewsDeduplicationService>();
 
 // Data services
-builder.Services.AddScoped<VeilleNet.Services.Data.INewsRepository, VeilleNet.Services.Data.NewsRepository>();
+builder.Services.AddScoped<VeilleNet.Services.Data.NewsRepository>();
+builder.Services.AddScoped<VeilleNet.Services.Data.INewsRepository>(sp => sp.GetRequiredService<VeilleNet.Services.Data.NewsRepository>());
+builder.Services.AddScoped<VeilleNet.Services.Data.IArticleRepository>(sp => sp.GetRequiredService<VeilleNet.Services.Data.NewsRepository>());
+builder.Services.AddScoped<VeilleNet.Services.Data.IAiSummaryRepository>(sp => sp.GetRequiredService<VeilleNet.Services.Data.NewsRepository>());
+builder.Services.AddScoped<VeilleNet.Services.Data.ISubscriberRepository>(sp => sp.GetRequiredService<VeilleNet.Services.Data.NewsRepository>());
+builder.Services.AddScoped<VeilleNet.Services.Data.INewsletterRepository>(sp => sp.GetRequiredService<VeilleNet.Services.Data.NewsRepository>());
 
 // AI summarization (Mistral via OpenAI-compatible endpoint)
 builder.Services.Configure<VeilleNet.Models.MistralOptions>(builder.Configuration.GetSection("Mistral"));

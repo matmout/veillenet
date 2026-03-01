@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using VeilleNet.Models;
 using VeilleNet.Services.Tools;
 
@@ -11,64 +13,140 @@ public interface IReleaseNewsService
 public class ReleaseNewsService : IReleaseNewsService
 {
     private readonly ICacheService _cacheService;
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ILogger<ReleaseNewsService> _logger;
     private const string CacheKey = "ReleaseNews";
-    private static readonly TimeSpan CacheExpiration = TimeSpan.FromDays(1);
+    private static readonly TimeSpan CacheExpiration = TimeSpan.FromHours(6);
 
-    public ReleaseNewsService(ICacheService cacheService)
+    // GitHub repos to track for release notes
+    private static readonly (string Owner, string Repo, string Framework)[] TrackedRepos =
+    [
+        ("dotnet", "runtime", ".NET Runtime"),
+        ("dotnet", "aspnetcore", "ASP.NET Core"),
+        ("dotnet", "efcore", "Entity Framework Core"),
+        ("dotnet", "roslyn", "Roslyn (C# Compiler)"),
+        ("dotnet", "maui", ".NET MAUI"),
+        ("dotnet", "aspire", ".NET Aspire"),
+    ];
+
+    public ReleaseNewsService(
+        ICacheService cacheService,
+        IHttpClientFactory httpClientFactory,
+        ILogger<ReleaseNewsService> logger)
     {
         _cacheService = cacheService;
+        _httpClientFactory = httpClientFactory;
+        _logger = logger;
     }
 
     public async Task<List<ReleaseNews>> GetLatestReleasesAsync()
     {
-        var cachedReleases = _cacheService.Get<List<ReleaseNews>>(CacheKey);
-        if (cachedReleases != null)
+        var cached = _cacheService.Get<List<ReleaseNews>>(CacheKey);
+        if (cached != null)
+            return cached;
+
+        var allReleases = new List<ReleaseNews>();
+
+        foreach (var (owner, repo, framework) in TrackedRepos)
         {
-            return cachedReleases;
+            try
+            {
+                var releases = await FetchGitHubReleasesAsync(owner, repo, framework);
+                allReleases.AddRange(releases);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to fetch releases for {Owner}/{Repo}", owner, repo);
+            }
         }
 
-        // For now, return static data. In production, this would fetch from GitHub API or official .NET feeds
-        var releases = new List<ReleaseNews>
-        {
-            new ReleaseNews
-            {
-                Version = ".NET 10.0",
-                Title = ".NET 10 Stable Release",
-                Description = "Official stable release of .NET 10 (LTS) with performance improvements and new C# features",
-                ReleaseDate = new DateTime(2025, 11, 12), // Ajustez à la date exacte si nécessaire
-                Url = "https://dotnet.microsoft.com/download/dotnet/10.0",
-                Type = "Stable"
-            },
-            new ReleaseNews
-            {
-                Version = "GPT Codex 5.2",
-                Title = "GPT Codex 5.2 Release",
-                Description = "Agentic Coding, Large-scale Refactoring, Cybersecurity Defense, Long-horizon tasks.",
-                ReleaseDate = new DateTime(2024, 11, 12),
-                Url = "https://openai.com/index/introducing-gpt-5-2/",
-                Type = "Stable"
-            },
-            new ReleaseNews
-            {
-                Version = "C# 14",
-                Title = "C# 14 Language Features",
-                Description = "New language features including extension member, field and more improvements",
-                ReleaseDate = new DateTime(2025, 11, 18),
-                Url = "https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-14",
-                Type = "Stable"
-            },
-            new ReleaseNews
-            {
-                Version = "Visual Studio 2026",
-                Title = "Latest version Visual Studio",
-                Description = "The new IDE brings all AI tools. Dream big. Achieve more.",
-                ReleaseDate = new DateTime(2025, 12, 20),
-                Url = "https://visualstudio.microsoft.com/?icid=SSM_AS_VisualStudio",
-                Type = "Stable"
-            }
-        };
+        var sorted = allReleases
+            .OrderByDescending(r => r.ReleaseDate)
+            .Take(60)
+            .ToList();
 
-        _cacheService.Set(CacheKey, releases, CacheExpiration);
-        return await Task.FromResult(releases);
+        _cacheService.Set(CacheKey, sorted, CacheExpiration);
+        return sorted;
+    }
+
+    private async Task<List<ReleaseNews>> FetchGitHubReleasesAsync(string owner, string repo, string framework)
+    {
+        var client = _httpClientFactory.CreateClient();
+        client.DefaultRequestHeaders.UserAgent.ParseAdd("VeilleNet/1.0");
+        client.DefaultRequestHeaders.Accept.ParseAdd("application/vnd.github+json");
+
+        var url = $"https://api.github.com/repos/{owner}/{repo}/releases?per_page=10";
+        var response = await client.GetAsync(url);
+        response.EnsureSuccessStatusCode();
+
+        var json = await response.Content.ReadAsStringAsync();
+        var ghReleases = JsonSerializer.Deserialize<List<GitHubRelease>>(json, JsonOptions);
+
+        if (ghReleases is null)
+            return [];
+
+        return ghReleases
+            .Where(r => !r.Draft)
+            .Select(r => new ReleaseNews
+            {
+                Version = r.TagName ?? r.Name ?? "unknown",
+                Title = $"{framework} â€” {r.Name ?? r.TagName}",
+                Description = TruncateBody(r.Body, 500),
+                ReleaseDate = r.PublishedAt ?? r.CreatedAt,
+                Url = r.HtmlUrl ?? $"https://github.com/{owner}/{repo}/releases",
+                Type = ClassifyRelease(r.TagName, r.Prerelease)
+            })
+            .ToList();
+    }
+
+    private static string ClassifyRelease(string? tag, bool prerelease)
+    {
+        if (prerelease) return "Preview";
+        if (tag != null && tag.Contains("-rc", StringComparison.OrdinalIgnoreCase)) return "RC";
+        if (tag != null && tag.Contains("-preview", StringComparison.OrdinalIgnoreCase)) return "Preview";
+        return "Stable";
+    }
+
+    private static string TruncateBody(string? body, int max)
+    {
+        if (string.IsNullOrWhiteSpace(body)) return string.Empty;
+        // Strip markdown links and keep text
+        var clean = System.Text.RegularExpressions.Regex.Replace(body, @"\[([^\]]+)\]\([^\)]+\)", "$1");
+        clean = System.Text.RegularExpressions.Regex.Replace(clean, @"[#*`>]", "");
+        clean = clean.Replace("\r\n", " ").Replace("\n", " ").Trim();
+        return clean.Length > max ? clean[..max] + "..." : clean;
+    }
+
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
+
+    // Minimal GitHub Release DTO
+    private sealed class GitHubRelease
+    {
+        [JsonPropertyName("tag_name")]
+        public string? TagName { get; set; }
+
+        [JsonPropertyName("name")]
+        public string? Name { get; set; }
+
+        [JsonPropertyName("body")]
+        public string? Body { get; set; }
+
+        [JsonPropertyName("html_url")]
+        public string? HtmlUrl { get; set; }
+
+        [JsonPropertyName("published_at")]
+        public DateTime? PublishedAt { get; set; }
+
+        [JsonPropertyName("created_at")]
+        public DateTime CreatedAt { get; set; }
+
+        [JsonPropertyName("prerelease")]
+        public bool Prerelease { get; set; }
+
+        [JsonPropertyName("draft")]
+        public bool Draft { get; set; }
     }
 }

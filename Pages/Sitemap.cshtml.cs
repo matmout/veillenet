@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using VeilleNet.Models;
 
 namespace VeilleNet.Pages;
 
@@ -110,12 +111,4 @@ public class SitemapModel : PageModel
             Priority = "0.1"
         });
     }
-}
-
-public class SitemapUrl
-{
-    public string Loc { get; set; } = string.Empty;
-    public string LastMod { get; set; } = string.Empty;
-    public string ChangeFreq { get; set; } = string.Empty;
-    public string Priority { get; set; } = string.Empty;
 }

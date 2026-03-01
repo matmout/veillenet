@@ -2,19 +2,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using VeilleNet.Models;
 using VeilleNet.Services.News;
-using VeilleNet.Services.Data;
+
+namespace VeilleNet.Pages;
 
 public class HistoryModel : PageModel
 {
     private static readonly TimeSpan DefaultLookback = TimeSpan.FromDays(30);
     private readonly INewsHistoryService _newsHistoryService;
-    private readonly INewsRepository _newsRepository;
 
 
-    public HistoryModel(INewsHistoryService newsHistoryService, INewsRepository newsRepository)
+    public HistoryModel(INewsHistoryService newsHistoryService)
     {
         _newsHistoryService = newsHistoryService;
-        _newsRepository = newsRepository;
     }
 
     public List<BaseNews> InitialNews { get; private set; } = new();

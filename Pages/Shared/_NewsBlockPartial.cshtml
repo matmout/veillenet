@@ -1,74 +1,46 @@
 @model VeilleNet.Models.ViewModels.NewsBlockViewModel
 
 <div class="card shadow-sm h-100">
-    <div class="card-header @Model.HeaderCssClass">
+    <div class="card-header @Model.HeaderCssClass" @(Model.HeaderStyle != null ? $"style=\"{Model.HeaderStyle}\"" : "")>
         <h2 class="h4 mb-0">
-            <i class="bi @Model.Icon"></i> @Model.Title
+            @if (Model.HeaderIconHtml != null)
+            {
+                @Html.Raw(Model.HeaderIconHtml)
+            }
+            else
+            {
+                <i class="bi @Model.Icon"></i>
+            }
+            @Model.Title
+            @if (Model.HeaderBadgeHtml != null)
+            {
+                @Html.Raw(Model.HeaderBadgeHtml)
+            }
         </h2>
     </div>
-    <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+    <div class="card-body" style="max-height: @(Model.MaxHeight)px; overflow-y: auto;">
         @if (Model.Items.Any())
         {
-            <div class="list-group list-group-flush">
-                @foreach (var news in Model.Items)
-                {
-                    <div class="list-group-item px-0" style="overflow: visible;">
-                        <div class="d-flex w-100 align-items-start">
-                            @if (!string.IsNullOrEmpty(news.Image))
-                            {
-                                <div class="me-3 flex-shrink-0">
-                                    <img src="@news.Image" alt="@news.Title" style="width: 60px; height: 45px; object-fit: cover; border-radius: 4px;" />
-                                </div>
-                            }
-                            else if (!string.IsNullOrEmpty(Model.DefaultImageUrl))
-                            {
-                                <div class="me-3 flex-shrink-0">
-                                    <img src="@Model.DefaultImageUrl" alt="@news.Title" style="width: 60px; height: 45px; object-fit: cover; border-radius: 4px;" />
-                                </div>
-                            }
-                            else if (!string.IsNullOrEmpty(Model.DefaultIconClass))
-                            {
-                                <div class="me-3 flex-shrink-0 d-flex align-items-center justify-content-center bg-secondary bg-opacity-10" style="width: 60px; height: 45px; border-radius: 4px;">
-                                    <i class="bi @Model.DefaultIconClass" style="font-size: 1.5rem; color: #6c757d;"></i>
-                                </div>
-                            }
-                            <div class="flex-grow-1">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <h6 class="mb-1 flex-grow-1">
-                                        <a href="@news.Url" target="_blank" class="text-decoration-none">
-                                            @news.Title
-                                        </a>
-                                    </h6>
-                                    @if (news.HasAiSummary)
-                                    {
-                                        <a href="/AiSummary?url=@Uri.EscapeDataString(news.Url)" title="View AI Summary" class="ms-2 flex-shrink-0">
-                                            <img src="~/images/mcp/technologie-ia.png" alt="AI Summary Available" style="width: 24px; height: 24px;" />
-                                        </a>
-                                    }
-                                </div>
-                                @if (!string.IsNullOrEmpty(news.Summary))
-                                {
-                                    var displaySummary = Model.SummaryMaxLength.HasValue && news.Summary.Length > Model.SummaryMaxLength.Value
-                                        ? news.Summary.Substring(0, Model.SummaryMaxLength.Value) + "..."
-                                        : news.Summary;
-                                    <div class="mb-1 small text-muted ai-summary-content news-summary" style="line-height:1.6;">
-                                        @Html.Raw(displaySummary)
-                                    </div>
-                                }
-                                <small class="text-muted">
-                                    @if (Model.ShowAuthor && !string.IsNullOrEmpty(news.Author))
-                                    {
-                                        <i class="bi bi-person"></i> @news.Author
-                                        <span>|</span>
-                                    }
-                                    <i class="bi bi-tag"></i> @news.Source |
-                                    <i class="bi bi-calendar"></i> @news.PublishedDate.ToString("dd MMM yyyy")
-                                </small>
-                            </div>
+            @if (Model.ColumnsPerRow > 1)
+            {
+                <div class="row g-3">
+                    @foreach (var item in Model.Items)
+                    {
+                        <div class="col-md-@(12 / Model.ColumnsPerRow)">
+                            @await Html.PartialAsync("_NewsBlockItemPartial", (Model, item))
                         </div>
-                    </div>
-                }
-            </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="list-group list-group-flush">
+                    @foreach (var item in Model.Items)
+                    {
+                        @await Html.PartialAsync("_NewsBlockItemPartial", (Model, item))
+                    }
+                </div>
+            }
         }
         else
         {

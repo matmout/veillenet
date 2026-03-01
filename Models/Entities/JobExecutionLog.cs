@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace VeilleNet.Models.Entities;
 
 public enum JobExecutionStatus
@@ -6,6 +8,7 @@ public enum JobExecutionStatus
     Failed = 1
 }
 
+[Table("job_execution_logs", Schema = "containsharp")]
 public sealed class JobExecutionLog
 {
     public int Id { get; set; }

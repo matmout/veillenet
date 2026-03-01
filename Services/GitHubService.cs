@@ -13,13 +13,15 @@ namespace VeilleNet.Services
     {
         private readonly ICacheService _cacheService;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ILogger<GitHubService> _logger;
         private const string CacheKey = "GitHubTrending";
         private static readonly TimeSpan CacheExpiration = TimeSpan.FromHours(6);
 
-        public GitHubService(ICacheService cacheService, IHttpClientFactory httpClientFactory)
+        public GitHubService(ICacheService cacheService, IHttpClientFactory httpClientFactory, ILogger<GitHubService> logger)
         {
             _cacheService = cacheService ?? throw new ArgumentNullException(nameof(cacheService));
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+            _logger = logger;
         }
 
         public async Task<List<GitHubProject>> GetTrendingCSharpProjectsAsync()
@@ -65,7 +67,7 @@ namespace VeilleNet.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Impossible de récupérer les projets GitHub trending C# Erreur : {ex.Message}");
+                _logger.LogError(ex, "Failed to fetch trending C# projects from GitHub");
                 // Log error and return empty list or cached data
                 throw; // Re-throw the exception to let the caller handle it
             }

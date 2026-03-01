@@ -14,14 +14,16 @@ public class StackOverflowService : IStackOverflowService
 {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ICacheService _cacheService;
+    private readonly ILogger<StackOverflowService> _logger;
     private const string CacheKey = "StackOverflowQuestions";
     private static readonly TimeSpan CacheExpiration = TimeSpan.FromHours(1);
     private const string FeedUrl = "https://stackoverflow.com/feeds/tag/c%23";// "https://stackoverflow.com/feeds/tag?tagnames=c%23&sort=votes";
 
-    public StackOverflowService(IHttpClientFactory httpClientFactory, ICacheService cacheService)
+    public StackOverflowService(IHttpClientFactory httpClientFactory, ICacheService cacheService, ILogger<StackOverflowService> logger)
     {
         _httpClientFactory = httpClientFactory;
         _cacheService = cacheService;
+        _logger = logger;
     }
 
     public async Task<List<StackOverflowQuestion>> GetLatestQuestionsAsync()
@@ -79,7 +81,7 @@ public class StackOverflowService : IStackOverflowService
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error fetching StackOverflow questions: {ex.Message}", ex);
+            _logger.LogWarning(ex, "Error fetching StackOverflow questions");
         }
 
         return questions;

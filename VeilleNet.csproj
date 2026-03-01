@@ -10,6 +10,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Data\SeedData\*.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="4.0.3.17" />
     <PackageReference Include="AWSSDK.SimpleEmail" Version="4.0.2.8" />
     <PackageReference Include="HtmlAgilityPack" Version="1.12.4" />

@@ -36,11 +36,7 @@ public sealed class NewsletterSendJob : IJob
             // Filter summaries to max 5 items while maximizing distinct sources
             var filteredSummaries = SummaryFilter.SelectMaxDistinctSources(summaries, 5);
 
-            string? defaultTheme = await _aiSummarizationService.GetDominantThemeFromRecentNewsAsync();
-
-
-
-            await _emailService.SendDailySummaryEmailAsync(summaries);
+            await _emailService.SendDailySummaryEmailAsync(filteredSummaries);
 
             _logger.LogInformation("Newsletter send job completed for {Date}", today);
         }

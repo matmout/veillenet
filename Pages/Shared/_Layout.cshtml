@@ -34,7 +34,12 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/scrollbar.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/ai-modal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/theme-light.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
+    <script>
+      // Apply saved/preferred theme immediately to prevent FOUC
+      (function(){var t=localStorage.getItem('containsharp-theme')||(window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark');document.documentElement.setAttribute('data-bs-theme',t)})();
+    </script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-4B9NVDSYP2"></script>
     <script>
@@ -50,7 +55,7 @@
     <a href="#main-content" class="skip-link">Skip to main content</a>
     
     <header role="banner">
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-primary border-bottom box-shadow mb-3" role="navigation" aria-label="Main navigation">
+        <nav class="navbar navbar-expand-lg navbar-toggleable-lg navbar-dark bg-primary border-bottom box-shadow mb-3" role="navigation" aria-label="Main navigation">
             <div class="container-fluid">
                 <a class="navbar-brand fw-bold" asp-area="" asp-page="/Index" aria-label="ContainSharp - Home">
                     Contain<span class="text-primary">('</span><span class="text-primary fw-bold"><img src="~/icons/containsharp.svg" alt="ContainSharp Logo" width="34" height="34" class="rounded" loading="lazy" /></span><span class="text-primary">')</span>
@@ -60,82 +65,112 @@
                         aria-expanded="false" aria-label="Toggle navigation menu">
                     <span class="navbar-toggler-icon" aria-hidden="true"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between" id="navbarSupportedContent">
+                <div class="navbar-collapse collapse d-lg-inline-flex justify-content-between" id="navbarSupportedContent">
                     <ul class="navbar-nav flex-grow-1" role="menubar" aria-label="Site navigation">
-                        <li class="nav-item" role="none">
-                            <a class="nav-link text-white" asp-area="" asp-page="/Index" role="menuitem" aria-label="Dashboard - Home page">
-                                <i class="bi bi-house" aria-hidden="true"></i> Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item" role="none">
-                            <a class="nav-link text-white" asp-area="" asp-page="/KnowledgeGraph" role="menuitem" aria-label="Knowledge Graph - 3D Neural Explorer (New)">
-                                <i class="bi bi-diagram-3" aria-hidden="true"></i> Graph
-                                <span class="badge bg-warning text-dark ms-1" style="font-size:0.7rem; vertical-align:middle;">New</span>
-                            </a>
-                        </li>
-                        <li class="nav-item" role="none">
-                            <a class="nav-link text-white" asp-area="" asp-page="/History" role="menuitem" aria-label="History - Archived news (New)">
-                                <i class="bi bi-clock-history" aria-hidden="true"></i> History
 
+                        <!-- Group: News -->
+                        <li class="nav-item dropdown nav-group" role="none">
+                            <a class="nav-link text-white dropdown-toggle nav-group-toggle" href="#" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="News section">
+                                <i class="bi bi-newspaper" aria-hidden="true"></i><span class="nav-group-label"> News</span>
                             </a>
+                            <ul class="dropdown-menu nav-dropdown-menu" role="menu">
+                                <li role="none">
+                                    <a class="dropdown-item nav-dropdown-item" asp-area="" asp-page="/Index" role="menuitem" aria-label="Dashboard">
+                                        <i class="bi bi-house" aria-hidden="true"></i> Dashboard
+                                    </a>
+                                </li>
+                                <li role="none">
+                                    <a class="dropdown-item nav-dropdown-item" asp-area="" asp-page="/History" role="menuitem" aria-label="History">
+                                        <i class="bi bi-clock-history" aria-hidden="true"></i> History
+                                    </a>
+                                </li>
+                                <li role="none">
+                                    <a class="dropdown-item nav-dropdown-item" asp-area="" asp-page="/KnowledgeGraph" role="menuitem" aria-label="Knowledge Graph">
+                                        <i class="bi bi-diagram-3" aria-hidden="true"></i> Graph
+                                        <span class="badge bg-warning text-dark ms-1" style="font-size:0.6rem;">NEW</span>
+                                    </a>
+                                </li>
+                                <li role="none">
+                                    <a class="dropdown-item nav-dropdown-item" asp-area="" asp-page="/Releases" role="menuitem" aria-label="Releases">
+                                        <i class="bi bi-tag" aria-hidden="true"></i> Releases
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
 
-                        <li class="nav-item" role="none">
-                            <a class="nav-link text-white" asp-area="" asp-page="/Roadmap" role="menuitem" aria-label="Roadmap - C# learning path">
-                                <i class="bi bi-signpost-2" aria-hidden="true"></i> Roadmap
+                        <!-- Group: C# -->
+                        <li class="nav-item dropdown nav-group" role="none">
+                            <a class="nav-link text-white dropdown-toggle nav-group-toggle" href="#" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="C# section">
+                                <i class="bi bi-code-slash" aria-hidden="true"></i><span class="nav-group-label"> C#</span>
                             </a>
+                            <ul class="dropdown-menu nav-dropdown-menu" role="menu">
+                                <li role="none">
+                                    <a class="dropdown-item nav-dropdown-item" asp-area="" asp-page="/Roadmap" role="menuitem" aria-label="Roadmap">
+                                        <i class="bi bi-signpost-2" aria-hidden="true"></i> Roadmap
+                                    </a>
+                                </li>
+                                <li role="none">
+                                    <a class="dropdown-item nav-dropdown-item" asp-area="" asp-page="/Training" role="menuitem" aria-label="Training">
+                                        <i class="bi bi-mortarboard" aria-hidden="true"></i> Training
+                                    </a>
+                                </li>
+                                <li role="none">
+                                    <a class="dropdown-item nav-dropdown-item" asp-area="" asp-page="/Radar" role="menuitem" aria-label="Version Radar">
+                                        <i class="bi bi-broadcast-pin" aria-hidden="true"></i> Radar
+                                    </a>
+                                </li>
+                                <li role="none">
+                                    <a class="dropdown-item nav-dropdown-item" asp-area="" asp-page="/Liens" role="menuitem" aria-label="Links">
+                                        <i class="bi bi-link-45deg" aria-hidden="true"></i> Links
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
-                        <li class="nav-item" role="none">
-                            <a class="nav-link text-white" asp-area="" asp-page="/Training" role="menuitem" aria-label="Training - Test your C# knowledge">
-                                <i class="bi bi-mortarboard" aria-hidden="true"></i> Training
+
+                        <!-- Group: IA -->
+                        <li class="nav-item dropdown nav-group" role="none">
+                            <a class="nav-link text-white dropdown-toggle nav-group-toggle" href="#" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="IA section">
+                                <i class="bi bi-robot" aria-hidden="true"></i><span class="nav-group-label"> IA</span>
                             </a>
+                            <ul class="dropdown-menu nav-dropdown-menu" role="menu">
+                                <li role="none">
+                                    <a class="dropdown-item nav-dropdown-item" asp-area="" asp-page="/MCP" role="menuitem" aria-label="MCP Tools">
+                                        <i class="bi bi-plugin" aria-hidden="true"></i> MCP
+                                    </a>
+                                </li>
+                                <li role="none">
+                                    <a class="dropdown-item nav-dropdown-item" asp-area="" asp-page="/LatestLLM" role="menuitem" aria-label="Latest LLM">
+                                        <i class="bi bi-cpu" aria-hidden="true"></i> LLM
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
-                        <li class="nav-item" role="none">
-                            <a class="nav-link text-white" asp-area="" asp-page="/Liens" role="menuitem" aria-label="Useful Links - Developer resources">
-                                <i class="bi bi-link-45deg" aria-hidden="true"></i> Links
-                            </a>
-                        </li>
-                        <li class="nav-item" role="none">
-                            <a class="nav-link text-white" asp-area="" asp-page="/MCP" role="menuitem" aria-label="MCP Tools - Model Context Protocol servers">
-                                <i class="bi bi-plugin" aria-hidden="true"></i> MCP
-                            </a>
-                        </li>
-                        <li class="nav-item" role="none">
-                            <a class="nav-link text-white" asp-area="" asp-page="/LatestLLM" role="menuitem" aria-label="Latest LLM - Large Language Models">
-                                <i class="bi bi-cpu" aria-hidden="true"></i> LLM
-                            </a>
-                        </li>
-                        <li class="nav-item" role="none">
-                            <a class="nav-link text-white" asp-area="" asp-page="/Radar" role="menuitem" aria-label="Version Radar - .NET Ecosystem Lifecycle Tracker">
-                                <i class="bi bi-broadcast-pin" aria-hidden="true"></i> Radar
-                            </a>
-                        </li>
-@*                         <li class="nav-item" role="none">
-                            <a class="nav-link text-white" asp-area="" asp-page="/AiSummary" role="menuitem" aria-label="AI Summary - AI generated summaries">
-                                <i class="bi bi-stars" aria-hidden="true"></i> AI Summary
-                            </a>
-                        </li> *@
-@*                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-page="/Newsletter">
-                                <i class="bi bi-envelope"></i> Newsletter
-                            </a>
-                        </li> *@
+
                     </ul>
                 </div>
-                <!-- Dev typing animation -->
-                <a class="dev-typer" asp-area="" asp-page="/About" title="About" aria-label="About - Learn more about this site">
-                    <div class="dev">
-                        <div class="dev-head"></div>
-                        <div class="dev-body">
-                            <div class="dev-screen"></div>
-                            <div class="dev-hands">
-                                <div class="dev-hand left"></div>
-                                <div class="dev-hand right"></div>
+                <!-- Navbar end: theme toggle + about -->
+                <div class="navbar-end-group">
+                    <button id="theme-toggle" class="theme-toggle" type="button" title="Toggle dark/light mode" aria-label="Toggle dark/light mode">
+                        <i id="theme-icon" class="bi bi-moon-stars-fill"></i>
+                    </button>
+                    <!-- Dev typing animation -->
+                    <a class="dev-typer" asp-area="" asp-page="/About" title="About" aria-label="About - Learn more about this site">
+                        <div class="dev">
+                            <div class="dev-head"></div>
+                            <div class="dev-body">
+                                <div class="dev-screen"></div>
+                                <div class="dev-hands">
+                                    <div class="dev-hand left"></div>
+                                    <div class="dev-hand right"></div>
+                                </div>
+                                <div class="dev-keyboard"></div>
                             </div>
-                            <div class="dev-keyboard"></div>
                         </div>
-                    </div>
-                </a>
+                    </a>
+                </div>
             </div>
         </nav>
     </header>
@@ -169,6 +204,7 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/output-shrink.js" asp-append-version="true"></script>
     <script src="~/js/ai-modal.js" asp-append-version="true"></script>
+    <script src="~/js/theme-toggle.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

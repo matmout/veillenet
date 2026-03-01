@@ -1,0 +1,141 @@
+@using VeilleNet.Models.ViewModels
+@{
+    var (config, item) = ((NewsBlockViewModel, NewsBlockItem))Model;
+    var imgW = config.ImageWidth;
+    var imgH = config.ImageHeight;
+}
+
+<div class="list-group-item px-0" style="overflow: visible;">
+    <div class="d-flex w-100 align-items-start">
+        @* --- Image / Avatar / Icon fallback --- *@
+        @if (!string.IsNullOrEmpty(item.Image))
+        {
+            <div class="me-3 flex-shrink-0">
+                @if (!string.IsNullOrEmpty(item.Url) && item.ShowVideoOverlay)
+                {
+                    <a href="@item.Url" target="_blank" class="text-decoration-none">
+                        <div class="x-video-thumb" style="width: @(imgW)px; height: @(imgH)px;">
+                            <img src="@item.Image" alt="@item.Title" class="x-video-thumb-img" style="width: @(imgW)px; height: @(imgH)px;" />
+                            <span class="x-video-play"><i class="bi bi-play-fill"></i></span>
+                        </div>
+                    </a>
+                }
+                else
+                {
+                    <img src="@item.Image" alt="@item.Title" style="width: @(imgW)px; height: @(imgH)px; object-fit: cover; border-radius: 4px;" />
+                }
+            </div>
+        }
+        else if (!string.IsNullOrEmpty(item.AvatarUrl))
+        {
+            <div class="me-3 flex-shrink-0 x-post-avatar-wrapper">
+                <img src="@item.AvatarUrl" alt="@item.Author" class="x-post-avatar" style="width: @(imgW)px; height: @(imgH)px;" />
+            </div>
+        }
+        else if (!string.IsNullOrEmpty(config.DefaultImageUrl))
+        {
+            <div class="me-3 flex-shrink-0">
+                <img src="@config.DefaultImageUrl" alt="@item.Title" style="width: @(imgW)px; height: @(imgH)px; object-fit: cover; border-radius: 4px;" />
+            </div>
+        }
+        else if (!string.IsNullOrEmpty(config.DefaultIconClass))
+        {
+            <div class="me-3 flex-shrink-0 d-flex align-items-center justify-content-center bg-secondary bg-opacity-10" style="width: @(imgW)px; height: @(imgH)px; border-radius: 4px;">
+                <i class="bi @config.DefaultIconClass" style="font-size: 1.5rem; color: #6c757d;"></i>
+            </div>
+        }
+
+        @* --- Content --- *@
+        <div class="flex-grow-1">
+            @if (config.ShowTitle && !string.IsNullOrEmpty(item.Title))
+            {
+                <div class="d-flex justify-content-between align-items-start">
+                    <h6 class="mb-1 flex-grow-1">
+                        <a href="@item.Url" target="_blank" class="text-decoration-none">
+                            @item.Title
+                        </a>
+                    </h6>
+                    @if (config.ShowAiSummary && item.HasAiSummary)
+                    {
+                        <a href="/AiSummary?url=@Uri.EscapeDataString(item.Url)" title="View AI Summary" class="ms-2 flex-shrink-0">
+                            <img src="~/images/mcp/technologie-ia.png" alt="AI Summary Available" style="width: 24px; height: 24px;" />
+                        </a>
+                    }
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(item.Summary))
+            {
+                var displaySummary = config.SummaryMaxLength.HasValue && item.Summary.Length > config.SummaryMaxLength.Value
+                    ? item.Summary.Substring(0, config.SummaryMaxLength.Value) + "..."
+                    : item.Summary;
+
+                <div class="mb-1 small text-muted ai-summary-content news-summary" style="line-height:1.6;">
+                    @if (config.SanitizeHtml)
+                    {
+                        @Html.Raw(VeilleNet.Services.HtmlOutputSanitizer.Sanitize(displaySummary))
+                    }
+                    else
+                    {
+                        @displaySummary
+                    }
+                </div>
+            }
+
+            @* --- Tags (StackOverflow) --- *@
+            @if (config.ShowTags && item.Tags.Count > 0)
+            {
+                <div class="d-flex gap-2 flex-wrap mb-1">
+                    @foreach (var tag in item.Tags.Take(5))
+                    {
+                        <span class="stackoverflow-tag">@tag</span>
+                    }
+                </div>
+            }
+
+            @* --- Stats (GitHub) --- *@
+            @if (config.ShowStats && (item.Stars.HasValue || item.Forks.HasValue))
+            {
+                <div class="d-flex gap-3">
+                    @if (item.Stars.HasValue)
+                    {
+                        <small class="text-warning">
+                            <i class="bi bi-star-fill"></i> @item.Stars.Value.ToString("N0")
+                        </small>
+                    }
+                    @if (item.Forks.HasValue)
+                    {
+                        <small class="text-info">
+                            <i class="bi bi-diagram-2"></i> @item.Forks.Value.ToString("N0")
+                        </small>
+                    }
+                    <small class="text-muted">
+                        <i class="bi bi-calendar"></i> @item.PublishedDate.ToString(config.DateFormat)
+                    </small>
+                </div>
+            }
+            else
+            {
+                @* --- Standard metadata line --- *@
+                <small class="text-muted">
+                    @if (config.ShowAuthor && !string.IsNullOrEmpty(item.Author))
+                    {
+                        <i class="bi @config.AuthorIcon"></i> @item.Author
+                        <span>|</span>
+                    }
+                    @if (config.ShowSource && !string.IsNullOrEmpty(item.Source))
+                    {
+                        <i class="bi bi-tag"></i> @item.Source
+                        <span>|</span>
+                    }
+                    <i class="bi bi-calendar"></i> @item.PublishedDate.ToString(config.DateFormat)
+                    @if (!string.IsNullOrEmpty(item.ExternalLinkText) && !string.IsNullOrEmpty(item.ExternalLinkUrl))
+                    {
+                        <span>|</span>
+                        <a href="@item.ExternalLinkUrl" target="_blank" class="text-decoration-none">@item.ExternalLinkText</a>
+                    }
+                </small>
+            }
+        </div>
+    </div>
+</div>

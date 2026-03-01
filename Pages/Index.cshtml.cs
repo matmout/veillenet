@@ -4,7 +4,6 @@ using VeilleNet.Models;
 using VeilleNet.Services;
 using VeilleNet.Services.News;
 using VeilleNet.Services.Tools;
-using VeilleNet.Services.Data;
 
 namespace VeilleNet.Pages;
 
@@ -17,9 +16,7 @@ public class IndexModel : PageModel
     private readonly IVideoService _videoService;
     private readonly IStackOverflowService _stackOverflowService;
     private readonly IXPostsService _xPostsService;
-    private readonly ICacheService _cacheService;
     private readonly INewsletterService _newsletterService;
-    private readonly INewsRepository _newsRepository;
     private readonly ILogger<IndexModel> _logger;
 
     public List<BaseNews> BlogPosts { get; set; } = new();
@@ -40,9 +37,7 @@ public class IndexModel : PageModel
         IVideoService videoService,
         IStackOverflowService stackOverflowService,
         IXPostsService xPostsService,
-        ICacheService cacheService,
         INewsletterService newsletterService,
-        INewsRepository newsRepository,
         ILogger<IndexModel> logger)
     {
         _blogService = blogService;
@@ -52,9 +47,7 @@ public class IndexModel : PageModel
         _videoService = videoService;
         _stackOverflowService = stackOverflowService;
         _xPostsService = xPostsService;
-        _cacheService = cacheService;
         _newsletterService = newsletterService;
-        _newsRepository = newsRepository;
         _logger = logger;
     }
 

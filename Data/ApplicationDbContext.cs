@@ -175,10 +175,10 @@ public class ApplicationDbContext : DbContext
                     {
                         if (dateTime.Kind == DateTimeKind.Unspecified)
                         {
-                            // Assume Paris time (Romance Standard Time on Windows)
+                            // Assume Paris time — cross-platform (Windows + Linux)
                             try
                             {
-                                var parisTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Romance Standard Time");
+                                var parisTimeZone = TimeZoneHelper.GetParisTimeZone();
                                 property.CurrentValue = TimeZoneInfo.ConvertTimeToUtc(dateTime, parisTimeZone);
                             }
                             catch
@@ -196,20 +196,9 @@ public class ApplicationDbContext : DbContext
             }
 
             // Update UpdatedAt timestamp
-            if (entry.State == EntityState.Modified)
+            if (entry.State == EntityState.Modified && entry.Entity is IHasTimestamps timestamped)
             {
-                if (entry.Entity is NewsArticle newsArticle)
-                {
-                    newsArticle.UpdatedAt = DateTime.UtcNow;
-                }
-                else if (entry.Entity is AiSummaryEntity aiSummary)
-                {
-                    aiSummary.UpdatedAt = DateTime.UtcNow;
-                }
-                else if (entry.Entity is DominantTheme dominantTheme)
-                {
-                    dominantTheme.UpdatedAt = DateTime.UtcNow;
-                }
+                timestamped.UpdatedAt = DateTime.UtcNow;
             }
         }
 

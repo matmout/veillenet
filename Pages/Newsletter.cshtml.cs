@@ -8,16 +8,16 @@ namespace VeilleNet.Pages;
 
 public class NewsletterModel : PageModel
 {
-    private readonly INewsRepository _newsRepository;
+    private readonly ISubscriberRepository _subscriberRepository;
     private readonly IEmailService _emailService;
     private readonly ILogger<NewsletterModel> _logger;
 
     public NewsletterModel(
-        INewsRepository newsRepository,
+        ISubscriberRepository subscriberRepository,
         IEmailService emailService,
         ILogger<NewsletterModel> logger)
     {
-        _newsRepository = newsRepository;
+        _subscriberRepository = subscriberRepository;
         _emailService = emailService;
         _logger = logger;
     }
@@ -48,7 +48,7 @@ public class NewsletterModel : PageModel
 
         try
         {
-            var subscriber = await _newsRepository.GetSubscriberByEmailAsync(Email);
+            var subscriber = await _subscriberRepository.GetSubscriberByEmailAsync(Email);
             
             if (subscriber == null || !subscriber.IsActive)
             {
@@ -59,7 +59,7 @@ public class NewsletterModel : PageModel
             else
             {
                 // Check if a valid token already exists
-                var hasValidToken = await _newsRepository.HasValidUnsubscribeTokenAsync(Email);
+                var hasValidToken = await _subscriberRepository.HasValidUnsubscribeTokenAsync(Email);
                 
                 if (hasValidToken)
                 {
@@ -71,7 +71,7 @@ public class NewsletterModel : PageModel
                 else
                 {
                     // Generate token (will create new one or reuse expired one)
-                    var token = await _newsRepository.GenerateUnsubscribeTokenAsync(Email);
+                    var token = await _subscriberRepository.GenerateUnsubscribeTokenAsync(Email);
                     
                     // Send confirmation email
                     var emailSent = await _emailService.SendUnsubscribeConfirmationEmailAsync(Email, token);

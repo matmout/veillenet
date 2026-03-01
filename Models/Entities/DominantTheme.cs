@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace VeilleNet.Models.Entities;
 
 [Table("dominant_themes", Schema = "containsharp")]
-public class DominantTheme
+public class DominantTheme : IHasTimestamps
 {
     [Key]
     [Column("id")]

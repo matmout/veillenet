@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace VeilleNet.Models.Entities;
 
 [Table("daily_newsletters", Schema = "containsharp")]
-public class DailyNewsletter
+public class DailyNewsletter : IHasTimestamps
 {
     [Key]
     [Column("id")]
@@ -61,7 +61,7 @@ public class DailyNewsletter
     /// </summary>
     public static DateOnly GetNewsletterDateFromUtc(DateTime utcDateTime)
     {
-        var parisTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Romance Standard Time");
+        var parisTimeZone = TimeZoneHelper.GetParisTimeZone();
         var parisDateTime = TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, parisTimeZone);
         return DateOnly.FromDateTime(parisDateTime);
     }

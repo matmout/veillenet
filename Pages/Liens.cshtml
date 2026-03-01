@@ -70,50 +70,15 @@
     </div>
 </div>
 
+@section Styles {
+    <link rel="stylesheet" href="~/css/category-cards.css" />
+}
+
 <style>
-    /* Category Cards */
-    .category-card {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .category-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
-    }
-
+    /* Page-specific card header */
     .category-card .card-header {
         padding: 1.25rem;
         border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .category-card .card-header.bg-primary {
-        background: linear-gradient(135deg, #007acc 0%, #005a9e 100%) !important;
-        color: #fff !important;
-    }
-
-    .category-card .card-header.bg-info {
-        background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%) !important;
-        color: #fff !important;
-    }
-
-    .category-card .card-header.bg-warning {
-        background: linear-gradient(135deg, #ffd166 0%, #f59e0b 100%) !important;
-        color: #1e1e1e !important;
-    }
-
-    .category-card .card-header.bg-success {
-        background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%) !important;
-        color: #fff !important;
-    }
-
-    .category-card .card-header.bg-danger {
-        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
-        color: #fff !important;
-    }
-
-    .category-card .card-header.bg-secondary {
-        background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%) !important;
-        color: #fff !important;
     }
 
     .category-card .card-header .small {
@@ -254,19 +219,8 @@
     }
 
     /* Animation on page load */
-    @@keyframes slideInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
     .category-card {
-        animation: slideInUp 0.5s ease-out backwards;
+        animation: categorySlideInUp 0.5s ease-out backwards;
     }
 
     /* Individual animation delays */

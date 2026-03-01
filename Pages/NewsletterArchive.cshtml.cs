@@ -6,17 +6,17 @@ namespace VeilleNet.Pages;
 
 public class NewsletterArchiveModel : PageModel
 {
-    private readonly INewsRepository _newsRepository;
+    private readonly INewsletterRepository _newsletterRepository;
 
-    public NewsletterArchiveModel(INewsRepository newsRepository)
+    public NewsletterArchiveModel(INewsletterRepository newsletterRepository)
     {
-        _newsRepository = newsRepository;
+        _newsletterRepository = newsletterRepository;
     }
 
     public List<DailyNewsletter> Newsletters { get; set; } = new();
 
     public async Task OnGetAsync()
     {
-        Newsletters = await _newsRepository.GetRecentNewslettersAsync(30);
+        Newsletters = await _newsletterRepository.GetRecentNewslettersAsync(30);
     }
 }

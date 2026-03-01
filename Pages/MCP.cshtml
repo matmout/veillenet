@@ -68,37 +68,20 @@
     </div>
 </div>
 
+@section Styles {
+    <link rel="stylesheet" href="~/css/category-cards.css" />
+}
+
 <style>
-    /* Category Cards */
+    /* Page-specific category card overrides */
     .category-card {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
         border: 1px solid var(--vs-border);
         background: var(--vs-panel);
-    }
-
-    .category-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
     }
 
     .category-card .card-header {
         padding: 1.5rem;
         border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .category-card .card-header.bg-primary {
-        background: linear-gradient(135deg, #007acc 0%, #005a9e 100%) !important;
-        color: #fff !important;
-    }
-
-    .category-card .card-header.bg-info {
-        background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%) !important;
-        color: #fff !important;
-    }
-
-    .category-card .card-header.bg-success {
-        background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%) !important;
-        color: #fff !important;
     }
 
     .category-card .card-header .small {
@@ -286,20 +269,9 @@
         }
     }
 
-    /* Animation on page load */
-    @@keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
+    /* Use shared animation keyframe */
     .category-card {
-        animation: fadeInUp 0.6s ease-out backwards;
+        animation: categorySlideInUp 0.6s ease-out backwards;
     }
 
     /* Individual animation delays */
@@ -317,7 +289,7 @@
 
     /* MCP Tool Cards stagger animation */
     .mcp-tool-card {
-        animation: fadeInUp 0.5s ease-out backwards;
+        animation: categorySlideInUp 0.5s ease-out backwards;
     }
 
     .mcp-tools-grid > div:nth-child(1) .mcp-tool-card {

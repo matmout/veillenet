@@ -1,0 +1,2217 @@
+﻿[
+  {
+    "id": 1,
+    "text": "What is the key difference between 'class' and 'struct' in terms of memory allocation?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Classes are reference types allocated on heap, structs are value types typically allocated on stack",
+      "Classes are always immutable, structs are mutable",
+      "Classes support inheritance, structs don't",
+      "Classes are sealed by default, structs are not"
+    ],
+    "correctAnswer": "Classes are reference types allocated on heap, structs are value types typically allocated on stack",
+    "category": "C# Fundamentals",
+    "explanation": "The fundamental difference is memory allocation: classes are reference types (heap), structs are value types (stack). Both can be mutable, but classes support inheritance while structs don't."
+  },
+  {
+    "id": 2,
+    "text": "In a production application, what's the safest way to handle uninitialized value type variables?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Always explicitly initialize them",
+      "Rely on default values",
+      "Use nullable types with null checks",
+      "Throw exceptions if uninitialized"
+    ],
+    "correctAnswer": "Always explicitly initialize them",
+    "category": "C# Fundamentals",
+    "explanation": "While value types have default values, professional code should explicitly initialize variables to avoid subtle bugs and make intent clear."
+  },
+  {
+    "id": 3,
+    "text": "What's the most appropriate use of 'protected internal' access modifier in enterprise applications?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Base class methods that should be accessible to derived classes and within the same assembly",
+      "Public API methods",
+      "Private implementation details",
+      "Extension methods"
+    ],
+    "correctAnswer": "Base class methods that should be accessible to derived classes and within the same assembly",
+    "category": "C# Fundamentals",
+    "explanation": "'protected internal' is ideal for framework/base class scenarios where methods need to be accessible to derived classes and other classes in the same assembly, but not to external consumers."
+  },
+  {
+    "id": 4,
+    "text": "In a 64-bit .NET application, how many bytes does an 'int' type occupy in memory?",
+    "type": "FreeText",
+    "choices": [],
+    "correctAnswer": "4",
+    "category": "C# Fundamentals",
+    "explanation": "An int in C# is always a signed 32-bit integer (4 bytes), regardless of platform architecture. For 64-bit integers, use 'long'."
+  },
+  {
+    "id": 5,
+    "text": "You're designing a logging system where different loggers (FileLogger, DatabaseLogger) should be interchangeable. Which OOP principle is most relevant?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Polymorphism through interfaces",
+      "Encapsulation of logger state",
+      "Inheritance from a base Logger class",
+      "Abstraction of logging details"
+    ],
+    "correctAnswer": "Polymorphism through interfaces",
+    "category": "OOP",
+    "explanation": "Polymorphism through interfaces (ILogger) allows different logger implementations to be used interchangeably, following the Dependency Inversion Principle."
+  },
+  {
+    "id": 6,
+    "text": "In a microservices architecture, why might you prefer composition over inheritance for service clients?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Composition provides more flexibility and avoids tight coupling",
+      "Inheritance is faster for service calls",
+      "Composition requires less memory",
+      "Inheritance is the only way to share code"
+    ],
+    "correctAnswer": "Composition provides more flexibility and avoids tight coupling",
+    "category": "OOP",
+    "explanation": "Composition (has-a relationships) is preferred in professional code as it's more flexible, avoids the fragility of inheritance hierarchies, and follows the Composition over Inheritance principle."
+  },
+  {
+    "id": 7,
+    "text": "What's the primary purpose of an abstract class in enterprise application design?",
+    "type": "MultipleChoice",
+    "choices": [
+      "To provide a common base implementation for derived classes",
+      "To prevent instantiation of base classes",
+      "To enforce method implementation in derived classes",
+      "To reduce code duplication through inheritance"
+    ],
+    "correctAnswer": "To provide a common base implementation for derived classes",
+    "category": "OOP",
+    "explanation": "Abstract classes excel at providing partial implementations that derived classes can build upon, combining shared functionality with required customization."
+  },
+  {
+    "id": 8,
+    "text": "In C#, what's the maximum depth of inheritance chain recommended for maintainable code?",
+    "type": "FreeText",
+    "choices": [],
+    "correctAnswer": "3-4 levels",
+    "category": "OOP",
+    "explanation": "While C# allows deep inheritance chains, professional practice recommends 3-4 levels maximum for maintainability. Deeper chains become hard to understand and debug."
+  },
+  {
+    "id": 9,
+    "text": "You need to frequently check for item existence and maintain uniqueness in a large dataset. Which collection provides the best performance?",
+    "type": "MultipleChoice",
+    "choices": [
+      "HashSet<T>",
+      "List<T> with Contains() checks",
+      "SortedSet<T>",
+      "Dictionary<T, bool>"
+    ],
+    "correctAnswer": "HashSet<T>",
+    "category": "Collections",
+    "explanation": "HashSet<T> provides O(1) average complexity for add/remove/contains operations and guarantees uniqueness, making it ideal for this scenario."
+  },
+  {
+    "id": 10,
+    "text": "In a high-performance application, what's the most efficient way to get the first matching element from a large collection?",
+    "type": "MultipleChoice",
+    "choices": [
+      "FirstOrDefault() with a predicate",
+      "Where().FirstOrDefault()",
+      "SingleOrDefault()",
+      "ToList().FirstOrDefault()"
+    ],
+    "correctAnswer": "FirstOrDefault() with a predicate",
+    "category": "LINQ",
+    "explanation": "FirstOrDefault(predicate) is most efficient as it stops enumerating at the first match, avoiding unnecessary iteration and allocation."
+  },
+  {
+    "id": 11,
+    "text": "What's the key performance consideration when using LINQ's Select() vs direct property access?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Select() defers execution until enumeration",
+      "Select() is always faster",
+      "Direct access is always better",
+      "Select() creates intermediate collections"
+    ],
+    "correctAnswer": "Select() defers execution until enumeration",
+    "category": "LINQ",
+    "explanation": "Select() uses deferred execution - it doesn't process data until the query is enumerated, which can be more efficient for chained operations."
+  },
+  {
+    "id": 12,
+    "text": "What is the worst-case time complexity of a lookup in a Dictionary with many hash collisions?",
+    "type": "FreeText",
+    "choices": [],
+    "correctAnswer": "O(n)",
+    "category": "Collections",
+    "explanation": "While Dictionary typically provides O(1) lookups, with many hash collisions it degrades to O(n) as it must traverse linked lists of colliding entries."
+  },
+  {
+    "id": 13,
+    "text": "Which keyword marks a method as asynchronous?",
+    "type": "MultipleChoice",
+    "choices": [
+      "async",
+      "await",
+      "Task",
+      "asynchronous"
+    ],
+    "correctAnswer": "async",
+    "category": "Async",
+    "explanation": "The 'async' keyword marks a method as asynchronous."
+  },
+  {
+    "id": 14,
+    "text": "What return type should an async method have?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Task or Task<T>",
+      "void",
+      "async",
+      "Promise"
+    ],
+    "correctAnswer": "Task or Task<T>",
+    "category": "Async",
+    "explanation": "Async methods return Task, Task<T>, or void (void is discouraged except for events)."
+  },
+  {
+    "id": 15,
+    "text": "What does the 'await' keyword do?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Suspends execution until the task completes",
+      "Creates a new thread",
+      "Blocks the thread",
+      "Cancels the task"
+    ],
+    "correctAnswer": "Suspends execution until the task completes",
+    "category": "Async",
+    "explanation": "await suspends method execution without blocking the thread."
+  },
+  {
+    "id": 16,
+    "text": "Which block is always executed, whether an exception is thrown or not?",
+    "type": "MultipleChoice",
+    "choices": [
+      "finally",
+      "catch",
+      "try",
+      "throw"
+    ],
+    "correctAnswer": "finally",
+    "category": "Exceptions",
+    "explanation": "The finally block is always executed, even if an exception is thrown."
+  },
+  {
+    "id": 17,
+    "text": "What is the base class of all exceptions in .NET?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Exception",
+      "Error",
+      "SystemException",
+      "BaseException"
+    ],
+    "correctAnswer": "Exception",
+    "category": "Exceptions",
+    "explanation": "System.Exception is the base class of all exceptions in .NET."
+  },
+  {
+    "id": 18,
+    "text": "What is a delegate in C#?",
+    "type": "MultipleChoice",
+    "choices": [
+      "A type that references methods",
+      "A class",
+      "An interface",
+      "A value type"
+    ],
+    "correctAnswer": "A type that references methods",
+    "category": "Delegates",
+    "explanation": "A delegate is a type that can reference methods with a specific signature."
+  },
+  {
+    "id": 19,
+    "text": "Which keyword is used to declare an event?",
+    "type": "MultipleChoice",
+    "choices": [
+      "event",
+      "delegate",
+      "action",
+      "trigger"
+    ],
+    "correctAnswer": "event",
+    "category": "Events",
+    "explanation": "The 'event' keyword is used to declare an event based on a delegate."
+  },
+  {
+    "id": 20,
+    "text": "Which symbol is used to declare a generic type?",
+    "type": "MultipleChoice",
+    "choices": [
+      "<T>",
+      "[T]",
+      "(T)",
+      "{T}"
+    ],
+    "correctAnswer": "<T>",
+    "category": "Generics",
+    "explanation": "Angle brackets <> are used to declare and use generic types."
+  },
+  {
+    "id": 21,
+    "text": "Which generic type constraint specifies that T must be a reference type?",
+    "type": "MultipleChoice",
+    "choices": [
+      "where T : class",
+      "where T : struct",
+      "where T : new()",
+      "where T : object"
+    ],
+    "correctAnswer": "where T : class",
+    "category": "Generics",
+    "explanation": "'where T : class' constrains T to be a reference type."
+  },
+  {
+    "id": 22,
+    "text": "Which pattern ensures a class has only one instance?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Singleton",
+      "Factory",
+      "Observer",
+      "Strategy"
+    ],
+    "correctAnswer": "Singleton",
+    "category": "Design Patterns",
+    "explanation": "The Singleton pattern ensures a class has only one global instance."
+  },
+  {
+    "id": 23,
+    "text": "Which pattern allows creating objects without specifying their exact class?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Factory",
+      "Singleton",
+      "Adapter",
+      "Decorator"
+    ],
+    "correctAnswer": "Factory",
+    "category": "Design Patterns",
+    "explanation": "The Factory pattern allows creating objects without exposing creation logic."
+  },
+  {
+    "id": 24,
+    "text": "What is the CLR?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Common Language Runtime",
+      "Common Library Repository",
+      "Code Language Runtime",
+      "Class Library Reference"
+    ],
+    "correctAnswer": "Common Language Runtime",
+    "category": ".NET",
+    "explanation": "CLR (Common Language Runtime) is the execution environment of .NET."
+  },
+  {
+    "id": 25,
+    "text": "What is the name of .NET's garbage collector?",
+    "type": "MultipleChoice",
+    "choices": [
+      "GC",
+      "MemoryManager",
+      "Collector",
+      "CleanUp"
+    ],
+    "correctAnswer": "GC",
+    "category": ".NET",
+    "explanation": "GC (Garbage Collector) automatically manages memory in .NET."
+  },
+  {
+    "id": 26,
+    "text": "How many generations does the .NET garbage collector use?",
+    "type": "FreeText",
+    "choices": [],
+    "correctAnswer": "3",
+    "category": ".NET",
+    "explanation": "The .NET GC uses 3 generations: 0, 1, and 2."
+  },
+  {
+    "id": 27,
+    "text": "Which class is more efficient for concatenating many strings?",
+    "type": "MultipleChoice",
+    "choices": [
+      "StringBuilder",
+      "String",
+      "StringBuffer",
+      "Concat"
+    ],
+    "correctAnswer": "StringBuilder",
+    "category": "Performance",
+    "explanation": "StringBuilder is optimized for multiple concatenation operations."
+  },
+  {
+    "id": 28,
+    "text": "Are strings in C# mutable or immutable?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Immutable",
+      "Mutable",
+      "Depends on context",
+      "Both"
+    ],
+    "correctAnswer": "Immutable",
+    "category": "String",
+    "explanation": "Strings in C# are immutable; each modification creates a new instance."
+  },
+  {
+    "id": 29,
+    "text": "Where are value types stored?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Stack",
+      "Heap",
+      "Cache",
+      "Registry"
+    ],
+    "correctAnswer": "Stack",
+    "category": "Types",
+    "explanation": "Value types are generally stored on the stack."
+  },
+  {
+    "id": 30,
+    "text": "Which keyword defines a custom value type?",
+    "type": "MultipleChoice",
+    "choices": [
+      "struct",
+      "class",
+      "value",
+      "type"
+    ],
+    "correctAnswer": "struct",
+    "category": "Types",
+    "explanation": "The 'struct' keyword defines a custom value type."
+  },
+  {
+    "id": 31,
+    "text": "How do you declare a nullable int?",
+    "type": "MultipleChoice",
+    "choices": [
+      "int?",
+      "Nullable<int>",
+      "int!",
+      "nullint"
+    ],
+    "correctAnswer": "int?",
+    "category": "Nullable",
+    "explanation": "'int?' is shorthand for 'Nullable<int>'."
+  },
+  {
+    "id": 32,
+    "text": "Which operator provides a default value if null?",
+    "type": "MultipleChoice",
+    "choices": [
+      "??",
+      "?.",
+      "??=",
+      "!"
+    ],
+    "correctAnswer": "??",
+    "category": "Nullable",
+    "explanation": "The '??' (null-coalescing) operator provides a default value if the operand is null."
+  },
+  {
+    "id": 33,
+    "text": "Can an interface contain fields?",
+    "type": "MultipleChoice",
+    "choices": [
+      "No",
+      "Yes",
+      "Only constants",
+      "Only readonly"
+    ],
+    "correctAnswer": "No",
+    "category": "Interface",
+    "explanation": "An interface cannot contain fields, only properties, methods, etc."
+  },
+  {
+    "id": 34,
+    "text": "How many interfaces can a class implement?",
+    "type": "FreeText",
+    "choices": [],
+    "correctAnswer": "unlimited",
+    "category": "Interface",
+    "explanation": "A class can implement an unlimited number of interfaces."
+  },
+  {
+    "id": 35,
+    "text": "Which modifier makes a member accessible within the assembly?",
+    "type": "MultipleChoice",
+    "choices": [
+      "internal",
+      "public",
+      "protected",
+      "private"
+    ],
+    "correctAnswer": "internal",
+    "category": "Modifiers",
+    "explanation": "The 'internal' modifier limits access to the current assembly."
+  },
+  {
+    "id": 36,
+    "text": "Which ADO.NET class is used to create a connection to SQL Server?",
+    "type": "MultipleChoice",
+    "choices": [
+      "SqlConnection",
+      "SqlCommand",
+      "SqlDataAdapter",
+      "DbSet"
+    ],
+    "correctAnswer": "SqlConnection",
+    "category": "Database",
+    "explanation": "SqlConnection represents a connection to a SQL Server database."
+  },
+  {
+    "id": 37,
+    "text": "Which connection string setting enables Windows Integrated Authentication?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Integrated Security=True",
+      "Authentication=Windows",
+      "TrustedProvider=SSPI",
+      "UseWindowsAuth=True"
+    ],
+    "correctAnswer": "Integrated Security=True",
+    "category": "Database",
+    "explanation": "Using 'Integrated Security=True' (or 'Trusted_Connection=True') enables Windows authentication."
+  },
+  {
+    "id": 38,
+    "text": "What is the recommended pattern to ensure a connection is always closed and disposed?",
+    "type": "MultipleChoice",
+    "choices": [
+      "using statement",
+      "try/catch only",
+      "GC.Collect",
+      "Finalize override"
+    ],
+    "correctAnswer": "using statement",
+    "category": "Database",
+    "explanation": "The 'using' statement guarantees Dispose is called even when exceptions occur."
+  },
+  {
+    "id": 39,
+    "text": "Which method opens an ADO.NET connection asynchronously?",
+    "type": "MultipleChoice",
+    "choices": [
+      "OpenAsync",
+      "OpenTask",
+      "BeginOpen",
+      "Open"
+    ],
+    "correctAnswer": "OpenAsync",
+    "category": "Database",
+    "explanation": "Use OpenAsync() to open the connection without blocking the calling thread."
+  },
+  {
+    "id": 40,
+    "text": "What is the main benefit of connection pooling?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Reuses physical connections",
+      "Encrypts data by default",
+      "Avoids deadlocks",
+      "Caches query plans"
+    ],
+    "correctAnswer": "Reuses physical connections",
+    "category": "Database",
+    "explanation": "Pooling reuses existing connections, reducing the overhead of frequent open/close operations."
+  },
+  {
+    "id": 41,
+    "text": "Which EF Core class represents a session with the database?",
+    "type": "MultipleChoice",
+    "choices": [
+      "DbContext",
+      "DbSet",
+      "DataContextFactory",
+      "ObjectSet"
+    ],
+    "correctAnswer": "DbContext",
+    "category": "Entity Framework",
+    "explanation": "DbContext is the primary class for interacting with EF Core and the database."
+  },
+  {
+    "id": 42,
+    "text": "Which method applies pending migrations at application startup?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Database.Migrate()",
+      "Database.Update()",
+      "ApplyMigrations()",
+      "EnsureCreated()"
+    ],
+    "correctAnswer": "Database.Migrate()",
+    "category": "Entity Framework",
+    "explanation": "Database.Migrate() applies any pending migrations to the database."
+  },
+  {
+    "id": 43,
+    "text": "Which method marks a new entity for insertion on SaveChanges()?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Add",
+      "Attach",
+      "Update",
+      "Track"
+    ],
+    "correctAnswer": "Add",
+    "category": "Entity Framework",
+    "explanation": "Add sets the entity state to Added so EF will insert it on SaveChanges()."
+  },
+  {
+    "id": 44,
+    "text": "Which LINQ method executes the query and returns results asynchronously?",
+    "type": "MultipleChoice",
+    "choices": [
+      "ToListAsync",
+      "AsQueryable",
+      "Where",
+      "Select"
+    ],
+    "correctAnswer": "ToListAsync",
+    "category": "Entity Framework",
+    "explanation": "ToListAsync materializes the query asynchronously."
+  },
+  {
+    "id": 45,
+    "text": "Which attribute can be used to configure a primary key on a property?",
+    "type": "MultipleChoice",
+    "choices": [
+      "[Key]",
+      "[Primary]",
+      "[Id]",
+      "[Index]"
+    ],
+    "correctAnswer": "[Key]",
+    "category": "Entity Framework",
+    "explanation": "The [Key] attribute (System.ComponentModel.DataAnnotations) marks a property as the primary key."
+  },
+  {
+    "id": 46,
+    "text": "Which JOIN returns all rows from the left table and matches from the right (NULL when missing)?",
+    "type": "MultipleChoice",
+    "choices": [
+      "LEFT JOIN",
+      "INNER JOIN",
+      "RIGHT JOIN",
+      "FULL JOIN"
+    ],
+    "correctAnswer": "LEFT JOIN",
+    "category": "SQL",
+    "explanation": "LEFT JOIN returns all rows from the left table and NULLs for non-matching right rows."
+  },
+  {
+    "id": 47,
+    "text": "Which clause filters aggregated results?",
+    "type": "MultipleChoice",
+    "choices": [
+      "HAVING",
+      "WHERE",
+      "GROUP BY",
+      "QUALIFY"
+    ],
+    "correctAnswer": "HAVING",
+    "category": "SQL",
+    "explanation": "HAVING filters groups after aggregation; WHERE filters rows before grouping."
+  },
+  {
+    "id": 48,
+    "text": "Which approach can return the 3rd highest salary reliably across ties?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Use DENSE_RANK() and filter WHERE rank = 3",
+      "ORDER BY salary DESC OFFSET 2 ROWS FETCH NEXT 1 ROW ONLY",
+      "TOP 3 with ORDER BY then MIN",
+      "COUNT(DISTINCT salary) = 3"
+    ],
+    "correctAnswer": "Use DENSE_RANK() and filter WHERE rank = 3",
+    "category": "SQL",
+    "explanation": "Window functions like DENSE_RANK handle ties better than simple OFFSET/FETCH in ranking scenarios."
+  },
+  {
+    "id": 49,
+    "text": "Which access pattern uses an index to locate rows directly by key?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Index Seek",
+      "Index Scan",
+      "Table Scan",
+      "Hash Match"
+    ],
+    "correctAnswer": "Index Seek",
+    "category": "SQL",
+    "explanation": "An index seek navigates the index b-tree to locate the requested key range efficiently."
+  },
+  {
+    "id": 50,
+    "text": "What is a covering index?",
+    "type": "MultipleChoice",
+    "choices": [
+      "An index that contains all columns needed by a query",
+      "The clustered index",
+      "An index on every column",
+      "A unique index"
+    ],
+    "correctAnswer": "An index that contains all columns needed by a query",
+    "category": "SQL",
+    "explanation": "A covering index includes all columns referenced by the query, avoiding lookups to the base table."
+  },
+  {
+    "id": 51,
+    "text": "In ACID properties, what does 'I' stand for?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Isolation",
+      "Integrity",
+      "Idempotence",
+      "Indexing"
+    ],
+    "correctAnswer": "Isolation",
+    "category": "SQL",
+    "explanation": "Isolation ensures concurrent transactions do not interfere with each other."
+  },
+  {
+    "id": 52,
+    "text": "Which isolation level prevents dirty reads but allows non-repeatable reads?",
+    "type": "MultipleChoice",
+    "choices": [
+      "READ COMMITTED",
+      "READ UNCOMMITTED",
+      "REPEATABLE READ",
+      "SERIALIZABLE"
+    ],
+    "correctAnswer": "READ COMMITTED",
+    "category": "SQL",
+    "explanation": "READ COMMITTED prevents dirty reads; non-repeatable reads can still occur."
+  },
+  {
+    "id": 53,
+    "text": "How can you delete duplicate rows while keeping a single row per key?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Use ROW_NUMBER() OVER(PARTITION BY ...) and delete rows WHERE rn > 1",
+      "Use DISTINCT in DELETE",
+      "Use GROUP BY without WHERE",
+      "Create a UNIQUE constraint only"
+    ],
+    "correctAnswer": "Use ROW_NUMBER() OVER(PARTITION BY ...) and delete rows WHERE rn > 1",
+    "category": "SQL",
+    "explanation": "ROW_NUMBER with a CTE lets you identify duplicates and delete those with rn > 1."
+  },
+  {
+    "id": 54,
+    "text": "What is the difference between COUNT(*) and COUNT(column)?",
+    "type": "MultipleChoice",
+    "choices": [
+      "COUNT(*) counts all rows; COUNT(column) ignores NULLs",
+      "COUNT(*) ignores NULLs; COUNT(column) includes NULLs",
+      "They are always identical",
+      "COUNT(column) is faster in all cases"
+    ],
+    "correctAnswer": "COUNT(*) counts all rows; COUNT(column) ignores NULLs",
+    "category": "SQL",
+    "explanation": "COUNT(column) does not count NULL values, whereas COUNT(*) counts all rows."
+  },
+  {
+    "id": 55,
+    "text": "Which set operator returns rows from the first query that are not present in the second?",
+    "type": "MultipleChoice",
+    "choices": [
+      "EXCEPT",
+      "INTERSECT",
+      "UNION",
+      "UNION ALL"
+    ],
+    "correctAnswer": "EXCEPT",
+    "category": "SQL",
+    "explanation": "EXCEPT returns rows present in the first query but not in the second."
+  },
+  {
+    "id": 56,
+    "text": "What does COALESCE(expr1, expr2, ...) do?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Returns the first non-NULL expression",
+      "Concatenates strings",
+      "Converts to NOT NULL",
+      "Trims whitespace"
+    ],
+    "correctAnswer": "Returns the first non-NULL expression",
+    "category": "SQL",
+    "explanation": "COALESCE evaluates arguments in order and returns the first that is not NULL."
+  },
+  {
+    "id": 57,
+    "text": "Which feature converts row values into columns based on an aggregate?",
+    "type": "MultipleChoice",
+    "choices": [
+      "PIVOT",
+      "UNPIVOT",
+      "ROLLUP",
+      "CUBE"
+    ],
+    "correctAnswer": "PIVOT",
+    "category": "SQL",
+    "explanation": "PIVOT rotates row data into columns for cross-tab style results."
+  },
+  {
+    "id": 58,
+    "text": "What is the main purpose of a clustered index?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Defines the physical order of rows",
+      "Enforces uniqueness only",
+      "Stores BLOB data",
+      "Caches query results"
+    ],
+    "correctAnswer": "Defines the physical order of rows",
+    "category": "SQL",
+    "explanation": "A clustered index determines the table's physical row order; there can be only one per table."
+  },
+  {
+    "id": 59,
+    "text": "In logical query processing, which clause is evaluated first?",
+    "type": "MultipleChoice",
+    "choices": [
+      "FROM",
+      "WHERE",
+      "SELECT",
+      "ORDER BY"
+    ],
+    "correctAnswer": "FROM",
+    "category": "SQL",
+    "explanation": "Logical processing order starts with FROM (then ON, OUTER, WHERE, GROUP BY, HAVING, SELECT, ORDER BY)."
+  },
+  {
+    "id": 60,
+    "text": "What is the default transaction isolation level in SQL Server?",
+    "type": "MultipleChoice",
+    "choices": [
+      "READ COMMITTED",
+      "READ UNCOMMITTED",
+      "REPEATABLE READ",
+      "SNAPSHOT"
+    ],
+    "correctAnswer": "READ COMMITTED",
+    "category": "SQL",
+    "explanation": "By default SQL Server uses READ COMMITTED isolation."
+  },
+  {
+    "id": 61,
+    "text": "If a bug fixes itself in production, what do we call it?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Feature",
+      "Miracle",
+      "Undefined Behavior",
+      "Heisenbug"
+    ],
+    "correctAnswer": "Heisenbug",
+    "category": "Fun",
+    "explanation": "A Heisenbug disappears or alters its behavior when you try to observe it. Miracles are not in the docs."
+  },
+  {
+    "id": 62,
+    "text": "How many stack overflows does it take to fix a StackOverflow?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Just one post",
+      "Depends on recursion depth",
+      "42",
+      "All of them"
+    ],
+    "correctAnswer": "Depends on recursion depth",
+    "category": "Fun",
+    "explanation": "Recursion jokes aside, the best fix is usually found on the first accepted answer."
+  },
+  {
+    "id": 63,
+    "text": "What's the most portable programming language?",
+    "type": "MultipleChoice",
+    "choices": [
+      "C#",
+      "Java",
+      "Python",
+      "PowerPoint"
+    ],
+    "correctAnswer": "PowerPoint",
+    "category": "Fun",
+    "explanation": "It runs everywhere—in meetings. Real answer: depends on runtime and ecosystem."
+  },
+  {
+    "id": 64,
+    "text": "If code works on my machine, what's the next step?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Ship it",
+      "Blame the network",
+      "Write tests",
+      "Print the DLL"
+    ],
+    "correctAnswer": "Write tests",
+    "category": "Fun",
+    "explanation": "'Works on my machine' is not a strategy—tests and reproducible environments are."
+  },
+  {
+    "id": 65,
+    "text": "What does 'sudo fix prod' return?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Permission denied",
+      "All green",
+      "Coffee",
+      "It depends"
+    ],
+    "correctAnswer": "It depends",
+    "category": "Fun",
+    "explanation": "It always depends—on logs, metrics, rollbacks, and whether you wrote a runbook."
+  },
+  {
+    "id": 66,
+    "text": "What does the acronym LLM stand for?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Large Language Model",
+      "Lightweight Logic Module",
+      "Limited Learning Machine",
+      "Long-Lived Module"
+    ],
+    "correctAnswer": "Large Language Model",
+    "category": "AI",
+    "explanation": "LLM stands for Large Language Model, an AI model trained on large amounts of text."
+  },
+  {
+    "id": 67,
+    "text": "What does the acronym MCP mean in the context of LLMs?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Model Context Protocol",
+      "Managed Control Process",
+      "Multi-Channel Pipeline",
+      "Modular Connector Protocol"
+    ],
+    "correctAnswer": "Model Context Protocol",
+    "category": "Protocols",
+    "explanation": "MCP stands for Model Context Protocol, a protocol for connecting LLMs to tools and data."
+  },
+  {
+    "id": 68,
+    "text": "Which statement best describes an Array in .NET?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Fixed-size, contiguous block of elements",
+      "Resizable, non-generic collection",
+      "Thread-safe FIFO collection",
+      "Doubly linked list of nodes"
+    ],
+    "correctAnswer": "Fixed-size, contiguous block of elements",
+    "category": "Collections",
+    "explanation": "An Array has a fixed length and stores elements in a contiguous block of memory."
+  },
+  {
+    "id": 69,
+    "text": "What is a key characteristic of ArrayList?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Non-generic, stores objects",
+      "Generic type-safe collection",
+      "Lock-free concurrent stack",
+      "Immutable queue"
+    ],
+    "correctAnswer": "Non-generic, stores objects",
+    "category": "Collections",
+    "explanation": "ArrayList is a non-generic collection that stores elements as object, requiring casting."
+  },
+  {
+    "id": 70,
+    "text": "Which advantage does List<T> have over ArrayList?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Type safety with generics",
+      "Built-in thread safety",
+      "Constant-time resizing",
+      "Stores elements on the stack"
+    ],
+    "correctAnswer": "Type safety with generics",
+    "category": "Collections",
+    "explanation": "List<T> is generic and provides compile-time type safety without casting."
+  },
+  {
+    "id": 71,
+    "text": "Which data structure does Queue implement?",
+    "type": "MultipleChoice",
+    "choices": [
+      "FIFO (First-In, First-Out)",
+      "LIFO (Last-In, First-Out)",
+      "Binary tree",
+      "Hash table"
+    ],
+    "correctAnswer": "FIFO (First-In, First-Out)",
+    "category": "Collections",
+    "explanation": "Queue processes items in first-in, first-out order using Enqueue and Dequeue."
+  },
+  {
+    "id": 72,
+    "text": "What differentiates ConcurrentQueue<T> from Queue?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Thread-safe operations for multiple producers/consumers",
+      "Stores only reference types",
+      "Guarantees ordering across processes",
+      "Provides blocking Dequeue by default"
+    ],
+    "correctAnswer": "Thread-safe operations for multiple producers/consumers",
+    "category": "Collections",
+    "explanation": "ConcurrentQueue<T> offers lock-free, thread-safe operations suitable for concurrency."
+  },
+  {
+    "id": 73,
+    "text": "Which data structure does Stack implement?",
+    "type": "MultipleChoice",
+    "choices": [
+      "LIFO (Last-In, First-Out)",
+      "FIFO (First-In, First-Out)",
+      "Graph",
+      "Trie"
+    ],
+    "correctAnswer": "LIFO (Last-In, First-Out)",
+    "category": "Collections",
+    "explanation": "Stack processes items in last-in, first-out order using Push and Pop."
+  },
+  {
+    "id": 74,
+    "text": "What is a key feature of ConcurrentStack<T>?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Thread-safe LIFO operations",
+      "Immutable collection",
+      "Ordered dictionary of keys",
+      "Blocking enqueue"
+    ],
+    "correctAnswer": "Thread-safe LIFO operations",
+    "category": "Collections",
+    "explanation": "ConcurrentStack<T> provides thread-safe push/pop operations for concurrent scenarios."
+  },
+  {
+    "id": 75,
+    "text": "Which statement best describes LinkedList<T>?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Doubly linked list allowing efficient insertions/removals",
+      "Array-based fixed-size list",
+      "Lock-free FIFO queue",
+      "Hash-based set of unique items"
+    ],
+    "correctAnswer": "Doubly linked list allowing efficient insertions/removals",
+    "category": "Collections",
+    "explanation": "LinkedList<T> is a doubly linked list; insertions/removals are efficient given a node reference."
+  },
+  {
+    "id": 76,
+    "text": "You need to create objects without exposing creation logic and return subtypes based on context. Which pattern should you use?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Factory",
+      "Singleton",
+      "Adapter",
+      "Observer"
+    ],
+    "correctAnswer": "Factory",
+    "category": "Design Patterns",
+    "explanation": "The Factory pattern encapsulates object creation and can return different subtypes based on parameters."
+  },
+  {
+    "id": 77,
+    "text": "You want to dynamically swap an algorithm (e.g., different sorting or pricing strategies). Which pattern should you use?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Strategy",
+      "Decorator",
+      "Prototype",
+      "Bridge"
+    ],
+    "correctAnswer": "Strategy",
+    "category": "Design Patterns",
+    "explanation": "Strategy defines a family of interchangeable algorithms and encapsulates them for runtime selection."
+  },
+  {
+    "id": 78,
+    "text": "You must automatically notify subscribed components when a subject's state changes. Which pattern fits?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Observer",
+      "Mediator",
+      "Adapter",
+      "Facade"
+    ],
+    "correctAnswer": "Observer",
+    "category": "Design Patterns",
+    "explanation": "Observer lets subscribers register with a subject and receive notifications on state changes."
+  },
+  {
+    "id": 79,
+    "text": "You must ensure a single global instance with controlled access and lazy initialization. Which pattern?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Singleton",
+      "Factory",
+      "Composite",
+      "Builder"
+    ],
+    "correctAnswer": "Singleton",
+    "category": "Design Patterns",
+    "explanation": "Singleton guarantees a single instance and provides a global access point, often with lazy initialization."
+  },
+  {
+    "id": 80,
+    "text": "You need to integrate an incompatible interface without changing client code. Which pattern should you apply?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Adapter",
+      "Decorator",
+      "Proxy",
+      "Bridge"
+    ],
+    "correctAnswer": "Adapter",
+    "category": "Design Patterns",
+    "explanation": "Adapter converts a component's interface to match the one expected by the client."
+  },
+  {
+    "id": 81,
+    "text": "You want to add responsibilities (e.g., logging, compression) to an object flexibly without changing its class. Which pattern?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Decorator",
+      "Proxy",
+      "Composite",
+      "Flyweight"
+    ],
+    "correctAnswer": "Decorator",
+    "category": "Design Patterns",
+    "explanation": "Decorator dynamically attaches responsibilities to an object via wrappers that adhere to the same interface."
+  },
+  {
+    "id": 82,
+    "text": "Multiple objects must collaborate through a mediation point to reduce direct dependencies. Which pattern should you choose?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Mediator",
+      "Observer",
+      "Facade",
+      "Prototype"
+    ],
+    "correctAnswer": "Mediator",
+    "category": "Design Patterns",
+    "explanation": "Mediator centralizes interactions among objects to reduce coupling and relational complexity."
+  },
+  {
+    "id": 83,
+    "text": "You want to simplify access to a complex subsystem through a single, consistent interface. Which pattern?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Facade",
+      "Bridge",
+      "Composite",
+      "Proxy"
+    ],
+    "correctAnswer": "Facade",
+    "category": "Design Patterns",
+    "explanation": "Facade provides a unified interface that simplifies the use of a complex subsystem."
+  },
+  {
+    "id": 84,
+    "text": "Which method is used to add middleware to the ASP.NET Core pipeline?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Use",
+      "Map",
+      "Run",
+      "Add"
+    ],
+    "correctAnswer": "Use",
+    "category": "ASP.NET Core",
+    "explanation": "The Use method adds middleware to the request pipeline that can pass control to the next middleware."
+  },
+  {
+    "id": 85,
+    "text": "What is the difference between AddScoped and AddTransient in dependency injection?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Scoped creates one instance per request, Transient creates a new instance each time",
+      "Scoped is thread-safe, Transient is not",
+      "Scoped is faster than Transient",
+      "They are identical"
+    ],
+    "correctAnswer": "Scoped creates one instance per request, Transient creates a new instance each time",
+    "category": "ASP.NET Core",
+    "explanation": "AddScoped creates one instance per HTTP request, while AddTransient creates a new instance every time it's requested."
+  },
+  {
+    "id": 86,
+    "text": "Which attribute is used to bind action parameters from the request body?",
+    "type": "MultipleChoice",
+    "choices": [
+      "[FromBody]",
+      "[FromQuery]",
+      "[FromRoute]",
+      "[FromForm]"
+    ],
+    "correctAnswer": "[FromBody]",
+    "category": "ASP.NET Core",
+    "explanation": "[FromBody] binds the parameter from the request body, typically for JSON payloads."
+  },
+  {
+    "id": 87,
+    "text": "What HTTP status code should be returned when a resource is successfully created?",
+    "type": "MultipleChoice",
+    "choices": [
+      "201 Created",
+      "200 OK",
+      "204 No Content",
+      "202 Accepted"
+    ],
+    "correctAnswer": "201 Created",
+    "category": "ASP.NET Core",
+    "explanation": "201 Created indicates successful resource creation and should include a Location header pointing to the new resource."
+  },
+  {
+    "id": 88,
+    "text": "Which method terminates the middleware pipeline without calling the next middleware?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Run",
+      "Use",
+      "Map",
+      "UseWhen"
+    ],
+    "correctAnswer": "Run",
+    "category": "ASP.NET Core",
+    "explanation": "Run is a terminal middleware that doesn't call next(), ending the pipeline."
+  },
+  {
+    "id": 89,
+    "text": "What is the purpose of ModelState.IsValid in ASP.NET Core?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Validates model binding and data annotations",
+      "Checks if the model is null",
+      "Verifies SQL injection attacks",
+      "Ensures the model is serializable"
+    ],
+    "correctAnswer": "Validates model binding and data annotations",
+    "category": "ASP.NET Core",
+    "explanation": "ModelState.IsValid checks whether model binding succeeded and all validation attributes are satisfied."
+  },
+  {
+    "id": 90,
+    "text": "Which interface should a middleware class implement?",
+    "type": "MultipleChoice",
+    "choices": [
+      "IMiddleware",
+      "IApplicationMiddleware",
+      "IRequestHandler",
+      "IHttpMiddleware"
+    ],
+    "correctAnswer": "IMiddleware",
+    "category": "ASP.NET Core",
+    "explanation": "Custom middleware classes can implement IMiddleware for factory-based activation."
+  },
+  {
+    "id": 91,
+    "text": "What is the purpose of the [ApiController] attribute?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Enables automatic model validation and binding conventions",
+      "Marks a controller as thread-safe",
+      "Enables caching automatically",
+      "Adds authentication requirements"
+    ],
+    "correctAnswer": "Enables automatic model validation and binding conventions",
+    "category": "ASP.NET Core",
+    "explanation": "[ApiController] enables features like automatic HTTP 400 responses for invalid models and inference of binding sources."
+  },
+  {
+    "id": 92,
+    "text": "Which HTTP method is idempotent and should be used to update a complete resource?",
+    "type": "MultipleChoice",
+    "choices": [
+      "PUT",
+      "POST",
+      "PATCH",
+      "DELETE"
+    ],
+    "correctAnswer": "PUT",
+    "category": "HTTP",
+    "explanation": "PUT is idempotent and replaces the entire resource. Multiple identical PUT requests have the same effect as a single one."
+  },
+  {
+    "id": 93,
+    "text": "What HTTP status code indicates that the server understood the request but refuses to authorize it?",
+    "type": "MultipleChoice",
+    "choices": [
+      "403 Forbidden",
+      "401 Unauthorized",
+      "400 Bad Request",
+      "405 Method Not Allowed"
+    ],
+    "correctAnswer": "403 Forbidden",
+    "category": "HTTP",
+    "explanation": "403 Forbidden means authentication succeeded but the user lacks permission. 401 means authentication is required."
+  },
+  {
+    "id": 94,
+    "text": "Which method is used to configure services in the dependency injection container?",
+    "type": "MultipleChoice",
+    "choices": [
+      "ConfigureServices",
+      "Configure",
+      "AddServices",
+      "RegisterServices"
+    ],
+    "correctAnswer": "ConfigureServices",
+    "category": "ASP.NET Core",
+    "explanation": "In older ASP.NET Core versions, ConfigureServices was used. In .NET 6+, services are added directly to builder.Services."
+  },
+  {
+    "id": 95,
+    "text": "What is the purpose of IActionResult in ASP.NET Core?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Represents the result of an action method",
+      "Validates action parameters",
+      "Filters incoming requests",
+      "Manages session state"
+    ],
+    "correctAnswer": "Represents the result of an action method",
+    "category": "ASP.NET Core",
+    "explanation": "IActionResult is an interface for action results like OkResult, NotFoundResult, CreatedResult, etc."
+  },
+  {
+    "id": 96,
+    "text": "Which attribute prevents over-posting attacks by specifying which properties can be bound?",
+    "type": "MultipleChoice",
+    "choices": [
+      "[Bind]",
+      "[ValidateInput]",
+      "[BindProperty]",
+      "[SafeModel]"
+    ],
+    "correctAnswer": "[Bind]",
+    "category": "ASP.NET Core",
+    "explanation": "The [Bind] attribute specifies which properties the model binder should include, preventing mass assignment vulnerabilities."
+  },
+  {
+    "id": 97,
+    "text": "What is the difference between IActionFilter and IResultFilter?",
+    "type": "MultipleChoice",
+    "choices": [
+      "ActionFilter runs before/after action execution, ResultFilter runs before/after result execution",
+      "ActionFilter is synchronous, ResultFilter is asynchronous",
+      "ActionFilter is for APIs only, ResultFilter is for MVC",
+      "They are identical"
+    ],
+    "correctAnswer": "ActionFilter runs before/after action execution, ResultFilter runs before/after result execution",
+    "category": "ASP.NET Core",
+    "explanation": "IActionFilter executes around action method execution, while IResultFilter executes around result execution (e.g., view rendering)."
+  },
+  {
+    "id": 98,
+    "text": "Which method should you use to return a 404 Not Found response in a controller?",
+    "type": "MultipleChoice",
+    "choices": [
+      "NotFound()",
+      "BadRequest()",
+      "NoContent()",
+      "StatusCode(404)"
+    ],
+    "correctAnswer": "NotFound()",
+    "category": "ASP.NET Core",
+    "explanation": "NotFound() returns a 404 status code. StatusCode(404) also works but NotFound() is more semantic."
+  },
+  {
+    "id": 99,
+    "text": "What is content negotiation in ASP.NET Core Web API?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Selecting response format based on Accept header",
+      "Compressing response data",
+      "Validating request content",
+      "Encrypting API responses"
+    ],
+    "correctAnswer": "Selecting response format based on Accept header",
+    "category": "ASP.NET Core",
+    "explanation": "Content negotiation allows the API to return different formats (JSON, XML) based on the client's Accept header."
+  },
+  {
+    "id": 100,
+    "text": "Which method configures strongly-typed configuration objects?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Configure<T>",
+      "AddOptions<T>",
+      "Bind<T>",
+      "Register<T>"
+    ],
+    "correctAnswer": "Configure<T>",
+    "category": "ASP.NET Core",
+    "explanation": "services.Configure<TOptions>(configuration.GetSection(\"SectionName\")) binds configuration to strongly-typed options."
+  },
+  {
+    "id": 101,
+    "text": "What is the purpose of the [Authorize] attribute?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Restricts access to authenticated users",
+      "Validates model data",
+      "Enables CORS",
+      "Configures routing"
+    ],
+    "correctAnswer": "Restricts access to authenticated users",
+    "category": "ASP.NET Core",
+    "explanation": "[Authorize] restricts access to authenticated users. It can also specify roles, policies, or authentication schemes."
+  },
+  {
+    "id": 102,
+    "text": "Which HTTP method should be used for partial updates?",
+    "type": "MultipleChoice",
+    "choices": [
+      "PATCH",
+      "PUT",
+      "POST",
+      "UPDATE"
+    ],
+    "correctAnswer": "PATCH",
+    "category": "ASP.NET Core",
+    "explanation": "PATCH is designed for partial updates, while PUT replaces the entire resource."
+  },
+  {
+    "id": 103,
+    "text": "What is the purpose of UseRouting() and UseEndpoints() in the middleware pipeline?",
+    "type": "MultipleChoice",
+    "choices": [
+      "UseRouting matches requests to endpoints, UseEndpoints executes them",
+      "Both are identical and interchangeable",
+      "UseRouting handles static files, UseEndpoints handles dynamic content",
+      "UseRouting is for MVC, UseEndpoints is for APIs"
+    ],
+    "correctAnswer": "UseRouting matches requests to endpoints, UseEndpoints executes them",
+    "category": "ASP.NET Core",
+    "explanation": "UseRouting adds route matching to the pipeline, while UseEndpoints executes the matched endpoint."
+  },
+  {
+    "id": 104,
+    "text": "What does JWT stand for?",
+    "type": "MultipleChoice",
+    "choices": [
+      "JSON Web Token",
+      "Java Web Technology",
+      "JavaScript Web Template",
+      "Joint Web Transfer"
+    ],
+    "correctAnswer": "JSON Web Token",
+    "category": "Security",
+    "explanation": "JWT (JSON Web Token) is a compact, URL-safe token format for securely transmitting information between parties."
+  },
+  {
+    "id": 105,
+    "text": "Which JWT component contains the actual claims and payload data?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Payload",
+      "Header",
+      "Signature",
+      "Footer"
+    ],
+    "correctAnswer": "Payload",
+    "category": "Security",
+    "explanation": "JWT consists of three parts: Header (metadata), Payload (claims), and Signature (verification)."
+  },
+  {
+    "id": 106,
+    "text": "What is the primary purpose of CORS (Cross-Origin Resource Sharing)?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Allow or restrict cross-origin HTTP requests",
+      "Encrypt data in transit",
+      "Prevent SQL injection",
+      "Manage user sessions"
+    ],
+    "correctAnswer": "Allow or restrict cross-origin HTTP requests",
+    "category": "Security",
+    "explanation": "CORS is a security feature that controls which origins can access resources in a web application."
+  },
+  {
+    "id": 107,
+    "text": "Which attack involves injecting malicious scripts into web pages viewed by other users?",
+    "type": "MultipleChoice",
+    "choices": [
+      "XSS (Cross-Site Scripting)",
+      "CSRF (Cross-Site Request Forgery)",
+      "SQL Injection",
+      "DDoS"
+    ],
+    "correctAnswer": "XSS (Cross-Site Scripting)",
+    "category": "Security",
+    "explanation": "XSS attacks inject malicious scripts that execute in users' browsers. Always encode output and sanitize input."
+  },
+  {
+    "id": 108,
+    "text": "How should passwords be stored in a database?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Hashed with a salt using bcrypt or Argon2",
+      "Encrypted with AES",
+      "Plain text",
+      "Base64 encoded"
+    ],
+    "correctAnswer": "Hashed with a salt using bcrypt or Argon2",
+    "category": "Security",
+    "explanation": "Passwords should be hashed (one-way) with unique salts using slow algorithms like bcrypt, not encrypted (reversible)."
+  },
+  {
+    "id": 109,
+    "text": "What is the purpose of an anti-forgery token in web applications?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Prevent CSRF attacks",
+      "Prevent XSS attacks",
+      "Prevent SQL injection",
+      "Encrypt form data"
+    ],
+    "correctAnswer": "Prevent CSRF attacks",
+    "category": "Security",
+    "explanation": "Anti-forgery tokens prevent Cross-Site Request Forgery by validating that requests originate from your application."
+  },
+  {
+    "id": 110,
+    "text": "What is the difference between authentication and authorization?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Authentication verifies identity, authorization verifies permissions",
+      "Authentication is for APIs, authorization is for web apps",
+      "They are identical",
+      "Authentication uses tokens, authorization uses cookies"
+    ],
+    "correctAnswer": "Authentication verifies identity, authorization verifies permissions",
+    "category": "Authentication",
+    "explanation": "Authentication verifies who you are (identity), while authorization determines what you can access (permissions)."
+  },
+  {
+    "id": 111,
+    "text": "Which OAuth 2.0 flow is recommended for server-side web applications?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Authorization Code Flow",
+      "Implicit Flow",
+      "Client Credentials Flow",
+      "Resource Owner Password Flow"
+    ],
+    "correctAnswer": "Authorization Code Flow",
+    "category": "Authentication",
+    "explanation": "Authorization Code Flow is most secure for server-side apps as the token is never exposed to the browser."
+  },
+  {
+    "id": 112,
+    "text": "What is the primary defense against SQL injection attacks?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Use parameterized queries or ORM",
+      "Validate input length",
+      "Use stored procedures only",
+      "Encrypt the database"
+    ],
+    "correctAnswer": "Use parameterized queries or ORM",
+    "category": "Security",
+    "explanation": "Parameterized queries (or ORMs like EF Core) prevent SQL injection by separating SQL code from data."
+  },
+  {
+    "id": 113,
+    "text": "What does the HttpOnly flag on a cookie prevent?",
+    "type": "MultipleChoice",
+    "choices": [
+      "JavaScript access to the cookie",
+      "Cookie transmission over HTTP",
+      "Cookie expiration",
+      "Cookie encryption"
+    ],
+    "correctAnswer": "JavaScript access to the cookie",
+    "category": "Security",
+    "explanation": "HttpOnly prevents client-side JavaScript from accessing the cookie, mitigating XSS-based cookie theft."
+  },
+  {
+    "id": 114,
+    "text": "What does the Secure flag on a cookie ensure?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Cookie is only sent over HTTPS",
+      "Cookie is encrypted",
+      "Cookie is HttpOnly",
+      "Cookie has anti-forgery protection"
+    ],
+    "correctAnswer": "Cookie is only sent over HTTPS",
+    "category": "Security",
+    "explanation": "The Secure flag ensures cookies are only transmitted over encrypted HTTPS connections."
+  },
+  {
+    "id": 115,
+    "text": "What is OpenID Connect (OIDC)?",
+    "type": "MultipleChoice",
+    "choices": [
+      "An identity layer on top of OAuth 2.0",
+      "A database authentication protocol",
+      "A password hashing algorithm",
+      "A cross-origin policy"
+    ],
+    "correctAnswer": "An identity layer on top of OAuth 2.0",
+    "category": "Authentication",
+    "explanation": "OpenID Connect is an identity layer built on OAuth 2.0 that adds authentication to authorization."
+  },
+  {
+    "id": 116,
+    "text": "What is the purpose of Content Security Policy (CSP)?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Prevent XSS by restricting resource sources",
+      "Encrypt HTTP traffic",
+      "Prevent CSRF attacks",
+      "Manage CORS policies"
+    ],
+    "correctAnswer": "Prevent XSS by restricting resource sources",
+    "category": "Security",
+    "explanation": "CSP is a security header that restricts which sources can load scripts, styles, and other resources, mitigating XSS."
+  },
+  {
+    "id": 117,
+    "text": "Which ASP.NET Core Identity method is used to sign in a user?",
+    "type": "MultipleChoice",
+    "choices": [
+      "SignInManager.SignInAsync",
+      "UserManager.LoginAsync",
+      "AuthenticationManager.SignIn",
+      "IdentityManager.Authenticate"
+    ],
+    "correctAnswer": "SignInManager.SignInAsync",
+    "category": "Authentication",
+    "explanation": "SignInManager<TUser>.SignInAsync creates the authentication cookie and signs in the user."
+  },
+  {
+    "id": 118,
+    "text": "What is the principle of least privilege?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Grant minimum permissions necessary to perform a task",
+      "Use the simplest code possible",
+      "Store minimal data in databases",
+      "Use the shortest passwords allowed"
+    ],
+    "correctAnswer": "Grant minimum permissions necessary to perform a task",
+    "category": "Security",
+    "explanation": "Least privilege means users and services should have only the minimum permissions required for their function."
+  },
+  {
+    "id": 119,
+    "text": "What is the purpose of rate limiting in APIs?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Prevent abuse and DoS attacks by limiting request frequency",
+      "Improve performance",
+      "Encrypt data",
+      "Validate input"
+    ],
+    "correctAnswer": "Prevent abuse and DoS attacks by limiting request frequency",
+    "category": "Security",
+    "explanation": "Rate limiting restricts the number of requests a client can make in a time period, preventing abuse and DoS."
+  },
+  {
+    "id": 120,
+    "text": "Which header should be set to prevent clickjacking attacks?",
+    "type": "MultipleChoice",
+    "choices": [
+      "X-Frame-Options",
+      "X-Content-Type-Options",
+      "X-XSS-Protection",
+      "Strict-Transport-Security"
+    ],
+    "correctAnswer": "X-Frame-Options",
+    "category": "Security",
+    "explanation": "X-Frame-Options (or CSP frame-ancestors) prevents your site from being embedded in iframes, preventing clickjacking."
+  },
+  {
+    "id": 121,
+    "text": "What does MFA (Multi-Factor Authentication) provide?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Additional security layer beyond password",
+      "Faster login process",
+      "Automatic password reset",
+      "Single sign-on capability"
+    ],
+    "correctAnswer": "Additional security layer beyond password",
+    "category": "Authentication",
+    "explanation": "MFA requires multiple verification factors (something you know, have, or are) for enhanced security."
+  },
+  {
+    "id": 122,
+    "text": "What is a record in C# 9+?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Immutable reference type with value-based equality",
+      "A database table representation",
+      "An async data structure",
+      "A logging mechanism"
+    ],
+    "correctAnswer": "Immutable reference type with value-based equality",
+    "category": "Modern C#",
+    "explanation": "Records are reference types with value-based equality, immutability by default, and concise syntax."
+  },
+  {
+    "id": 123,
+    "text": "What does the 'init' accessor do in C#?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Allows property to be set during initialization only",
+      "Initializes the property to default value",
+      "Makes property read-only",
+      "Enables lazy initialization"
+    ],
+    "correctAnswer": "Allows property to be set during initialization only",
+    "category": "Modern C#",
+    "explanation": "init accessors allow properties to be set during object initialization but become read-only afterwards."
+  },
+  {
+    "id": 124,
+    "text": "What is pattern matching in C#?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Testing if a value matches a specific shape or pattern",
+      "Matching regular expressions",
+      "Comparing strings",
+      "Database query matching"
+    ],
+    "correctAnswer": "Testing if a value matches a specific shape or pattern",
+    "category": "Modern C#",
+    "explanation": "Pattern matching allows testing values against patterns in switch expressions, is expressions, etc."
+  },
+  {
+    "id": 125,
+    "text": "What is the purpose of the 'required' modifier in C# 11?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Forces property to be initialized during construction",
+      "Makes parameter mandatory",
+      "Enables null checking",
+      "Marks method as essential"
+    ],
+    "correctAnswer": "Forces property to be initialized during construction",
+    "category": "Modern C#",
+    "explanation": "The required modifier ensures a property must be set during object creation, enforced by the compiler."
+  },
+  {
+    "id": 126,
+    "text": "What is a top-level statement in C# 9+?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Code outside of a class or method in Program.cs",
+      "A statement at the beginning of a method",
+      "The first line of a class",
+      "A global variable declaration"
+    ],
+    "correctAnswer": "Code outside of a class or method in Program.cs",
+    "category": "Modern C#",
+    "explanation": "Top-level statements eliminate boilerplate code by allowing statements directly in Program.cs without a Main method."
+  },
+  {
+    "id": 127,
+    "text": "What does the null-coalescing assignment operator ??= do?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Assigns value only if left operand is null",
+      "Checks if both operands are null",
+      "Throws if value is null",
+      "Converts null to default value"
+    ],
+    "correctAnswer": "Assigns value only if left operand is null",
+    "category": "Modern C#",
+    "explanation": "x ??= y assigns y to x only if x is null, equivalent to x = x ?? y."
+  },
+  {
+    "id": 128,
+    "text": "What is a switch expression in C#?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Concise syntax that returns a value based on patterns",
+      "A loop structure",
+      "An async expression",
+      "A LINQ expression"
+    ],
+    "correctAnswer": "Concise syntax that returns a value based on patterns",
+    "category": "Modern C#",
+    "explanation": "Switch expressions provide a concise, expression-based alternative to switch statements with pattern matching."
+  },
+  {
+    "id": 129,
+    "text": "What is the purpose of the 'with' keyword for records?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Creates a copy with modified properties",
+      "Joins two records",
+      "Validates record data",
+      "Serializes the record"
+    ],
+    "correctAnswer": "Creates a copy with modified properties",
+    "category": "Modern C#",
+    "explanation": "The 'with' expression creates a copy of a record with specified properties changed (non-destructive mutation)."
+  },
+  {
+    "id": 130,
+    "text": "What does the null-forgiving operator '!' do?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Tells compiler to suppress nullable warnings",
+      "Throws if value is null",
+      "Converts null to default",
+      "Checks for null"
+    ],
+    "correctAnswer": "Tells compiler to suppress nullable warnings",
+    "category": "Modern C#",
+    "explanation": "The ! operator suppresses nullable reference type warnings when you know a value isn't null."
+  },
+  {
+    "id": 131,
+    "text": "What is a primary constructor in C# 12?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Constructor parameters declared in class declaration",
+      "The first constructor defined",
+      "A required constructor",
+      "A parameterless constructor"
+    ],
+    "correctAnswer": "Constructor parameters declared in class declaration",
+    "category": "Modern C#",
+    "explanation": "Primary constructors allow declaring constructor parameters directly in the class declaration for concise syntax."
+  },
+  {
+    "id": 132,
+    "text": "What is the N+1 query problem in EF Core?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Loading parent then querying each child separately",
+      "Loading too much data at once",
+      "Using wrong index",
+      "Having null foreign keys"
+    ],
+    "correctAnswer": "Loading parent then querying each child separately",
+    "category": "Entity Framework",
+    "explanation": "N+1 problem occurs when loading a parent entity (1 query) then loading each child in separate queries (N queries). Use Include() to fix."
+  },
+  {
+    "id": 133,
+    "text": "Which method eagerly loads related entities in EF Core?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Include()",
+      "Load()",
+      "Join()",
+      "Fetch()"
+    ],
+    "correctAnswer": "Include()",
+    "category": "Entity Framework",
+    "explanation": "Include() eagerly loads related entities in the same query. ThenInclude() loads nested relationships."
+  },
+  {
+    "id": 134,
+    "text": "What is the purpose of AsNoTracking() in EF Core?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Improves performance for read-only queries",
+      "Disables change tracking for updates",
+      "Prevents SQL injection",
+      "Enables lazy loading"
+    ],
+    "correctAnswer": "Improves performance for read-only queries",
+    "category": "Entity Framework",
+    "explanation": "AsNoTracking() disables change tracking, improving performance when you don't need to update entities."
+  },
+  {
+    "id": 135,
+    "text": "What is a stored procedure?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Precompiled SQL statements stored in database",
+      "A cached query result",
+      "A temporary table",
+      "A database backup"
+    ],
+    "correctAnswer": "Precompiled SQL statements stored in database",
+    "category": "SQL",
+    "explanation": "Stored procedures are precompiled SQL code stored in the database, offering performance and security benefits."
+  },
+  {
+    "id": 136,
+    "text": "What is a database transaction?",
+    "type": "MultipleChoice",
+    "choices": [
+      "A unit of work that is atomic, consistent, isolated, and durable",
+      "A single SQL query",
+      "A database backup operation",
+      "A table join operation"
+    ],
+    "correctAnswer": "A unit of work that is atomic, consistent, isolated, and durable",
+    "category": "SQL",
+    "explanation": "Transactions ensure ACID properties: all operations succeed or all fail together, maintaining data integrity."
+  },
+  {
+    "id": 137,
+    "text": "What is a migration in EF Core?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Code that evolves database schema over time",
+      "Moving data between tables",
+      "Importing data from files",
+      "Database backup"
+    ],
+    "correctAnswer": "Code that evolves database schema over time",
+    "category": "Entity Framework",
+    "explanation": "Migrations are version-controlled changes to database schema that can be applied or rolled back."
+  },
+  {
+    "id": 138,
+    "text": "What is the difference between DELETE and TRUNCATE?",
+    "type": "MultipleChoice",
+    "choices": [
+      "DELETE is logged and can have WHERE clause, TRUNCATE is faster but removes all rows",
+      "DELETE is faster",
+      "TRUNCATE can have WHERE clause",
+      "They are identical"
+    ],
+    "correctAnswer": "DELETE is logged and can have WHERE clause, TRUNCATE is faster but removes all rows",
+    "category": "SQL",
+    "explanation": "DELETE removes rows one by one with logging and WHERE support. TRUNCATE quickly removes all rows, resets identity, minimal logging."
+  },
+  {
+    "id": 139,
+    "text": "What is a database index?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Data structure that improves query performance",
+      "A primary key",
+      "A foreign key relationship",
+      "A table constraint"
+    ],
+    "correctAnswer": "Data structure that improves query performance",
+    "category": "SQL",
+    "explanation": "Indexes speed up data retrieval at the cost of slower writes and additional storage."
+  },
+  {
+    "id": 140,
+    "text": "What does the virtual keyword enable in EF Core navigation properties?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Lazy loading",
+      "Eager loading",
+      "Explicit loading",
+      "No tracking"
+    ],
+    "correctAnswer": "Lazy loading",
+    "category": "Entity Framework",
+    "explanation": "Making navigation properties virtual enables lazy loading proxies to load related data on first access."
+  },
+  {
+    "id": 141,
+    "text": "What is a foreign key constraint?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Enforces referential integrity between tables",
+      "Improves query performance",
+      "Creates an index automatically",
+      "Encrypts column data"
+    ],
+    "correctAnswer": "Enforces referential integrity between tables",
+    "category": "SQL",
+    "explanation": "Foreign key constraints ensure that values in one table match values in another, maintaining referential integrity."
+  },
+  {
+    "id": 142,
+    "text": "What's the primary benefit of using 'record' types in DTOs (Data Transfer Objects)?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Value-based equality and immutability by default",
+      "Better serialization performance",
+      "Automatic database mapping",
+      "Built-in validation"
+    ],
+    "correctAnswer": "Value-based equality and immutability by default",
+    "category": "Advanced C#",
+    "explanation": "Records provide value-based equality (comparing properties vs reference) and immutability, making them ideal for DTOs that represent data rather than identity."
+  },
+  {
+    "id": 143,
+    "text": "In a high-concurrency application, what's the safest way to implement lazy initialization?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Lazy<T> with thread-safe initialization",
+      "Manual double-checked locking",
+      "Simple null checks",
+      "Static constructors"
+    ],
+    "correctAnswer": "Lazy<T> with thread-safe initialization",
+    "category": "Advanced C#",
+    "explanation": "Lazy<T> provides built-in thread-safe initialization patterns that are more reliable and maintainable than manual double-checked locking."
+  },
+  {
+    "id": 144,
+    "text": "What's the most appropriate use of 'Span<T>' in performance-critical code?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Working with contiguous memory without allocations",
+      "Replacing all array usage",
+      "Thread synchronization",
+      "Database access"
+    ],
+    "correctAnswer": "Working with contiguous memory without allocations",
+    "category": "Advanced C#",
+    "explanation": "Span<T> provides type-safe access to contiguous memory regions without heap allocations, ideal for high-performance parsing and memory manipulation."
+  },
+  {
+    "id": 145,
+    "text": "You're investigating a memory leak in a long-running .NET service. What's the most effective first step?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Take memory dumps and analyze with WinDbg or dotMemory",
+      "Restart the service",
+      "Add more logging",
+      "Increase garbage collection frequency"
+    ],
+    "correctAnswer": "Take memory dumps and analyze with WinDbg or dotMemory",
+    "category": "Debugging",
+    "explanation": "Memory dumps provide concrete evidence of object retention patterns and are essential for diagnosing memory leaks in production services."
+  },
+  {
+    "id": 146,
+    "text": "What's the most common cause of poor LINQ-to-SQL performance in enterprise applications?",
+    "type": "MultipleChoice",
+    "choices": [
+      "N+1 query problems and inefficient joins",
+      "Using async/await",
+      "Small database tables",
+      "Too many indexes"
+    ],
+    "correctAnswer": "N+1 query problems and inefficient joins",
+    "category": "Performance",
+    "explanation": "N+1 queries (loading parent then querying each child separately) and poorly optimized joins are the most common performance bottlenecks in ORM usage."
+  },
+  {
+    "id": 147,
+    "text": "What's the primary benefit of the CQRS pattern in complex applications?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Separation of read and write models for scalability and optimization",
+      "Automatic caching",
+      "Reduced database size",
+      "Simpler code structure"
+    ],
+    "correctAnswer": "Separation of read and write models for scalability and optimization",
+    "category": "Architecture",
+    "explanation": "CQRS (Command Query Responsibility Segregation) separates read and write operations, allowing each to be optimized independently for complex domains."
+  },
+  {
+    "id": 148,
+    "text": "When would you choose event sourcing over traditional CRUD in a financial application?",
+    "type": "MultipleChoice",
+    "choices": [
+      "When you need a complete audit trail of all state changes",
+      "When performance is the only concern",
+      "For simple data models",
+      "When using relational databases"
+    ],
+    "correctAnswer": "When you need a complete audit trail of all state changes",
+    "category": "Architecture",
+    "explanation": "Event sourcing stores all state changes as a sequence of events, providing a complete audit trail essential for financial and compliance scenarios."
+  },
+  {
+    "id": 149,
+    "text": "What's the recommended approach for dependency injection in .NET 6+ minimal APIs?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Use builder.Services for registration and constructor injection",
+      "Manual instantiation in each endpoint",
+      "Service locator pattern",
+      "Static service access"
+    ],
+    "correctAnswer": "Use builder.Services for registration and constructor injection",
+    "category": "Modern .NET",
+    "explanation": "Modern .NET uses builder.Services.Add*() methods for registration and constructor injection for clean, testable dependency management."
+  },
+  {
+    "id": 150,
+    "text": "What's the primary benefit of using Source Generators in .NET 5+?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Compile-time code generation to improve performance and reduce runtime overhead",
+      "Automatic database schema generation",
+      "Replacing all reflection usage",
+      "Simpler build pipelines"
+    ],
+    "correctAnswer": "Compile-time code generation to improve performance and reduce runtime overhead",
+    "category": "Modern .NET",
+    "explanation": "Source Generators enable compile-time code generation, reducing runtime reflection overhead and improving startup performance."
+  },
+  {
+    "id": 151,
+    "text": "What's the most concise way to write this null check: 'if (value != null) return value; else return defaultValue;'?",
+    "type": "MultipleChoice",
+    "choices": [
+      "return value ?? defaultValue;",
+      "return value != null ? value : defaultValue;",
+      "return value ??= defaultValue;",
+      "return defaultValue ?? value;"
+    ],
+    "correctAnswer": "return value ?? defaultValue;",
+    "category": "Modern C# Syntax",
+    "explanation": "The null-coalescing operator ?? provides the most concise syntax for returning a value or its fallback."
+  },
+  {
+    "id": 152,
+    "text": "How can you write this property with a backing field more concisely: 'private string _name; public string Name { get { return _name; } set { _name = value; } }'?",
+    "type": "MultipleChoice",
+    "choices": [
+      "public string Name { get; set; }",
+      "public string Name => _name;",
+      "public string Name { get; init; }",
+      "public string Name { get; private set; }"
+    ],
+    "correctAnswer": "public string Name { get; set; }",
+    "category": "Modern C# Syntax",
+    "explanation": "Auto-properties (get; set;) eliminate the need for explicit backing fields in most cases."
+  },
+  {
+    "id": 153,
+    "text": "What's the equivalent concise syntax for: 'if (string.IsNullOrEmpty(value)) throw new ArgumentException(\"Value cannot be null or empty\");'?",
+    "type": "MultipleChoice",
+    "choices": [
+      "ArgumentException.ThrowIfNullOrEmpty(value);",
+      "throw if string.IsNullOrEmpty(value);",
+      "value.ThrowIfNullOrEmpty();",
+      "!string.IsNullOrEmpty(value) ?? throw new ArgumentException();"
+    ],
+    "correctAnswer": "ArgumentException.ThrowIfNullOrEmpty(value);",
+    "category": "Modern C# Syntax",
+    "explanation": "C# 10+ provides concise throw helper methods like ArgumentException.ThrowIfNullOrEmpty() for cleaner validation."
+  },
+  {
+    "id": 154,
+    "text": "How can you rewrite this switch statement more concisely: 'switch(x) { case 1: return \"One\"; case 2: return \"Two\"; default: return \"Many\"; }'?",
+    "type": "MultipleChoice",
+    "choices": [
+      "return x switch { 1 => \"One\", 2 => \"Two\", _ => \"Many\" };",
+      "return x switch { case 1: \"One\", case 2: \"Two\", default: \"Many\" };",
+      "return x switch { 1: \"One\", 2: \"Two\", *: \"Many\" };",
+      "return x switch { 1 => \"One\", 2 => \"Two\", else => \"Many\" };"
+    ],
+    "correctAnswer": "return x switch { 1 => \"One\", 2 => \"Two\", _ => \"Many\" };",
+    "category": "Modern C# Syntax",
+    "explanation": "Switch expressions provide concise, expression-based syntax with lambda-style case patterns."
+  },
+  {
+    "id": 155,
+    "text": "What's the most concise way to write this list initialization: 'var list = new List<string>(); list.Add(\"a\"); list.Add(\"b\"); list.Add(\"c\");'?",
+    "type": "MultipleChoice",
+    "choices": [
+      "var list = new List<string> { \"a\", \"b\", \"c\" };",
+      "var list = [\"a\", \"b\", \"c\"];",
+      "var list = new() { \"a\", \"b\", \"c\" };",
+      "var list = new List<string>(new[] { \"a\", \"b\", \"c\" });"
+    ],
+    "correctAnswer": "var list = new List<string> { \"a\", \"b\", \"c\" };",
+    "category": "Modern C# Syntax",
+    "explanation": "Collection initializers provide concise syntax for populating collections at creation time."
+  },
+  {
+    "id": 156,
+    "text": "How can you write this method more concisely: 'public string GetName() { return _name; }'?",
+    "type": "MultipleChoice",
+    "choices": [
+      "public string GetName() => _name;",
+      "public string GetName() { _name; }",
+      "public string GetName() return _name;",
+      "public string GetName() { return: _name; }"
+    ],
+    "correctAnswer": "public string GetName() => _name;",
+    "category": "Modern C# Syntax",
+    "explanation": "Expression-bodied members use => to provide concise syntax for single-expression methods."
+  },
+  {
+    "id": 157,
+    "text": "What's the equivalent of this null check with assignment: 'if (value == null) value = new ValueType();'?",
+    "type": "MultipleChoice",
+    "choices": [
+      "value ??= new ValueType();",
+      "value = value ?? new ValueType();",
+      "value ?? new ValueType();",
+      "value = new ValueType() ?? value;"
+    ],
+    "correctAnswer": "value ??= new ValueType();",
+    "category": "Modern C# Syntax",
+    "explanation": "The null-coalescing assignment operator ??= assigns a value only if the left operand is null."
+  },
+  {
+    "id": 158,
+    "text": "How can you write this property pattern more concisely: 'public string Name { get { return _name; } private set { _name = value; } }'?",
+    "type": "MultipleChoice",
+    "choices": [
+      "public string Name { get => _name; private set => _name = value; }",
+      "public string Name { get; private set; } = _name;",
+      "public string Name => _name { private set; }",
+      "public string Name { get; private init; }"
+    ],
+    "correctAnswer": "public string Name { get => _name; private set => _name = value; }",
+    "category": "Modern C# Syntax",
+    "explanation": "Expression-bodied accessors allow concise syntax for simple get/set implementations."
+  },
+  {
+    "id": 159,
+    "text": "What's the most concise way to write this conditional assignment: 'if (condition) result = value1; else result = value2;'?",
+    "type": "MultipleChoice",
+    "choices": [
+      "result = condition ? value1 : value2;",
+      "result = condition switch { true => value1, false => value2 };",
+      "result = condition ? value1 : value2 ?? default;",
+      "result = condition then value1 else value2;"
+    ],
+    "correctAnswer": "result = condition ? value1 : value2;",
+    "category": "Modern C# Syntax",
+    "explanation": "The ternary conditional operator provides the most concise syntax for simple conditional assignments."
+  },
+  {
+    "id": 160,
+    "text": "How can you write this array initialization more concisely in C# 12+: 'int[] numbers = new int[] { 1, 2, 3, 4, 5 };'?",
+    "type": "MultipleChoice",
+    "choices": [
+      "int[] numbers = [1, 2, 3, 4, 5];",
+      "int[] numbers = new[] { 1, 2, 3, 4, 5 };",
+      "int[] numbers = { 1, 2, 3, 4, 5 };",
+      "int[] numbers = new int[5] { 1, 2, 3, 4, 5 };"
+    ],
+    "correctAnswer": "int[] numbers = [1, 2, 3, 4, 5];",
+    "category": "Modern C# Syntax",
+    "explanation": "C# 12+ introduces collection expressions with [] syntax for more concise array and collection initialization."
+  }
+]

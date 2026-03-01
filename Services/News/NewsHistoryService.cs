@@ -14,11 +14,13 @@ public interface INewsHistoryService
 
 public class NewsHistoryService : INewsHistoryService
 {
-    private readonly INewsRepository _newsRepository;
+    private readonly IArticleRepository _articleRepository;
+    private readonly IAiSummaryRepository _aiSummaryRepository;
 
-    public NewsHistoryService(INewsRepository newsRepository)
+    public NewsHistoryService(IArticleRepository articleRepository, IAiSummaryRepository aiSummaryRepository)
     {
-        _newsRepository = newsRepository;
+        _articleRepository = articleRepository;
+        _aiSummaryRepository = aiSummaryRepository;
     }
 
     public async Task<NewsSearchResult> SearchAsync(string? keyword, DateTime? startDate, DateTime? endDate, string? source, int page = 1, int pageSize = 20, CancellationToken cancellationToken = default)
@@ -26,13 +28,13 @@ public class NewsHistoryService : INewsHistoryService
         var take = Math.Clamp(pageSize, 1, 200);
         var skip = Math.Max(0, (page - 1) * take);
 
-        var (items, total) = await _newsRepository.SearchNewsArticlesAsync(keyword, startDate, endDate, source, skip, take, cancellationToken);
+        var (items, total) = await _articleRepository.SearchNewsArticlesAsync(keyword, startDate, endDate, source, skip, take, cancellationToken);
         
         var mapped = items.Select(MapToBaseNews).ToList();
         
          // Enrich with HasAiSummary
         var urls = mapped.Select(n => n.Url).ToList();
-        var existingSummaries = await _newsRepository.GetExistingAiSummaryUrlsAsync(urls, cancellationToken);
+        var existingSummaries = await _aiSummaryRepository.GetExistingAiSummaryUrlsAsync(urls, cancellationToken);
         
         foreach (var news in mapped)
         {
@@ -44,12 +46,12 @@ public class NewsHistoryService : INewsHistoryService
 
     public async Task<List<BaseNews>> GetRecentAsync(int count = 20, CancellationToken cancellationToken = default)
     {
-        var (items, _) = await _newsRepository.SearchNewsArticlesAsync(null, null, null, null, 0, Math.Clamp(count, 1, 200), cancellationToken);
+        var (items, _) = await _articleRepository.SearchNewsArticlesAsync(null, null, null, null, 0, Math.Clamp(count, 1, 200), cancellationToken);
         var mapped = items.Select(MapToBaseNews).ToList();
 
         // Enrich with HasAiSummary
         var urls = mapped.Select(n => n.Url).ToList();
-        var existingSummaries = await _newsRepository.GetExistingAiSummaryUrlsAsync(urls, cancellationToken);
+        var existingSummaries = await _aiSummaryRepository.GetExistingAiSummaryUrlsAsync(urls, cancellationToken);
         
         foreach (var news in mapped)
         {
@@ -60,7 +62,7 @@ public class NewsHistoryService : INewsHistoryService
     }
 
     public Task<List<string>> GetSourcesAsync(CancellationToken cancellationToken = default)
-        => _newsRepository.GetAllNewsSourcesAsync(cancellationToken);
+        => _articleRepository.GetAllNewsSourcesAsync(cancellationToken);
 
     private static BaseNews MapToBaseNews(Models.Entities.NewsArticle article)
     {

@@ -1,0 +1,98 @@
+/* Light theme overrides — applied when [data-bs-theme="light"] is set */
+[data-bs-theme="light"] {
+  --vs-bg: #f5f5f5;
+  --vs-panel: #ffffff;
+  --vs-panel-alt: #fafafa;
+  --vs-border: #e0e0e0;
+  --vs-text: #1e1e1e;
+  --vs-muted: #6c757d;
+  --vs-accent: #0969da;
+  --vs-accent-strong: #0550ae;
+
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --card-shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.12);
+  --dark-gradient: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%);
+}
+
+[data-bs-theme="light"] body {
+  background-color: var(--vs-bg);
+  color: var(--vs-text);
+}
+
+[data-bs-theme="light"] .card {
+  background-color: var(--vs-panel);
+  border-color: var(--vs-border);
+}
+
+[data-bs-theme="light"] .list-group-item {
+  background-color: transparent;
+  border-color: var(--vs-border);
+  color: var(--vs-text);
+}
+
+[data-bs-theme="light"] .text-muted {
+  color: var(--vs-muted) !important;
+}
+
+[data-bs-theme="light"] .footer {
+  background-color: var(--vs-panel-alt);
+  border-color: var(--vs-border) !important;
+}
+
+/* VS Output Window in light mode */
+[data-bs-theme="light"] .vs-output {
+  background: var(--vs-panel);
+  border-color: var(--vs-border);
+}
+
+[data-bs-theme="light"] .output-stream {
+  background: var(--vs-panel);
+  color: var(--vs-text);
+}
+
+[data-bs-theme="light"] .output-titlebar {
+  background: #e8e8e8;
+  color: #333;
+}
+
+[data-bs-theme="light"] .output-toolbar {
+  background: #f0f0f0;
+  border-color: var(--vs-border);
+}
+
+[data-bs-theme="light"] .output-toolbar .chip {
+  background: #ddd;
+  color: #333;
+}
+
+/* StackOverflow tags in light mode */
+[data-bs-theme="light"] .stackoverflow-tag {
+  background-color: #e1ecf4;
+  color: #39739d;
+}
+
+/* Category card overrides */
+[data-bs-theme="light"] .category-card {
+  border-color: var(--vs-border);
+  background: var(--vs-panel);
+}
+
+/* Theme toggle button */
+.theme-toggle {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  transition: opacity 0.2s;
+}
+
+.theme-toggle:hover {
+  opacity: 0.8;
+}
+
+[data-bs-theme="light"] .theme-toggle {
+  color: #333;
+}

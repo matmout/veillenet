@@ -1,6 +1,7 @@
 ﻿@page
 @model IndexModel
 @using VeilleNet.Models.ViewModels
+@using VeilleNet.Models
 @{
     ViewData["Title"] = "Dashboard";
     ViewData["Description"] = "ContainSharp Dashboard - Your daily C# news hub. Track latest .NET releases, AI coding tools, WinForms updates, official blogs, GitHub trending projects and C# video tutorials.";
@@ -53,136 +54,54 @@
                 DefaultImageUrl = "~/images/newsia.png",
                 ShowAuthor = false,
                 LoadingText = "Loading AI news...",
-                Items = Model.AINews
+                Items = Model.AINews.ToBlockItems()
             })
         </div>
 
         <!-- C# Videos Section -->
         <div class="col-lg-6 mb-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-header text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                    <h2 class="h4 mb-0">
-                        <i class="bi bi-play-circle"></i> New C# Videos
-                    </h2>
-                </div>
-                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
-                    @if (Model.Videos.Any())
-                    {
-                        <div class="list-group list-group-flush">
-                            @foreach (var video in Model.Videos)
-                            {
-                                <div class="list-group-item px-0">
-                                    <div class="d-flex w-100 align-items-start">
-                                        @if (!string.IsNullOrEmpty(video.Thumbnail))
-                                        {
-                                            <div class="me-3 flex-shrink-0">
-                                                <img src="@video.Thumbnail" alt="@video.Title" style="width: 120px; height: 90px; object-fit: cover; border-radius: 4px;" />
-                                            </div>
-                                        }
-                                        else
-                                        {
-                                            <div class="me-3 flex-shrink-0">
-                                                <img src="~/images/videoGeneric.png" alt="@video.Title" style="width: 120px; height: 90px; object-fit: cover; border-radius: 4px;" />
-                                            </div>
-
-                                        }
-                                        <div class="flex-grow-1">
-                                            <h6 class="mb-1">
-                                                <a href="@video.Url" target="_blank" class="text-decoration-none">
-                                                    @video.Title
-                                                </a>
-                                            </h6>
-                                            <p class="mb-1 small text-muted">@(video.Description.Length > 0 ? video.Description.Substring(0, Math.Min(200, video.Description.Length)) : "")@(video.Description.Length > 200 ? "..." : "")</p>
-                                            <small class="text-muted">
-                                                <i class="bi bi-camera-video"></i> @video.Channel | 
-                                                <i class="bi bi-calendar"></i> @video.PublishedDate.ToString("dd MMM yyyy")
-                                            </small>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                    }
-                    else
-                    {
-                        <p class="text-muted text-center">Loading videos...</p>
-                    }
-                </div>
-            </div>
+            @await Html.PartialAsync("_NewsBlockPartial", new NewsBlockViewModel
+            {
+                Title = "New C# Videos",
+                Icon = "bi-play-circle",
+                HeaderCssClass = "text-white",
+                HeaderStyle = "background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                DefaultImageUrl = "~/images/videoGeneric.png",
+                ShowAuthor = true,
+                AuthorIcon = "bi-camera-video",
+                ShowSource = false,
+                ShowAiSummary = false,
+                SanitizeHtml = false,
+                SummaryMaxLength = 200,
+                ImageWidth = 120,
+                ImageHeight = 90,
+                LoadingText = "Loading videos...",
+                Items = Model.Videos.ToBlockItems()
+            })
         </div>
     </div>
 
     <!-- Official X Posts Section -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-header text-white" style="background: #0f0f0f;">
-                    <h2 class="h4 mb-0">
-                        <i class="bi bi-twitter-x"></i> Latest Posts  <span class="badge bg-warning text-dark ms-1" style="font-size:0.7rem; vertical-align:middle;">New</span>
-                    </h2>
-                </div>
-                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
-                    @if (Model.OfficialXPosts.Any())
-                    {
-                        <div class="row g-3">
-                            @foreach (var post in Model.OfficialXPosts)
-                            {
-                                var previewImage = !string.IsNullOrEmpty(post.VideoPreviewImageUrl) ? post.VideoPreviewImageUrl : post.MediaUrl;
-                                <div class="col-md-6">
-                                    <div class="list-group-item px-0" style="overflow: visible;">
-                                        <div class="d-flex w-100 align-items-start">
-                                            @if (!string.IsNullOrEmpty(previewImage))
-                                            {
-                                                <div class="me-3 flex-shrink-0">
-                                                    <a href="@post.Url" target="_blank" class="text-decoration-none">
-                                                        <div class="x-video-thumb">
-                                                            <img src="@previewImage" alt="Post media" class="x-video-thumb-img" />
-                                                            @if (!string.IsNullOrEmpty(post.VideoUrl) || !string.IsNullOrEmpty(post.VideoPreviewImageUrl))
-                                                            {
-                                                                <span class="x-video-play"><i class="bi bi-play-fill"></i></span>
-                                                            }
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                            }
-                                            else if (!string.IsNullOrEmpty(post.ProfileImageUrl))
-                                            {
-                                                <div class="me-3 flex-shrink-0 x-post-avatar-wrapper">
-                                                    <img src="@post.ProfileImageUrl" alt="@post.Author" class="x-post-avatar" />
-                                                </div>
-                                            }
-                                            else
-                                            {
-                                                <div class="me-3 flex-shrink-0 d-flex align-items-center justify-content-center bg-secondary bg-opacity-10" style="width: 60px; height: 45px; border-radius: 4px;">
-                                                    <i class="bi bi-twitter-x" style="font-size: 1.25rem; color: #6c757d;"></i>
-                                                </div>
-                                            }
-                                            <div class="flex-grow-1">
-@*                                                 <div class="d-flex justify-content-between align-items-start">
-                                                    <h6 class="mb-1 flex-grow-1">
-                                                        <a href="@post.Url" target="_blank" class="text-decoration-none">View on X</a>
-                                                    </h6>
-                                                </div> *@
-                                                <div class="mb-1 small text-muted ai-summary-content" style="line-height:1.6;">
-                                                    @post.Text
-                                                </div>
-                                                <small class="text-muted">
-                                                    <i class="bi bi-person"></i> @post.Author |
-                                                    <i class="bi bi-calendar"></i> @post.PublishedDate.ToString("dd MMM yyyy HH:mm") | <a href="@post.Url" target="_blank" class="text-decoration-none">View on X</a>
-                                                </small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                    }
-                    else
-                    {
-                        <p class="text-muted text-center">Loading official X posts...</p>
-                    }
-                </div>
-            </div>
+            @await Html.PartialAsync("_NewsBlockPartial", new NewsBlockViewModel
+            {
+                Title = "Latest Posts",
+                Icon = "bi-twitter-x",
+                HeaderCssClass = "text-white",
+                HeaderStyle = "background: #0f0f0f",
+                HeaderBadgeHtml = "<span class=\"badge bg-warning text-dark ms-1\" style=\"font-size:0.7rem; vertical-align:middle;\">New</span>",
+                ShowTitle = false,
+                ShowAuthor = true,
+                ShowSource = false,
+                ShowAiSummary = false,
+                SanitizeHtml = false,
+                DateFormat = "dd MMM yyyy HH:mm",
+                DefaultIconClass = "bi-twitter-x",
+                ColumnsPerRow = 2,
+                LoadingText = "Loading official X posts...",
+                Items = Model.OfficialXPosts.ToBlockItems()
+            })
         </div>
     </div>
 
@@ -198,7 +117,7 @@
                 DefaultIconClass = "bi-newspaper",
                 ShowAuthor = true,
                 LoadingText = "Loading posts...",
-                Items = Model.BlogPosts
+                Items = Model.BlogPosts.ToBlockItems()
             })
         </div>
 
@@ -213,115 +132,46 @@
                 ShowAuthor = false,
                 SummaryMaxLength = 260,
                 LoadingText = "Loading WinForms news...",
-                Items = Model.WinFormNews
+                Items = Model.WinFormNews.ToBlockItems()
             })
         </div>
     </div>
         <!-- Main Content Row -->
         <div class="row">
-            <!-- Blog Posts Section (moved to StackOverflow position) -->
+            <!-- StackOverflow Questions Section -->
             <div class="col-lg-6 mb-4">
-                <div class="card shadow-sm h-100">
-                    <div class="card-header text-white" style="background: linear-gradient(135deg, #f48024 0%, #ef8236 100%);">
-                        <h2 class="h4 mb-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-stack-overflow" viewBox="0 0 16 16" style="vertical-align: -0.125em;">
-                                <path d="M12.412 14.572V10.29h1.428V16H1v-5.71h1.428v4.282z"/>
-                                <path d="M3.857 13.145h7.137v-1.428H3.857zM10.254 0 9.108.852l4.26 5.727 1.146-.852zm-3.54 3.377 5.484 4.567.913-1.097L7.627 2.28l-.914 1.097zM4.922 6.55l6.47 3.013.603-1.294-6.47-3.013zm-.925 3.344 6.985 1.469.294-1.398-6.985-1.468z"/>
-                            </svg> New C# Questions - StackOverflow
-                        </h2>
-                    </div>
-                    <div class="card-body" style="max-height: 600px; overflow-y: auto;">
-                        @if (Model.StackOverflowQuestions.Any())
-                        {
-                            <div class="list-group list-group-flush">
-                                @foreach (var question in Model.StackOverflowQuestions)
-                                {
-                                    <div class="list-group-item px-0" style="overflow: visible;">
-                                        <div class="d-flex w-100 align-items-start">
-                                            <div class="flex-grow-1">
-                                                <div class="d-flex justify-content-between align-items-start">
-                                                    <h6 class="mb-1 flex-grow-1">
-                                                        <a href="@question.Url" target="_blank" class="text-decoration-none">@question.Title</a>
-                                                    </h6>
-                                                </div>
-                                                @if (!string.IsNullOrEmpty(question.Summary))
-                                                {
-                                                    <p class="mb-2 small text-muted news-summary">@(question.Summary.Length > 200 ? question.Summary.Substring(0, 200) + "..." : question.Summary)</p>
-                                                }
-                                                <small class="news-meta d-block me-2">
-                                                    
-                                                    @if (!string.IsNullOrEmpty(question.Author))
-                                                    {
-                                                       
-                                                        <i class="bi bi-person"></i> @question.Author
-                                                        <span class="mx-2">|</span>
-                                                    }
-                                                    <i class="bi bi-calendar"></i> @question.PublishedDate.ToString("dd MMM yyyy")
-                                                </small>
-                                                <div class="d-flex gap-2 flex-wrap">
-                                                    @foreach (var tag in question.Tags.Take(5))
-                                                    {
-                                                        <span class="stackoverflow-tag">@tag</span>
-                                                    }
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                }
-                            </div>
-                        }
-                        else
-                        {
-                            <p class="text-muted text-center">Loading StackOverflow questions...</p>
-                        }
-                    </div>
-                </div>
+                @await Html.PartialAsync("_NewsBlockPartial", new NewsBlockViewModel
+                {
+                    Title = "New C# Questions - StackOverflow",
+                    HeaderIconHtml = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" fill=\"currentColor\" class=\"bi bi-stack-overflow\" viewBox=\"0 0 16 16\" style=\"vertical-align: -0.125em;\"><path d=\"M12.412 14.572V10.29h1.428V16H1v-5.71h1.428v4.282z\"/><path d=\"M3.857 13.145h7.137v-1.428H3.857zM10.254 0 9.108.852l4.26 5.727 1.146-.852zm-3.54 3.377 5.484 4.567.913-1.097L7.627 2.28l-.914 1.097zM4.922 6.55l6.47 3.013.603-1.294-6.47-3.013zm-.925 3.344 6.985 1.469.294-1.398-6.985-1.468z\"/></svg>",
+                    HeaderCssClass = "text-white",
+                    HeaderStyle = "background: linear-gradient(135deg, #f48024 0%, #ef8236 100%)",
+                    ShowAuthor = true,
+                    ShowSource = false,
+                    ShowAiSummary = false,
+                    SanitizeHtml = false,
+                    SummaryMaxLength = 200,
+                    ShowTags = true,
+                    MaxHeight = 600,
+                    LoadingText = "Loading StackOverflow questions...",
+                    Items = Model.StackOverflowQuestions.ToBlockItems()
+                })
             </div>
 
         <!-- GitHub Trending Section -->
         <div class="col-lg-6 mb-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-header bg-dark text-white">
-                    <h2 class="h4 mb-0">
-                        <i class="bi bi-github"></i> Tendances GitHub - C#
-                    </h2>
-                </div>
-                <div class="card-body" style="max-height: 600px; overflow-y: auto;">
-                    @if (Model.TrendingProjects.Any())
-                    {
-                        <div class="list-group list-group-flush">
-                            @foreach (var project in Model.TrendingProjects)
-                            {
-                                <div class="list-group-item px-0">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-1">
-                                            <a href="@project.Url" target="_blank" class="text-decoration-none">
-                                                @project.FullName
-                                            </a>
-                                        </h6>
-                                    </div>
-                                    <p class="mb-2 small">@project.Description</p>
-                                    <div class="d-flex gap-3">
-                                        <small class="text-warning">
-                                            <i class="bi bi-star-fill"></i> @project.Stars.ToString("N0")
-                                        </small>
-                                        <small class="text-info">
-                                            <i class="bi bi-diagram-2"></i> @project.Forks.ToString("N0")
-                                        </small>
-                                        <small class="text-muted">
-                                            <i class="bi bi-calendar"></i> @project.UpdatedAt.ToString("dd MMM yyyy")
-                                        </small>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                    }
-                    else
-                    {
-                        <p class="text-muted text-center">Chargement des projets...</p>
-                    }
-                </div>
-            </div>
+            @await Html.PartialAsync("_NewsBlockPartial", new NewsBlockViewModel
+            {
+                Title = "Tendances GitHub - C#",
+                Icon = "bi-github",
+                HeaderCssClass = "bg-dark text-white",
+                ShowStats = true,
+                ShowAiSummary = false,
+                SanitizeHtml = false,
+                MaxHeight = 600,
+                LoadingText = "Chargement des projets...",
+                Items = Model.TrendingProjects.ToBlockItems()
+            })
         </div>
     </div>
 

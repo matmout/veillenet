@@ -13,13 +13,13 @@ public class AiSummaryApiController : ControllerBase
 {
     private readonly ICacheService _cacheService;
     private readonly ILogger<AiSummaryApiController> _logger;
-    private readonly INewsRepository _newsRepository;
+    private readonly IAiSummaryRepository _aiSummaryRepository;
 
-    public AiSummaryApiController(INewsRepository newsRepository,ICacheService cacheService, ILogger<AiSummaryApiController> logger)
+    public AiSummaryApiController(IAiSummaryRepository aiSummaryRepository,ICacheService cacheService, ILogger<AiSummaryApiController> logger)
     {
         _cacheService = cacheService;
         _logger = logger;
-        _newsRepository = newsRepository;
+        _aiSummaryRepository = aiSummaryRepository;
     }
 
     [HttpGet("ai-summary")]
@@ -37,7 +37,7 @@ public class AiSummaryApiController : ControllerBase
 
             if (cached == null)
             {
-                var summary = await _newsRepository.GetAiSummaryByUrlAsync(url);
+                var summary = await _aiSummaryRepository.GetAiSummaryByUrlAsync(url);
                 if (summary != null)
                 {
                     _cacheService.Set(cacheKey, summary.ToAiContentSummary(), TimeSpan.FromHours(24));

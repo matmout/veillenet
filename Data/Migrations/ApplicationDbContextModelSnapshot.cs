@@ -261,7 +261,7 @@ namespace VeilleNet.Data.Migrations
 
                     b.HasIndex("Status");
 
-                    b.ToTable("JobExecutionLogs");
+                    b.ToTable("job_execution_logs", "containsharp");
                 });
 
             modelBuilder.Entity("VeilleNet.Models.Entities.NamedEntity", b =>
@@ -494,7 +494,7 @@ namespace VeilleNet.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("x_tracked_accounts");
+                    b.ToTable("x_tracked_accounts", "containsharp");
                 });
 
             modelBuilder.Entity("article_entities", b =>

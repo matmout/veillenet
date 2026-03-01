@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VeilleNet.Models.Entities;
 
-[Table("x_tracked_accounts")]
+[Table("x_tracked_accounts", Schema = "containsharp")]
 public class XTrackedAccount
 {
     [Key]

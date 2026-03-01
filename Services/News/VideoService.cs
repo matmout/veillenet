@@ -14,6 +14,7 @@ public class VideoService : IVideoService
 {
     private readonly ICacheService _cacheService;
     private readonly IFeedService _feedService;
+    private readonly ILogger<VideoService> _logger;
     private const string CacheKey = "CSharpVideos";
     private static readonly TimeSpan CacheExpiration = TimeSpan.FromHours(1);
 
@@ -36,10 +37,11 @@ public class VideoService : IVideoService
         ("Ed Andersen","https://www.youtube.com/feeds/videos.xml?channel_id=UCpZjU-GdtNJO42H8xPDyxRQ")
     };
 
-    public VideoService(ICacheService cacheService, IFeedService feedService)
+    public VideoService(ICacheService cacheService, IFeedService feedService, ILogger<VideoService> logger)
     {
         _cacheService = cacheService;
         _feedService = feedService;
+        _logger = logger;
     }
 
     public async Task<List<Video>> GetLatestVideosAsync()
@@ -61,7 +63,7 @@ public class VideoService : IVideoService
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Impossible de lire le contenu Video {name} {url} Erreur : {ex.Message}", ex);
+                _logger.LogWarning(ex, "Failed to fetch video feed {FeedName} ({FeedUrl})", name, url);
                 // Log error in production, continue with other feeds
             }
         }
@@ -99,7 +101,7 @@ public class VideoService : IVideoService
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Erreur lors de l'extraction de l'ID YouTube de l'URL {url} : {ex.Message}", ex);
+            _logger.LogWarning(ex, "Failed to extract YouTube video ID from {Url}", url);
             // Handle URL parsing errors
         }
 

@@ -31,7 +31,8 @@ public class AiSummarizationService : IAiSummarizationService
     private readonly IAINewsService _aiNewsService;
     private readonly IWinFormNewsService _winFormNewsService;
     private readonly IVideoService _videoService;
-    private readonly INewsRepository _newsRepository;
+    private readonly IArticleRepository _articleRepository;
+    private readonly IAiSummaryRepository _aiSummaryRepository;
     private readonly MistralOptions _options;
     private readonly ILogger<AiSummarizationService> _logger;
     private readonly IServiceScopeFactory _scopeFactory;
@@ -45,7 +46,8 @@ public class AiSummarizationService : IAiSummarizationService
         IAINewsService aiNewsService,
         IWinFormNewsService winFormNewsService,
         IVideoService videoService,
-        INewsRepository newsRepository,
+        IArticleRepository articleRepository,
+        IAiSummaryRepository aiSummaryRepository,
         IOptions<MistralOptions> options,
         ILogger<AiSummarizationService> logger,
         IServiceScopeFactory scopeFactory,
@@ -58,7 +60,8 @@ public class AiSummarizationService : IAiSummarizationService
         _aiNewsService = aiNewsService;
         _winFormNewsService = winFormNewsService;
         _videoService = videoService;
-        _newsRepository = newsRepository;
+        _articleRepository = articleRepository;
+        _aiSummaryRepository = aiSummaryRepository;
         _options = options.Value;
         _logger = logger;
         _scopeFactory = scopeFactory;
@@ -77,7 +80,7 @@ public class AiSummarizationService : IAiSummarizationService
         var chatClient = _chatClientFactory.TryCreate();
         if (chatClient is null) return;
 
-        var articles = await _newsRepository.GetRecentAiSummarizedNewsArticlesAsync(count, cancellationToken);
+        var articles = await _articleRepository.GetRecentAiSummarizedNewsArticlesAsync(count, cancellationToken);
         var skipped = 0;
         var processed = 0;
         foreach (var article in articles)
@@ -106,7 +109,7 @@ public class AiSummarizationService : IAiSummarizationService
 
                 if (entities != null && entities.Any())
                 {
-                    await _newsRepository.AddEntitiesToArticleAsync(article.Id, entities, cancellationToken);
+                    await _articleRepository.AddEntitiesToArticleAsync(article.Id, entities, cancellationToken);
                 }
             }
             catch (Exception ex)
@@ -120,21 +123,21 @@ public class AiSummarizationService : IAiSummarizationService
 
     public async Task<List<AiContentSummary>> GetLatestBlogSummariesFromDatabaseAsync(int count = 10, CancellationToken cancellationToken = default)
     {
-        var summaries = await _newsRepository.GetRecentAiSummariesAsync(count, cancellationToken);
+        var summaries = await _aiSummaryRepository.GetRecentAiSummariesAsync(count, cancellationToken);
         return summaries.Select(s => s.ToAiContentSummary()).ToList();
     }
 
     public async Task<string?> GetDominantThemeFromRecentNewsAsync(CancellationToken cancellationToken = default)
     {
         var generationDate = DateOnly.FromDateTime(DateTime.UtcNow);
-        var existingTheme = await _newsRepository.GetDominantThemeByDateAsync(generationDate, cancellationToken);
+        var existingTheme = await _articleRepository.GetDominantThemeByDateAsync(generationDate, cancellationToken);
         if (existingTheme != null)
         {
             return FormatThemeOutput(existingTheme.Theme, existingTheme.Rationale);
         }
 
         var sinceDate = DateTime.UtcNow.AddDays(-3);
-        var articles = await _newsRepository.GetRecentNewsArticlesAsync(200, cancellationToken);
+        var articles = await _articleRepository.GetRecentNewsArticlesAsync(200, cancellationToken);
         var recentTitles = articles
             .Where(a => a.PublishedDate >= sinceDate)
             .Select(a => a.Title?.Trim())
@@ -175,14 +178,14 @@ public class AiSummarizationService : IAiSummarizationService
 
             if (parsedTheme != null)
             {
-                await _newsRepository.AddOrUpdateDominantThemeAsync(generationDate, parsedTheme.Value.theme, parsedTheme.Value.rationale, cancellationToken);
+                await _articleRepository.AddOrUpdateDominantThemeAsync(generationDate, parsedTheme.Value.theme, parsedTheme.Value.rationale, cancellationToken);
                 return FormatThemeOutput(parsedTheme.Value.theme, parsedTheme.Value.rationale);
             }
 
             var fallback = response.Text?.Trim();
             if (!string.IsNullOrWhiteSpace(fallback))
             {
-                await _newsRepository.AddOrUpdateDominantThemeAsync(generationDate, fallback!, null, cancellationToken);
+                await _articleRepository.AddOrUpdateDominantThemeAsync(generationDate, fallback!, null, cancellationToken);
             }
 
             return fallback;
@@ -212,7 +215,7 @@ public class AiSummarizationService : IAiSummarizationService
         //posts.AddRange(videoTask); TO be implemented after
 
         // Deduplicate news
-        var recentArticles = await _newsRepository.GetRecentNewsArticlesAsync(200, cancellationToken);
+        var recentArticles = await _articleRepository.GetRecentNewsArticlesAsync(200, cancellationToken);
         var uniquePosts = new List<BaseNews>();
 
         foreach (var post in globalPosts)
@@ -237,7 +240,7 @@ public class AiSummarizationService : IAiSummarizationService
         // Save news articles to database
         try
         {
-            await _newsRepository.AddOrUpdateNewsArticlesAsync(globalPosts, cancellationToken);
+            await _articleRepository.AddOrUpdateNewsArticlesAsync(globalPosts, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -277,7 +280,7 @@ public class AiSummarizationService : IAiSummarizationService
         // Save AI summaries to database
         try
         {
-            await _newsRepository.AddOrUpdateAiSummariesAsync(summaries, cancellationToken);
+            await _aiSummaryRepository.AddOrUpdateAiSummariesAsync(summaries, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -293,7 +296,7 @@ public class AiSummarizationService : IAiSummarizationService
                 try
                 {
                     using var scope = _scopeFactory.CreateScope();
-                    var scopedRepo = scope.ServiceProvider.GetRequiredService<INewsRepository>();
+                    var scopedRepo = scope.ServiceProvider.GetRequiredService<IArticleRepository>();
                     var scopedAiService = scope.ServiceProvider.GetRequiredService<IAiSummarizationService>();
 
                     var entityCount = await scopedRepo.GetNamedEntityCountAsync(CancellationToken.None);
@@ -322,7 +325,7 @@ public class AiSummarizationService : IAiSummarizationService
         var chatClient = _chatClientFactory.TryCreate();
         if (chatClient is null) return;
 
-        var articles = await _newsRepository.GetRecentNewsArticlesAsync(30, cancellationToken);
+        var articles = await _articleRepository.GetRecentNewsArticlesAsync(30, cancellationToken);
         var processed = 0;
         var skipped = 0;
         foreach (var article in articles)
@@ -350,7 +353,7 @@ public class AiSummarizationService : IAiSummarizationService
 
                 if (entities != null && entities.Any())
                 {
-                    await _newsRepository.AddEntitiesToArticleAsync(article.Id, entities, cancellationToken);
+                    await _articleRepository.AddEntitiesToArticleAsync(article.Id, entities, cancellationToken);
                 }
 
                 // Rate limiting: avoid Mistral API burst
@@ -374,7 +377,7 @@ public class AiSummarizationService : IAiSummarizationService
         // Check database first
         try
         {
-            var existingSummary = await _newsRepository.GetAiSummaryByUrlAsync(post.Url, cancellationToken);
+            var existingSummary = await _aiSummaryRepository.GetAiSummaryByUrlAsync(post.Url, cancellationToken);
             if (existingSummary != null && existingSummary.SummaryDate >= DateTime.UtcNow.AddHours(-24))
             {
                 _logger.LogInformation("Using cached AI summary from database for: {Url}", post.Url);
@@ -395,11 +398,36 @@ public class AiSummarizationService : IAiSummarizationService
 
         var httpClient = _httpClientFactory.CreateClient();
         httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("VeilleNet-AI-Summary");
+        httpClient.Timeout = TimeSpan.FromSeconds(15);
+
+        // SSRF protection: validate URL against allowlist before fetching
+        if (!UrlSafetyValidator.IsSafeUrl(post.Url))
+        {
+            var reason = UrlSafetyValidator.GetRejectionReason(post.Url);
+            _logger.LogWarning("Blocked unsafe URL for AI summarization: {Url} — Reason: {Reason}", post.Url, reason);
+            return null;
+        }
 
         string html;
         try
         {
-            html = await httpClient.GetStringAsync(post.Url, cancellationToken);
+            // Limit response size to 512KB to prevent memory abuse
+            var response = await httpClient.GetAsync(post.Url, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            const int maxBytes = 512 * 1024;
+            var contentLength = response.Content.Headers.ContentLength;
+            if (contentLength > maxBytes)
+            {
+                _logger.LogWarning("Response too large ({Size} bytes) for URL: {Url}", contentLength, post.Url);
+                return null;
+            }
+
+            html = await response.Content.ReadAsStringAsync(cancellationToken);
+            if (html.Length > maxBytes)
+            {
+                html = html[..maxBytes];
+            }
         }
         catch
         {
@@ -476,6 +504,9 @@ public class AiSummarizationService : IAiSummarizationService
         var entities = entitiesText.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
 
         string htmlReponseText = AddHtmlToText(summaryText);
+
+        // Sanitize HTML output to prevent XSS before storage
+        htmlReponseText = HtmlOutputSanitizer.Sanitize(htmlReponseText);
 
         var result = new AiContentSummary
         {

@@ -1,8 +1,6 @@
-using System.ServiceModel.Syndication;
-using System.Xml;
 using VeilleNet.Models;
-using VeilleNet.Services.Tools;
 using VeilleNet.Services.Data;
+using VeilleNet.Services.Tools;
 
 namespace VeilleNet.Services.News;
 
@@ -11,76 +9,21 @@ public interface IWinFormNewsService
     Task<List<BaseNews>> GetLatestWinFormNewsAsync();
 }
 
-public class WinFormNewsService : IWinFormNewsService
+public class WinFormNewsService : BaseNewsAggregationService, IWinFormNewsService
 {
-    private readonly ICacheService _cacheService;
-    private readonly IFeedService _feedService;
-    private const string CacheKey = "WinFormNews";
-    private static readonly TimeSpan CacheExpiration = TimeSpan.FromHours(1);
+    protected override string CacheKey => "WinFormNews";
 
-    private readonly List<(string Name, string Url, string Category, string DefaultImage)> _winFormFeeds = new()
+    protected override IReadOnlyList<FeedDefinition> Feeds { get; } = new List<FeedDefinition>
     {
-        //("Microsoft .NET Blog", "https://devblogs.microsoft.com/dotnet/feed/", "Microsoft", "https://devblogs.microsoft.com/wp-content/uploads/sites/10/2019/05/cropped-dotnet-icon-32x32.png"),
-        //("Visual Studio Blog", "https://devblogs.microsoft.com/visualstudio/feed/", "Microsoft", "https://devblogs.microsoft.com/wp-content/uploads/sites/4/2019/01/cropped-vs-icon-32x32.png"),
-        ("DevExpress", "https://community.devexpress.com/Blogs/MainFeed", "DevExpress", "https://www.devexpress.com/favicon.ico")
+        new("DevExpress", "https://community.devexpress.com/Blogs/MainFeed", "https://www.devexpress.com/favicon.ico", "DevExpress", MaxItems: 20),
     };
 
-    private readonly INewsRepository _newsRepository;
+    public WinFormNewsService(
+        ICacheService cacheService,
+        IFeedService feedService,
+        IAiSummaryRepository aiSummaryRepository,
+        ILogger<WinFormNewsService> logger)
+        : base(cacheService, feedService, aiSummaryRepository, logger) { }
 
-    public WinFormNewsService(ICacheService cacheService, IFeedService feedService, INewsRepository newsRepository)
-    {
-        _cacheService = cacheService;
-        _feedService = feedService;
-        _newsRepository = newsRepository;
-    }
-
-    public async Task<List<BaseNews>> GetLatestWinFormNewsAsync()
-    {
-        var cachedNews = _cacheService.Get<List<BaseNews>>(CacheKey);
-        if (cachedNews != null)
-        {
-            return cachedNews;
-        }
-
-        var winFormNews = new List<BaseNews>();
-
-        foreach (var (name, url, category, defaultImage) in _winFormFeeds)
-        {
-            try
-            {
-                var feedNews = await _feedService.FetchNewsFeedAsync(name, url, defaultImage,20, category, news => true /*IsWinFormRelated(news.Title, news.Summary)*/);
-                winFormNews.AddRange(feedNews);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Impossible de lire le contenu WinForm News {name} {url} Erreur : {ex.Message}", ex);
-                // Log error in production, continue with other feeds
-            }
-        }
-
-        winFormNews = winFormNews.OrderByDescending(n => n.PublishedDate).Take(20).ToList();
-        
-        // Enrich with HasAiSummary (optimization: batch check)
-        var urls = winFormNews.Select(n => n.Url).ToList();
-        var existingSummaries = await _newsRepository.GetExistingAiSummaryUrlsAsync(urls);
-
-        foreach (var news in winFormNews)
-        {
-            news.HasAiSummary = existingSummaries.Contains(news.Url);
-        }
-
-        _cacheService.Set(CacheKey, winFormNews, CacheExpiration);
-
-        return winFormNews;
-    }
-
-    private bool IsWinFormRelated(string title, string summary)
-    {
-        var keywords = new[] { "winform", "windows forms", "winforms", "windows form", 
-                               "system.windows.forms", "devexpress winforms", "form designer",
-                               "windows desktop", "desktop application" };
-        
-        var combinedText = $"{title} {summary}".ToLowerInvariant();
-        return keywords.Any(keyword => combinedText.Contains(keyword));
-    }
+    public Task<List<BaseNews>> GetLatestWinFormNewsAsync() => FetchAndCacheAsync();
 }

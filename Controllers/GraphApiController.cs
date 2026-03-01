@@ -7,12 +7,12 @@ namespace VeilleNet.Controllers;
 [Route("api/[controller]")]
 public class GraphApiController : ControllerBase
 {
-    private readonly INewsRepository _newsRepository;
+    private readonly IArticleRepository _articleRepository;
     private readonly ILogger<GraphApiController> _logger;
 
-    public GraphApiController(INewsRepository newsRepository, ILogger<GraphApiController> logger)
+    public GraphApiController(IArticleRepository articleRepository, ILogger<GraphApiController> logger)
     {
-        _newsRepository = newsRepository;
+        _articleRepository = articleRepository;
         _logger = logger;
     }
 
@@ -21,7 +21,7 @@ public class GraphApiController : ControllerBase
     {
         try
         {
-            var entities = await _newsRepository.GetEntitiesWithArticlesAsync(100, cancellationToken);
+            var entities = await _articleRepository.GetEntitiesWithArticlesAsync(100, cancellationToken);
             
             var nodes = new List<object>();
             var links = new List<object>();

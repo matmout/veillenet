@@ -97,7 +97,7 @@
                                         <span class="badge bg-secondary flex-shrink-0">@news.Source</span>
                                     </div>
                                 </div>
-                                <p class="card-text small text-muted mb-2">@Html.Raw(news.Summary.Length > 200 ? news.Summary.Substring(0, news.Summary.Length < 260 ? news.Summary.Length  : 260) + "..." : news.Summary)</p>
+                                <p class="card-text small text-muted mb-2">@Html.Raw(VeilleNet.Services.HtmlOutputSanitizer.Sanitize(news.Summary.Length > 200 ? news.Summary.Substring(0, news.Summary.Length < 260 ? news.Summary.Length  : 260) + "..." : news.Summary))</p>
                                 <small class="text-muted"><i class="bi bi-calendar"></i> @news.PublishedDate.ToString("dd MMM yyyy")</small>
                             </div>
                         </div>

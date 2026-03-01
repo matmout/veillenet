@@ -51,7 +51,7 @@ public class NewsRepository : INewsRepository
         if (dateTime.Kind == DateTimeKind.Unspecified)
         {
             // Assume Paris time (UTC+1 or UTC+2 depending on DST)
-            var parisTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Romance Standard Time"); // Windows
+            var parisTimeZone = TimeZoneHelper.GetParisTimeZone();
             try
             {
                 return TimeZoneInfo.ConvertTimeToUtc(dateTime, parisTimeZone);

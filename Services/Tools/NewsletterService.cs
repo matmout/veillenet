@@ -16,13 +16,13 @@ public interface INewsletterService
 
 public class NewsletterService : INewsletterService
 {
-    private readonly INewsRepository _newsRepository;
+    private readonly ISubscriberRepository _subscriberRepository;
     private readonly ILogger<NewsletterService> _logger;
     private readonly IEmailService _emailService;
 
-    public NewsletterService(INewsRepository newsRepository, ILogger<NewsletterService> logger, IEmailService emailService)
+    public NewsletterService(ISubscriberRepository subscriberRepository, ILogger<NewsletterService> logger, IEmailService emailService)
     {
-        _newsRepository = newsRepository;
+        _subscriberRepository = subscriberRepository;
         _logger = logger;
         _emailService = emailService;
     }
@@ -32,10 +32,10 @@ public class NewsletterService : INewsletterService
         try
         {
             // Subscribe but set as Inactive (awaiting confirmation)
-            await _newsRepository.SubscribeAsync(email, source, isActive: false);
+            await _subscriberRepository.SubscribeAsync(email, source, isActive: false);
             
             // Generate confirmation token
-            var token = await _newsRepository.GenerateConfirmationTokenAsync(email);
+            var token = await _subscriberRepository.GenerateConfirmationTokenAsync(email);
             
             _logger.LogInformation("Subscriber added (pending confirmation): {Email} from {Source}", email, source);
             
@@ -55,11 +55,11 @@ public class NewsletterService : INewsletterService
     {
         try
         {
-            var success = await _newsRepository.ConfirmSubscriptionAsync(token);
+            var success = await _subscriberRepository.ConfirmSubscriptionAsync(token);
             
             if (success)
             {
-                var subscriber = await _newsRepository.GetSubscriberByConfirmationTokenAsync(token); // Or get by token? Wait, token is cleared.
+                var subscriber = await _subscriberRepository.GetSubscriberByConfirmationTokenAsync(token); // Or get by token? Wait, token is cleared.
                 // Actually ConfirmSubscriptionAsync clears the token.
                 // So I can't get subscriber by token AFTER confirming.
                 // But I can get it BEFORE? Or just rely on success.
@@ -97,7 +97,7 @@ public class NewsletterService : INewsletterService
     {
         try
         {
-            await _newsRepository.UnsubscribeAsync(email, reason);
+            await _subscriberRepository.UnsubscribeAsync(email, reason);
             _logger.LogInformation("Subscriber unsubscribed: {Email}, Reason: {Reason}", email, reason ?? "Not specified");
             return true;
         }
@@ -110,22 +110,22 @@ public class NewsletterService : INewsletterService
 
     public async Task<bool> IsSubscribedAsync(string email)
     {
-        return await _newsRepository.IsSubscribedAsync(email);
+        return await _subscriberRepository.IsSubscribedAsync(email);
     }
 
     public async Task<List<string>> GetAllActiveSubscribersEmailsAsync()
     {
-        var subscribers = await _newsRepository.GetActiveSubscribersAsync();
+        var subscribers = await _subscriberRepository.GetActiveSubscribersAsync();
         return subscribers.Select(s => s.Email).ToList();
     }
 
     public async Task<int> GetActiveSubscribersCountAsync()
     {
-        return await _newsRepository.GetActiveSubscribersCountAsync();
+        return await _subscriberRepository.GetActiveSubscribersCountAsync();
     }
 
     public async Task IncrementEmailSentAsync(string email)
     {
-        await _newsRepository.IncrementEmailSentAsync(email);
+        await _subscriberRepository.IncrementEmailSentAsync(email);
     }
 }
