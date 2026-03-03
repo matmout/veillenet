@@ -55,7 +55,7 @@ autre contenu chiffré par le mécanisme DataProtection d'ASP.NET Core.
 
 1. **Faire une rotation de la clé** : Supprimer le fichier `keys/key-1423bbd6-b6e6-4e42-bf12-5a376bd460f9.xml` et redémarrer l'application pour en générer une nouvelle.
 2. **Retirer le fichier du suivi Git** : Fait dans ce PR via `git rm --cached`.
-3. **Envisager `git filter-branch` ou BFG Repo-Cleaner** pour purger complètement la clé de l'historique Git si le dépôt est public.
+3. **Purger l'historique Git** via `git filter-branch` ou [BFG Repo-Cleaner](https://rtyley.github.io/bfg-repo-cleaner/) pour supprimer définitivement la clé de l'historique. Cette étape est **indispensable** que le dépôt soit public ou privé, car toute personne ayant accès au dépôt pourrait exploiter la clé pour déchiffrer des cookies de session et des tokens CSRF.
 
 ---
 
