@@ -23,7 +23,7 @@ public class AINewsService : BaseNewsAggregationService, IAINewsService
 
     protected override IReadOnlyList<FeedDefinition> Feeds { get; } = new List<FeedDefinition>
     {
-        new("OpenAI Blog", "https://openai.com/blog/rss.xml", string.Empty, "AI/ML", Filter: n => IsAIRelated(n.Title, n.Summary)),
+        new("OpenAI Blog", "https://openai.com/blog/rss.xml", "/images/mcp/openai.png", "AI/ML", Filter: n => IsAIRelated(n.Title, n.Summary)),
         new("GitHub Blog", "https://github.blog/feed/", "https://github.githubassets.com/favicons/favicon.png", "Development", Filter: n => IsAIRelated(n.Title, n.Summary)),
         new("Google AI Blog", "https://feeds.feedburner.com/blogspot/gJZg", "https://www.gstatic.com/images/branding/product/2x/googleg_32dp.png", "AI/ML", Filter: n => IsAIRelated(n.Title, n.Summary)),
         new("Hugging Face Blog", "https://huggingface.co/blog/feed.xml", "https://huggingface.co/favicon.ico", "AI/ML", Filter: n => IsAIRelated(n.Title, n.Summary)),

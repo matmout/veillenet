@@ -152,6 +152,14 @@
     "scoreIA": "N/A"
   },
   {
+    "name": "Claude Sonnet 4.6",
+    "description": "Latest Sonnet generation with improved performance on complex and economically valuable tasks, positioned close to Opus-class capabilities.",
+    "link": "https://www.anthropic.com/news/claude-sonnet-4-6",
+    "author": "Anthropic",
+    "dateRelease": "2026-02-17",
+    "scoreIA": "N/A"
+  },
+  {
     "name": "Gemini 3 Pro",
     "description": "New generation of Google Gemini, natively multimodal with increased reasoning capabilities.",
     "link": "https://deepmind.google/technologies/gemini/",

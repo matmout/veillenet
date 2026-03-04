@@ -2213,5 +2213,61 @@
     "correctAnswer": "int[] numbers = [1, 2, 3, 4, 5];",
     "category": "Modern C# Syntax",
     "explanation": "C# 12+ introduces collection expressions with [] syntax for more concise array and collection initialization."
+  },
+  {
+    "id": 161,
+    "text": "In .NET 10, which deployment mode is generally preferred for cloud containers to reduce startup overhead while keeping image size reasonable?",
+    "type": "MultipleChoice",
+    "choices": [
+      "Framework-dependent deployment with trimmed publish output",
+      "Single-file self-contained with full debug symbols",
+      "Framework-dependent without trimming and ReadyToRun disabled",
+      "Native AOT for every workload without evaluation"
+    ],
+    "correctAnswer": "Framework-dependent deployment with trimmed publish output",
+    "category": ".NET 10",
+    "explanation": "For many containerized workloads, framework-dependent deployment plus trimming balances startup time, size, and operational flexibility."
+  },
+  {
+    "id": 162,
+    "text": "For Blazor interactive components, what is the main reason to keep rendering state in a dedicated service instead of only in component fields?",
+    "type": "MultipleChoice",
+    "choices": [
+      "To share and preserve state across components and navigation",
+      "Because components cannot hold local state",
+      "To avoid dependency injection",
+      "Because services render faster than components"
+    ],
+    "correctAnswer": "To share and preserve state across components and navigation",
+    "category": "Blazor",
+    "explanation": "A scoped state service helps coordinate component state and reduces duplication when multiple components need the same data."
+  },
+  {
+    "id": 163,
+    "text": "In .NET MAUI, which pattern is most appropriate to keep UI logic testable and separate from platform-specific views?",
+    "type": "MultipleChoice",
+    "choices": [
+      "MVVM with commands and bindable view models",
+      "Putting business logic directly in code-behind",
+      "Static helper classes for every screen",
+      "Using only dependency properties without view models"
+    ],
+    "correctAnswer": "MVVM with commands and bindable view models",
+    "category": "MAUI",
+    "explanation": "MVVM keeps behavior in testable view models, while XAML views remain focused on presentation."
+  },
+  {
+    "id": 164,
+    "text": "What is a key benefit of .NET Aspire for distributed applications?",
+    "type": "MultipleChoice",
+    "choices": [
+      "It provides opinionated orchestration, service discovery, and observability for local development",
+      "It replaces Kubernetes in production automatically",
+      "It removes the need for logging and telemetry",
+      "It requires rewriting services into a single monolith"
+    ],
+    "correctAnswer": "It provides opinionated orchestration, service discovery, and observability for local development",
+    "category": "Aspire",
+    "explanation": "Aspire improves the inner-loop developer experience by wiring common distributed-app concerns out of the box."
   }
 ]
