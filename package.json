@@ -1,0 +1,29 @@
+{
+  "name": "veillenet",
+  "version": "1.0.0",
+  "description": "<div align=\"center\">\r   <img src=\"wwwroot/icons/containsharp.png\" alt=\"ContainSharp Logo\" width=\"128\" height=\"128\" />",
+  "main": "index.js",
+  "scripts": {
+    "css:purge": "postcss wwwroot/lib/bootstrap/dist/css/bootstrap.min.css -o wwwroot/css/bootstrap.purged.min.css",
+    "css:build": "npm run css:purge",
+    "build": "npm run css:build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/matmout/veillenet.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/matmout/veillenet/issues"
+  },
+  "homepage": "https://github.com/matmout/veillenet#readme",
+  "devDependencies": {
+    "@fullhuman/postcss-purgecss": "^8.0.0",
+    "cssnano": "^7.1.3",
+    "postcss": "^8.5.8",
+    "postcss-cli": "^11.0.1"
+  }
+}

@@ -90,7 +90,7 @@
                                     <div class="d-flex align-items-center ms-2" style="gap:6px;">
                                         @if (news.HasAiSummary)
                                         {
-                                            <a href="/AiSummary?url=@Uri.EscapeDataString(news.Url)" title="View AI Summary" class="flex-shrink-0">
+                                            <a href="/AiSummary?url=@Uri.EscapeDataString(news.Url)" aria-label="Voir le résumé IA : @news.Title" class="flex-shrink-0">
                                                 <img src="~/images/mcp/technologie-ia.png" alt="AI Summary Available" style="width: 24px; height: 24px;" />
                                             </a>
                                         }

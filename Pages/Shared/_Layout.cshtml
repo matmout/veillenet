@@ -26,29 +26,21 @@
     <link rel="canonical" href="@(ViewData["CanonicalUrl"] ?? "https://containsharp.com")" />
     <link rel="icon" type="image/svg+xml" href="~/icons/containsharp.svg" />
     <link rel="alternate icon" type="image/png" href="~/icons/containsharp.png" />
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <!-- Preload critical resources for LCP/FCP -->
+    <link rel="preload" href="~/css/site.css" as="style" />
+    <link rel="preload" href="~/icons/containsharp.svg" as="image" type="image/svg+xml" />
+    <link rel="stylesheet" href="~/css/bootstrap.purged.min.css" asp-append-version="true" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/scrollbar.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/ai-modal.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/theme-light.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
-    <script>
-      // Apply saved/preferred theme immediately to prevent FOUC
-      (function(){var t=localStorage.getItem('containsharp-theme')||(window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark');document.documentElement.setAttribute('data-bs-theme',t)})();
-    </script>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4B9NVDSYP2"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);} 
-      gtag('js', new Date());
-
-      gtag('config', 'G-4B9NVDSYP2');
-    </script>
+    <!-- Apply saved/preferred theme immediately to prevent FOUC -->
+    <script>(function(){var t=localStorage.getItem('containsharp-theme')||(window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark');document.documentElement.setAttribute('data-bs-theme',t)})();</script>
 </head>
 <body>
     <!-- Skip to main content link for keyboard navigation -->
@@ -199,13 +191,34 @@
         </div>
     </footer>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="~/js/output-shrink.js" asp-append-version="true"></script>
-    <script src="~/js/ai-modal.js" asp-append-version="true"></script>
-    <script src="~/js/theme-toggle.js" asp-append-version="true"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="~/js/site.js" asp-append-version="true" defer></script>
+    <script src="~/js/output-shrink.js" asp-append-version="true" defer></script>
+    <script src="~/js/ai-modal.js" asp-append-version="true" defer></script>
+    <script src="~/js/theme-toggle.js" asp-append-version="true" defer></script>
 
     @await RenderSectionAsync("Scripts", required: false)
+
+    <!-- Google Analytics 4 — loaded on idle to avoid blocking critical rendering -->
+    <script>
+    (function() {
+      function loadGA4() {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-4B9NVDSYP2';
+        document.head.appendChild(s);
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        window.gtag = gtag;
+        gtag('js', new Date());
+        gtag('config', 'G-4B9NVDSYP2');
+      }
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(loadGA4, { timeout: 3000 });
+      } else {
+        window.addEventListener('load', function() { setTimeout(loadGA4, 1000); });
+      }
+    })();
+    </script>
 </body>
 </html>

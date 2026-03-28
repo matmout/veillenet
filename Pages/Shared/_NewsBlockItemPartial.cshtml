@@ -13,9 +13,9 @@
             <div class="me-3 flex-shrink-0">
                 @if (!string.IsNullOrEmpty(item.Url) && item.ShowVideoOverlay)
                 {
-                    <a href="@item.Url" target="_blank" class="text-decoration-none">
+                    <a href="@item.Url" target="_blank" class="text-decoration-none" aria-label="@item.Title (ouvre dans un nouvel onglet)">
                         <div class="x-video-thumb" style="width: @(imgW)px; height: @(imgH)px;">
-                            <img src="@item.Image" alt="@item.Title" class="x-video-thumb-img" style="width: @(imgW)px; height: @(imgH)px;" />
+                            <img src="@item.Image" alt="@item.Title" loading="lazy" class="x-video-thumb-img" style="width: @(imgW)px; height: @(imgH)px;" />
                             <span class="x-video-play"><i class="bi bi-play-fill"></i></span>
                         </div>
                     </a>
@@ -29,13 +29,13 @@
         else if (!string.IsNullOrEmpty(item.AvatarUrl))
         {
             <div class="me-3 flex-shrink-0 x-post-avatar-wrapper">
-                <img src="@item.AvatarUrl" alt="@item.Author" class="x-post-avatar" style="width: @(imgW)px; height: @(imgH)px;" />
+                <img src="@item.AvatarUrl" alt="@item.Author" loading="lazy" class="x-post-avatar" style="width: @(imgW)px; height: @(imgH)px;" />
             </div>
         }
         else if (!string.IsNullOrEmpty(config.DefaultImageUrl))
         {
             <div class="me-3 flex-shrink-0">
-                <img src="@config.DefaultImageUrl" alt="@item.Title" style="width: @(imgW)px; height: @(imgH)px; object-fit: cover; border-radius: 4px;" />
+                <img src="@config.DefaultImageUrl" alt="@item.Title" loading="lazy" style="width: @(imgW)px; height: @(imgH)px; object-fit: cover; border-radius: 4px;" />
             </div>
         }
         else if (!string.IsNullOrEmpty(config.DefaultIconClass))
@@ -57,7 +57,7 @@
                     </h6>
                     @if (config.ShowAiSummary && item.HasAiSummary)
                     {
-                        <a href="/AiSummary?url=@Uri.EscapeDataString(item.Url)" title="View AI Summary" class="ms-2 flex-shrink-0">
+                        <a href="/AiSummary?url=@Uri.EscapeDataString(item.Url)" aria-label="Voir le résumé IA : @item.Title" class="ms-2 flex-shrink-0">
                             <img src="~/images/mcp/technologie-ia.png" alt="AI Summary Available" style="width: 24px; height: 24px;" />
                         </a>
                     }
