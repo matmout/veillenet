@@ -12,13 +12,30 @@ public class SitemapModel : PageModel
         var baseUrl = "https://containsharp.com";
         var today = DateTime.UtcNow.ToString("yyyy-MM-dd");
 
-        // Core pages
+        // Homepage - highest priority
         Urls.Add(new SitemapUrl
         {
             Loc = $"{baseUrl}/",
             LastMod = today,
             ChangeFreq = "daily",
             Priority = "1.0"
+        });
+
+        // Main content pages - high priority
+        Urls.Add(new SitemapUrl
+        {
+            Loc = $"{baseUrl}/Roadmap",
+            LastMod = today,
+            ChangeFreq = "weekly",
+            Priority = "0.9"
+        });
+
+        Urls.Add(new SitemapUrl
+        {
+            Loc = $"{baseUrl}/Training",
+            LastMod = today,
+            ChangeFreq = "weekly",
+            Priority = "0.9"
         });
 
         Urls.Add(new SitemapUrl
@@ -31,13 +48,70 @@ public class SitemapModel : PageModel
 
         Urls.Add(new SitemapUrl
         {
+            Loc = $"{baseUrl}/MCP",
+            LastMod = today,
+            ChangeFreq = "weekly",
+            Priority = "0.8"
+        });
+
+        Urls.Add(new SitemapUrl
+        {
+            Loc = $"{baseUrl}/LatestLLM",
+            LastMod = today,
+            ChangeFreq = "weekly",
+            Priority = "0.8"
+        });
+
+        Urls.Add(new SitemapUrl
+        {
+            Loc = $"{baseUrl}/History",
+            LastMod = today,
+            ChangeFreq = "daily",
+            Priority = "0.7"
+        });
+
+        // Supporting pages - medium priority
+        Urls.Add(new SitemapUrl
+        {
+            Loc = $"{baseUrl}/AiSummary",
+            LastMod = today,
+            ChangeFreq = "daily",
+            Priority = "0.7"
+        });
+
+        Urls.Add(new SitemapUrl
+        {
             Loc = $"{baseUrl}/Newsletter",
             LastMod = today,
             ChangeFreq = "monthly",
             Priority = "0.6"
         });
 
-        // Utility pages
+        Urls.Add(new SitemapUrl
+        {
+            Loc = $"{baseUrl}/NewsletterArchive",
+            LastMod = today,
+            ChangeFreq = "weekly",
+            Priority = "0.6"
+        });
+
+        Urls.Add(new SitemapUrl
+        {
+            Loc = $"{baseUrl}/About",
+            LastMod = today,
+            ChangeFreq = "monthly",
+            Priority = "0.5"
+        });
+
+        // Utility pages - lower priority
+        Urls.Add(new SitemapUrl
+        {
+            Loc = $"{baseUrl}/Privacy",
+            LastMod = today,
+            ChangeFreq = "yearly",
+            Priority = "0.3"
+        });
+
         Urls.Add(new SitemapUrl
         {
             Loc = $"{baseUrl}/History",
@@ -101,14 +175,6 @@ public class SitemapModel : PageModel
             LastMod = today,
             ChangeFreq = "monthly",
             Priority = "0.3"
-        });
-
-        Urls.Add(new SitemapUrl
-        {
-            Loc = $"{baseUrl}/Error404",
-            LastMod = today,
-            ChangeFreq = "yearly",
-            Priority = "0.1"
         });
     }
 }
