@@ -8,6 +8,9 @@ public class MCPTool
     public string GuideUrl { get; set; } = string.Empty;
     public string Icon { get; set; } = string.Empty;
     public string ImageUrl { get; set; } = string.Empty;
+    public string TrustLevel { get; set; } = string.Empty;
+    public string AccessMode { get; set; } = string.Empty;
+    public string PrimaryUseCase { get; set; } = string.Empty;
 }
 
 public class MCPCategory

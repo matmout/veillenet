@@ -44,20 +44,20 @@ Ce dossier contient les captures d'écran de l'application ContainSharp.
 ---
 
 ### MCP Tools (/MCP)
-**Description** : Liste des serveurs Model Context Protocol pour agents IA.
+**Description** : Sélection curée de serveurs Model Context Protocol utiles pour les workflows IA en 2026.
 
 **Catégories** :
-- Development (GitHub, GitLab, npm, Docker)
-- Databases (PostgreSQL, SQLite, MySQL, MongoDB)
-- Cloud Services (AWS, Azure, Google Cloud)
-- Utilities (Filesystem, Fetch, Memory, Time)
-- AI Tools (Brave Search, Puppeteer)
+- Developer Workflows (GitHub, GitLab, Playwright, Filesystem)
+- Data & Backend (PostgreSQL, Supabase, MongoDB, SQLite)
+- Search & Knowledge (Context7, Tavily, Fetch)
+- Team & Workflow (Slack, Linear, Atlassian)
+- Cloud & Platform Ops (Cloudflare, Railway)
 
 **Fonctionnalités** :
-- Cards avec nom, description, lien GitHub
+- Cards avec nom, description, badges de confiance et lien de documentation
 - Icônes pour chaque catégorie
 - Layout en grille responsive
-- Filtres par catégorie
+- Bloc éditorial avec critères de sélection et état du catalogue
 
 ---
 
