@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Options;
 using VeilleNet.Models;
 using VeilleNet.Services;
 using VeilleNet.Services.News;
@@ -28,6 +29,7 @@ public class IndexModel : PageModel
     public List<XPost> OfficialXPosts { get; set; } = new();
 
     public int ActiveNewsletterSubscribersCount { get; private set; }
+    public bool IsXPostsFeatureEnabled { get; }
 
     public IndexModel(
         IBlogAggregationService blogService,
@@ -37,6 +39,7 @@ public class IndexModel : PageModel
         IVideoService videoService,
         IStackOverflowService stackOverflowService,
         IXPostsService xPostsService,
+        IOptions<XApiOptions> xApiOptions,
         INewsletterService newsletterService,
         ILogger<IndexModel> logger)
     {
@@ -47,6 +50,7 @@ public class IndexModel : PageModel
         _videoService = videoService;
         _stackOverflowService = stackOverflowService;
         _xPostsService = xPostsService;
+        IsXPostsFeatureEnabled = xApiOptions.Value.Enabled;
         _newsletterService = newsletterService;
         _logger = logger;
     }
@@ -60,7 +64,9 @@ public class IndexModel : PageModel
         var winFormTask = _winFormNewsService.GetLatestWinFormNewsAsync();
         var videoTask = _videoService.GetLatestVideosAsync();
         var stackOverflowTask = _stackOverflowService.GetLatestQuestionsAsync();
-        var xPostsTask = _xPostsService.GetLatestOfficialPostsAsync();
+        var xPostsTask = IsXPostsFeatureEnabled
+            ? _xPostsService.GetLatestOfficialPostsAsync()
+            : Task.FromResult(new List<XPost>());
         var subscribersCountTask = _newsletterService.GetActiveSubscribersCountAsync();
 
         await Task.WhenAll(blogTask, githubTask, aiNewsTask, winFormTask, videoTask, stackOverflowTask, xPostsTask, subscribersCountTask);

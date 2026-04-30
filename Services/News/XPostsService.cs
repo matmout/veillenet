@@ -58,6 +58,12 @@ public class XPostsService : IXPostsService
 
     public async Task<List<XPost>> GetLatestOfficialPostsAsync()
     {
+        if (!_options.Enabled)
+        {
+            _logger.LogInformation("X posts feature is disabled in configuration. Skipping official posts fetch.");
+            return [];
+        }
+
         var cachedPosts = _cacheService.Get<List<XPost>>(CacheKey);
         if (cachedPosts != null)
         {

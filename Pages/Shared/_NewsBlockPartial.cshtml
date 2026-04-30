@@ -44,7 +44,28 @@
         }
         else
         {
-            <p class="text-muted text-center">@Model.LoadingText</p>
+            @if (Model.HasEmptyState)
+            {
+                <div class="news-block-empty-state" role="status" aria-live="polite">
+                    <div class="news-block-empty-state-icon">
+                        <i class="bi @Model.EmptyStateIcon" aria-hidden="true"></i>
+                    </div>
+                    <div>
+                        @if (!string.IsNullOrWhiteSpace(Model.EmptyStateTitle))
+                        {
+                            <p class="news-block-empty-state-title mb-2">@Model.EmptyStateTitle</p>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(Model.EmptyStateMessage))
+                        {
+                            <p class="news-block-empty-state-message mb-0">@Model.EmptyStateMessage</p>
+                        }
+                    </div>
+                </div>
+            }
+            else
+            {
+                <p class="text-muted text-center">@Model.LoadingText</p>
+            }
         }
     </div>
 </div>

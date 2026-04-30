@@ -51,5 +51,9 @@ public class NewsBlockViewModel
 
     // --- Data ---
     public string LoadingText { get; set; } = "Loading...";
+    public string? EmptyStateTitle { get; set; }
+    public string? EmptyStateMessage { get; set; }
+    public string EmptyStateIcon { get; set; } = "bi-info-circle";
+    public bool HasEmptyState => !string.IsNullOrWhiteSpace(EmptyStateTitle) || !string.IsNullOrWhiteSpace(EmptyStateMessage);
     public List<NewsBlockItem> Items { get; set; } = [];
 }

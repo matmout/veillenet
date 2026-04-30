@@ -261,6 +261,42 @@ body {
   padding: 1rem;
 }
 
+.news-block-empty-state {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 1rem;
+  border: 1px dashed var(--vs-border);
+  border-radius: 0.75rem;
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.08) 0%, rgba(255, 193, 7, 0.02) 100%);
+}
+
+.news-block-empty-state-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 999px;
+  color: #ffc107;
+  background: rgba(255, 193, 7, 0.12);
+}
+
+.news-block-empty-state-icon i {
+  font-size: 1.25rem;
+}
+
+.news-block-empty-state-title {
+  color: var(--vs-text);
+  font-weight: 600;
+}
+
+.news-block-empty-state-message {
+  color: var(--vs-muted);
+  line-height: 1.6;
+}
+
 /* Newsletter page readability on dark theme */
 .card .form-label,
 .card label,

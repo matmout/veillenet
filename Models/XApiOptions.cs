@@ -4,6 +4,7 @@ public class XApiOptions
 {
     public const string SectionName = "XApi";
 
+    public bool Enabled { get; set; } = false;
     public string BaseUrl { get; set; } = "https://api.x.com/2/";
     public string BearerToken { get; set; } = string.Empty;
     public string ConsumerKey { get; set; } = string.Empty;
