@@ -84,6 +84,28 @@
     gap: 0.35rem;
 }
 
+.radar-refresh-note {
+    background: rgba(106, 159, 181, 0.08);
+    border: 1px solid rgba(106, 159, 181, 0.18);
+    border-radius: var(--border-radius-lg);
+    padding: 0.85rem 1rem;
+}
+
+.radar-refresh-header {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--vs-accent);
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+}
+
+.radar-refresh-body {
+    color: var(--vs-muted);
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
 .badge-days-left {
     background: rgba(239, 68, 68, 0.15);
     color: var(--vs-red);
@@ -470,10 +492,25 @@
     color: var(--vs-muted);
 }
 
+.tooltip-row span {
+    overflow-wrap: anywhere;
+}
+
 .tooltip-row i {
     font-size: 0.8rem;
     width: 16px;
     text-align: center;
+}
+
+.tooltip-note {
+    margin-top: 0.45rem;
+    padding: 0.45rem 0.55rem;
+    background: rgba(106, 159, 181, 0.08);
+    border: 1px solid rgba(106, 159, 181, 0.15);
+    border-radius: 8px;
+    color: var(--vs-text);
+    font-size: 0.76rem;
+    line-height: 1.4;
 }
 
 .tooltip-adoption-row {
@@ -633,17 +670,36 @@
 }
 
 .version-card-dates {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
     margin-bottom: 0.65rem;
 }
 
 .date-item {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 0.35rem;
     font-size: 0.8rem;
     color: var(--vs-muted);
+}
+
+.date-item span {
+    overflow-wrap: anywhere;
+}
+
+.support-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.4rem;
+    background: rgba(106, 159, 181, 0.08);
+    border: 1px solid rgba(106, 159, 181, 0.14);
+    border-radius: 8px;
+    color: var(--vs-text);
+    font-size: 0.78rem;
+    line-height: 1.45;
+    padding: 0.45rem 0.6rem;
+    margin-bottom: 0.65rem;
 }
 
 .eol-countdown {

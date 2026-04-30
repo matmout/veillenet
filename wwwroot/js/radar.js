@@ -57,6 +57,7 @@
     const tooltipEos = document.getElementById('tooltip-eos');
     const tooltipSupport = document.getElementById('tooltip-support');
     const tooltipAdoption = document.getElementById('tooltip-adoption');
+    const tooltipNote = document.getElementById('tooltip-note');
     const tooltipFeatures = document.getElementById('tooltip-features');
     const tooltipLinks = document.getElementById('tooltip-links');
 
@@ -72,6 +73,12 @@
         tooltipRelease.textContent = bar.dataset.release;
         tooltipEos.textContent = bar.dataset.eos;
         tooltipSupport.textContent = bar.dataset.support;
+
+        if (tooltipNote) {
+            const supportNote = bar.dataset.supportNote || '';
+            tooltipNote.textContent = supportNote;
+            tooltipNote.hidden = !supportNote;
+        }
 
         // Adoption row
         tooltipAdoption.textContent = bar.dataset.adoption;

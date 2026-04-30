@@ -147,9 +147,15 @@
                         @foreach (var version in group.OrderBy(v => v.ReleaseDate))
                         {
                             var startPercent = ((version.ReleaseDate - timelineStart).TotalDays / totalDays) * 100;
-                            var endDate = version.EndOfSupportDate ?? timelineEnd;
+                            var endDate = version.TimelineEndDate ?? version.EndOfSupportDate ?? timelineEnd;
                             var endPercent = ((endDate - timelineStart).TotalDays / totalDays) * 100;
                             var widthPercent = endPercent - startPercent;
+                            var supportEndText = version.EndOfSupportDate?.ToString("MMM dd, yyyy")
+                                ?? version.SupportNote
+                                ?? "See lifecycle policy";
+                            var supportNoteText = version.EndOfSupportDate.HasValue
+                                ? version.SupportNote ?? string.Empty
+                                : string.Empty;
 
                             var statusClass = version.Status switch
                             {
@@ -196,7 +202,8 @@
                                  data-version="@version.Version"
                                  data-display="@version.DisplayName"
                                  data-release="@version.ReleaseDate.ToString("MMM dd, yyyy")"
-                                 data-eos="@(version.EndOfSupportDate?.ToString("MMM dd, yyyy") ?? "Indefinite")"
+                                 data-eos="@supportEndText"
+                                 data-support-note="@supportNoteText"
                                  data-features="@version.KeyFeatures"
                                  data-url="@version.Url"
                                  data-migration="@(version.MigrationGuideUrl ?? "")"
@@ -237,6 +244,7 @@
                 <i class="bi bi-shield-check"></i>
                 <span>Support: <strong id="tooltip-support"></strong></span>
             </div>
+            <div class="tooltip-note" id="tooltip-note" hidden></div>
             <div class="tooltip-row tooltip-adoption-row">
                 <span id="tooltip-adoption"></span>
             </div>
@@ -252,6 +260,9 @@
     <div class="version-cards-grid" id="version-cards">
         @foreach (var version in Model.Versions.OrderByDescending(v => v.ReleaseDate))
         {
+            var supportEndText = version.EndOfSupportDate?.ToString("MMM dd, yyyy")
+                ?? version.SupportNote
+                ?? "See lifecycle policy";
             var statusClass = version.Status switch
             {
                 SupportStatus.Active => "card-status-active",
@@ -309,9 +320,16 @@
                         </div>
                         <div class="date-item">
                             <i class="bi bi-calendar-x @(version.Status == SupportStatus.EndOfLife ? "text-danger" : version.Status == SupportStatus.EndingSoon ? "text-warning" : "text-muted")"></i>
-                            <span>@(version.EndOfSupportDate?.ToString("MMM dd, yyyy") ?? "Indefinite")</span>
+                            <span>@supportEndText</span>
                         </div>
                     </div>
+                    @if (version.EndOfSupportDate.HasValue && !string.IsNullOrWhiteSpace(version.SupportNote))
+                    {
+                        <div class="support-note">
+                            <i class="bi bi-info-circle"></i>
+                            <span>@version.SupportNote</span>
+                        </div>
+                    }
                     @if (version.Status == SupportStatus.EndingSoon && version.EndOfSupportDate.HasValue)
                     {
                         var daysRemaining = (version.EndOfSupportDate.Value - today).Days;

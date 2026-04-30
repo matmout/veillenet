@@ -12,6 +12,7 @@ public interface IFrameworkVersionService
     Task<List<FrameworkVersion>> GetVersionsByFrameworkAsync(string framework);
     List<FrameworkVersion> GetEndingSoonVersions(int monthsThreshold = 6);
     List<string> GetFrameworkNames();
+    DateTime GetDataVerifiedAt();
 }
 
 /// <summary>
@@ -25,14 +26,17 @@ file sealed class FrameworkVersionSeed
     public string DisplayName { get; set; } = string.Empty;
     public string ReleaseDate { get; set; } = string.Empty;
     public string? EndOfSupportDate { get; set; }
+    public string? TimelineEndDate { get; set; }
     public string SupportType { get; set; } = string.Empty;
     public string KeyFeatures { get; set; } = string.Empty;
     public string Url { get; set; } = string.Empty;
     public string? MigrationGuideUrl { get; set; }
+    public string? SupportNote { get; set; }
 }
 
 public class FrameworkVersionService : IFrameworkVersionService
 {
+    private static readonly DateTime DataVerifiedAt = new(2026, 4, 30);
     private readonly List<FrameworkVersion> _versions;
 
     public FrameworkVersionService()
@@ -65,6 +69,8 @@ public class FrameworkVersionService : IFrameworkVersionService
 
     public List<string> GetFrameworkNames() =>
         _versions.Select(v => v.Framework).Distinct().OrderBy(f => f).ToList();
+
+    public DateTime GetDataVerifiedAt() => DataVerifiedAt;
 
     private void ComputeStatuses()
     {
@@ -109,13 +115,22 @@ public class FrameworkVersionService : IFrameworkVersionService
             Framework = s.Framework,
             Version = s.Version,
             DisplayName = s.DisplayName,
-            ReleaseDate = DateTime.ParseExact(s.ReleaseDate, "yyyy-MM-dd", CultureInfo.InvariantCulture),
-            EndOfSupportDate = string.IsNullOrEmpty(s.EndOfSupportDate) ? null
-                : DateTime.ParseExact(s.EndOfSupportDate, "yyyy-MM-dd", CultureInfo.InvariantCulture),
+            ReleaseDate = ParseRequiredDate(s.ReleaseDate),
+            EndOfSupportDate = ParseOptionalDate(s.EndOfSupportDate),
+            TimelineEndDate = ParseOptionalDate(s.TimelineEndDate),
             SupportType = Enum.Parse<SupportType>(s.SupportType),
             KeyFeatures = s.KeyFeatures,
             Url = s.Url,
-            MigrationGuideUrl = s.MigrationGuideUrl
+            MigrationGuideUrl = s.MigrationGuideUrl,
+            SupportNote = s.SupportNote
         }).ToList();
     }
+
+    private static DateTime ParseRequiredDate(string value) =>
+        DateTime.ParseExact(value, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+    private static DateTime? ParseOptionalDate(string? value) =>
+        string.IsNullOrWhiteSpace(value)
+            ? null
+            : DateTime.ParseExact(value, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 }

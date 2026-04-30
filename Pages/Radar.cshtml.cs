@@ -11,6 +11,7 @@ public class RadarModel : PageModel
     public List<FrameworkVersion> Versions { get; set; } = new();
     public List<FrameworkVersion> EndingSoonVersions { get; set; } = new();
     public List<string> Frameworks { get; set; } = new();
+    public DateTime DataVerifiedAt { get; private set; }
 
     public RadarModel(IFrameworkVersionService versionService)
     {
@@ -22,5 +23,6 @@ public class RadarModel : PageModel
         Versions = await _versionService.GetAllVersionsAsync();
         EndingSoonVersions = _versionService.GetEndingSoonVersions(6);
         Frameworks = _versionService.GetFrameworkNames();
+        DataVerifiedAt = _versionService.GetDataVerifiedAt();
     }
 }
