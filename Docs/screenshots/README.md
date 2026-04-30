@@ -62,29 +62,28 @@ Ce dossier contient les captures d'écran de l'application ContainSharp.
 ---
 
 ### Latest LLM (/LatestLLM)
-**Description** : Comparateur et suivi des derniers modèles de langage.
+**Description** : Catalogue editorial des derniers modeles de langage et de code.
 
 **Providers** :
-- OpenAI (GPT-4, GPT-4 Turbo, o1)
-- Anthropic (Claude 3.5 Sonnet, Claude 3 Opus)
-- Google (Gemini 2.0 Flash, Gemini 1.5 Pro)
-- Meta (Llama 3.3 70B)
-- Mistral (Mistral Large 2)
-- xAI (Grok 2)
+- OpenAI (GPT-5.5, GPT-5.4)
+- Anthropic (Claude Opus 4.7, Sonnet 4.6, Haiku 4.5)
+- Google DeepMind (Gemini 3.1 Pro, Gemini 3 Flash)
+- Mistral AI (Medium 3.5, Small 4, Large 3)
+- xAI (Grok 4.20, Grok 4.1 Fast)
+- Moonshot AI (Kimi K2.6)
+- Meta (Llama 4 Maverick, Llama 4 Scout)
 
 **Informations affichées** :
 - Nom du modèle
 - Provider
 - Date de sortie
-- Taille du contexte
-- Prix (input/output)
-- Capacités (vision, function calling)
+- Description courte
+- Lien vers la documentation officielle
 
 **Design** :
-- Tableau comparatif responsive
-- Cards pour chaque provider
-- Badges pour les capacités
-- Tri et filtrage
+- Grille responsive de cards
+- Mise en avant des sorties recentes
+- Focus sur les LLM et modeles de code recents
 
 ---
 

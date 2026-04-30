@@ -1,13 +1,13 @@
 @page
 @model LatestLLMModel
 @{
-    ViewData["Title"] = "Latest LLM";
-    ViewData["Description"] = "Discover the latest Large Language Models (LLM) available, including OpenAI GPT-4, Claude, Grok, GitHub Copilot, and Perplexity models. Stay updated with the newest AI models for development and productivity.";
+    ViewData["Title"] = "Latest LLM Models";
+    ViewData["Description"] = "Track recent LLM releases such as GPT-5.5, GPT-5.4, Claude Opus 4.7, Gemini 3.1 Pro, Mistral Medium 3.5, Grok 4.20, Kimi K2.6, and Llama 4.";
     ViewData["CanonicalUrl"] = "https://containsharp.com/LatestLLM";
 }
 
 <div class="container-fluid">
-    <partial name="_PageHeaderPartial" view-data='@(new ViewDataDictionary(ViewData) { { "Icon", "cpu" }, { "HeaderTitle", "Latest LLM" }, { "HeaderDescription", "Explore the latest Large Language Models available for AI-powered development" } })' />
+    <partial name="_PageHeaderPartial" view-data='@(new ViewDataDictionary(ViewData) { { "Icon", "cpu" }, { "HeaderTitle", "Latest LLM Models" }, { "HeaderDescription", "A curated catalog of recent language models for coding, reasoning, and multimodal development workflows" } })' />
 
     <!-- LLM Cards Grid -->
     <div class="row g-4">
@@ -63,6 +63,24 @@
 </div>
 
 <style>
+    .llm-intro {
+        display: flex;
+        gap: 0.75rem;
+        align-items: flex-start;
+        padding: 1rem 1.25rem;
+        background: rgba(0, 122, 204, 0.08);
+        border: 1px solid rgba(0, 122, 204, 0.25);
+        border-radius: var(--border-radius-lg);
+        color: var(--vs-text);
+    }
+
+    .llm-intro i {
+        color: var(--vs-accent-strong);
+        font-size: 1.1rem;
+        margin-top: 0.1rem;
+        flex-shrink: 0;
+    }
+
     /* LLM Card Styles - Visual Studio Theme */
     .llm-card {
         background: var(--vs-panel);
@@ -275,6 +293,10 @@
 
     /* Responsive adjustments */
     @@media (max-width: 767px) {
+        .llm-intro {
+            align-items: flex-start;
+        }
+
         .llm-card-header {
             flex-direction: column;
             text-align: center;
