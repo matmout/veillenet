@@ -82,35 +82,38 @@
     </div>
 
     <!-- Official X Posts Section -->
-    <div class="row mb-4">
-        <div class="col-12">
-            @await Html.PartialAsync("_NewsBlockPartial", new NewsBlockViewModel
-            {
-                Title = "Latest Posts",
-                Icon = "bi-twitter-x",
-                HeaderCssClass = "text-white",
-                HeaderStyle = "background: #0f0f0f",
-                HeaderBadgeHtml = Model.IsXPostsFeatureEnabled
-                    ? "<span class=\"badge bg-warning text-dark ms-1\" style=\"font-size:0.7rem; vertical-align:middle;\">New</span>"
-                    : "<span class=\"badge bg-secondary ms-1\" style=\"font-size:0.7rem; vertical-align:middle;\">Paused</span>",
-                ShowTitle = false,
-                ShowAuthor = true,
-                ShowSource = false,
-                ShowAiSummary = false,
-                SanitizeHtml = false,
-                DateFormat = "dd MMM yyyy HH:mm",
-                DefaultIconClass = "bi-twitter-x",
-                ColumnsPerRow = 2,
-                LoadingText = "Loading official X posts...",
-                EmptyStateTitle = Model.IsXPostsFeatureEnabled ? null : "X feed paused",
-                EmptyStateMessage = Model.IsXPostsFeatureEnabled
-                    ? null
-                    : "The official X API for this feed is paid. This section is temporarily disabled to keep the dashboard cost under control.",
-                EmptyStateIcon = "bi-pause-circle",
-                Items = Model.OfficialXPosts.ToBlockItems()
-            })
+    @if (Model.IsXPostsFeatureEnabled == true)
+    {
+        <div class="row mb-4">
+            <div class="col-12">
+                @await Html.PartialAsync("_NewsBlockPartial", new NewsBlockViewModel
+    {
+        Title = "Latest Posts",
+        Icon = "bi-twitter-x",
+        HeaderCssClass = "text-white",
+        HeaderStyle = "background: #0f0f0f",
+        HeaderBadgeHtml = Model.IsXPostsFeatureEnabled
+                        ? "<span class=\"badge bg-warning text-dark ms-1\" style=\"font-size:0.7rem; vertical-align:middle;\">New</span>"
+                        : "<span class=\"badge bg-secondary ms-1\" style=\"font-size:0.7rem; vertical-align:middle;\">Paused</span>",
+        ShowTitle = false,
+        ShowAuthor = true,
+        ShowSource = false,
+        ShowAiSummary = false,
+        SanitizeHtml = false,
+        DateFormat = "dd MMM yyyy HH:mm",
+        DefaultIconClass = "bi-twitter-x",
+        ColumnsPerRow = 2,
+        LoadingText = "Loading official X posts...",
+        EmptyStateTitle = Model.IsXPostsFeatureEnabled ? null : "X feed paused",
+        EmptyStateMessage = Model.IsXPostsFeatureEnabled
+                        ? null
+                        : "The official X API for this feed is paid. This section is temporarily disabled to keep the dashboard cost under control.",
+        EmptyStateIcon = "bi-pause-circle",
+        Items = Model.OfficialXPosts.ToBlockItems()
+    })
+            </div>
         </div>
-    </div>
+    }
 
     <!-- StackOverflow and WinForms Row -->
     <div class="row mb-4">

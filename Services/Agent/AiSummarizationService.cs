@@ -3,6 +3,7 @@ using System.Text;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Options;
 using VeilleNet.Models;
+using VeilleNet.Models.Entities;
 using VeilleNet.Services.News;
 using VeilleNet.Services.Tools;
 using VeilleNet.Services.Data;
@@ -199,15 +200,12 @@ public class AiSummarizationService : IAiSummarizationService
 
     public async Task<List<AiContentSummary>> GetLatestBlogSummariesAsync(int count = 10, CancellationToken cancellationToken = default)
     {
+        var latestNewsThreshold = DateTime.Today.AddDays(-1);
+        var fallbackThreshold = DateTime.Today.AddDays(-2);
         List<BaseNews> globalPosts = new List<BaseNews>();
-        var posts = (await _blogAggregationService.GetLatestPostsAsync()).Where(w=>w.PublishedDate >= DateTime.Today.AddDays(-1)).ToList();
-        var aiNewsTask = (await _aiNewsService.GetLatestAINewsAsync()).Where(w => w.PublishedDate >= DateTime.Today.AddDays(-1)).ToList();
-        var winFormTask = (await _winFormNewsService.GetLatestWinFormNewsAsync()).Where(w => w.PublishedDate >= DateTime.Today.AddDays(-1)).ToList();
-
-        if (posts.Count == 0 && aiNewsTask.Count == 0 && winFormTask.Count == 0)
-        {
-            return new List<AiContentSummary>();
-        }
+        var posts = (await _blogAggregationService.GetLatestPostsAsync()).Where(w => w.PublishedDate >= latestNewsThreshold).ToList();
+        var aiNewsTask = (await _aiNewsService.GetLatestAINewsAsync()).Where(w => w.PublishedDate >= latestNewsThreshold).ToList();
+        var winFormTask = (await _winFormNewsService.GetLatestWinFormNewsAsync()).Where(w => w.PublishedDate >= latestNewsThreshold).ToList();
 
         globalPosts.AddRange(posts);
         globalPosts.AddRange(aiNewsTask);
@@ -232,19 +230,33 @@ public class AiSummarizationService : IAiSummarizationService
         
         globalPosts = uniquePosts;
 
-        if (globalPosts.Count == 0)
+        if (globalPosts.Count > 0)
         {
-             return new List<AiContentSummary>();
+            // Save news articles to database
+            try
+            {
+                await _articleRepository.AddOrUpdateNewsArticlesAsync(globalPosts, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving news articles to database");
+            }
         }
 
-        // Save news articles to database
-        try
+        if (globalPosts.Count == 0)
         {
-            await _articleRepository.AddOrUpdateNewsArticlesAsync(globalPosts, cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error saving news articles to database");
+            var articlesWithoutSummary = await _articleRepository.GetRecentNewsArticlesWithoutAiSummaryAsync(fallbackThreshold, count, cancellationToken);
+            globalPosts = articlesWithoutSummary
+                .Select(MapToBaseNews)
+                .ToList();
+
+            if (globalPosts.Count > 0)
+            {
+                _logger.LogInformation(
+                    "No unique fresh news found. Retrying {Count} recent persisted news without AI summary since {Threshold}",
+                    globalPosts.Count,
+                    fallbackThreshold);
+            }
         }
 
         // If not configured, degrade gracefully to RSS summaries.
@@ -408,28 +420,50 @@ public class AiSummarizationService : IAiSummarizationService
             return null;
         }
 
-        string html;
+        string html = null;
         try
         {
-            // Limit response size to 512KB to prevent memory abuse
-            var response = await httpClient.GetAsync(post.Url, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+            var response = await httpClient.GetAsync(
+                post.Url,
+                HttpCompletionOption.ResponseHeadersRead,
+                cancellationToken);
+
             response.EnsureSuccessStatusCode();
 
             const int maxBytes = 512 * 1024;
-            var contentLength = response.Content.Headers.ContentLength;
-            if (contentLength > maxBytes)
+
+            await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+            using var memory = new MemoryStream();
+
+            var buffer = new byte[8192];
+            int totalRead = 0;
+            int read;
+
+            while ((read = await stream.ReadAsync(buffer, 0, buffer.Length, cancellationToken)) > 0)
             {
-                _logger.LogWarning("Response too large ({Size} bytes) for URL: {Url}", contentLength, post.Url);
-                return null;
+                if (totalRead + read > maxBytes)
+                {
+                    read = maxBytes - totalRead;
+                }
+
+                await memory.WriteAsync(buffer, 0, read, cancellationToken);
+                totalRead += read;
+
+                if (totalRead >= maxBytes)
+                {
+                    _logger.LogWarning("Response truncated at {Size} bytes for URL: {Url}", maxBytes, post.Url);
+                    break;
+                }
             }
 
-            html = await response.Content.ReadAsStringAsync(cancellationToken);
-            if (html.Length > maxBytes)
-            {
-                html = html[..maxBytes];
-            }
+            html = Encoding.UTF8.GetString(memory.ToArray());
         }
-        catch
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching URL: {Url}", post.Url);
+        }
+
+        if (string.IsNullOrEmpty(html))
         {
             return null;
         }
@@ -547,6 +581,21 @@ public class AiSummarizationService : IAiSummarizationService
 
         // Wrap in a simple container for styling if needed
         return "<div class=\"ai-summary\">" + text + "</div>";
+    }
+
+    private static BaseNews MapToBaseNews(NewsArticle article)
+    {
+        return new BaseNews
+        {
+            Title = article.Title,
+            Url = article.Url,
+            Summary = article.Summary,
+            PublishedDate = article.PublishedDate,
+            Author = article.Author,
+            Source = article.Source,
+            Category = article.Category,
+            Image = article.Image
+        };
     }
 
     private static string GetCacheKey(string url)

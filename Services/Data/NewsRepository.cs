@@ -88,6 +88,23 @@ public class NewsRepository : INewsRepository
             nameof(GetRecentNewsArticlesAsync), cancellationToken);
     }
 
+    public async Task<List<NewsArticle>> GetRecentNewsArticlesWithoutAiSummaryAsync(DateTime publishedAfter, int count = 50, CancellationToken cancellationToken = default)
+    {
+        count = Math.Clamp(count, 1, 500);
+        var publishedAfterUtc = EnsureUtc(publishedAfter);
+
+        return await ExecuteWithContextAsync(async context =>
+                await context.NewsArticles
+                    .AsNoTracking()
+                    .Where(n => n.PublishedDate >= publishedAfterUtc
+                        && n.Url != string.Empty
+                        && !context.AiSummaries.Any(s => s.Url == n.Url))
+                    .OrderByDescending(n => n.PublishedDate)
+                    .Take(count)
+                    .ToListAsync(cancellationToken),
+            nameof(GetRecentNewsArticlesWithoutAiSummaryAsync), cancellationToken);
+    }
+
     public async Task<List<NewsArticle>> GetRecentAiSummarizedNewsArticlesAsync(int count = 100, CancellationToken cancellationToken = default)
     {
         count = Math.Clamp(count, 1, 500);
