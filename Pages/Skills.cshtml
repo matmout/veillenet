@@ -1,0 +1,653 @@
+@page
+@model SkillsModel
+@{
+    ViewData["Title"] = "Curated AI Skills";
+    ViewData["Description"] = "A curated April 2026 guide to high-frequency AI skill patterns, how skills work, and the file architectures used across Claude Code, OpenAI Agents, LangGraph, and Microsoft Skills.";
+    ViewData["CanonicalUrl"] = "https://containsharp.com/Skills";
+}
+
+<div class="container-fluid">
+    <partial name="_PageHeaderPartial" view-data='@(new ViewDataDictionary(ViewData) { { "Icon", "lightning-charge" }, { "HeaderTitle", "Curated AI Skills" }, { "HeaderDescription", "High-frequency skill patterns, packaging models, and refresh sources that still matter in April 2026" } })' />
+
+@*     <div class="row mb-4">
+        <div class="col-12">
+            <div class="skills-intro-card">
+                <div class="curation-pill-row">
+                    <span class="curation-pill">@Model.PageData.ReviewLabel</span>
+                    <span class="curation-pill">@Model.TotalSkills curated skill patterns</span>
+                    <span class="curation-pill">@Model.EcosystemCount ecosystems</span>
+                    <span class="curation-pill">@Model.SourceCount source hubs</span>
+                </div>
+                <p class="mb-0">@Model.PageData.CatalogNote</p>
+            </div>
+        </div>
+    </div> *@
+
+    <div class="row g-4 mb-4">
+        <div class="col-xl-7">
+            <div class="card detail-card h-100">
+                <div class="card-header">
+                    <h2 class="h4 mb-0"><i class="bi bi-diagram-3"></i> How a skill works</h2>
+                </div>
+                <div class="card-body">
+                    <div class="lifecycle-grid">
+                        @foreach (var step in Model.PageData.Lifecycle)
+                        {
+                            <div class="lifecycle-step">
+                                <div class="lifecycle-icon">
+                                    <i class="bi bi-@step.Icon"></i>
+                                </div>
+                                <div>
+                                    <h3 class="lifecycle-title">@step.Title</h3>
+                                    <p class="lifecycle-text">@step.Description</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-5">
+            <div class="card detail-card h-100">
+                <div class="card-header">
+                    <h2 class="h4 mb-0"><i class="bi bi-arrow-repeat"></i> @Model.PageData.RefreshWorkflow.Title</h2>
+                </div>
+                <div class="card-body">
+                    <p class="detail-text">@Model.PageData.RefreshWorkflow.Description</p>
+                    <div class="refresh-cadence">
+                        <span class="refresh-label">Cadence</span>
+                        <span class="refresh-value">@Model.PageData.RefreshWorkflow.Cadence</span>
+                    </div>
+
+                    <h3 class="detail-subtitle">What triggers a refresh</h3>
+                    <ul class="detail-list">
+                        @foreach (var signal in Model.PageData.RefreshWorkflow.Signals)
+                        {
+                            <li>@signal</li>
+                        }
+                    </ul>
+
+                    <h3 class="detail-subtitle">Source of truth</h3>
+                    <div class="source-list">
+                        @foreach (var source in Model.PageData.RefreshWorkflow.Sources)
+                        {
+                            <a href="@source.Url" target="_blank" rel="noopener noreferrer" class="source-link">
+                                <span>@source.Name</span>
+                                <span class="source-type">@source.SourceType</span>
+                            </a>
+                        }
+                    </div>
+
+                    <h3 class="detail-subtitle">Refresh checklist</h3>
+                    <ol class="detail-list ordered-list">
+                        @foreach (var step in Model.PageData.RefreshWorkflow.Steps)
+                        {
+                            <li>@step</li>
+                        }
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="section-intro">
+                <h2 class="h3 mb-2"><i class="bi bi-folder2-open"></i> Typical file architecture</h2>
+                <p class="mb-0">@Model.PageData.ArchitectureNote</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        @foreach (var architecture in Model.PageData.Architectures)
+        {
+            <div class="col-lg-6">
+                <div class="card architecture-card h-100">
+                    <div class="card-header">
+                        <div class="architecture-header">
+                            <div>
+                                <h3 class="h5 mb-1">@architecture.Ecosystem</h3>
+                                <p class="architecture-description mb-0">@architecture.Description</p>
+                            </div>
+                            <span class="architecture-badge">@architecture.PackagingStyle</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="file-pill-row">
+                            @foreach (var file in architecture.TypicalFiles)
+                            {
+                                <span class="file-pill">@file</span>
+                            }
+                        </div>
+
+                        <pre class="skill-tree">@architecture.FileTree</pre>
+                        <p class="architecture-notes">@architecture.Notes</p>
+
+                        <div class="architecture-links">
+                            <a href="@architecture.OfficialUrl" target="_blank" rel="noopener noreferrer" class="tool-link">
+                                <i class="bi bi-book"></i> Official docs
+                            </a>
+                            @if (!string.IsNullOrWhiteSpace(architecture.RepositoryUrl))
+                            {
+                                <a href="@architecture.RepositoryUrl" target="_blank" rel="noopener noreferrer" class="tool-link secondary-link">
+                                    <i class="bi bi-github"></i> Reference repo
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="row g-4">
+        @foreach (var category in Model.PageData.Categories)
+        {
+            <div class="col-12 mb-4">
+                <div class="card h-100 category-card">
+                    <div class="card-header bg-@category.ColorClass">
+                        <div class="category-header-content">
+                            <div>
+                                <h2 class="h4 mb-0">
+                                    <i class="bi @category.Icon"></i> @category.Name
+                                </h2>
+                                <p class="category-description mb-0 mt-2 small">@category.Description</p>
+                            </div>
+                            <span class="category-count">@category.Skills.Count pattern@(category.Skills.Count > 1 ? "s" : "")</span>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="row g-0 skills-grid">
+                            @foreach (var skill in category.Skills)
+                            {
+                                <div class="col-lg-6 col-xl-4">
+                                    <div class="skill-card">
+                                        <div class="tool-icon-wrapper">
+                                            <i class="bi @skill.Icon tool-icon"></i>
+                                        </div>
+                                        <div class="tool-content">
+                                            <div class="tool-meta">
+                                                <span class="badge-trust">@skill.Ecosystem</span>
+                                                <span class="badge-access">@skill.PackagingStyle</span>
+                                            </div>
+                                            <h3 class="tool-name">@skill.Name</h3>
+                                            <p class="tool-description">@skill.Description</p>
+                                            <div class="tool-details">
+                                                <span class="tool-details-label">Best for</span>
+                                                <span class="tool-details-value">@skill.PrimaryUseCase</span>
+                                            </div>
+                                            <p class="adoption-signal">@skill.AdoptionSignal</p>
+                                            <div class="tool-actions">
+                                                <a href="@skill.GuideUrl" target="_blank" rel="noopener noreferrer" class="tool-link">
+                                                    <i class="bi bi-book"></i> Ecosystem docs
+                                                </a>
+                                                @if (!string.IsNullOrWhiteSpace(skill.RepositoryUrl))
+                                                {
+                                                    <a href="@skill.RepositoryUrl" target="_blank" rel="noopener noreferrer" class="tool-link secondary-link">
+                                                        <i class="bi bi-github"></i> Reference repo
+                                                    </a>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="row mt-5 mb-4">
+        <div class="col-12 text-center">
+            <a href="/" class="btn btn-outline-primary btn-lg">
+                <i class="bi bi-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/category-cards.css" />
+}
+
+<style>
+    .skills-intro-card,
+    .detail-card,
+    .architecture-card,
+    .category-card {
+        border: 1px solid var(--vs-border);
+        background: var(--vs-panel);
+    }
+
+    .skills-intro-card,
+    .section-intro {
+        padding: 1.25rem 1.5rem;
+        border-radius: var(--border-radius-lg);
+        background: rgba(0, 122, 204, 0.08);
+        border: 1px solid rgba(0, 122, 204, 0.25);
+        color: var(--vs-text);
+    }
+
+    .section-intro {
+        background: var(--vs-panel-alt);
+        border-color: var(--vs-border);
+    }
+
+    .curation-pill-row,
+    .file-pill-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .curation-pill,
+    .file-pill,
+    .architecture-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.4rem 0.8rem;
+        border-radius: 999px;
+        background: rgba(0, 122, 204, 0.12);
+        border: 1px solid rgba(0, 122, 204, 0.3);
+        color: var(--vs-accent-strong);
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .detail-card .card-header,
+    .architecture-card .card-header,
+    .category-card .card-header {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid var(--vs-border);
+        background: var(--vs-panel-alt);
+    }
+
+    .detail-card .card-body,
+    .architecture-card .card-body {
+        padding: 1.5rem;
+    }
+
+    .detail-text,
+    .architecture-description,
+    .architecture-notes {
+        color: var(--vs-muted);
+        line-height: 1.6;
+    }
+
+    .lifecycle-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+    }
+
+    .lifecycle-step {
+        display: flex;
+        gap: 1rem;
+        padding: 1rem;
+        border-radius: 12px;
+        border: 1px solid var(--vs-border);
+        background: var(--vs-panel-alt);
+    }
+
+    .lifecycle-icon {
+        width: 48px;
+        height: 48px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--vs-accent-strong) 0%, var(--vs-purple) 100%);
+        color: #fff;
+        flex-shrink: 0;
+        font-size: 1.2rem;
+    }
+
+    .lifecycle-title,
+    .detail-subtitle {
+        color: var(--vs-text);
+        font-weight: 700;
+    }
+
+    .lifecycle-title {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .lifecycle-text,
+    .detail-list,
+    .ordered-list,
+    .adoption-signal {
+        color: var(--vs-muted);
+        margin-bottom: 0;
+    }
+
+    .detail-subtitle {
+        font-size: 1rem;
+        margin: 1.25rem 0 0.75rem;
+    }
+
+    .refresh-cadence {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.9rem 1rem;
+        border-radius: 10px;
+        border: 1px solid var(--vs-border);
+        background: rgba(255, 255, 255, 0.02);
+    }
+
+    .refresh-label {
+        color: var(--vs-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+
+    .refresh-value {
+        color: var(--vs-accent-strong);
+        font-size: 0.95rem;
+        font-weight: 700;
+        text-align: right;
+    }
+
+    .source-list,
+    .architecture-links,
+    .tool-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .source-link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        width: 100%;
+        padding: 0.85rem 1rem;
+        border-radius: 10px;
+        border: 1px solid var(--vs-border);
+        background: var(--vs-panel-alt);
+        color: var(--vs-text);
+        text-decoration: none;
+        transition: all 0.25s ease;
+    }
+
+    .source-link:hover {
+        border-color: var(--vs-accent-strong);
+        color: var(--vs-text);
+        transform: translateY(-2px);
+    }
+
+    .source-type {
+        color: var(--vs-accent-strong);
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        text-align: right;
+    }
+
+    .architecture-header,
+    .category-header-content {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+
+    .skill-tree {
+        margin: 0 0 1rem;
+        padding: 1rem;
+        border-radius: 12px;
+        background: #111827;
+        color: #d1d5db;
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        font-size: 0.85rem;
+        line-height: 1.6;
+        white-space: pre-wrap;
+    }
+
+    .category-description,
+    .category-card .card-header h2 {
+        color: inherit;
+    }
+
+    .category-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.45rem 0.85rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        background: rgba(15, 15, 15, 0.25);
+        color: var(--vs-text);
+        font-size: 0.8rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .skills-grid {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .skill-card {
+        padding: 1.5rem;
+        border-right: 1px solid var(--vs-border);
+        border-bottom: 1px solid var(--vs-border);
+        background: var(--vs-panel-alt);
+        transition: all 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .skill-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--vs-accent-strong) 0%, var(--vs-purple) 100%);
+        transition: width 0.3s ease;
+    }
+
+    .skill-card:hover {
+        background: rgba(0, 122, 204, 0.05);
+        transform: translateY(-4px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .skill-card:hover::before {
+        width: 100%;
+    }
+
+    .tool-icon-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--vs-panel) 0%, var(--vs-bg) 100%);
+        border: 2px solid var(--vs-border);
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .skill-card:hover .tool-icon-wrapper {
+        background: linear-gradient(135deg, var(--vs-accent-strong) 0%, var(--vs-purple) 100%);
+        border-color: var(--vs-accent-strong);
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .tool-icon {
+        font-size: 1.75rem;
+        color: var(--vs-accent-strong);
+        transition: color 0.3s ease;
+    }
+
+    .skill-card:hover .tool-icon {
+        color: #fff;
+    }
+
+    .tool-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .tool-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .badge-trust,
+    .badge-access {
+        padding: 0.35rem 0.75rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .badge-trust {
+        background: rgba(0, 122, 204, 0.15);
+        color: var(--vs-accent-strong);
+        border: 1px solid rgba(0, 122, 204, 0.3);
+    }
+
+    .badge-access {
+        background: rgba(156, 39, 176, 0.12);
+        color: #d9a6ff;
+        border: 1px solid rgba(156, 39, 176, 0.35);
+    }
+
+    .tool-name {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--vs-text);
+        margin-bottom: 0.75rem;
+        line-height: 1.3;
+    }
+
+    .tool-description {
+        font-size: 0.9rem;
+        color: var(--vs-muted);
+        line-height: 1.5;
+        margin-bottom: 1rem;
+    }
+
+    .tool-details {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        margin-bottom: 0.85rem;
+        padding: 0.85rem 1rem;
+        border-radius: 8px;
+        border: 1px solid var(--vs-border);
+        background: rgba(255, 255, 255, 0.02);
+    }
+
+    .tool-details-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--vs-muted);
+        font-weight: 600;
+    }
+
+    .tool-details-value {
+        font-size: 0.9rem;
+        color: var(--vs-text);
+        font-weight: 600;
+    }
+
+    .adoption-signal {
+        font-size: 0.85rem;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+        flex: 1;
+    }
+
+    .tool-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: rgba(0, 122, 204, 0.1);
+        border: 1px solid var(--vs-accent-strong);
+        border-radius: 6px;
+        color: var(--vs-accent-strong);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .tool-link:hover {
+        background: var(--vs-accent-strong);
+        color: #fff;
+        transform: translateX(4px);
+    }
+
+    .secondary-link {
+        border-color: rgba(148, 163, 184, 0.4);
+        color: #d1d5db;
+        background: rgba(148, 163, 184, 0.08);
+    }
+
+    .secondary-link:hover {
+        background: rgba(148, 163, 184, 0.25);
+        border-color: rgba(148, 163, 184, 0.6);
+        color: #fff;
+    }
+
+    @@media (max-width: 1199px) {
+        .col-xl-4:nth-child(3n) .skill-card {
+            border-right: none;
+        }
+    }
+
+    @@media (max-width: 991px) {
+        .lifecycle-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .col-lg-6:nth-child(2n) .skill-card {
+            border-right: none;
+        }
+    }
+
+    @@media (max-width: 767px) {
+        .architecture-header,
+        .category-header-content,
+        .refresh-cadence {
+            flex-direction: column;
+        }
+
+        .skill-card {
+            border-right: none;
+        }
+
+        .tool-icon-wrapper {
+            width: 50px;
+            height: 50px;
+        }
+
+        .tool-icon {
+            font-size: 1.5rem;
+        }
+    }
+</style>

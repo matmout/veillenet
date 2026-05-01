@@ -130,6 +130,7 @@ builder.Services.AddHttpClient();
 // Register application services
 builder.Services.AddSingleton<ICacheService, MemoryCacheService>();
 builder.Services.AddSingleton<IMCPService, MCPService>();
+builder.Services.AddSingleton<ISkillsService, SkillsService>();
 builder.Services.AddScoped<IFeedService, FeedService>();
 builder.Services.AddScoped<IBlogAggregationService, BlogAggregationService>();
 builder.Services.AddScoped<IGitHubService, GitHubService>();

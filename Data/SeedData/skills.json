@@ -1,0 +1,265 @@
+{
+  "reviewLabel": "Reviewed for April 2026",
+  "catalogNote": "This page tracks high-frequency skill patterns rather than one-off marketplace entries. The goal is to capture the reusable skill shapes teams keep shipping across coding, research, orchestration, and delivery agents in April 2026.",
+  "architectureNote": "There is no single universal skill package, but the shape repeats across ecosystems: a short manifest or instruction entrypoint, optional scripts or tools, supporting references, and a small amount of test or example material.",
+  "lifecycle": [
+    {
+      "title": "Intent match",
+      "description": "The agent compares the user request against skill descriptions, triggers, or explicit slash invocations to decide whether a reusable skill should activate.",
+      "icon": "bullseye"
+    },
+    {
+      "title": "Context loading",
+      "description": "Only the skill entrypoint and the small set of supporting files needed for the current task are loaded, which keeps long reference material cheap until it is relevant.",
+      "icon": "inboxes"
+    },
+    {
+      "title": "Workflow execution",
+      "description": "The skill can call scripts, tools, prompts, or graph nodes to apply a repeatable playbook such as code review, triage, research, or release preparation.",
+      "icon": "play-circle"
+    },
+    {
+      "title": "Shaped output",
+      "description": "A good skill constrains the final output with clear quality bars, formatting rules, and completion criteria so the result is predictable across repeated runs.",
+      "icon": "check2-square"
+    }
+  ],
+  "architectures": [
+    {
+      "ecosystem": "Claude Code",
+      "description": "Folder-discovered skills built around a required SKILL.md entrypoint and optional supporting files.",
+      "packagingStyle": "SKILL.md package",
+      "officialUrl": "https://docs.anthropic.com/en/docs/claude-code/skills",
+      "repositoryUrl": "",
+      "notes": "Best for local or repository-scoped skills where the agent auto-discovers reusable playbooks from known skill folders.",
+      "fileTree": ".claude/skills/code-review-gate/\n|- SKILL.md\n|- scripts/\n|  |- validate-checklist.ps1\n|- references/\n|  |- review-rules.md\n|- assets/\n|  |- comment-template.md\n`- examples/\n   `- sample-output.md",
+      "typicalFiles": [
+        "SKILL.md",
+        "scripts/",
+        "references/",
+        "assets/",
+        "examples/"
+      ]
+    },
+    {
+      "ecosystem": "OpenAI Agents SDK",
+      "description": "Reusable Python packages where tool schemas, guardrails, and prompts define the skill boundary.",
+      "packagingStyle": "Python SDK package",
+      "officialUrl": "https://openai.github.io/openai-agents-python/",
+      "repositoryUrl": "https://github.com/openai/openai-agents-python",
+      "notes": "A good fit when the skill is code-backed and needs explicit tools, structured outputs, tracing, or handoffs.",
+      "fileTree": "agents/release-notes-builder/\n|- agent.py\n|- tools.py\n|- schemas.py\n|- prompts/\n|  `- system.md\n`- tests/\n   `- test_release_notes.py",
+      "typicalFiles": [
+        "agent.py",
+        "tools.py",
+        "schemas.py",
+        "prompts/",
+        "tests/"
+      ]
+    }
+  ],
+  "refreshWorkflow": {
+    "title": "How we keep the list fresh",
+    "description": "The source of truth stays versioned in Data\\SeedData\\skills.json. We refresh the page by re-reviewing official docs, reference repositories, and the skill patterns that continue to appear across public agent ecosystems.",
+    "cadence": "Monthly review, plus targeted updates after major agent releases",
+    "signals": [
+      "A major ecosystem ships a new skills feature, manifest format, or packaging convention.",
+      "A workflow pattern starts appearing across several ecosystems instead of a single vendor stack.",
+      "Official docs or starter repositories deprecate an older skill shape or recommend a new one."
+    ],
+    "steps": [
+      "Review official skills, agents, or orchestration docs before editing any curated entry.",
+      "Validate every documentation and repository link with Scripts\\refresh-skills-links.ps1.",
+      "Update the JSON review label, architecture notes, and any affected skill patterns.",
+      "Rebuild the site and visually verify the Skills page before publishing."
+    ],
+    "sources": [
+      {
+        "name": "Anthropic Claude Code skills docs",
+        "url": "https://docs.anthropic.com/en/docs/claude-code/skills",
+        "sourceType": "Official docs"
+      },
+      {
+        "name": "OpenAI Agents SDK docs",
+        "url": "https://openai.github.io/openai-agents-python/",
+        "sourceType": "Official docs"
+      },
+      {
+        "name": "LangGraph overview",
+        "url": "https://docs.langchain.com/oss/python/langgraph/overview",
+        "sourceType": "Official docs"
+      },
+      {
+        "name": "Microsoft Skills catalog",
+        "url": "https://github.com/microsoft/skills",
+        "sourceType": "Reference repo"
+      }
+    ]
+  },
+  "categories": [
+    {
+      "name": "Claude Code skill patterns",
+      "description": "High-frequency repo-local skills built around SKILL.md playbooks and optional helper scripts.",
+      "icon": "bi-lightning-charge",
+      "colorClass": "info",
+      "skills": [
+        {
+          "name": "Code Review Gate",
+          "description": "A reusable review playbook that applies repo rules, surfaces blocking issues first, and standardizes review output.",
+          "ecosystem": "Claude Code",
+          "guideUrl": "https://docs.anthropic.com/en/docs/claude-code/skills",
+          "repositoryUrl": "",
+          "icon": "bi-search-heart",
+          "packagingStyle": "SKILL.md package",
+          "primaryUseCase": "Repeatable PR and patch reviews",
+          "adoptionSignal": "Frequently shared as a project skill because every team wants the same review bar without pasting a full checklist into each session."
+        },
+        {
+          "name": "Repo Audit Playbook",
+          "description": "A structured skill for auditing architecture, dependencies, security notes, and operational drift inside an existing codebase.",
+          "ecosystem": "Claude Code",
+          "guideUrl": "https://docs.anthropic.com/en/docs/claude-code/skills",
+          "repositoryUrl": "",
+          "icon": "bi-binoculars",
+          "packagingStyle": "SKILL.md package",
+          "primaryUseCase": "Fast codebase discovery and technical due diligence",
+          "adoptionSignal": "Common in platform teams and consulting workflows where the same repository audit needs to be rerun across many projects."
+        },
+        {
+          "name": "Test Generation Workflow",
+          "description": "A skill that turns source files and conventions into targeted unit or integration test plans with a fixed quality checklist.",
+          "ecosystem": "Claude Code",
+          "guideUrl": "https://docs.anthropic.com/en/docs/claude-code/skills",
+          "repositoryUrl": "",
+          "icon": "bi-bezier2",
+          "packagingStyle": "SKILL.md package",
+          "primaryUseCase": "Turning repeated testing prompts into one reusable instruction bundle",
+          "adoptionSignal": "Popular whenever teams need consistent test style, fixture usage, and coverage expectations across repositories."
+        }
+      ]
+    },
+    {
+      "name": "OpenAI Agents SDK patterns",
+      "description": "Code-backed agent skills that package tools, prompts, schemas, and guardrails for production workflows.",
+      "icon": "bi-cpu",
+      "colorClass": "primary",
+      "skills": [
+        {
+          "name": "Browser Research Agent",
+          "description": "A web-aware research skill that collects sources, extracts signals, and returns a structured brief with citations.",
+          "ecosystem": "OpenAI Agents",
+          "guideUrl": "https://openai.github.io/openai-agents-python/",
+          "repositoryUrl": "https://github.com/openai/openai-agents-python",
+          "icon": "bi-globe2",
+          "packagingStyle": "Python SDK package",
+          "primaryUseCase": "Fresh research and source-backed synthesis",
+          "adoptionSignal": "One of the most repeated agent patterns because it combines tool use, guardrails, and structured output in a single reusable package."
+        },
+        {
+          "name": "Retrieval QA Skill",
+          "description": "A retrieval-augmented skill that blends vector search, citations, and answer validation for internal knowledge bases.",
+          "ecosystem": "OpenAI Agents",
+          "guideUrl": "https://openai.github.io/openai-agents-python/",
+          "repositoryUrl": "https://github.com/openai/openai-agents-python",
+          "icon": "bi-journal-text",
+          "packagingStyle": "Python SDK package",
+          "primaryUseCase": "Knowledge-grounded answers over docs or product content",
+          "adoptionSignal": "Persists because most real agent deployments still need repeatable grounding and auditable answers."
+        },
+        {
+          "name": "PR and Issue Triage Agent",
+          "description": "A triage skill that clusters repository events, assigns urgency, and drafts next actions for maintainers.",
+          "ecosystem": "OpenAI Agents",
+          "guideUrl": "https://openai.github.io/openai-agents-python/",
+          "repositoryUrl": "https://github.com/openai/openai-agents-python",
+          "icon": "bi-kanban",
+          "packagingStyle": "Python SDK package",
+          "primaryUseCase": "Maintainer inbox reduction and backlog hygiene",
+          "adoptionSignal": "Widely reused where teams want tool-backed automation but still need explicit schemas and approval checkpoints."
+        }
+      ]
+    },
+    {
+      "name": "LangGraph skill patterns",
+      "description": "Stateful orchestration patterns for skills that branch, retry, or require approvals across several steps.",
+      "icon": "bi-diagram-3",
+      "colorClass": "warning",
+      "skills": [
+        {
+          "name": "Incident Commander Graph",
+          "description": "A graph-driven response skill that detects signals, routes tasks, and produces a live incident summary with state tracking.",
+          "ecosystem": "LangGraph",
+          "guideUrl": "https://docs.langchain.com/oss/python/langgraph/overview",
+          "repositoryUrl": "https://github.com/langchain-ai/langgraph",
+          "icon": "bi-shield-exclamation",
+          "packagingStyle": "Graph module",
+          "primaryUseCase": "Operational incidents, escalations, and response loops",
+          "adoptionSignal": "High value whenever the skill must survive retries, branching, or partial progress rather than one linear prompt."
+        },
+        {
+          "name": "Docs-to-Code Planner",
+          "description": "A planning skill that reads specs or documentation, builds intermediate state, and emits an implementation sequence.",
+          "ecosystem": "LangGraph",
+          "guideUrl": "https://docs.langchain.com/oss/python/langgraph/overview",
+          "repositoryUrl": "https://github.com/langchain-ai/langgraph",
+          "icon": "bi-file-earmark-code",
+          "packagingStyle": "Graph module",
+          "primaryUseCase": "Longer implementation planning with checkpoints",
+          "adoptionSignal": "Useful when teams want planning, validation, and execution to stay connected instead of living in separate prompts."
+        },
+        {
+          "name": "Stateful Support Router",
+          "description": "A routing skill that classifies requests, preserves conversation state, and hands work to the right downstream agent or human.",
+          "ecosystem": "LangGraph",
+          "guideUrl": "https://docs.langchain.com/oss/python/langgraph/overview",
+          "repositoryUrl": "https://github.com/langchain-ai/langgraph",
+          "icon": "bi-signpost-split",
+          "packagingStyle": "Graph module",
+          "primaryUseCase": "Support, service desks, and triage-heavy help flows",
+          "adoptionSignal": "Common because routing skills usually need durable state and explicit branch logic once the happy path breaks."
+        }
+      ]
+    },
+    {
+      "name": "Microsoft Skills",
+      "description": "Real SKILL.md-based entries curated from the public microsoft/skills repository.",
+      "icon": "bi-windows",
+      "colorClass": "success",
+      "skills": [
+        {
+          "name": "applicationinsights-web-ts",
+          "description": "Instrument browser and web apps with the Application Insights JavaScript SDK for RUM, dependencies, exceptions, custom events, and browser-side GenAI traces correlated with backend observability.",
+          "ecosystem": "Microsoft Skills",
+          "guideUrl": "https://github.com/microsoft/skills/tree/main/.github/plugins/azure-sdk-typescript/skills/applicationinsights-web-ts",
+          "repositoryUrl": "https://github.com/microsoft/skills",
+          "icon": "bi-graph-up-arrow",
+          "packagingStyle": "SKILL.md package",
+          "primaryUseCase": "Frontend telemetry, RUM, and correlated tracing",
+          "adoptionSignal": "Useful when teams need production-grade browser instrumentation and want agent guidance tied directly to the Azure SDK skill catalog."
+        },
+        {
+          "name": "continual-learning",
+          "description": "Guide and hook-based skill for implementing continual learning in coding agents through memory scoping, reflection patterns, and cross-session persistence.",
+          "ecosystem": "Microsoft Skills",
+          "guideUrl": "https://github.com/microsoft/skills/tree/main/.github/skills/continual-learning",
+          "repositoryUrl": "https://github.com/microsoft/skills",
+          "icon": "bi-arrow-repeat",
+          "packagingStyle": "SKILL.md package",
+          "primaryUseCase": "Agent memory, reflection, and learning across sessions",
+          "adoptionSignal": "Notable because it adds practical long-term learning to coding agents with a lightweight hook and a clear project-versus-global memory split."
+        },
+        {
+          "name": "frontend-design-review",
+          "description": "Review and create production-grade frontend interfaces with strong design quality, accessibility, and design-system compliance checks.",
+          "ecosystem": "Microsoft Skills",
+          "guideUrl": "https://github.com/microsoft/skills/tree/main/.github/skills/frontend-design-review",
+          "repositoryUrl": "https://github.com/microsoft/skills",
+          "icon": "bi-palette2",
+          "packagingStyle": "SKILL.md package",
+          "primaryUseCase": "Frontend design reviews, accessibility audits, and UI quality gates",
+          "adoptionSignal": "High-value for teams that want memorable UI reviews backed by an explicit rubric instead of generic frontend feedback."
+        }
+      ]
+    }
+  ]
+}

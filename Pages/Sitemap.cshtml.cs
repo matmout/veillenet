@@ -31,6 +31,14 @@ public class SitemapModel : PageModel
 
         Urls.Add(new SitemapUrl
         {
+            Loc = $"{baseUrl}/About",
+            LastMod = today,
+            ChangeFreq = "monthly",
+            Priority = "0.4"
+        });
+
+        Urls.Add(new SitemapUrl
+        {
             Loc = $"{baseUrl}/Newsletter",
             LastMod = today,
             ChangeFreq = "monthly",
@@ -44,6 +52,14 @@ public class SitemapModel : PageModel
             LastMod = today,
             ChangeFreq = "daily",
             Priority = "0.8"
+        });
+
+        Urls.Add(new SitemapUrl
+        {
+            Loc = $"{baseUrl}/AiSummary",
+            LastMod = today,
+            ChangeFreq = "daily",
+            Priority = "0.7"
         });
         
         Urls.Add(new SitemapUrl
@@ -88,10 +104,42 @@ public class SitemapModel : PageModel
 
         Urls.Add(new SitemapUrl
         {
+            Loc = $"{baseUrl}/Releases",
+            LastMod = today,
+            ChangeFreq = "daily",
+            Priority = "0.8"
+        });
+
+        Urls.Add(new SitemapUrl
+        {
+            Loc = $"{baseUrl}/Skills",
+            LastMod = today,
+            ChangeFreq = "weekly",
+            Priority = "0.8"
+        });
+
+        Urls.Add(new SitemapUrl
+        {
             Loc = $"{baseUrl}/Radar",
             LastMod = today,
             ChangeFreq = "weekly",
             Priority = "0.8"
+        });
+
+        Urls.Add(new SitemapUrl
+        {
+            Loc = $"{baseUrl}/NewsletterArchive",
+            LastMod = today,
+            ChangeFreq = "daily",
+            Priority = "0.6"
+        });
+
+        Urls.Add(new SitemapUrl
+        {
+            Loc = $"{baseUrl}/Privacy",
+            LastMod = today,
+            ChangeFreq = "yearly",
+            Priority = "0.2"
         });
 
         // Utility pages
