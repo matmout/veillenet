@@ -103,8 +103,8 @@ builder.Services.AddMemoryCache();
 builder.Services.Configure<VeilleNet.Models.DatabaseOptions>(
     builder.Configuration.GetSection(VeilleNet.Models.DatabaseOptions.SectionName));
 
-builder.Services.Configure<VeilleNet.Models.XApiOptions>(
-    builder.Configuration.GetSection(VeilleNet.Models.XApiOptions.SectionName));
+builder.Services.Configure<VeilleNet.Models.RedditOptions>(
+    builder.Configuration.GetSection(VeilleNet.Models.RedditOptions.SectionName));
 
 builder.Services.AddDbContextFactory<ApplicationDbContext>((serviceProvider, options) =>
 {
@@ -140,7 +140,7 @@ builder.Services.AddScoped<IAINewsService, AINewsService>();
 builder.Services.AddScoped<IWinFormNewsService, WinFormNewsService>();
 builder.Services.AddScoped<IVideoService, VideoService>();
 builder.Services.AddScoped<IStackOverflowService, StackOverflowService>();
-builder.Services.AddScoped<IXPostsService, XPostsService>();
+builder.Services.AddScoped<IRedditService, RedditService>();
 builder.Services.AddScoped<ILLMService, LLMService>();
 builder.Services.AddSingleton<IQuestionService, QuestionService>();
 builder.Services.AddSingleton<IFrameworkVersionService, FrameworkVersionService>();
@@ -159,6 +159,7 @@ builder.Services.AddScoped<VeilleNet.Services.Data.INewsletterRepository>(sp => 
 builder.Services.Configure<VeilleNet.Models.MistralOptions>(builder.Configuration.GetSection("Mistral"));
 builder.Services.AddSingleton<IMistralChatClientFactory, MistralChatClientFactory>();
 builder.Services.AddScoped<IAiSummarizationService, AiSummarizationService>();
+builder.Services.AddScoped<IDailyBriefingService, DailyBriefingService>();
 
 // Email service (Amazon SES)
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
@@ -197,8 +198,16 @@ builder.Services.AddQuartz(q =>
     q.AddTrigger(opts => opts
         .ForJob(newsletterJobKey)
         .WithIdentity("NewsletterSendJob-trigger")
-        // Tous les jours � 17h00 (timezone locale du serveur)
+        // Tous les jours à 17h00 (timezone locale du serveur)
         .WithCronSchedule("0 0 17 ? * *"));
+
+    var dailyBriefingJobKey = new JobKey("DailyBriefingJob");
+    q.AddJob<DailyBriefingJob>(opts => opts.WithIdentity(dailyBriefingJobKey));
+    q.AddTrigger(opts => opts
+        .ForJob(dailyBriefingJobKey)
+        .WithIdentity("DailyBriefingJob-trigger")
+        // Every day at 07:00 UTC to pre-generate the daily briefing
+        .WithCronSchedule("0 0 7 ? * *"));
 });
 
 builder.Services.AddQuartzHostedService(options =>

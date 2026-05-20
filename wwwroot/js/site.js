@@ -63,7 +63,25 @@
 
   const timestamp = () => new Date().toISOString().replace('T', ' ').replace('Z', '');
 
-  const scenario = async () => {
+  const briefingScenario = async (briefing) => {
+    el.innerHTML = '';
+    await print(`[${timestamp()}] Generating AI daily briefing...`, 'dim');
+    await print('');
+
+    // Split briefing into lines and display each as a typed output line
+    const lines = briefing.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    for (const line of lines) {
+      // Bullet points get a visual highlight, other lines dim
+      const cls = line.startsWith('•') ? 'ok' : 'dim';
+      await print(line, cls);
+      await delay(200 + Math.random() * 300);
+    }
+
+    await print('');
+    await print(`[${timestamp()}] Briefing ready — updated once daily.`, 'dim');
+  };
+
+  const buildScenario = async () => {
     el.innerHTML = '';
     await print(`[${timestamp()}] dotnet --info`, 'dim');
     await print(' .NET SDK: 10.0.x (linux-x64)');
@@ -109,10 +127,22 @@
     await print(' --- Restarting ---', 'warn');
   };
 
-  (async function loop() {
-    while (true) {
-      try { await scenario(); } catch { }
-      await delay(900);
-    }
-  })();
+  const briefing = (typeof window.__dailyBriefing === 'string' && window.__dailyBriefing.trim().length > 0)
+    ? window.__dailyBriefing
+    : null;
+
+  if (briefing) {
+    // Show briefing once, then stay static
+    (async () => {
+      try { await briefingScenario(briefing); } catch { }
+    })();
+  } else {
+    // Fallback: loop the build animation
+    (async function loop() {
+      while (true) {
+        try { await buildScenario(); } catch { }
+        await delay(900);
+      }
+    })();
+  }
 })();

@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Options;
 using VeilleNet.Models;
 using VeilleNet.Services;
+using VeilleNet.Services.Agent;
 using VeilleNet.Services.News;
 using VeilleNet.Services.Tools;
 
@@ -16,8 +17,9 @@ public class IndexModel : PageModel
     private readonly IWinFormNewsService _winFormNewsService;
     private readonly IVideoService _videoService;
     private readonly IStackOverflowService _stackOverflowService;
-    private readonly IXPostsService _xPostsService;
+    private readonly IRedditService _redditService;
     private readonly INewsletterService _newsletterService;
+    private readonly IDailyBriefingService _dailyBriefingService;
     private readonly ILogger<IndexModel> _logger;
 
     public List<BaseNews> BlogPosts { get; set; } = new();
@@ -26,10 +28,11 @@ public class IndexModel : PageModel
     public List<BaseNews> WinFormNews { get; set; } = new();
     public List<Video> Videos { get; set; } = new();
     public List<StackOverflowQuestion> StackOverflowQuestions { get; set; } = new();
-    public List<XPost> OfficialXPosts { get; set; } = new();
+    public List<RedditPost> RedditPosts { get; set; } = new();
 
     public int ActiveNewsletterSubscribersCount { get; private set; }
-    public bool IsXPostsFeatureEnabled { get; }
+    public bool IsRedditEnabled { get; }
+    public string? DailyBriefing { get; private set; }
 
     public IndexModel(
         IBlogAggregationService blogService,
@@ -38,9 +41,10 @@ public class IndexModel : PageModel
         IWinFormNewsService winFormNewsService,
         IVideoService videoService,
         IStackOverflowService stackOverflowService,
-        IXPostsService xPostsService,
-        IOptions<XApiOptions> xApiOptions,
+        IRedditService redditService,
+        IOptions<RedditOptions> redditOptions,
         INewsletterService newsletterService,
+        IDailyBriefingService dailyBriefingService,
         ILogger<IndexModel> logger)
     {
         _blogService = blogService;
@@ -49,9 +53,10 @@ public class IndexModel : PageModel
         _winFormNewsService = winFormNewsService;
         _videoService = videoService;
         _stackOverflowService = stackOverflowService;
-        _xPostsService = xPostsService;
-        IsXPostsFeatureEnabled = xApiOptions.Value.Enabled;
+        _redditService = redditService;
+        IsRedditEnabled = redditOptions.Value.Enabled;
         _newsletterService = newsletterService;
+        _dailyBriefingService = dailyBriefingService;
         _logger = logger;
     }
 
@@ -64,12 +69,12 @@ public class IndexModel : PageModel
         var winFormTask = _winFormNewsService.GetLatestWinFormNewsAsync();
         var videoTask = _videoService.GetLatestVideosAsync();
         var stackOverflowTask = _stackOverflowService.GetLatestQuestionsAsync();
-        var xPostsTask = IsXPostsFeatureEnabled
-            ? _xPostsService.GetLatestOfficialPostsAsync()
-            : Task.FromResult(new List<XPost>());
+        var redditTask = IsRedditEnabled
+            ? _redditService.GetTopPostsAsync()
+            : Task.FromResult(new List<RedditPost>());
         var subscribersCountTask = _newsletterService.GetActiveSubscribersCountAsync();
 
-        await Task.WhenAll(blogTask, githubTask, aiNewsTask, winFormTask, videoTask, stackOverflowTask, xPostsTask, subscribersCountTask);
+        await Task.WhenAll(blogTask, githubTask, aiNewsTask, winFormTask, videoTask, stackOverflowTask, redditTask, subscribersCountTask);
 
         BlogPosts = await blogTask;
         TrendingProjects = await githubTask;
@@ -77,8 +82,17 @@ public class IndexModel : PageModel
         WinFormNews = await winFormTask;
         Videos = await videoTask;
         StackOverflowQuestions = await stackOverflowTask;
-        OfficialXPosts = await xPostsTask;
+        RedditPosts = await redditTask;
         ActiveNewsletterSubscribersCount = await subscribersCountTask;
+
+        try
+        {
+            DailyBriefing = await _dailyBriefingService.GetOrGenerateDailyBriefingAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to load daily briefing; falling back to animation.");
+        }
     }
 
     public async Task<IActionResult> OnPostQuickSubscribeAsync(string email)

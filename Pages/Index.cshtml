@@ -30,11 +30,11 @@
                         <span class="dot min"></span>
                         <span class="dot max"></span>
                     </div>
-                    <div class="title">Output — Build</div>
+                    <div class="title">Today in 60 Seconds</div>
                     <div class="spacer"></div>
                 </div>
                 <div class="output-toolbar">
-                    <div class="chip">Show output from: Build</div>
+                    <div class="chip">Show output from: AI Daily Briefing</div>
                     <div class="chip">Encoding: UTF-8</div>
                 </div>
                 <div id="output-stream" class="output-stream" aria-live="polite"></div>
@@ -81,35 +81,26 @@
         </div>
     </div>
 
-    <!-- Official X Posts Section -->
-    @if (Model.IsXPostsFeatureEnabled == true)
+    <!-- Reddit Top Posts Section -->
+    @if (Model.IsRedditEnabled)
     {
         <div class="row mb-4">
             <div class="col-12">
                 @await Html.PartialAsync("_NewsBlockPartial", new NewsBlockViewModel
     {
-        Title = "Latest Posts",
-        Icon = "bi-twitter-x",
+        Title = "Reddit — r/csharp & r/dotnet",
+        Icon = "bi-reddit",
         HeaderCssClass = "text-white",
-        HeaderStyle = "background: #0f0f0f",
-        HeaderBadgeHtml = Model.IsXPostsFeatureEnabled
-                        ? "<span class=\"badge bg-warning text-dark ms-1\" style=\"font-size:0.7rem; vertical-align:middle;\">New</span>"
-                        : "<span class=\"badge bg-secondary ms-1\" style=\"font-size:0.7rem; vertical-align:middle;\">Paused</span>",
-        ShowTitle = false,
+        HeaderStyle = "background: linear-gradient(135deg, #FF4500 0%, #FF6534 100%)",
+        ShowTitle = true,
         ShowAuthor = true,
-        ShowSource = false,
+        ShowSource = true,
         ShowAiSummary = false,
         SanitizeHtml = false,
         DateFormat = "dd MMM yyyy HH:mm",
-        DefaultIconClass = "bi-twitter-x",
         ColumnsPerRow = 2,
-        LoadingText = "Loading official X posts...",
-        EmptyStateTitle = Model.IsXPostsFeatureEnabled ? null : "X feed paused",
-        EmptyStateMessage = Model.IsXPostsFeatureEnabled
-                        ? null
-                        : "The official X API for this feed is paid. This section is temporarily disabled to keep the dashboard cost under control.",
-        EmptyStateIcon = "bi-pause-circle",
-        Items = Model.OfficialXPosts.ToBlockItems()
+        LoadingText = "Loading Reddit posts...",
+        Items = Model.RedditPosts.ToBlockItems()
     })
             </div>
         </div>
@@ -240,45 +231,7 @@
     </div>
 
     @section Scripts {
-        <style>
-            .x-video-thumb {
-                position: relative;
-                width: 60px;
-                height: 45px;
-            }
-
-            .x-video-thumb-img {
-                width: 60px;
-                height: 45px;
-                object-fit: cover;
-                border-radius: 4px;
-            }
-
-            .x-post-avatar-wrapper {
-                background: transparent;
-            }
-
-            .x-post-avatar {
-                width: 60px;
-                height: 45px;
-                object-fit: contain;
-                border-radius: 4px;
-                background: transparent;
-            }
-
-            .x-video-play {
-                position: absolute;
-                inset: 0;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: #fff;
-                font-size: 1.5rem;
-                background: rgba(0, 0, 0, 0.35);
-                border-radius: 4px;
-            }
-
-        </style>
         <script>
+            window.__dailyBriefing = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.DailyBriefing ?? ""));
         </script>
     }

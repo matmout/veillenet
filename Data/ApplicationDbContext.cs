@@ -18,6 +18,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<JobExecutionLog> JobExecutionLogs { get; set; }
     public DbSet<NamedEntity> NamedEntities { get; set; }
     public DbSet<XTrackedAccount> XTrackedAccounts { get; set; }
+    public DbSet<DailyBriefingEntity> DailyBriefings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -126,6 +127,24 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.Theme)
                 .HasMaxLength(500)
                 .IsRequired();
+
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+        });
+
+        // Configure DailyBriefing
+        modelBuilder.Entity<DailyBriefingEntity>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.ToTable("daily_briefings", "containsharp");
+            entity.HasIndex(e => e.BriefingDate)
+                .IsUnique()
+                .HasDatabaseName("idx_daily_briefings_unique_date");
+
+            entity.Property(e => e.Content).IsRequired();
 
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP");

@@ -924,4 +924,37 @@ public class NewsRepository : INewsRepository
                 await context.NamedEntities.CountAsync(cancellationToken),
             nameof(GetNamedEntityCountAsync), cancellationToken);
     }
+
+    // Daily Briefing
+    public async Task<DailyBriefingEntity?> GetDailyBriefingByDateAsync(DateOnly date, CancellationToken cancellationToken = default)
+    {
+        return await ExecuteWithContextAsync(async context =>
+                await context.DailyBriefings
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(b => b.BriefingDate == date, cancellationToken),
+            nameof(GetDailyBriefingByDateAsync), cancellationToken);
+    }
+
+    public async Task<DailyBriefingEntity> AddOrUpdateDailyBriefingAsync(DateOnly date, string content, int articleCount, CancellationToken cancellationToken = default)
+    {
+        return await ExecuteWithContextAsync(async context =>
+        {
+            var existing = await context.DailyBriefings
+                .FirstOrDefaultAsync(b => b.BriefingDate == date, cancellationToken);
+
+            if (existing != null)
+            {
+                existing.Content = content;
+                existing.ArticleCount = articleCount;
+                existing.UpdatedAt = DateTime.UtcNow;
+                await context.SaveChangesAsync(cancellationToken);
+                return existing;
+            }
+
+            var entity = DailyBriefingEntity.Create(date, content, articleCount);
+            context.DailyBriefings.Add(entity);
+            await context.SaveChangesAsync(cancellationToken);
+            return entity;
+        }, nameof(AddOrUpdateDailyBriefingAsync), cancellationToken);
+    }
 }

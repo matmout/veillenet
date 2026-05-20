@@ -27,4 +27,8 @@ public interface IArticleRepository
     Task<List<NamedEntity>> GetEntitiesWithArticlesAsync(int articleCount = 100, CancellationToken cancellationToken = default);
     Task AddEntitiesToArticleAsync(int articleId, List<string> entityNames, CancellationToken cancellationToken = default);
     Task<int> GetNamedEntityCountAsync(CancellationToken cancellationToken = default);
+
+    // Daily Briefing
+    Task<DailyBriefingEntity?> GetDailyBriefingByDateAsync(DateOnly date, CancellationToken cancellationToken = default);
+    Task<DailyBriefingEntity> AddOrUpdateDailyBriefingAsync(DateOnly date, string content, int articleCount, CancellationToken cancellationToken = default);
 }

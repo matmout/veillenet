@@ -77,6 +77,20 @@ public static class NewsBlockItemMapper
             ExternalLinkUrl = p.Url
         }).ToList();
 
+    public static List<NewsBlockItem> ToBlockItems(this IEnumerable<RedditPost> items) =>
+        items.Select(p => new NewsBlockItem
+        {
+            Title = p.Title,
+            Url = p.Url,
+            Summary = string.IsNullOrWhiteSpace(p.Text) ? null : p.Text,
+            PublishedDate = p.PublishedDate,
+            Author = p.Author,
+            Source = p.Subreddit,
+            Image = p.Thumbnail,
+            ExternalLinkText = $"↑ {p.Score:N0}  💬 {p.NumComments:N0}",
+            ExternalLinkUrl = p.Url
+        }).ToList();
+
     public static List<NewsBlockItem> ToBlockItems(this IEnumerable<StackOverflowQuestion> items) =>
         items.Select(q => new NewsBlockItem
         {
