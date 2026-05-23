@@ -1,17 +1,21 @@
 @model VeilleNet.Models.ViewModels.NewsBlockViewModel
+@{
+    var tokenClass = string.IsNullOrEmpty(Model.TokenColor) ? "" : $"panel-{Model.TokenColor}";
+    var legacyClass = Model.HeaderCssClass ?? string.Empty;
+}
 
-<div class="card shadow-sm h-100">
-    <div class="card-header @Model.HeaderCssClass" @(Model.HeaderStyle != null ? $"style=\"{Model.HeaderStyle}\"" : "")>
-        <h2 class="h4 mb-0">
+<div class="card h-100 @tokenClass">
+    <div class="card-header @legacyClass">
+        <h2 class="mb-0 d-flex align-items-center gap-2" style="font: inherit; letter-spacing: inherit;">
             @if (Model.HeaderIconHtml != null)
             {
                 @Html.Raw(Model.HeaderIconHtml)
             }
-            else
+            else if (!string.IsNullOrEmpty(Model.Icon))
             {
-                <i class="bi @Model.Icon"></i>
+                <i class="bi @Model.Icon" aria-hidden="true"></i>
             }
-            @Model.Title
+            <span>@Model.Title</span>
             @if (Model.HeaderBadgeHtml != null)
             {
                 @Html.Raw(Model.HeaderBadgeHtml)
@@ -23,10 +27,10 @@
         {
             @if (Model.ColumnsPerRow > 1)
             {
-                <div class="row g-3">
+                <div class="row g-3 news-block-grid">
                     @foreach (var item in Model.Items)
                     {
-                        <div class="col-md-@(12 / Model.ColumnsPerRow)">
+                        <div class="col-md-@(12 / Model.ColumnsPerRow) d-flex">
                             @await Html.PartialAsync("_NewsBlockItemPartial", (Model, item))
                         </div>
                     }

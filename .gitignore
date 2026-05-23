@@ -129,3 +129,4 @@ appsettings.*.json
 secrets.json
 user-secrets.json
 keys/
+/.agents/*

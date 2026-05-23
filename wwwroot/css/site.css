@@ -1,48 +1,139 @@
-/* Modern CSS Variables */
+/* ===========================================================
+   ContainSharp — Design system
+   Palette: OKLCH, tinted neutrals, syntax-highlight semantic tokens.
+   Theme: editorial IDE (dark default, light override in theme-light.css).
+   =========================================================== */
 :root {
-  /* Palette Visual Studio-like */
-  --vs-bg: #1e1e1e;
-  --vs-panel: #2d2d2d;
-  --vs-panel-alt: #252526;
-  --vs-border: #3c3c3c;
-  --vs-text: #d4d4d4;
-  --vs-muted: #a8adb5; /* WCAG AA: 4.96:1 contrast ratio on #1e1e1e */
-  --vs-accent: #6a9fb5; /* light blue */
-  --vs-accent-strong: #007acc; /* VS blue */
-  --vs-green: #22c55e;
-  --vs-yellow: #ffd166;
-  --vs-purple: #a78bfa;
-  --vs-red: #ef4444;
+  /* ---- Surfaces (tinted neutrals, never #000/#fff) ---- */
+  --surface:       oklch(0.18 0.005 250);     /* éditeur */
+  --panel:         oklch(0.22 0.006 250);     /* sidebar */
+  --panel-alt:     oklch(0.25 0.006 250);     /* tab strip */
+  --panel-hover:   oklch(0.28 0.007 250);
+  --border:        oklch(0.32 0.008 250);
+  --border-strong: oklch(0.42 0.010 250);
 
-  --primary-gradient: linear-gradient(135deg, #007acc 0%, #6a9fb5 100%);
-  --success-gradient: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-  --dark-gradient: linear-gradient(135deg, #2d2d2d 0%, #1e1e1e 100%);
+  /* ---- Text ---- */
+  --text:          oklch(0.92 0.005 250);     /* identifier */
+  --text-soft:     oklch(0.78 0.008 250);
+  --text-muted:    oklch(0.62 0.012 220);     /* comment */
 
-  --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-  --card-shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.45);
-  --transition-base: all 0.2s ease;
-  --border-radius-base: 10px;
-  --border-radius-lg: 12px;
-  --spacing-base: 1.25rem;
+  /* ---- Accent (VS keyword blue) ---- */
+  --accent:        oklch(0.65 0.14 245);
+  --accent-strong: oklch(0.58 0.16 245);
+  --accent-soft:   oklch(0.65 0.14 245 / 0.16);
+
+  /* ---- Semantic tokens (syntax highlight) ----
+     Each content block adopts ONE token color, applied as border-top
+     and label tint only. No gradients, no decorated backgrounds. */
+  --token-keyword:      oklch(0.65 0.14 245);   /* blue   — accent / actions */
+  --token-string:       oklch(0.72 0.13 145);   /* green  — official blogs */
+  --token-type:         oklch(0.78 0.13 88);    /* yellow — AI / coding agents */
+  --token-number:       oklch(0.70 0.14 35);    /* orange — releases / versions */
+  --token-function:     oklch(0.72 0.12 305);   /* violet — GitHub trending */
+  --token-preprocessor: oklch(0.65 0.16 25);    /* red    — Reddit */
+  --token-attribute:    oklch(0.72 0.13 200);   /* cyan   — StackOverflow */
+  --token-comment:      var(--text-muted);
+
+  /* ---- Status (sparingly used outside semantic blocks) ---- */
+  --status-ok:    oklch(0.72 0.13 145);
+  --status-warn:  oklch(0.78 0.13 88);
+  --status-err:   oklch(0.65 0.16 25);
+
+  /* ---- Typography scale (ratio 1.333, perfect fourth) ---- */
+  --text-xs:   0.75rem;
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-lg:   1.125rem;
+  --text-xl:   1.333rem;
+  --text-2xl:  1.777rem;
+  --text-3xl:  2.369rem;
+  --text-4xl:  3.157rem;
+
+  --font-ui:      "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-display: "Share Tech", "Inter", system-ui, sans-serif;
+
+  /* ---- Motion (ease-out-quart, no bounce) ---- */
+  --motion-fast: 120ms cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-base: 200ms cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-slow: 360ms cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* ---- Geometry ---- */
+  --radius-sm: 4px;
+  --radius:    6px;
+  --radius-lg: 10px;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-8: 3rem;
+
+  --shadow-sm:  0 1px 2px rgba(0, 0, 0, 0.18);
+  --shadow:     0 2px 8px rgba(0, 0, 0, 0.28);
+  --shadow-lg:  0 6px 24px rgba(0, 0, 0, 0.38);
+
+  --titlebar-h: 36px;
+  --tabbar-h:   40px;
+  --statusbar-h: 26px;
+
+  /* ---- Legacy --vs-* aliases (mapped to new tokens) ---- */
+  --vs-bg:            var(--surface);
+  --vs-panel:         var(--panel);
+  --vs-panel-alt:     var(--panel-alt);
+  --vs-border:        var(--border);
+  --vs-text:          var(--text);
+  --vs-muted:         var(--text-muted);
+  --vs-accent:        var(--accent);
+  --vs-accent-strong: var(--accent-strong);
+  --vs-green:         var(--token-string);
+  --vs-yellow:        var(--token-type);
+  --vs-purple:        var(--token-function);
+  --vs-red:           var(--token-preprocessor);
+
+  --card-shadow:       var(--shadow);
+  --card-shadow-hover: var(--shadow-lg);
+  --transition-base:   color var(--motion-base), background var(--motion-base), border-color var(--motion-base), box-shadow var(--motion-base);
+  --border-radius-base: var(--radius-lg);
+  --border-radius-lg:   var(--radius-lg);
+  --spacing-base:       var(--space-5);
 }
 
-/* Modern Typography */
+/* ===========================================================
+   Typography
+   Body: Inter (UI/long reads).
+   Mono: JetBrains Mono (code, metadata, status bar, chips).
+   Display: Share Tech, reserved for wordmark and editorial titles.
+   =========================================================== */
 html {
-    font-size: 14px;
-    font-family: "Share Tech", sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  font-size: 16px;
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-/* Appliquer la police globalement */
 body {
-  font-family: "Share Tech", sans-serif;
+  font-family: var(--font-ui);
+  font-feature-settings: "cv11", "ss01", "ss03";
+  font-size: var(--text-base);
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+/* Utility: opt-in display font for wordmark / editorial titles */
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: 0.01em;
+}
+
+.font-mono,
+code, kbd, samp, pre {
+  font-family: var(--font-mono);
+}
+
+/* Tabular figures for numbers in chips, status bar, version, counters */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
 }
 
 /* Enhanced Focus States - Visual Studio style */
@@ -164,10 +255,11 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
-  background: var(--vs-bg);
-  line-height: 1.7;
-  color: var(--vs-text);
+  margin: 0;
+  padding-bottom: var(--statusbar-h);
+  background: var(--surface);
+  line-height: 1.6;
+  color: var(--text);
 }
 
 /* Enhanced Form Styling */
@@ -180,82 +272,107 @@ body {
   text-align: start;
 }
 
-/* Modern Card Styling */
+/* ===========================================================
+   Panel (was: card)
+   IDE editor panel: 1px border, no rounded corners on header,
+   sober shadow, hover via border-color + shadow only (no translate).
+   =========================================================== */
 .card {
-  border: 1px solid var(--vs-border);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--card-shadow);
-  transition: var(--transition-base);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--motion-base), box-shadow var(--motion-base);
   overflow: hidden;
-  background: var(--vs-panel);
-  height: 100%; /* Ensure consistent height for cards */
-}
-
-.hover-tilt {
-    transition: transform 180ms ease, box-shadow 180ms ease;
-    will-change: transform;
-}
-.hover-tilt:hover {
-    transform: rotate(-1.2deg) scale(1.03);
-    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.35);
-}
-
-.about-photo {
-    border-radius: 0.5rem;
-}
-
-/* Ensure no blur overlay/filter is applied on hover */
-.about-photo:hover {
-    filter: none !important;
-    backdrop-filter: none !important;
+  background: var(--panel);
+  height: 100%;
 }
 
 .card.h-100 {
-    display: flex;
-    flex-direction: column; /* Ensure consistent sizing for card elements */
-}
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--card-shadow-hover);
+  display: flex;
+  flex-direction: column;
 }
 
+.card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow);
+}
+
+/* About-page portrait keeps its playful tilt (scoped, intentional) */
+.about-photo {
+  border-radius: var(--radius);
+  transition: transform var(--motion-base), box-shadow var(--motion-base);
+  will-change: transform;
+}
+
+.about-photo:hover {
+  transform: rotate(-1.2deg) scale(1.03);
+  box-shadow: var(--shadow-lg);
+  filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* Legacy .hover-tilt: no-op (kept for compat, no transform) */
+.hover-tilt {
+  transition: border-color var(--motion-base), box-shadow var(--motion-base);
+}
+.hover-tilt:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow);
+}
+
+/* Panel header: a tab strip, not a colored band.
+   Token color goes to the top accent (--panel-token, set per panel)
+   and to the title text. No gradients, no backgrounds. */
 .card-header {
-  border-bottom: 1px solid var(--vs-border);
-  padding: 0.75rem 1rem;
-  font-weight: 600;
-  background: var(--vs-panel-alt) !important;
-  color: var(--vs-text) !important;
+  position: relative;
+  border-bottom: 1px solid var(--border);
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: var(--panel-alt) !important;
+  color: var(--text) !important;
   border-radius: 0 !important;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
-.card-header.bg-primary {
-  background: var(--vs-panel-alt) !important;
-  border-bottom: 2px solid var(--vs-accent-strong);
+.card-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--panel-token, var(--token-keyword));
+  opacity: 0.85;
 }
 
-.card-header.bg-info {
-  background: var(--vs-panel-alt) !important;
-  border-bottom: 2px solid var(--vs-purple);
+.card-header .bi,
+.card-header svg {
+  color: var(--panel-token, var(--token-keyword));
+  font-size: 1rem;
 }
 
-.card-header.bg-warning {
-  background: var(--vs-panel-alt) !important;
-  color: var(--vs-text) !important;
-  border-bottom: 2px solid var(--vs-yellow);
-}
+/* Backward-compat: Bootstrap bg-* classes on .card-header map to tokens.
+   They no longer produce a gradient — they only set --panel-token. */
+.card-header.bg-primary  { background: var(--panel-alt) !important; --panel-token: var(--token-keyword); }
+.card-header.bg-info     { background: var(--panel-alt) !important; --panel-token: var(--token-attribute); }
+.card-header.bg-warning  { background: var(--panel-alt) !important; --panel-token: var(--token-type); color: var(--text) !important; }
+.card-header.bg-success  { background: var(--panel-alt) !important; --panel-token: var(--token-string); }
+.card-header.bg-dark     { background: var(--panel-alt) !important; --panel-token: var(--token-comment); }
 
-.card-header.bg-success {
-  background: var(--vs-panel-alt) !important;
-  border-bottom: 2px solid var(--vs-green);
-}
-
-.card-header.bg-dark {
-  background: var(--vs-panel-alt) !important;
-  border-bottom: 2px solid var(--vs-border);
-}
+/* Token utility classes for explicit assignment from Razor. */
+.panel-keyword      { --panel-token: var(--token-keyword); }
+.panel-string       { --panel-token: var(--token-string); }
+.panel-type         { --panel-token: var(--token-type); }
+.panel-number       { --panel-token: var(--token-number); }
+.panel-function     { --panel-token: var(--token-function); }
+.panel-preprocessor { --panel-token: var(--token-preprocessor); }
+.panel-attribute    { --panel-token: var(--token-attribute); }
 
 .card-body {
   padding: 1rem;
@@ -263,24 +380,25 @@ body {
 
 .news-block-empty-state {
   display: flex;
-  gap: 0.75rem;
+  gap: var(--space-3);
   align-items: flex-start;
-  padding: 1rem;
-  border: 1px dashed var(--vs-border);
-  border-radius: 0.75rem;
-  background: linear-gradient(135deg, rgba(255, 193, 7, 0.08) 0%, rgba(255, 193, 7, 0.02) 100%);
+  padding: var(--space-4);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  background: transparent;
 }
 
 .news-block-empty-state-icon {
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.25rem;
+  height: 2.25rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border-radius: 999px;
-  color: #ffc107;
-  background: rgba(255, 193, 7, 0.12);
+  border-radius: var(--radius);
+  color: var(--token-type);
+  background: oklch(0.78 0.13 88 / 0.10);
+  border: 1px solid oklch(0.78 0.13 88 / 0.32);
 }
 
 .news-block-empty-state-icon i {
@@ -368,39 +486,39 @@ input[name="Email"]:focus::placeholder {
   padding: 1.5rem;
 }
 
-/* VS Alerts */
+/* Alerts: full 1px border in the token color, no side-stripe. */
 .vs-alert {
-  padding: 1rem 1.25rem;
-  margin-bottom: 1.5rem;
-  border-radius: 6px;
+  padding: var(--space-4) var(--space-5);
+  margin-bottom: var(--space-5);
+  border-radius: var(--radius);
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  border-left: 4px solid;
+  gap: var(--space-3);
+  border: 1px solid;
 }
 
 .vs-alert-success {
-  background: rgba(34, 197, 94, 0.1);
-  border-left-color: #22c55e;
-  color: #86efac;
+  background: oklch(0.72 0.13 145 / 0.08);
+  border-color: oklch(0.72 0.13 145 / 0.40);
+  color: oklch(0.85 0.13 145);
 }
 
 .vs-alert-error {
-  background: rgba(239, 68, 68, 0.1);
-  border-left-color: #ef4444;
-  color: #fca5a5;
+  background: oklch(0.65 0.16 25 / 0.08);
+  border-color: oklch(0.65 0.16 25 / 0.42);
+  color: oklch(0.82 0.14 25);
 }
 
 .vs-alert-info {
-  background: rgba(59, 130, 246, 0.1);
-  border-left-color: #3b82f6;
-  color: #93c5fd;
+  background: oklch(0.65 0.14 245 / 0.08);
+  border-color: oklch(0.65 0.14 245 / 0.40);
+  color: oklch(0.85 0.10 245);
 }
 
 .vs-alert-secondary {
-  background: rgba(107, 114, 128, 0.1);
-  border-left-color: #6b7280;
-  color: #d1d5db;
+  background: oklch(0.62 0.012 220 / 0.10);
+  border-color: var(--border-strong);
+  color: var(--text-soft);
 }
 
 /* VS Info Box */
@@ -508,19 +626,19 @@ input[name="Email"]:focus::placeholder {
 }
 
 .vs-button-danger {
-  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
-  color: white;
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+  background: var(--token-preprocessor);
+  color: oklch(0.98 0 0);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid oklch(0.55 0.18 25);
 }
 
 .vs-button-danger:hover {
-  background: linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%);
-  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.4);
-  transform: translateY(-2px);
+  background: oklch(0.55 0.18 25);
+  box-shadow: var(--shadow);
 }
 
 .vs-button-danger:active {
-  transform: translateY(0);
+  background: oklch(0.48 0.18 25);
 }
 
 /* VS Feature List */
@@ -632,54 +750,40 @@ input[name="Email"]:focus::placeholder {
   border-radius: 6px;
 }
 
-/* Badge Styling */
+/* Badges: solid token color, no gradient. */
 .badge {
-  padding: 0.25rem 0.5rem;
-  border-radius: 6px;
-  font-weight: 600;
+  padding: 0.18rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-weight: 500;
   font-size: 0.7rem;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  background: var(--vs-panel-alt);
-  color: var(--vs-text);
-  border: 1px solid var(--vs-border);
+  background: var(--panel-alt);
+  color: var(--text);
+  border: 1px solid var(--border);
 }
 
-.badge.bg-success {
-  background: linear-gradient(135deg, #00b894 0%, #00cec9 100%) !important;
-}
+.badge.bg-success   { background: oklch(0.72 0.13 145 / 0.18) !important; color: oklch(0.85 0.13 145); border-color: oklch(0.72 0.13 145 / 0.40); }
+.badge.bg-info      { background: oklch(0.72 0.13 200 / 0.18) !important; color: oklch(0.85 0.10 200); border-color: oklch(0.72 0.13 200 / 0.40); }
+.badge.bg-warning   { background: oklch(0.78 0.13 88 / 0.20) !important;  color: oklch(0.85 0.13 88); border-color: oklch(0.78 0.13 88 / 0.45); }
+.badge.bg-primary   { background: var(--accent-soft) !important;          color: oklch(0.85 0.10 245); border-color: oklch(0.65 0.14 245 / 0.40); }
+.badge.bg-secondary { background: oklch(0.40 0.010 250) !important;       color: var(--text-soft);    border-color: var(--border); }
+.badge.bg-danger    { background: oklch(0.65 0.16 25 / 0.18) !important;  color: oklch(0.82 0.14 25); border-color: oklch(0.65 0.16 25 / 0.42); }
 
-.badge.bg-info {
-  background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%) !important;
-}
-
-.badge.bg-warning {
-  background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%) !important;
-  color: #2d3748 !important;
-}
-
-.badge.bg-primary {
-  background: var(--primary-gradient) !important;
-}
-
-.badge.bg-secondary {
-  background: linear-gradient(135deg, #b2bec3 0%, #636e72 100%) !important;
-}
-
-/* List Group Styling */
+/* List items: no side-stripe; subtle background + border-bottom emphasis. */
 .list-group-item {
   border: none;
-  border-bottom: 1px solid var(--vs-border);
-  padding: 0.75rem 1rem;
-  transition: var(--transition-base);
+  border-bottom: 1px solid var(--border);
+  padding: var(--space-3) var(--space-4);
+  transition: background var(--motion-fast), color var(--motion-fast);
   background: transparent;
-  color: var(--vs-text);
+  color: var(--text);
 }
 
 .list-group-item:hover {
-  background: var(--vs-panel);
-  border-left: 3px solid var(--vs-accent-strong);
-  padding-left: calc(1rem - 3px);
+  background: var(--panel-hover);
+  color: var(--text);
 }
 
 .list-group-item:first-child {
@@ -716,30 +820,29 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--vs-text);
 }
 
-/* Scrollbar Styling - WebKit browsers (Chrome, Safari, Edge) */
+/* Scrollbar — thin, theme-aware, no gradient. */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
+  background: var(--panel-alt);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--vs-accent-strong);
-  border-radius: 10px;
+  background: var(--border-strong);
+  border-radius: 999px;
+  border: 2px solid var(--panel-alt);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #5a6fd8 0%, #6a3f92 100%);
+  background: var(--accent);
 }
 
-/* Firefox scrollbar styling */
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--vs-accent-strong) var(--vs-panel);
+  scrollbar-color: var(--border-strong) var(--panel-alt);
 }
 
 /* Animation Classes */
@@ -787,154 +890,576 @@ small, .small {
   box-shadow: var(--card-shadow);
 }
 
-/* VS-like Output window */
+/* ===========================================================
+   Output Window — the hero on the home page.
+   The "Today in 60 seconds" briefing reads as an IDE output panel.
+   =========================================================== */
 .vs-output {
-  background: var(--vs-panel);
-  border: 1px solid var(--vs-border);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  /* Hero panel has a keyword top accent like other panels */
+  --panel-token: var(--token-keyword);
+  position: relative;
 }
+.vs-output::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--panel-token);
+  opacity: 0.85;
+}
+
 .output-titlebar {
   display: flex;
   align-items: center;
-  gap: .5rem;
-  padding: .5rem .75rem;
-  background: var(--vs-panel-alt);
-  border-bottom: 1px solid var(--vs-border);
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  background: var(--panel-alt);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
 }
-.output-titlebar .controls { display:flex; gap:.35rem; }
-.output-titlebar .dot{ width:10px; height:10px; border-radius:50%; display:inline-block; }
-.output-titlebar .dot.close{ background:#ef4444; }
-.output-titlebar .dot.min{ background:#ffd166; }
-.output-titlebar .dot.max{ background:#22c55e; }
-.output-titlebar .title{ color:var(--vs-text); font-weight:600; }
-.output-titlebar .spacer{ flex:1; }
-
-.output-toolbar{ display:flex; gap:.5rem; padding:.4rem .6rem; border-bottom:1px solid var(--vs-border); background:var(--vs-panel); }
-.output-toolbar .chip{ background:var(--vs-panel-alt); border:1px solid var(--vs-border); color:var(--vs-muted); padding:.15rem .5rem; border-radius:6px; font-size:.8rem; }
-
-.output-stream{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size:.85rem; line-height:1.55; padding:.75rem; height:260px; overflow:auto; background:#111; color:#cbd5e1; }
-.output-stream .ok{ color:#22c55e; }
-.output-stream .warn{ color:#ffd166; }
-.output-stream .err{ color:#ef4444; }
-.output-stream .dim{ color:#94a3b8; }
-
-/* Navbar � style Visual Studio */
-.navbar {
-  background: var(--vs-panel-alt) !important;
-  border-bottom: 1px solid var(--vs-border);
-  position: relative;
+.output-titlebar .controls { display: flex; gap: 0.35rem; }
+.output-titlebar .dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  display: inline-block; opacity: 0.6;
+}
+.output-titlebar .dot.close { background: var(--token-preprocessor); }
+.output-titlebar .dot.min   { background: var(--token-type); }
+.output-titlebar .dot.max   { background: var(--token-string); }
+.output-titlebar .title {
+  color: var(--text);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+.output-titlebar .spacer { flex: 1; }
+.output-meta {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
 }
 
-.navbar .navbar-brand {
-  color: var(--vs-text) !important;
+.output-toolbar {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.25rem 0.5rem;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
 }
-
-.navbar .navbar-brand .bi {
-  color: var(--vs-accent-strong);
+.output-toolbar .chip {
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 0.1rem 0.5rem;
+  border-radius: var(--radius-sm);
 }
-
-.navbar .nav-link {
-  color: var(--vs-muted) !important;
-  border: 1px solid transparent;
-  border-radius: 6px;
-  padding: 0.25rem 0.5rem;
-  margin-right: 0.25rem;
-}
-
-.navbar .nav-link:hover,
-.navbar .nav-link.active {
-  color: var(--vs-text) !important;
-  background: var(--vs-panel);
-  border-color: var(--vs-border);
-}
-
-/* ---- Navbar grouped dropdowns ---- */
-.nav-group > .nav-group-toggle {
+.output-toolbar .spacer { flex: 1; }
+.output-toolbar .output-action {
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
-  padding: 0.35rem 0.75rem;
-  border-radius: 8px;
+  gap: 0.35rem;
+  padding: 0.1rem 0.5rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-soft);
+  text-decoration: none;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  transition: background var(--motion-fast), color var(--motion-fast), border-color var(--motion-fast);
+}
+.output-toolbar .output-action:hover {
+  background: var(--panel-hover);
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+
+.output-stream {
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  line-height: 1.65;
+  padding: var(--space-4) var(--space-5);
+  height: 380px;
+  overflow: auto;
+  background: oklch(0.14 0.005 250);
+  color: oklch(0.85 0.008 250);
+}
+.output-stream .ok   { color: var(--token-string); }
+.output-stream .warn { color: var(--token-type); }
+.output-stream .err  { color: var(--token-preprocessor); }
+.output-stream .dim  { color: var(--text-muted); }
+
+/* ===========================================================
+   Briefing layout — asymmetric grid (replaces uniform col-lg-6)
+   Hero spans full width. Subsequent rows alternate 8/4, 12, 7/5, 5/7.
+   =========================================================== */
+.briefing-stage {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-5) var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.briefing-hero { margin-bottom: var(--space-3); }
+
+.briefing-row {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.briefing-row-12  { grid-template-columns: 1fr; }
+.briefing-row-8-4 { grid-template-columns: 2fr 1fr; }
+.briefing-row-7-5 { grid-template-columns: 1.4fr 1fr; }
+.briefing-row-5-7 { grid-template-columns: 1fr 1.4fr; }
+
+@media (max-width: 992px) {
+  .briefing-row-8-4,
+  .briefing-row-7-5,
+  .briefing-row-5-7 { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .briefing-stage { padding: var(--space-4); gap: var(--space-4); }
+  .output-stream { height: 280px; padding: var(--space-3); }
+}
+
+/* ===========================================================
+   Inline newsletter CTA — replaces the giant gradient card.
+   Reads as a terminal prompt line, not a SaaS subscription module.
+   =========================================================== */
+.briefing-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-5);
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel);
+  margin-top: var(--space-3);
+}
+
+.briefing-cta-text {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  color: var(--text-soft);
+  font-size: var(--text-sm);
+}
+
+.briefing-cta-prompt {
+  font-family: var(--font-mono);
+  color: var(--token-string);
+  font-weight: 500;
+}
+
+.briefing-cta-form {
+  display: inline-flex;
+  align-items: stretch;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: oklch(0.16 0.005 250);
+  flex: 1 1 320px;
+  max-width: 480px;
+}
+
+.briefing-cta-input {
+  flex: 1 1 auto;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  padding: var(--space-2) var(--space-3);
+  min-width: 0;
+}
+
+.briefing-cta-input::placeholder { color: var(--text-muted); }
+.briefing-cta-input:focus { outline: none; }
+.briefing-cta-form:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.briefing-cta-submit {
+  border: none;
+  border-left: 1px solid var(--border);
+  background: var(--panel-alt);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  padding: 0 var(--space-4);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  transition: background var(--motion-fast), color var(--motion-fast);
+}
+
+.briefing-cta-submit:hover {
+  background: var(--accent);
+  color: oklch(0.98 0 0);
+}
+
+.briefing-cta-meta {
+  margin-left: auto;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+@media (max-width: 720px) {
+  .briefing-cta-meta { margin-left: 0; width: 100%; }
+}
+
+/* ===========================================================
+   IDE chrome — title bar + tab bar
+   Replaces the standard Bootstrap navbar with an editor-style
+   two-tier header: titlebar (wordmark + version + global actions)
+   and tabbar (categories as editor tabs).
+   =========================================================== */
+.ide-chrome {
+  background: var(--panel-alt);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+}
+
+/* ---- Title bar ---- */
+.ide-titlebar {
+  height: var(--titlebar-h);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0 var(--space-4);
+  background: oklch(0.20 0.005 250);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.ide-titlebar-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  color: var(--text);
+  text-decoration: none;
+  letter-spacing: 0.01em;
+}
+
+.ide-titlebar-brand:hover {
+  color: var(--text);
+}
+
+.ide-titlebar-brand .bracket {
+  color: var(--text-muted);
+}
+
+.ide-titlebar-brand img {
+  width: 22px;
+  height: 22px;
+  border-radius: 3px;
+}
+
+.ide-titlebar-path {
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.ide-titlebar-path .sep {
+  opacity: 0.55;
+}
+
+.ide-titlebar-spacer { flex: 1; }
+
+.ide-titlebar-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.ide-titlebar-actions .btn-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
   border: 1px solid transparent;
-  transition: background 0.2s ease, border-color 0.2s ease;
+  background: transparent;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--motion-fast), border-color var(--motion-fast), color var(--motion-fast);
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.ide-titlebar-actions .btn-icon:hover {
+  background: var(--panel-hover);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+/* ---- Tab bar ---- */
+.ide-tabbar {
+  height: var(--tabbar-h);
+  display: flex;
+  align-items: stretch;
+  background: var(--panel-alt);
+  padding-left: var(--space-3);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.ide-tabbar::-webkit-scrollbar { display: none; }
+
+.ide-tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: color var(--motion-fast), background var(--motion-fast);
   white-space: nowrap;
 }
 
-.nav-group > .nav-group-toggle:hover,
-.nav-group > .nav-group-toggle:focus,
-.nav-group.show > .nav-group-toggle {
-  background: var(--vs-panel);
-  border-color: var(--vs-border);
-  color: var(--vs-text) !important;
+.ide-tab:hover,
+.ide-tab:focus-visible {
+  color: var(--text);
+  background: var(--panel-hover);
 }
 
-.nav-group-label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
+.ide-tab.active {
+  color: var(--text);
+  background: var(--surface);
 }
 
-/* Dropdown panel */
-.nav-dropdown-menu {
-  background: var(--vs-panel-alt) !important;
-  border: 1px solid var(--vs-border) !important;
-  border-radius: 10px !important;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.45) !important;
-  padding: 0.4rem 0.35rem !important;
-  min-width: 160px;
-  margin-top: 4px !important;
+.ide-tab.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--tab-token, var(--token-keyword));
 }
 
-.nav-dropdown-item {
-  color: var(--vs-muted) !important;
-  border-radius: 6px;
-  padding: 0.42rem 0.75rem !important;
-  font-size: 0.83rem;
+.ide-tab[data-token="keyword"]      { --tab-token: var(--token-keyword); }
+.ide-tab[data-token="string"]       { --tab-token: var(--token-string); }
+.ide-tab[data-token="type"]         { --tab-token: var(--token-type); }
+.ide-tab[data-token="function"]     { --tab-token: var(--token-function); }
+.ide-tab[data-token="attribute"]    { --tab-token: var(--token-attribute); }
+.ide-tab[data-token="preprocessor"] { --tab-token: var(--token-preprocessor); }
+.ide-tab[data-token="number"]       { --tab-token: var(--token-number); }
+
+/* Subtab popover (replaces Bootstrap dropdown) — flat editor menu. */
+.ide-subtabs {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 220px;
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  border-radius: 0 0 var(--radius) var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-1) 0;
+  display: none;
+  z-index: 1030;
+}
+
+.ide-tab-group { position: relative; display: inline-flex; align-items: stretch; }
+.ide-tab-group:hover .ide-subtabs,
+.ide-tab-group:focus-within .ide-subtabs {
+  display: block;
+}
+
+.ide-subtab {
   display: flex;
   align-items: center;
-  gap: 0.45rem;
-  transition: background 0.15s ease, color 0.15s ease;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: background var(--motion-fast), color var(--motion-fast);
 }
 
-.nav-dropdown-item:hover,
-.nav-dropdown-item:focus {
-  background: rgba(106,159,181,0.12) !important;
-  color: var(--vs-text) !important;
+.ide-subtab:hover,
+.ide-subtab:focus-visible {
+  background: var(--panel-hover);
+  color: var(--text);
 }
 
-.nav-dropdown-item i {
+.ide-subtab .bi {
+  color: var(--tab-token, var(--token-keyword));
   width: 16px;
-  text-align: center;
-  flex-shrink: 0;
-  color: var(--vs-accent);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
-/* Remove Bootstrap arrow on dropdown toggle in navbar */
-.navbar .nav-group-toggle::after {
+.ide-subtab .badge {
+  margin-left: auto;
+}
+
+/* Mobile: collapse via a single toggle. The toggle reveals
+   the tab list stacked vertically; subtabs stay revealed. */
+.ide-mobile-toggle {
   display: none;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  width: 32px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  margin-right: var(--space-2);
+  cursor: pointer;
 }
 
-/* Mobile: full-width items inside collapsed menu */
-@media (max-width: 991.98px) {
-  .nav-dropdown-menu {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 0 0 1rem !important;
+@media (max-width: 768px) {
+  .ide-titlebar-path { display: none; }
+
+  .ide-mobile-toggle { display: inline-flex; }
+
+  .ide-tabbar {
+    display: none;
+    height: auto;
+    flex-direction: column;
+    padding: var(--space-2) 0;
+    border-top: 1px solid var(--border);
   }
 
-  .nav-dropdown-item {
-    color: rgba(255,255,255,0.75) !important;
-    padding: 0.35rem 0.5rem !important;
+  .ide-tabbar.open { display: flex; }
+
+  .ide-tab {
+    height: 36px;
+    padding: 0 var(--space-4);
   }
 
-  .nav-dropdown-item:hover {
-    color: #fff !important;
-    background: rgba(255,255,255,0.08) !important;
+  .ide-tab.active::after { display: none; }
+  .ide-tab.active { border-left: 2px solid var(--tab-token, var(--token-keyword)); }
+
+  .ide-subtabs {
+    position: static;
+    border: none;
+    box-shadow: none;
+    padding-left: var(--space-5);
+    display: block;
+    background: transparent;
+  }
+}
+
+/* ===========================================================
+   Status bar (footer)
+   Sticky to bottom of viewport. Mono font, 26px tall, accent fill.
+   =========================================================== */
+.ide-statusbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--statusbar-h);
+  z-index: 1010;
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  padding: 0 var(--space-3);
+  background: var(--accent-strong);
+  color: oklch(0.98 0 0);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.02em;
+  border-top: 1px solid oklch(0.50 0.16 245);
+}
+
+.ide-statusbar-group {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+}
+
+.ide-statusbar-spacer { flex: 1; }
+
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-3);
+  color: oklch(0.98 0 0 / 0.92);
+  text-decoration: none;
+  white-space: nowrap;
+  border-left: 1px solid oklch(1 0 0 / 0.16);
+  transition: background var(--motion-fast);
+}
+
+.ide-statusbar-group .status-chip:first-child {
+  border-left: none;
+}
+
+.ide-statusbar-left .status-chip {
+  border-left: none;
+  border-right: 1px solid oklch(1 0 0 / 0.16);
+}
+.ide-statusbar-left .status-chip:last-child {
+  border-right: none;
+}
+
+a.status-link:hover,
+a.status-link:focus-visible {
+  background: oklch(1 0 0 / 0.10);
+  color: oklch(0.98 0 0);
+}
+
+.status-chip .bi {
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+.status-online .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--status-ok);
+  box-shadow: 0 0 6px oklch(0.72 0.13 145 / 0.7);
+}
+
+@media (max-width: 720px) {
+  .ide-statusbar { font-size: 0.7rem; padding: 0 var(--space-2); }
+  .status-chip { padding: 0 var(--space-2); gap: var(--space-1); }
+  .status-chip-collapse-md { display: none; }
+}
+
+@media (max-width: 480px) {
+  /* On very small screens, hide the encoding/lang chips to keep room
+     for branch + about + github + status. */
+  .ide-statusbar-left .status-chip:nth-child(2),
+  .ide-statusbar-left .status-chip:nth-child(3),
+  .ide-statusbar-right .status-chip:nth-child(3) {
+    display: none;
   }
 }
 
@@ -1036,15 +1561,20 @@ small, .small {
   }
 }
 
-/* Dev typing animation in navbar */
+/* Dev typing animation — sits in the IDE titlebar, scaled to fit. */
 .dev-typer {
-  width: 48px;
-  height: 48px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  position: static;  /* removed absolute positioning — now in flex group */
   flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  transition: background var(--motion-fast);
+}
+
+.dev-typer:hover {
+  background: var(--panel-hover);
 }
 
 .dev {
@@ -1159,29 +1689,26 @@ small, .small {
 }
 
 /* StackOverflow Tags - Visual Studio Style */
-.springframework
 .stackoverflow-tag {
   display: inline-flex;
   align-items: center;
-  padding: 0.35rem 0.75rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  border: 2px solid;
-  border-radius: 12px;
-  transition: var(--transition-base);
-  background: linear-gradient(135deg, rgba(167, 139, 250, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-  border-color: #a78bfa;
-  color: #c4b5fd;
-  letter-spacing: 0.3px;
+  padding: 0.18rem 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  border: 1px solid oklch(0.72 0.13 200 / 0.40);
+  border-radius: var(--radius-sm);
+  transition: background var(--motion-fast), border-color var(--motion-fast), color var(--motion-fast);
+  background: oklch(0.72 0.13 200 / 0.10);
+  color: oklch(0.85 0.10 200);
+  letter-spacing: 0.04em;
   text-transform: lowercase;
 }
 
 .stackoverflow-tag:hover {
-  background: linear-gradient(135deg, rgba(167, 139, 250, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
-  border-color: #c4b5fd;
-  color: #e9d5ff;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(167, 139, 250, 0.3);
+  background: oklch(0.72 0.13 200 / 0.18);
+  border-color: oklch(0.72 0.13 200 / 0.65);
+  color: oklch(0.92 0.08 200);
 }
 
 /* --- News blocks shared styles (align on WinForms block) --- */
@@ -1241,6 +1768,53 @@ small, .small {
 
 .news-summary {
   line-height: 1.6;
+}
+
+/* --- News block multi-column grid: keep items uniform --- */
+.news-block-grid {
+  align-items: stretch;
+}
+
+.news-block-grid > [class*="col-"] {
+  min-width: 0;
+}
+
+.news-block-grid > [class*="col-"] > .list-group-item {
+  width: 100%;
+  border-bottom: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: var(--space-3) !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.news-block-grid > [class*="col-"] > .list-group-item > .d-flex {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.news-block-grid > [class*="col-"] > .list-group-item .flex-grow-1 {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.news-block-grid > [class*="col-"] > .list-group-item h6 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.news-block-grid > [class*="col-"] > .list-group-item .news-summary {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .news-meta {

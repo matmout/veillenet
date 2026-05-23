@@ -1,4 +1,4 @@
-﻿@page
+@page
 @model IndexModel
 @using VeilleNet.Models.ViewModels
 @using VeilleNet.Models
@@ -6,66 +6,61 @@
     ViewData["Title"] = "Dashboard";
     ViewData["Description"] = "ContainSharp Dashboard - Your daily C# news hub. Track latest .NET releases, AI coding tools, WinForms updates, official blogs, GitHub trending projects and C# video tutorials.";
     ViewData["CanonicalUrl"] = "https://containsharp.com/";
+
+    var todayLabel = DateTime.UtcNow.ToString("dddd dd MMMM yyyy", new System.Globalization.CultureInfo("en-US")).ToLowerInvariant();
 }
 
-<div class="container-fluid">
-    <div class="row mb-4">
-        <div class="col-12">
-            <h1 class="display-4 text-center mb-3">
-                Contain<span class="text-primary">('</span><span class="text-primary fw-bold"><img src="~/icons/containsharp.svg" alt="ContainSharp Logo" width="64" height="64" class="rounded" loading="lazy" /></span><span class="text-primary">')</span>
-            </h1>
-            <p class="lead text-center text-muted">
-                Your daily dose of C# - Official blogs, Releases, GitHub Trends, AI tools
-            </p>
-        </div>
-    </div>
+<h1 class="visually-hidden">Daily C# Briefing — @todayLabel</h1>
 
-    <!-- Output Window Simulation (Visual Studio style) -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card shadow-sm vs-output">
-                <div class="output-titlebar">
-                    <div class="controls">
-                        <span class="dot close"></span>
-                        <span class="dot min"></span>
-                        <span class="dot max"></span>
-                    </div>
-                    <div class="title">Today in 60 Seconds</div>
-                    <div class="spacer"></div>
+<div class="briefing-stage">
+    <!-- Hero: Output Window — the lede -->
+    <section class="briefing-hero" aria-label="Today in 60 seconds">
+        <div class="card vs-output">
+            <div class="output-titlebar">
+                <div class="controls">
+                    <span class="dot close"></span>
+                    <span class="dot min"></span>
+                    <span class="dot max"></span>
                 </div>
-                <div class="output-toolbar">
-                    <div class="chip">Show output from: AI Daily Briefing</div>
-                    <div class="chip">Encoding: UTF-8</div>
-                </div>
-                <div id="output-stream" class="output-stream" aria-live="polite"></div>
+                <div class="title">today_in_60_seconds.log</div>
+                <div class="spacer"></div>
+                <span class="output-meta tabular-nums">@todayLabel</span>
             </div>
+            <div class="output-toolbar">
+                <div class="chip">Show output from: AI Daily Briefing</div>
+                <div class="chip">Encoding: UTF-8</div>
+                <div class="spacer"></div>
+                <button type="button" class="output-action" data-action="reload" title="Reload briefing">
+                    <i class="bi bi-arrow-clockwise" aria-hidden="true"></i> reload
+                </button>
+                <a class="output-action" asp-page="/History" title="History">
+                    <i class="bi bi-clock-history" aria-hidden="true"></i> history
+                </a>
+            </div>
+            <div id="output-stream" class="output-stream" aria-live="polite"></div>
         </div>
-    </div>
+    </section>
 
-    <!-- AI News and Videos Row -->
-    <div class="row mb-4">
-        <!-- AI News Section -->
-        <div class="col-lg-6 mb-4">
+    <!-- Row 1: AI agents (wide) + C# videos (narrow) -->
+    <section class="briefing-row briefing-row-8-4">
+        <div>
             @await Html.PartialAsync("_NewsBlockPartial", new NewsBlockViewModel
             {
-                Title = "Coding Agents - AI News",
+                Title = "coding_agents.news",
                 Icon = "bi-robot",
-                HeaderCssClass = "bg-warning text-dark",
+                TokenColor = "type",
                 DefaultImageUrl = "/images/newsia.png",
                 ShowAuthor = false,
                 LoadingText = "Loading AI news...",
                 Items = Model.AINews.ToBlockItems()
             })
         </div>
-
-        <!-- C# Videos Section -->
-        <div class="col-lg-6 mb-4">
+        <div>
             @await Html.PartialAsync("_NewsBlockPartial", new NewsBlockViewModel
             {
-                Title = "New C# Videos",
+                Title = "videos.csharp",
                 Icon = "bi-play-circle",
-                HeaderCssClass = "text-white",
-                HeaderStyle = "background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                TokenColor = "function",
                 DefaultImageUrl = "/images/videoGeneric.png",
                 ShowAuthor = true,
                 AuthorIcon = "bi-camera-video",
@@ -79,56 +74,52 @@
                 Items = Model.Videos.ToBlockItems()
             })
         </div>
-    </div>
+    </section>
 
-    <!-- Reddit Top Posts Section -->
     @if (Model.IsRedditEnabled)
     {
-        <div class="row mb-4">
-            <div class="col-12">
+        <!-- Row 2 (optional): Reddit full width -->
+        <section class="briefing-row briefing-row-12">
+            <div>
                 @await Html.PartialAsync("_NewsBlockPartial", new NewsBlockViewModel
-    {
-        Title = "Reddit — r/csharp & r/dotnet",
-        Icon = "bi-reddit",
-        HeaderCssClass = "text-white",
-        HeaderStyle = "background: linear-gradient(135deg, #FF4500 0%, #FF6534 100%)",
-        ShowTitle = true,
-        ShowAuthor = true,
-        ShowSource = true,
-        ShowAiSummary = false,
-        SanitizeHtml = false,
-        DateFormat = "dd MMM yyyy HH:mm",
-        ColumnsPerRow = 2,
-        LoadingText = "Loading Reddit posts...",
-        Items = Model.RedditPosts.ToBlockItems()
-    })
+                {
+                    Title = "reddit.r_csharp_dotnet",
+                    Icon = "bi-reddit",
+                    TokenColor = "preprocessor",
+                    ShowTitle = true,
+                    ShowAuthor = true,
+                    ShowSource = true,
+                    ShowAiSummary = false,
+                    SanitizeHtml = false,
+                    DateFormat = "dd MMM yyyy HH:mm",
+                    ColumnsPerRow = 2,
+                    LoadingText = "Loading Reddit posts...",
+                    Items = Model.RedditPosts.ToBlockItems()
+                })
             </div>
-        </div>
+        </section>
     }
 
-    <!-- StackOverflow and WinForms Row -->
-    <div class="row mb-4">
-        <!-- Official .NET Blogs (moved to StackOverflow position, size swapped to 400px) -->
-        <div class="col-lg-6 mb-4">
+    <!-- Row 3: Official blogs (wide) + WinForms (narrow) -->
+    <section class="briefing-row briefing-row-7-5">
+        <div>
             @await Html.PartialAsync("_NewsBlockPartial", new NewsBlockViewModel
             {
-                Title = "Official .NET Blogs",
+                Title = "official_dotnet.blogs",
                 Icon = "bi-rss",
-                HeaderCssClass = "bg-success text-white",
+                TokenColor = "string",
                 DefaultIconClass = "bi-newspaper",
                 ShowAuthor = true,
                 LoadingText = "Loading posts...",
                 Items = Model.BlogPosts.ToBlockItems()
             })
         </div>
-
-        <!-- WinForm News Section -->
-        <div class="col-lg-6 mb-4">
+        <div>
             @await Html.PartialAsync("_NewsBlockPartial", new NewsBlockViewModel
             {
-                Title = "DevExpress - News",
+                Title = "devexpress.winforms",
                 Icon = "bi-window-desktop",
-                HeaderCssClass = "bg-warning text-dark",
+                TokenColor = "number",
                 DefaultIconClass = "bi-newspaper",
                 ShowAuthor = false,
                 SummaryMaxLength = 260,
@@ -136,102 +127,85 @@
                 Items = Model.WinFormNews.ToBlockItems()
             })
         </div>
-    </div>
-        <!-- Main Content Row -->
-        <div class="row">
-            <!-- StackOverflow Questions Section -->
-            <div class="col-lg-6 mb-4">
-                @await Html.PartialAsync("_NewsBlockPartial", new NewsBlockViewModel
-                {
-                    Title = "New C# Questions - StackOverflow",
-                    HeaderIconHtml = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" fill=\"currentColor\" class=\"bi bi-stack-overflow\" viewBox=\"0 0 16 16\" style=\"vertical-align: -0.125em;\"><path d=\"M12.412 14.572V10.29h1.428V16H1v-5.71h1.428v4.282z\"/><path d=\"M3.857 13.145h7.137v-1.428H3.857zM10.254 0 9.108.852l4.26 5.727 1.146-.852zm-3.54 3.377 5.484 4.567.913-1.097L7.627 2.28l-.914 1.097zM4.922 6.55l6.47 3.013.603-1.294-6.47-3.013zm-.925 3.344 6.985 1.469.294-1.398-6.985-1.468z\"/></svg>",
-                    HeaderCssClass = "text-white",
-                    HeaderStyle = "background: linear-gradient(135deg, #f48024 0%, #ef8236 100%)",
-                    ShowAuthor = true,
-                    ShowSource = false,
-                    ShowAiSummary = false,
-                    SanitizeHtml = false,
-                    SummaryMaxLength = 200,
-                    ShowTags = true,
-                    MaxHeight = 600,
-                    LoadingText = "Loading StackOverflow questions...",
-                    Items = Model.StackOverflowQuestions.ToBlockItems()
-                })
-            </div>
+    </section>
 
-        <!-- GitHub Trending Section -->
-        <div class="col-lg-6 mb-4">
+    <!-- Row 4: StackOverflow (narrow) + GitHub Trending (wide) -->
+    <section class="briefing-row briefing-row-5-7">
+        <div>
             @await Html.PartialAsync("_NewsBlockPartial", new NewsBlockViewModel
             {
-                Title = "Tendances GitHub - C#",
+                Title = "stackoverflow.questions",
+                HeaderIconHtml = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" fill=\"currentColor\" viewBox=\"0 0 16 16\" style=\"vertical-align: -0.125em;\"><path d=\"M12.412 14.572V10.29h1.428V16H1v-5.71h1.428v4.282z\"/><path d=\"M3.857 13.145h7.137v-1.428H3.857zM10.254 0 9.108.852l4.26 5.727 1.146-.852zm-3.54 3.377 5.484 4.567.913-1.097L7.627 2.28l-.914 1.097zM4.922 6.55l6.47 3.013.603-1.294-6.47-3.013zm-.925 3.344 6.985 1.469.294-1.398-6.985-1.468z\"/></svg>",
+                TokenColor = "attribute",
+                ShowAuthor = true,
+                ShowSource = false,
+                ShowAiSummary = false,
+                SanitizeHtml = false,
+                SummaryMaxLength = 200,
+                ShowTags = true,
+                MaxHeight = 600,
+                LoadingText = "Loading StackOverflow questions...",
+                Items = Model.StackOverflowQuestions.ToBlockItems()
+            })
+        </div>
+        <div>
+            @await Html.PartialAsync("_NewsBlockPartial", new NewsBlockViewModel
+            {
+                Title = "github.trending_csharp",
                 Icon = "bi-github",
-                HeaderCssClass = "bg-dark text-white",
+                TokenColor = "function",
                 ShowStats = true,
                 ShowAiSummary = false,
                 SanitizeHtml = false,
                 MaxHeight = 600,
-                LoadingText = "Chargement des projets...",
+                LoadingText = "Loading projects...",
                 Items = Model.TrendingProjects.ToBlockItems()
             })
         </div>
-    </div>
+    </section>
 
-    <!-- Newsletter Section -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card shadow-sm" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                <div class="card-body text-center py-5">
-                    <h3 class="text-white mb-3">
-                        <i class="bi bi-envelope-heart"></i> ContainSharp Newsletter
-                    </h3>
-                    <p class="text-white mb-4">Get the latest .NET news delivered daily to your inbox</p>
-                    
-                    <form method="post" asp-page-handler="QuickSubscribe" class="row g-3 justify-content-center align-items-center">
-                        <div class="col-auto" style="max-width: 400px; width: 100%;">
-                            <input type="email" 
-                                   class="form-control form-control-lg" 
-                                   name="Email" 
-                                   placeholder="your.email@example.com" 
-                                   required 
-                                   style="border-radius: 50px; border: 2px solid rgba(255,255,255,0.3); background-color: rgba(0,0,0,0.2); color: white; padding: 0.75rem 1.5rem;">
-                        </div>
-                        <div class="col-auto">
-                            <button type="submit" class="btn btn-warning btn-lg fw-bold" style="border-radius: 50px; padding: 0.75rem 2.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                                Subscribe <i class="bi bi-arrow-right"></i>
-                            </button>
-                        </div>
-                    </form>
-
-                    @if (!string.IsNullOrEmpty(ViewData["NewsletterMessage"] as string))
-                    {
-                        var messageType = ViewData["NewsletterMessageType"] as string ?? "info";
-                        var alertClass = messageType switch
-                        {
-                            "success" => "alert-success",
-                            "error" => "alert-danger",
-                            "info" => "alert-info",
-                            _ => "alert-secondary"
-                        };
-
-                        <div class="alert @alertClass alert-dismissible fade show mt-3" role="alert" style="max-width: 600px; margin: 1rem auto 0;">
-                            @ViewData["NewsletterMessage"]
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    }
-
-                    <p class="text-white-50 small mt-3 mb-0">
-                        📧 Daily updates • 🔒 Secure unsubscribe • 🎯 No spam
-                    </p>
-                    <p class="text-white-50 small mt-2 mb-0">
-                        <i class="bi bi-people"></i> @Model.ActiveNewsletterSubscribersCount.ToString("N0") subscribers
-                    </p>
-                </div>
-            </div>
+    <!-- Inline newsletter CTA — thin, single line, no gradient card -->
+    <section class="briefing-cta" aria-label="Newsletter subscription">
+        <div class="briefing-cta-text">
+            <span class="briefing-cta-prompt">~ subscribe</span>
+            <span>Receive this briefing in your inbox every morning.</span>
         </div>
-    </div>
+        <form method="post" asp-page-handler="QuickSubscribe" class="briefing-cta-form">
+            <label for="newsletter-email" class="visually-hidden">Email address</label>
+            <input id="newsletter-email"
+                   type="email"
+                   class="briefing-cta-input"
+                   name="Email"
+                   placeholder="you@domain.tld"
+                   required />
+            <button type="submit" class="briefing-cta-submit">
+                Subscribe <i class="bi bi-arrow-right" aria-hidden="true"></i>
+            </button>
+        </form>
+        <span class="briefing-cta-meta tabular-nums">
+            @Model.ActiveNewsletterSubscribersCount.ToString("N0") subscribers
+        </span>
+    </section>
 
-    @section Scripts {
-        <script>
-            window.__dailyBriefing = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.DailyBriefing ?? ""));
-        </script>
+    @if (!string.IsNullOrEmpty(ViewData["NewsletterMessage"] as string))
+    {
+        var messageType = ViewData["NewsletterMessageType"] as string ?? "info";
+        var alertClass = messageType switch
+        {
+            "success" => "vs-alert-success",
+            "error" => "vs-alert-error",
+            "info" => "vs-alert-info",
+            _ => "vs-alert-secondary"
+        };
+
+        <div class="vs-alert @alertClass" role="alert">
+            @ViewData["NewsletterMessage"]
+        </div>
     }
+</div>
+
+@section Scripts {
+    <script>
+        window.__dailyBriefing = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.DailyBriefing ?? ""));
+    </script>
+}

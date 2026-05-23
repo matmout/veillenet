@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet build *)",
+      "Bash(node C:\\\\DEV\\\\veillenet\\\\.claude\\\\skills\\\\impeccable\\\\scripts\\\\load-context.mjs)",
+      "Bash(node \".claude/skills/impeccable/scripts/load-context.mjs\")"
+    ]
+  }
+}

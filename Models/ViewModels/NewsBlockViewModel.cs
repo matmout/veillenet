@@ -5,8 +5,14 @@ public class NewsBlockViewModel
     // --- Header ---
     public string Title { get; set; } = string.Empty;
     public string Icon { get; set; } = string.Empty;
+    /// <summary>
+    /// Semantic syntax-highlight token that colors the panel top accent and
+    /// title icon. One of: keyword, string, type, number, function,
+    /// preprocessor, attribute. Empty = default (keyword).
+    /// </summary>
+    public string TokenColor { get; set; } = string.Empty;
     public string HeaderCssClass { get; set; } = string.Empty;
-    /// <summary>Inline CSS style for header (gradients, custom backgrounds).</summary>
+    /// <summary>Inline CSS style for header (legacy; prefer TokenColor).</summary>
     public string? HeaderStyle { get; set; }
     /// <summary>Raw HTML for custom header icon (e.g., SVG). When set, <see cref="Icon"/> is ignored.</summary>
     public string? HeaderIconHtml { get; set; }

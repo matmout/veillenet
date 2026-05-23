@@ -1,98 +1,76 @@
-/* Light theme overrides — applied when [data-bs-theme="light"] is set */
+/* ===========================================================
+   Light theme overrides — applied when [data-bs-theme="light"]
+   Same OKLCH design system, with surface/text inverted and chroma reduced.
+   =========================================================== */
 [data-bs-theme="light"] {
-  --vs-bg: #f5f5f5;
-  --vs-panel: #ffffff;
-  --vs-panel-alt: #fafafa;
-  --vs-border: #e0e0e0;
-  --vs-text: #1e1e1e;
-  --vs-muted: #6c757d;
-  --vs-accent: #0969da;
-  --vs-accent-strong: #0550ae;
+  --surface:       oklch(0.98 0.003 250);
+  --panel:         oklch(0.985 0.004 250);
+  --panel-alt:     oklch(0.95 0.005 250);
+  --panel-hover:   oklch(0.93 0.005 250);
+  --border:        oklch(0.88 0.006 250);
+  --border-strong: oklch(0.76 0.008 250);
 
-  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --card-shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.12);
-  --dark-gradient: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%);
+  --text:        oklch(0.18 0.005 250);
+  --text-soft:   oklch(0.30 0.008 250);
+  --text-muted:  oklch(0.46 0.010 250);
+
+  --accent:        oklch(0.52 0.16 245);
+  --accent-strong: oklch(0.42 0.18 245);
+  --accent-soft:   oklch(0.52 0.16 245 / 0.14);
+
+  /* Tokens nudged darker to keep AA contrast on a light background */
+  --token-keyword:      oklch(0.50 0.16 245);
+  --token-string:       oklch(0.50 0.14 145);
+  --token-type:         oklch(0.55 0.14 70);
+  --token-number:       oklch(0.55 0.15 35);
+  --token-function:     oklch(0.50 0.14 305);
+  --token-preprocessor: oklch(0.52 0.18 25);
+  --token-attribute:    oklch(0.50 0.13 220);
+  --token-comment:      var(--text-muted);
+
+  --status-ok:    oklch(0.55 0.14 145);
+  --status-warn:  oklch(0.60 0.14 70);
+  --status-err:   oklch(0.52 0.18 25);
+
+  --shadow-sm: 0 1px 2px rgba(20, 24, 36, 0.06);
+  --shadow:    0 2px 8px rgba(20, 24, 36, 0.10);
+  --shadow-lg: 0 6px 24px rgba(20, 24, 36, 0.14);
 }
 
-[data-bs-theme="light"] body {
-  background-color: var(--vs-bg);
-  color: var(--vs-text);
+/* Titlebar a bit lighter than panel-alt */
+[data-bs-theme="light"] .ide-titlebar {
+  background: oklch(0.93 0.005 250);
 }
 
-[data-bs-theme="light"] .card {
-  background-color: var(--vs-panel);
-  border-color: var(--vs-border);
-}
-
-[data-bs-theme="light"] .list-group-item {
-  background-color: transparent;
-  border-color: var(--vs-border);
-  color: var(--vs-text);
-}
-
-[data-bs-theme="light"] .text-muted {
-  color: var(--vs-muted) !important;
-}
-
-[data-bs-theme="light"] .footer {
-  background-color: var(--vs-panel-alt);
-  border-color: var(--vs-border) !important;
-}
-
-/* VS Output Window in light mode */
-[data-bs-theme="light"] .vs-output {
-  background: var(--vs-panel);
-  border-color: var(--vs-border);
-}
-
+/* Output window darker code area in light theme: parchment-ish, not black */
 [data-bs-theme="light"] .output-stream {
-  background: var(--vs-panel);
-  color: var(--vs-text);
+  background: oklch(0.96 0.004 250);
+  color: oklch(0.22 0.005 250);
 }
 
-[data-bs-theme="light"] .output-titlebar {
-  background: #e8e8e8;
-  color: #333;
-}
-
-[data-bs-theme="light"] .output-toolbar {
-  background: #f0f0f0;
-  border-color: var(--vs-border);
-}
-
-[data-bs-theme="light"] .output-toolbar .chip {
-  background: #ddd;
-  color: #333;
-}
-
-/* StackOverflow tags in light mode */
+/* StackOverflow tag (already uses oklch in dark; restate for light) */
 [data-bs-theme="light"] .stackoverflow-tag {
-  background-color: #e1ecf4;
-  color: #39739d;
+  background: oklch(0.50 0.13 220 / 0.10);
+  border-color: oklch(0.50 0.13 220 / 0.40);
+  color: oklch(0.36 0.14 220);
 }
 
-/* Category card overrides */
-[data-bs-theme="light"] .category-card {
-  border-color: var(--vs-border);
-  background: var(--vs-panel);
+[data-bs-theme="light"] .stackoverflow-tag:hover {
+  background: oklch(0.50 0.13 220 / 0.18);
+  border-color: oklch(0.50 0.13 220 / 0.65);
+  color: oklch(0.24 0.16 220);
 }
 
-/* Theme toggle button */
-.theme-toggle {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 1.1rem;
-  cursor: pointer;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  transition: opacity 0.2s;
+/* Status bar: keep colored accent fill in light mode for identity */
+[data-bs-theme="light"] .ide-statusbar {
+  background: oklch(0.42 0.18 245);
+  border-top: 1px solid oklch(0.36 0.18 245);
 }
 
-.theme-toggle:hover {
-  opacity: 0.8;
+/* Inline newsletter input background slightly tinted */
+[data-bs-theme="light"] .briefing-cta-form {
+  background: oklch(0.99 0.003 250);
 }
 
-[data-bs-theme="light"] .theme-toggle {
-  color: #333;
-}
+/* Theme toggle keeps its accessible look */
+.theme-toggle { cursor: pointer; }
