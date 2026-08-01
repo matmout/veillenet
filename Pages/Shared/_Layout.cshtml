@@ -196,6 +196,40 @@
         var open = bar.classList.toggle('open');
         btn.setAttribute('aria-expanded', open ? 'true' : 'false');
       });
+
+      // Desktop: first click/tap on a tab opens its submenu (hover alone
+      // fails on touch screens); a second click navigates to the tab's page.
+      var groups = bar.querySelectorAll('.ide-tab-group');
+      function closeAll(except){
+        groups.forEach(function(g){
+          if (g !== except) {
+            g.classList.remove('open');
+            var t = g.querySelector('.ide-tab');
+            if (t) t.setAttribute('aria-expanded', 'false');
+          }
+        });
+      }
+      groups.forEach(function(group){
+        var tab = group.querySelector('.ide-tab');
+        if (!tab) return;
+        tab.setAttribute('aria-expanded', 'false');
+        tab.addEventListener('click', function(e){
+          // Mobile layout: submenus are always visible, let the link navigate.
+          if (window.matchMedia('(max-width: 768px)').matches) return;
+          if (!group.classList.contains('open')) {
+            e.preventDefault();
+            closeAll(group);
+            group.classList.add('open');
+            tab.setAttribute('aria-expanded', 'true');
+          }
+        });
+      });
+      document.addEventListener('click', function(e){
+        if (!bar.contains(e.target)) closeAll(null);
+      });
+      document.addEventListener('keydown', function(e){
+        if (e.key === 'Escape') closeAll(null);
+      });
     })();
     </script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" defer></script>

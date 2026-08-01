@@ -1221,10 +1221,7 @@ small, .small {
   align-items: stretch;
   background: var(--panel-alt);
   padding-left: var(--space-3);
-  overflow-x: auto;
-  scrollbar-width: none;
 }
-.ide-tabbar::-webkit-scrollbar { display: none; }
 
 .ide-tab {
   position: relative;
@@ -1290,7 +1287,8 @@ small, .small {
 
 .ide-tab-group { position: relative; display: inline-flex; align-items: stretch; }
 .ide-tab-group:hover .ide-subtabs,
-.ide-tab-group:focus-within .ide-subtabs {
+.ide-tab-group:focus-within .ide-subtabs,
+.ide-tab-group.open .ide-subtabs {
   display: block;
 }
 
