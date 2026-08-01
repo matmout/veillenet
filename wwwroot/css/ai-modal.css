@@ -1,4 +1,4 @@
-/* AI Summary Modal - Visual Studio Style */
+/* AI Summary Modal — IDE / Visual Studio output-panel language */
 .ai-modal-overlay {
     display: none;
     position: fixed;
@@ -21,70 +21,116 @@
 .ai-modal {
     background: var(--vs-panel);
     border: 1px solid var(--vs-border);
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
-    max-width: 800px;
-    width: 90%;
+    max-width: 820px;
+    width: 92%;
     max-height: 85vh;
     display: flex;
     flex-direction: column;
     animation: slideDown 0.3s ease-out;
     position: relative;
+    overflow: hidden;
+    --panel-token: var(--token-keyword);
 }
 
-/* Modal Header - VS Style */
-.ai-modal-header {
+.ai-modal::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--panel-token);
+    opacity: 0.85;
+    z-index: 1;
+}
+
+/* Titlebar — mirrors .output-titlebar from the home hero */
+.ai-modal-titlebar {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 12px 16px;
-    background: var(--vs-panel-alt);
-    border-bottom: 1px solid var(--vs-border);
-    border-radius: 8px 8px 0 0;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-4);
+    background: var(--panel-alt);
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
 }
 
-.ai-modal-title {
+.ai-modal-titlebar .controls {
     display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--vs-text);
-    margin: 0;
+    gap: 0.35rem;
 }
 
-.ai-modal-title i {
-    color: var(--vs-accent-strong);
-    font-size: 18px;
+.ai-modal-titlebar .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    opacity: 0.6;
+}
+
+.ai-modal-titlebar .dot.close { background: var(--token-preprocessor); }
+.ai-modal-titlebar .dot.min   { background: var(--token-type); }
+.ai-modal-titlebar .dot.max   { background: var(--token-string); }
+
+.ai-modal-titlebar .title {
+    color: var(--text);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+}
+
+.ai-modal-titlebar .spacer {
+    flex: 1;
+}
+
+.ai-modal-titlebar .output-meta {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
 }
 
 .ai-modal-close {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
     background: transparent;
-    border: none;
-    color: var(--vs-muted);
-    font-size: 20px;
-    cursor: pointer;
-    padding: 4px 8px;
-    border-radius: 4px;
-    transition: all 0.2s;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 14px;
     line-height: 1;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: background var(--motion-fast), color var(--motion-fast), border-color var(--motion-fast);
 }
 
 .ai-modal-close:hover {
-    background: var(--vs-panel);
-    color: var(--vs-text);
+    background: color-mix(in oklch, var(--token-preprocessor) 18%, transparent);
+    border-color: var(--token-preprocessor);
+    color: var(--text);
 }
 
-.ai-modal-close:focus {
+.ai-modal-close:focus-visible {
     outline: 2px solid var(--vs-accent-strong);
     outline-offset: 2px;
 }
 
-/* Modal Body */
+/* Body — editorial reading: Inter, comfortable line-height, capped width */
 .ai-modal-body {
-    padding: 20px;
+    padding: var(--space-5) var(--space-5);
     overflow-y: auto;
     flex: 1;
+    font-family: var(--font-ui);
+}
+
+.ai-modal-body > * {
+    max-width: 70ch;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .ai-modal-loading {
@@ -100,23 +146,33 @@
 
 .ai-modal-error {
     padding: 20px;
-    background: rgba(239, 68, 68, 0.1);
+    background: color-mix(in oklch, var(--token-preprocessor) 10%, transparent);
     border: 1px solid var(--vs-red);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     color: var(--vs-red);
 }
 
-/* AI Summary Content Styling */
+/* AI Summary content */
 .ai-summary {
     color: var(--vs-text);
     line-height: 1.7;
+    font-family: var(--font-ui);
 }
 
 .ai-summary h3 {
     color: var(--vs-accent-strong);
-    font-size: 1.1rem;
-    margin-top: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 1.75rem;
     margin-bottom: 0.75rem;
+    letter-spacing: 0.01em;
+}
+
+.ai-summary h3::before {
+    content: "// ";
+    color: var(--text-muted);
+    font-weight: 400;
 }
 
 .ai-summary h3:first-child {
@@ -146,16 +202,26 @@
     color: var(--vs-accent-strong);
 }
 
-/* Article Metadata */
+.ai-summary code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    padding: 0.1rem 0.35rem;
+    background: var(--panel-alt);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--token-string);
+}
+
+/* Footer meta — kept, mono, no date (now lives in titlebar) */
 .ai-modal-meta {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
-    padding: 12px 16px;
-    background: var(--vs-panel-alt);
-    border-top: 1px solid var(--vs-border);
-    border-radius: 0 0 8px 8px;
-    font-size: 0.875rem;
+    padding: var(--space-2) var(--space-4);
+    background: var(--panel-alt);
+    border-top: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
 }
 
 .ai-modal-meta-item {
@@ -182,47 +248,36 @@
 
 /* Animations */
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
+    from { opacity: 0; }
+    to   { opacity: 1; }
 }
 
 @keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-30px) scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
+    from { opacity: 0; transform: translateY(-30px) scale(0.95); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 @keyframes spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .ai-modal {
         width: 95%;
         max-height: 90vh;
     }
-    
+
     .ai-modal-body {
-        padding: 16px;
+        padding: var(--space-4) var(--space-4);
+    }
+
+    .ai-modal-titlebar .output-meta {
+        display: none;
     }
 }
 
-/* Scrollbar for modal body */
+/* Scrollbar — VS muted */
 .ai-modal-body::-webkit-scrollbar {
     width: 8px;
 }

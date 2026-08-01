@@ -2,109 +2,145 @@
 @model NewsletterArchiveModel
 @{
     ViewData["Title"] = "Newsletter Archive";
-    ViewData["Description"] = "Archive of all daily newsletters sent by Contain'Sharp";
+    ViewData["Description"] = "Archive of all daily newsletters sent by ContainSharp.";
     ViewData["CanonicalUrl"] = "https://containsharp.com/NewsletterArchive";
+
+    var enCulture = new System.Globalization.CultureInfo("en-US");
+    var total = Model.Newsletters.Count;
 }
 
-<div class="container">
-    <div class="row mb-4">
-        <div class="col-12">
-            <h1 class="h2 mb-2"><i class="bi bi-archive"></i> Newsletter Archive</h1>
-            <p class="text-muted mb-0">Historique des newsletters quotidiennes envoyées</p>
-        </div>
-    </div>
+<div class="briefing-stage archive-stage">
+    <partial name="_PageHeaderPartial" view-data='@(new ViewDataDictionary(ViewData) {
+        { "Icon", "archive" },
+        { "HeaderTitle", "Newsletter Archive" },
+        { "HeaderDescription", "Chronological log of daily briefings published to subscribers." },
+        { "HeaderTokenColor", "string" },
+        { "HeaderFileSlug", "archive.log" }
+    })' />
 
-    <div class="row">
-        <div class="col-12">
-            @if (Model.Newsletters.Any())
+    @if (Model.Newsletters.Any())
+    {
+        <div class="archive-toolbar" role="presentation">
+            <span class="prompt">$</span>
+            <span class="cmd">git log <span class="flag">--graph</span> <span class="flag">--pretty=oneline</span> <span class="arg">-- newsletters/</span></span>
+            <span class="spacer"></span>
+            <span class="count"><strong>@total</strong> entries</span>
+        </div>
+
+        <ol class="commit-log">
+            @foreach (var newsletter in Model.Newsletters)
             {
-                <div class="list-group">
-                    @foreach (var newsletter in Model.Newsletters)
+                var hash         = NewsletterArchiveModel.ShortHash(newsletter);
+                var refToken     = newsletter.IsSent ? "string" : "type";
+                var iso          = newsletter.NewsletterDate.ToString("yyyy-MM-dd", enCulture);
+                var fileSlug     = $"newsletter-{iso}.html";
+                var previewId    = $"preview-{newsletter.Id}";
+                var sentAtLocal  = newsletter.SentAt?.ToLocalTime();
+                var createdLocal = newsletter.CreatedAt.ToLocalTime();
+
+                <li class="commit-row" id="row-@newsletter.Id">
+                    <span class="commit-gutter" aria-hidden="true"><span class="star"></span></span>
+                    <span class="commit-hash">@hash</span>
+                    <span class="commit-date">@iso</span>
+                    <span class="commit-subject" title="@newsletter.Subject">@newsletter.Subject</span>
+
+                    @if (newsletter.IsSent)
                     {
-                        var statusBadge = newsletter.IsSent 
-                            ? "<span class=\"badge bg-success\">Envoyée</span>" 
-                            : "<span class=\"badge bg-warning text-dark\">En attente</span>";
-
-                        <div class="list-group-item">
-                            <div class="d-flex w-100 justify-content-between align-items-center mb-2">
-                                <h5 class="mb-0">
-                                    <i class="bi bi-calendar-date"></i>
-                                    @newsletter.NewsletterDate.ToString("dddd dd MMMM yyyy", new System.Globalization.CultureInfo("fr-FR"))
-                                </h5>
-                                @Html.Raw(statusBadge)
-                            </div>
-                            
-                            <h6 class="mb-2">@newsletter.Subject</h6>
-                            
-                            <div class="row text-muted small">
-                                <div class="col-md-3">
-                                    <i class="bi bi-card-list"></i> @newsletter.SummaryCount résumés
-                                </div>
-                                @if (newsletter.IsSent)
-                                {
-                                    <div class="col-md-3">
-                                        <i class="bi bi-people"></i> @newsletter.RecipientCount destinataires
-                                    </div>
-                                    <div class="col-md-6">
-                                        <i class="bi bi-clock"></i> Envoyée le @newsletter.SentAt?.ToLocalTime().ToString("dd/MM/yyyy à HH:mm")
-                                    </div>
-                                }
-                                else
-                                {
-                                    <div class="col-md-9">
-                                        <i class="bi bi-clock-history"></i> Créée le @newsletter.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy à HH:mm")
-                                    </div>
-                                }
-                            </div>
-
-                            <div class="mt-3">
-                                <button class="btn btn-sm btn-outline-primary" 
-                                        type="button" 
-                                        data-bs-toggle="collapse" 
-                                        data-bs-target="#preview-@newsletter.Id">
-                                    <i class="bi bi-eye"></i> Aperçu HTML
-                                </button>
-                                <button class="btn btn-sm btn-outline-secondary" 
-                                        type="button" 
-                                        data-bs-toggle="collapse" 
-                                        data-bs-target="#text-@newsletter.Id">
-                                    <i class="bi bi-file-text"></i> Version texte
-                                </button>
-                            </div>
-
-                            <div class="collapse mt-3" id="preview-@newsletter.Id">
-                                <div class="card card-body bg-light">
-                                    <iframe srcdoc="@Html.Raw(newsletter.HtmlContent.Replace("\"", "&quot;"))" 
-                                            style="width: 100%; height: 600px; border: 1px solid #dee2e6; border-radius: 4px;"></iframe>
-                                </div>
-                            </div>
-
-                            <div class="collapse mt-3" id="text-@newsletter.Id">
-                                <div class="card card-body bg-light">
-                                    <pre class="mb-0" style="white-space: pre-wrap; font-size: 0.9em;">@newsletter.TextContent</pre>
-                                </div>
-                            </div>
-                        </div>
+                        <span class="commit-ref" data-token="@refToken">(HEAD<span class="arrow">â†’</span>sent)</span>
                     }
-                </div>
-            }
-            else
-            {
-                <div class="alert alert-info">
-                    <i class="bi bi-info-circle"></i> Aucune newsletter archivée pour le moment.
-                </div>
-            }
-        </div>
-    </div>
+                    else
+                    {
+                        <span class="commit-ref" data-token="@refToken">(pending)</span>
+                    }
 
-    <div class="row mt-4">
-        <div class="col-12 text-center">
-            <a href="/Newsletter" class="btn btn-primary">
-                <i class="bi bi-envelope-heart"></i> S'abonner à la newsletter
-            </a>
-            <a href="/" class="btn btn-link">
-                <i class="bi bi-arrow-left"></i> Retour au tableau de bord
-            </a>
+                    <div class="commit-meta-row">
+                        <span class="commit-meta">
+                            <span class="comment">//</span>
+                            <span><span class="num">@newsletter.SummaryCount</span> <span class="key">summaries</span></span>
+                            @if (newsletter.IsSent)
+                            {
+                                <span class="sep">Â·</span>
+                                <span><span class="num">@newsletter.RecipientCount</span> <span class="key">recipients</span></span>
+                                @if (sentAtLocal.HasValue)
+                                {
+                                    <span class="sep">Â·</span>
+                                    <span><span class="key">sent_at=</span>@sentAtLocal.Value.ToString("HH:mm", enCulture)</span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="sep">Â·</span>
+                                <span><span class="key">created_at=</span>@createdLocal.ToString("HH:mm", enCulture)</span>
+                            }
+                        </span>
+
+                        <span class="commit-actions">
+                            <button class="editor-tab"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#@previewId"
+                                    aria-expanded="false"
+                                    aria-controls="@previewId">
+                                <i class="bi bi-file-earmark-code" aria-hidden="true"></i>
+                                <span>@fileSlug.Replace(".html", "")</span><span class="ext">.html</span>
+                                <span class="close" aria-hidden="true">Ã—</span>
+                            </button>
+                        </span>
+                    </div>
+
+                    <div class="collapse commit-preview" id="@previewId">
+                        <iframe srcdoc="@Html.Raw(newsletter.HtmlContent.Replace("\"", "&quot;"))"
+                                title="Newsletter HTML preview"
+                                sandbox="allow-same-origin"
+                                loading="lazy"></iframe>
+                    </div>
+                </li>
+            }
+        </ol>
+
+        <div class="archive-statusbar" role="presentation">
+            <span class="branch"><i class="bi bi-git" aria-hidden="true"></i>branch: archive</span>
+            <span class="sep">Â·</span>
+            <span class="stat"><span class="num">@total</span> newsletters</span>
+            <span class="sep">Â·</span>
+            <span class="stat sent"><span class="num">@Model.SentCount</span> sent</span>
+            <span class="sep">Â·</span>
+            <span class="stat pending"><span class="num">@Model.PendingCount</span> pending</span>
+            <span class="spacer"></span>
+            <span>UTF-8 Â· LF</span>
         </div>
+    }
+    else
+    {
+        <div class="archive-empty" role="status">
+            <span><span class="fatal">fatal:</span> no newsletters in archive</span>
+            <span class="hint"><span class="prompt">$</span> subscribe to start receiving the daily briefing.</span>
+        </div>
+    }
+
+    <div class="content-card-actions newsletter-archive-cta">
+        <a class="output-action" asp-page="/Newsletter">
+            <i class="bi bi-envelope-heart"></i> subscribe
+        </a>
+        <a class="output-action" asp-page="/Index">
+            <i class="bi bi-arrow-left"></i> back to dashboard
+        </a>
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/newsletter-archive.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    <script>
+        (function () {
+            document.querySelectorAll('.commit-row').forEach(function (row) {
+                var preview = row.querySelector('.commit-preview');
+                if (!preview) return;
+                preview.addEventListener('shown.bs.collapse', function () { row.classList.add('is-open'); });
+                preview.addEventListener('hidden.bs.collapse', function () { row.classList.remove('is-open'); });
+            });
+        })();
+    </script>
+}

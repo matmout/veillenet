@@ -1,10 +1,66 @@
-﻿@page
+@page
 @model PrivacyModel
 @{
     ViewData["Title"] = "Privacy Policy";
     ViewData["Description"] = "Privacy policy and data handling information for the ContainSharp website.";
     ViewData["CanonicalUrl"] = "https://containsharp.com/Privacy";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<div class="briefing-stage">
+    <partial name="_PageHeaderPartial" view-data='@(new ViewDataDictionary(ViewData) {
+        { "Icon", "shield-lock" },
+        { "HeaderTitle", "Privacy Policy" },
+        { "HeaderDescription", "What ContainSharp stores, why, and how to opt out." },
+        { "HeaderTokenColor", "comment" }
+    })' />
+
+    <article class="content-card" data-token="comment">
+        <div class="page-prose">
+            <h2>What we collect</h2>
+            <p>
+                ContainSharp is a personal technology-watch dashboard. The site itself does not require an account.
+                The only personal data we deliberately store is the email address you provide when subscribing to the
+                daily newsletter.
+            </p>
+
+            <h2>Newsletter subscribers</h2>
+            <p>
+                When you subscribe, we store your email address, the subscription date, and a confirmation token used
+                only to validate that the address belongs to you. We do not enrich, sell, or share this information
+                with any third party.
+            </p>
+            <p>
+                You can request unsubscription at any time from the
+                <a asp-page="/Newsletter">Unsubscribe</a> page. The process uses a confirmation email so nobody else
+                can unsubscribe you without your consent. Once confirmed, your email address is removed from our
+                active list.
+            </p>
+
+            <h2>Analytics and logs</h2>
+            <p>
+                Standard web server logs are kept for short-term operational purposes (debugging, abuse prevention).
+                They typically include the requested URL, response status, user agent, and a truncated IP. No
+                third-party analytics or advertising scripts run on the site.
+            </p>
+
+            <h2>Hosting and data location</h2>
+            <p>
+                The site and database are hosted on standard cloud infrastructure inside the European Union.
+                Communication is encrypted in transit via HTTPS.
+            </p>
+
+            <h2>Your rights</h2>
+            <p>
+                Under the GDPR, you have the right to access, correct, or erase the personal data we hold about you,
+                and to object to its processing. For any of these requests, write to the contact listed on the
+                <a asp-page="/About">About</a> page.
+            </p>
+
+            <h2>Updates</h2>
+            <p>
+                This policy may evolve as the site changes. Material updates will be noted on this page; significant
+                changes affecting newsletter subscribers will be announced inside the newsletter itself.
+            </p>
+        </div>
+    </article>
+</div>

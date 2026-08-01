@@ -51,7 +51,8 @@
         bool IsActive(params string[] pages) => pages.Any(p => string.Equals(p, currentPage, StringComparison.OrdinalIgnoreCase));
         var activeNews = IsActive("/Index", "/History", "/KnowledgeGraph", "/Releases", "/Radar");
         var activeCsharp = IsActive("/Roadmap", "/Training", "/Liens");
-        var activeAi = IsActive("/MCP", "/LatestLLM", "/Skills");
+        var activeAi = IsActive("/MCP", "/LatestLLM", "/Skills", "/AiSummary");
+        var activeNewsletter = IsActive("/NewsletterArchive", "/Newsletter");
     }
     <header class="ide-chrome" role="banner">
         <!-- Title bar -->
@@ -130,6 +131,17 @@
                         <i class="bi bi-lightning-charge" aria-hidden="true"></i> Skills
                         <span class="badge bg-warning">NEW</span>
                     </a>
+                    <a class="ide-subtab" asp-area="" asp-page="/AiSummary" role="menuitem"><i class="bi bi-stars" aria-hidden="true"></i> AI Summary</a>
+                </div>
+            </div>
+
+            <div class="ide-tab-group">
+                <a class="ide-tab @(activeNewsletter ? "active" : "")" data-token="comment" asp-area="" asp-page="/NewsletterArchive" aria-haspopup="true">
+                    newsletter.cs
+                </a>
+                <div class="ide-subtabs" role="menu">
+                    <a class="ide-subtab" asp-area="" asp-page="/NewsletterArchive" role="menuitem"><i class="bi bi-archive" aria-hidden="true"></i> Archive</a>
+                    <a class="ide-subtab" asp-area="" asp-page="/Newsletter" role="menuitem"><i class="bi bi-envelope-slash" aria-hidden="true"></i> Unsubscribe</a>
                 </div>
             </div>
         </nav>
@@ -158,6 +170,10 @@
             <a class="status-chip status-link" asp-area="" asp-page="/About">
                 <i class="bi bi-info-circle" aria-hidden="true"></i>
                 About
+            </a>
+            <a class="status-chip status-link" asp-area="" asp-page="/Privacy">
+                <i class="bi bi-shield-lock" aria-hidden="true"></i>
+                Privacy
             </a>
             <a class="status-chip status-link" href="https://github.com/matmout" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile (opens in new tab)">
                 <i class="bi bi-github" aria-hidden="true"></i>

@@ -1,0 +1,375 @@
+/* ===========================================================
+   Newsletter Archive — `git log --graph` register.
+   Scoped styles for /NewsletterArchive only. Reuses tokens from site.css.
+   =========================================================== */
+
+.archive-stage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* ----- Top toolbar: `$ git log ...` + entry counter ----- */
+.archive-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-soft);
+}
+
+.archive-toolbar .prompt {
+  color: var(--text-muted);
+  user-select: none;
+}
+
+.archive-toolbar .cmd {
+  color: var(--text);
+}
+
+.archive-toolbar .cmd .flag {
+  color: var(--token-attribute);
+}
+
+.archive-toolbar .cmd .arg {
+  color: var(--token-string);
+}
+
+.archive-toolbar .spacer { flex: 1; }
+
+.archive-toolbar .count {
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.archive-toolbar .count strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* ----- Commit list ----- */
+.commit-log {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel);
+  overflow: hidden;
+}
+
+.commit-row {
+  display: grid;
+  grid-template-columns: 1.75rem 6.5rem 6.5rem 1fr auto;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  position: relative;
+}
+
+.commit-row:last-child { border-bottom: none; }
+
+/* Faux highlight on hover, like a focused row in an editor */
+.commit-row:hover {
+  background: color-mix(in oklab, var(--panel-hover) 60%, transparent);
+}
+
+/* Graph gutter: the `*` marker and the rail running through every row */
+.commit-gutter {
+  grid-row: span 2;
+  align-self: stretch;
+  position: relative;
+  color: var(--token-function);
+  font-size: var(--text-base);
+  line-height: 1;
+  text-align: center;
+}
+
+.commit-gutter::before {
+  /* vertical rail */
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--border);
+  transform: translateX(-0.5px);
+}
+
+.commit-gutter .star {
+  position: relative;
+  display: inline-block;
+  margin-top: 0.1rem;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  background: var(--token-function);
+  box-shadow: 0 0 0 3px var(--panel);
+}
+
+/* First/last rows: trim the rail so it doesn't run past the list */
+.commit-row:first-child .commit-gutter::before { top: 50%; }
+.commit-row:last-child  .commit-gutter::before { bottom: 50%; }
+
+/* Hash, date, subject, ref on the top line */
+.commit-hash {
+  color: var(--token-function);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+.commit-date {
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.commit-subject {
+  color: var(--text);
+  font-weight: 500;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.commit-ref {
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+}
+
+.commit-ref[data-token="string"] { color: var(--token-string); }
+.commit-ref[data-token="type"]   { color: var(--token-type); }
+
+.commit-ref .arrow {
+  opacity: 0.7;
+  margin: 0 0.15rem;
+}
+
+/* Second line: meta as a // comment + actions */
+.commit-meta-row {
+  grid-column: 2 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: 0.15rem;
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.commit-meta {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0 0.55rem;
+}
+
+.commit-meta .comment {
+  color: var(--token-comment, var(--text-muted));
+  opacity: 0.85;
+}
+
+.commit-meta .sep {
+  opacity: 0.5;
+  margin: 0 0.1rem;
+}
+
+.commit-meta .key {
+  color: var(--text-soft);
+}
+
+.commit-meta .num {
+  color: var(--token-number);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ----- Editor tab + iframe preview ----- */
+.commit-actions { margin-left: auto; }
+
+.editor-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.2rem 0.5rem 0.2rem 0.6rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-soft);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  cursor: pointer;
+  transition: background var(--motion-fast), color var(--motion-fast), border-color var(--motion-fast);
+}
+
+.editor-tab:hover {
+  background: var(--panel-hover);
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+
+.editor-tab .ext {
+  color: var(--token-attribute);
+}
+
+.editor-tab .close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 2px;
+  color: var(--text-muted);
+  opacity: 0;
+  transition: opacity var(--motion-fast), background var(--motion-fast);
+}
+
+/* When the row's preview is open, show the × and attach the tab to the panel */
+.commit-row.is-open .editor-tab {
+  background: var(--panel-alt);
+  border-color: var(--border-strong);
+  border-bottom-color: var(--panel-alt);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  color: var(--text);
+  position: relative;
+  z-index: 1;
+  margin-bottom: -1px;
+}
+
+.commit-row.is-open .editor-tab .close { opacity: 1; }
+
+.editor-tab:hover .close { opacity: 1; }
+.editor-tab .close:hover { background: var(--panel-hover); color: var(--text); }
+
+.commit-preview {
+  grid-column: 2 / -1;
+  margin-top: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  border-top-right-radius: var(--radius);
+  background: var(--panel-alt);
+}
+
+.commit-preview iframe {
+  width: 100%;
+  height: 560px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: oklch(0.98 0.003 250);
+}
+
+/* ----- Statusbar (foot) ----- */
+.archive-statusbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  height: var(--statusbar-h);
+  padding: 0 var(--space-4);
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.archive-statusbar .branch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--accent);
+}
+
+.archive-statusbar .branch i { font-size: 0.85em; }
+
+.archive-statusbar .sep {
+  opacity: 0.4;
+}
+
+.archive-statusbar .stat .num {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.archive-statusbar .stat.sent .num    { color: var(--token-string); }
+.archive-statusbar .stat.pending .num { color: var(--token-type); }
+
+.archive-statusbar .spacer { flex: 1; }
+
+/* ----- Empty state: fatal: error ----- */
+.archive-empty {
+  padding: var(--space-5) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.archive-empty .fatal {
+  color: var(--token-preprocessor);
+  font-weight: 500;
+}
+
+.archive-empty .hint {
+  color: var(--text-muted);
+  opacity: 0.85;
+}
+
+.archive-empty .hint .prompt { color: var(--text-soft); }
+
+/* ----- Bottom CTAs override (right-aligned, mono lowercase) ----- */
+.newsletter-archive-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  justify-content: flex-end;
+  margin-top: var(--space-3);
+}
+
+/* ----- Responsive ----- */
+@media (max-width: 768px) {
+  .commit-row {
+    grid-template-columns: 1.5rem 1fr auto;
+    row-gap: var(--space-1);
+  }
+
+  .commit-gutter { grid-row: span 3; }
+
+  .commit-date {
+    grid-column: 2 / -1;
+    order: -1;
+  }
+
+  .commit-hash {
+    grid-column: 2;
+  }
+
+  .commit-subject {
+    grid-column: 2 / -1;
+    white-space: normal;
+  }
+
+  .commit-ref {
+    grid-column: 2 / -1;
+  }
+
+  .commit-meta-row,
+  .commit-preview { grid-column: 2 / -1; }
+
+  .commit-preview iframe { height: 380px; }
+}

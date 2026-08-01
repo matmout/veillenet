@@ -6,317 +6,141 @@
     ViewData["CanonicalUrl"] = "https://containsharp.com/LatestLLM";
 }
 
-<div class="container-fluid">
-    <partial name="_PageHeaderPartial" view-data='@(new ViewDataDictionary(ViewData) { { "Icon", "cpu" }, { "HeaderTitle", "Latest LLM Models" }, { "HeaderDescription", "A curated catalog of recent language models for coding, reasoning, and multimodal development workflows" } })' />
+<div class="briefing-stage">
+    <partial name="_PageHeaderPartial" view-data='@(new ViewDataDictionary(ViewData) {
+        { "Icon", "cpu" },
+        { "HeaderTitle", "Latest LLM Models" },
+        { "HeaderDescription", "A curated catalog of recent language models for coding, reasoning, and multimodal development workflows." },
+        { "HeaderTokenColor", "type" }
+    })' />
 
-    <!-- LLM Cards Grid -->
-    <div class="row g-4">
+    <div class="llm-grid">
         @foreach (var llm in Model.LLMs)
         {
-            <div class="col-lg-6 col-xl-4">
-                <div class="llm-card h-100">
-                    <div class="llm-card-header">
-                        <div class="llm-icon-wrapper">
-                            <i class="bi bi-robot llm-icon"></i>
-                        </div>
-                        <div class="llm-header-content">
-                            <h3 class="llm-name">@llm.Name</h3>
-                            <p class="llm-author">
-                                <i class="bi bi-building"></i> @llm.Author
-                            </p>
-                        </div>
+            <article class="content-card llm-card" data-token="type">
+                <header class="llm-card-head">
+                    <span class="llm-icon-wrapper" aria-hidden="true">
+                        <i class="bi bi-robot"></i>
+                    </span>
+                    <div>
+                        <h3 class="llm-name">@llm.Name</h3>
+                        <p class="llm-author">
+                            <i class="bi bi-building"></i> @llm.Author
+                        </p>
                     </div>
-                    <div class="llm-card-body">
-                        <p class="llm-description">@llm.Description</p>
-                        <div class="llm-meta">
-                            <div class="meta-item">
-                                <i class="bi bi-calendar-event"></i>
-                                <span>@llm.DateRelease.ToString("dd MMM yyyy")</span>
-                            </div>
-                            @if (!string.IsNullOrEmpty(llm.ScoreIA) && llm.ScoreIA != "N/A")
-                            {
-                                <div class="meta-item">
-                                    <i class="bi bi-star-fill"></i>
-                                    <span>Score: @llm.ScoreIA</span>
-                                </div>
-                            }
-                        </div>
-                    </div>
-                    <div class="llm-card-footer">
-                        <a href="@llm.Link" target="_blank" class="llm-link">
-                            <i class="bi bi-box-arrow-up-right"></i> Visit Documentation
-                        </a>
-                    </div>
-                </div>
-            </div>
-        }
-    </div>
+                </header>
 
-    <!-- Back to Dashboard -->
-    <div class="row mt-5 mb-4">
-        <div class="col-12 text-center">
-            <a href="/" class="btn btn-outline-primary btn-lg">
-                <i class="bi bi-arrow-left"></i> Back to Dashboard
-            </a>
-        </div>
+                <p class="llm-description">@llm.Description</p>
+
+                <dl class="llm-meta">
+                    <div>
+                        <dt><i class="bi bi-calendar-event"></i> released</dt>
+                        <dd>@llm.DateRelease.ToString("dd MMM yyyy")</dd>
+                    </div>
+                    @if (!string.IsNullOrEmpty(llm.ScoreIA) && llm.ScoreIA != "N/A")
+                    {
+                        <div>
+                            <dt><i class="bi bi-star-fill"></i> score</dt>
+                            <dd>@llm.ScoreIA</dd>
+                        </div>
+                    }
+                </dl>
+
+                <div class="content-card-actions">
+                    <a class="output-action" href="@llm.Link" target="_blank" rel="noopener">
+                        <i class="bi bi-box-arrow-up-right"></i> documentation
+                    </a>
+                </div>
+            </article>
+        }
     </div>
 </div>
 
-<style>
-    .llm-intro {
-        display: flex;
-        gap: 0.75rem;
-        align-items: flex-start;
-        padding: 1rem 1.25rem;
-        background: rgba(0, 122, 204, 0.08);
-        border: 1px solid rgba(0, 122, 204, 0.25);
-        border-radius: var(--border-radius-lg);
-        color: var(--vs-text);
-    }
-
-    .llm-intro i {
-        color: var(--vs-accent-strong);
-        font-size: 1.1rem;
-        margin-top: 0.1rem;
-        flex-shrink: 0;
-    }
-
-    /* LLM Card Styles - Visual Studio Theme */
-    .llm-card {
-        background: var(--vs-panel);
-        border: 1px solid var(--vs-border);
-        border-radius: var(--border-radius-lg);
-        transition: all 0.3s ease;
-        overflow: hidden;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .llm-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 4px;
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-        transform: scaleX(0);
-        transform-origin: left;
-        transition: transform 0.3s ease;
-    }
-
-    .llm-card:hover {
-        transform: translateY(-8px);
-        box-shadow: var(--card-shadow-hover);
-        border-color: var(--vs-accent-strong);
-    }
-
-    .llm-card:hover::before {
-        transform: scaleX(1);
-    }
-
-    /* Card Header */
-    .llm-card-header {
-        padding: 1.5rem;
-        display: flex;
-        align-items: flex-start;
-        gap: 1rem;
-        border-bottom: 1px solid var(--vs-border);
-        background: var(--vs-panel-alt);
-    }
-
-    .llm-icon-wrapper {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 60px;
-        height: 60px;
-        border-radius: 12px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        flex-shrink: 0;
-        transition: all 0.3s ease;
-    }
-
-    .llm-card:hover .llm-icon-wrapper {
-        transform: scale(1.1) rotate(5deg);
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-    }
-
-    .llm-icon {
-        font-size: 1.75rem;
-        color: #fff;
-    }
-
-    .llm-header-content {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .llm-name {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: var(--vs-text);
-        margin-bottom: 0.5rem;
-        line-height: 1.3;
-        word-wrap: break-word;
-    }
-
-    .llm-author {
-        font-size: 0.9rem;
-        color: var(--vs-muted);
-        margin-bottom: 0;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    /* Card Body */
-    .llm-card-body {
-        padding: 1.5rem;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .llm-description {
-        font-size: 0.95rem;
-        color: var(--vs-muted);
-        line-height: 1.6;
-        margin-bottom: 1.5rem;
-        flex: 1;
-    }
-
-    .llm-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
-        padding-top: 1rem;
-        border-top: 1px solid var(--vs-border);
-    }
-
-    .meta-item {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.875rem;
-        color: var(--vs-muted);
-    }
-
-    .meta-item i {
-        color: var(--vs-accent-strong);
-        font-size: 1rem;
-    }
-
-    /* Card Footer */
-    .llm-card-footer {
-        padding: 1rem 1.5rem;
-        background: var(--vs-panel-alt);
-        border-top: 1px solid var(--vs-border);
-    }
-
-    .llm-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        background: rgba(0, 122, 204, 0.1);
-        border: 1px solid var(--vs-accent-strong);
-        border-radius: 6px;
-        color: var(--vs-accent-strong);
-        text-decoration: none;
-        font-weight: 600;
-        font-size: 0.9rem;
-        transition: all 0.3s ease;
-        width: 100%;
-        justify-content: center;
-    }
-
-    .llm-link:hover {
-        background: var(--vs-accent-strong);
-        color: #fff;
-        transform: translateX(4px);
-    }
-
-    /* Animation on page load */
-    @@keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .llm-card {
-        animation: fadeInUp 0.6s ease-out backwards;
-    }
-
-    /* Stagger animation for cards */
-    .col-lg-6:nth-child(1) .llm-card {
-        animation-delay: 0.1s;
-    }
-
-    .col-lg-6:nth-child(2) .llm-card {
-        animation-delay: 0.2s;
-    }
-
-    .col-lg-6:nth-child(3) .llm-card {
-        animation-delay: 0.3s;
-    }
-
-    .col-lg-6:nth-child(4) .llm-card {
-        animation-delay: 0.4s;
-    }
-
-    .col-lg-6:nth-child(5) .llm-card {
-        animation-delay: 0.5s;
-    }
-
-    .col-lg-6:nth-child(6) .llm-card {
-        animation-delay: 0.6s;
-    }
-
-    .col-lg-6:nth-child(7) .llm-card {
-        animation-delay: 0.7s;
-    }
-
-    .col-lg-6:nth-child(8) .llm-card {
-        animation-delay: 0.8s;
-    }
-
-    .col-lg-6:nth-child(9) .llm-card {
-        animation-delay: 0.9s;
-    }
-
-    /* Responsive adjustments */
-    @@media (max-width: 767px) {
-        .llm-intro {
-            align-items: flex-start;
+@section Styles {
+    <style>
+        .llm-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: var(--space-4);
         }
 
-        .llm-card-header {
+        .llm-card {
+            display: flex;
             flex-direction: column;
-            text-align: center;
+            gap: var(--space-3);
+        }
+
+        .llm-card-head {
+            display: grid;
+            grid-template-columns: 48px 1fr;
+            gap: var(--space-3);
+            align-items: start;
         }
 
         .llm-icon-wrapper {
-            margin: 0 auto;
+            width: 48px;
+            height: 48px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius);
+            background: color-mix(in oklab, var(--token-type) 16%, transparent);
+            border: 1px solid color-mix(in oklab, var(--token-type) 40%, transparent);
+            color: var(--token-type);
+            font-size: 1.4rem;
+        }
+
+        .llm-name {
+            margin: 0;
+            font-family: var(--font-ui);
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.25;
         }
 
         .llm-author {
-            justify-content: center;
+            margin: 0.2rem 0 0;
+            font-family: var(--font-mono);
+            font-size: var(--text-xs);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .llm-description {
+            margin: 0;
+            color: var(--text-soft);
+            font-size: var(--text-sm);
+            line-height: 1.6;
+            flex: 1;
         }
 
         .llm-meta {
-            flex-direction: column;
-            gap: 0.75rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: var(--space-3);
+            margin: 0;
+            padding: var(--space-3);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--panel-alt);
         }
-
-        .meta-item {
-            justify-content: center;
+        .llm-meta > div { display: flex; flex-direction: column; gap: 0.15rem; }
+        .llm-meta dt {
+            font-family: var(--font-mono);
+            font-size: var(--text-xs);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            margin: 0;
         }
-    }
-</style>
+        .llm-meta dd {
+            margin: 0;
+            font-family: var(--font-mono);
+            font-size: var(--text-sm);
+            color: var(--text);
+        }
+    </style>
+}

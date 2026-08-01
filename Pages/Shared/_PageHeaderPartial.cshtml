@@ -1,22 +1,53 @@
-@* Partial view for consistent page title headers *@
-@* Parameters: Icon (Bootstrap icon class without 'bi-' prefix), Title, Description *@
+@* IDE-style page header — mirrors the .vs-output titlebar from the home hero *@
+@* Parameters via ViewData:                                                     *@
+@*   Icon              : Bootstrap icon class without 'bi-' prefix             *@
+@*   HeaderTitle       : human-readable page title                              *@
+@*   HeaderDescription : optional supporting description                        *@
+@*   HeaderTokenColor  : token slug for the top accent (keyword|type|string|    *@
+@*                       number|function|preprocessor|attribute). Default:      *@
+@*                       "keyword".                                              *@
+@*   HeaderFileSlug    : optional override of the mono filename in the titlebar.*@
+@*                       Falls back to a snake_cased version of HeaderTitle.    *@
 
 @{
-    var icon = ViewData["Icon"] as string ?? "file-text";
-    var title = ViewData["HeaderTitle"] as string ?? "Page Title";
-    var description = ViewData["HeaderDescription"] as string ?? "";
+    var icon              = ViewData["Icon"] as string ?? "file-text";
+    var title             = ViewData["HeaderTitle"] as string ?? "Page Title";
+    var description       = ViewData["HeaderDescription"] as string ?? "";
+    var headerTokenColor  = ViewData["HeaderTokenColor"] as string ?? "keyword";
+    var headerFileSlug    = ViewData["HeaderFileSlug"] as string;
+
+    if (string.IsNullOrWhiteSpace(headerFileSlug))
+    {
+        var slugBase = (title ?? "page").ToLowerInvariant();
+        var slugChars = slugBase.Select(c => char.IsLetterOrDigit(c) ? c : '_').ToArray();
+        var slug = new string(slugChars).Trim('_');
+        while (slug.Contains("__"))
+        {
+            slug = slug.Replace("__", "_");
+        }
+        headerFileSlug = string.IsNullOrEmpty(slug) ? "page.md" : slug + ".md";
+    }
 }
 
-<div class="row mb-4">
-    <div class="col-12">
-        <h1 class="display-4 text-center mb-3">
-            <i class="bi bi-@icon"></i> @title
-        </h1>
+<header class="page-header" data-token="@headerTokenColor">
+    <div class="page-titlebar">
+        <div class="controls" aria-hidden="true">
+            <span class="dot close"></span>
+            <span class="dot min"></span>
+            <span class="dot max"></span>
+        </div>
+        <div class="title">@headerFileSlug</div>
+        <div class="spacer"></div>
+        <span class="page-titlebar-meta tabular-nums">
+            <i class="bi bi-@icon" aria-hidden="true"></i>
+            <span>@title</span>
+        </span>
+    </div>
+    <div class="page-header-body">
+        <h1 class="page-header-title">@title</h1>
         @if (!string.IsNullOrEmpty(description))
         {
-            <p class="lead text-center text-muted">
-                @description
-            </p>
+            <p class="page-header-description">@description</p>
         }
     </div>
-</div>
+</header>

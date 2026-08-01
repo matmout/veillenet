@@ -3,7 +3,12 @@
     "allow": [
       "Bash(dotnet build *)",
       "Bash(node C:\\\\DEV\\\\veillenet\\\\.claude\\\\skills\\\\impeccable\\\\scripts\\\\load-context.mjs)",
-      "Bash(node \".claude/skills/impeccable/scripts/load-context.mjs\")"
+      "Bash(node \".claude/skills/impeccable/scripts/load-context.mjs\")",
+      "Bash(node \"C:\\\\DEV\\\\veillenet\\\\.claude\\\\skills\\\\impeccable\\\\scripts\\\\load-context.mjs\")",
+      "Bash(Get-ChildItem -Path \"C:\\\\DEV\\\\veillenet\" -Recurse -Include \"*.cshtml\")",
+      "Bash(Select-Object FullName)",
+      "Bash(Head -30)",
+      "Bash(node \"C:/DEV/veillenet/.claude/skills/impeccable/scripts/load-context.mjs\")"
     ]
   }
 }

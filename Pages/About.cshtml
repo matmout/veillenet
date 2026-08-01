@@ -6,79 +6,107 @@
     ViewData["CanonicalUrl"] = "https://containsharp.com/About";
 }
 
-<section class="container mt-4 text-light">
-    <div class="row mb-4">
-        <div class="col-12">
-            <h1 class="display-4 text-center mb-3">
-                <i class="bi bi-info-circle"></i> About
-            </h1>
-        </div>
-    </div>
-@*     <h1 class="display-6">About</h1> *@
-    <hr />
-    <div class="row g-4 align-items-stretch">
-        <div class="col-12 col-lg-4 d-flex">
-            <!-- Responsive, lightweight display of the photo with lazy loading -->
-            <div class="card bg-dark border-secondary shadow-sm w-100 h-100">
-                <div class="card-body p-2">
-                    <img class="img-fluid rounded about-photo hover-tilt w-100"
-                         src="~/images/about.jpg"
-                         alt="Matthieu TRACHSEL"
-                         loading="lazy"
-                         decoding="async"
-                         style="height: 100%; max-height: 340px; object-fit: cover; width: 100%;" />
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-lg-8 d-flex">
-            <div class="card bg-dark border-secondary shadow-sm w-100 h-100">
-                <div class="card-body text-light">
-                    <h2 class="h5 mb-3">Matthieu TRACHSEL - Paris</h2>
-                    <p>
-                        This site is built with C# .NET10 and Razor Pages. I created it to stay up to date as a developer,
-                        aggregating resources and practicing with real features. The goal was to have a Visual Studio-like
-                        design and a practical playground to iterate quickly.
-                    </p>
-                    <p>
-                        As a developer, I needed a central place to track news, test ideas, and keep learning.
-                        This project helps me structure that journey.
-                    </p>
-                    <p class="mt-2">
-                        I am currently a FullStack Developer at BRED.
-                    </p>
-                    <p class="mb-0">
-                        I'm always curious about challenging projects and collaborative environments that push technical craftsmanship forward.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="briefing-stage">
+    <partial name="_PageHeaderPartial" view-data='@(new ViewDataDictionary(ViewData) {
+        { "Icon", "person-circle" },
+        { "HeaderTitle", "About" },
+        { "HeaderDescription", "Who built ContainSharp and why." },
+        { "HeaderTokenColor", "function" }
+    })' />
 
-    <!-- Profile cards -->
-    <div class="row g-4 mt-4">
-        <div class="col-12 col-md-6">
-            <div class="card h-100 bg-dark border-secondary">
-                <div class="card-body text-light">
-                    <div class="d-flex align-items-center mb-2">
-                        <i class="bi bi-linkedin me-2"></i>
-                        <h3 class="h6 m-0">LinkedIn</h3>
-                    </div>
-                    <p class="mb-3">Connect and follow professional updates.</p>
-                    <a class="btn btn-primary" href="https://fr.linkedin.com/in/matthieu-trachsel-863a1249/enw" target="_blank" rel="noopener">View Profile</a>
-                </div>
-            </div>
+    <section class="about-grid">
+        <div class="about-photo-wrap">
+            <img class="about-photo"
+                 src="~/images/about.jpg"
+                 alt="Matthieu TRACHSEL"
+                 loading="lazy"
+                 decoding="async" />
         </div>
-        <div class="col-12 col-md-6">
-            <div class="card h-100 bg-dark border-secondary">
-                <div class="card-body text-light">
-                    <div class="d-flex align-items-center mb-2">
-                        <i class="bi bi-github me-2"></i>
-                        <h3 class="h6 m-0">GitHub</h3>
-                    </div>
-                    <p class="mb-3">Explore repositories and contributions.</p>
-                    <a class="btn btn-outline-light" href="https://github.com/matmout" target="_blank" rel="noopener">View Profile</a>
-                </div>
+
+        <article class="content-card" data-token="function">
+            <h2 class="content-card-title">
+                <i class="bi bi-terminal"></i> matthieu_trachsel.bio
+            </h2>
+            <p>
+                This site is built with C# .NET 10 and Razor Pages. I created it to stay current as a developer —
+                aggregating resources, testing ideas, and practising on real features. The brief was simple: a Visual
+                Studio-inspired surface that doubles as a daily reading habit and a playground.
+            </p>
+            <p>
+                As a developer, I needed a central place to track news, prototype ideas, and keep learning.
+                ContainSharp structures that loop for me, one briefing at a time.
+            </p>
+            <p>
+                I am currently a FullStack Developer at BRED, based in Paris. Always curious about challenging
+                projects and collaborative environments that push technical craftsmanship forward.
+            </p>
+        </article>
+    </section>
+
+    <section class="about-links">
+        <article class="content-card" data-token="function">
+            <h2 class="content-card-title">
+                <i class="bi bi-linkedin"></i> linkedin
+            </h2>
+            <p>Connect and follow professional updates.</p>
+            <div class="content-card-actions">
+                <a class="output-action" href="https://fr.linkedin.com/in/matthieu-trachsel-863a1249/enw" target="_blank" rel="noopener">
+                    <i class="bi bi-box-arrow-up-right"></i> View profile
+                </a>
             </div>
-        </div>
-    </div>
-</section>
+        </article>
+
+        <article class="content-card" data-token="function">
+            <h2 class="content-card-title">
+                <i class="bi bi-github"></i> github
+            </h2>
+            <p>Explore repositories and contributions.</p>
+            <div class="content-card-actions">
+                <a class="output-action" href="https://github.com/matmout" target="_blank" rel="noopener">
+                    <i class="bi bi-box-arrow-up-right"></i> View profile
+                </a>
+            </div>
+        </article>
+    </section>
+</div>
+
+@section Styles {
+    <style>
+        .about-grid {
+            display: grid;
+            grid-template-columns: minmax(220px, 320px) 1fr;
+            gap: var(--space-5);
+            align-items: stretch;
+        }
+
+        .about-photo-wrap {
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-3);
+            background: var(--panel);
+            overflow: hidden;
+        }
+
+        .about-photo {
+            width: 100%;
+            height: 100%;
+            min-height: 280px;
+            object-fit: cover;
+            border-radius: var(--radius);
+            display: block;
+        }
+
+        .about-links {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-4);
+        }
+
+        @@media (max-width: 768px) {
+            .about-grid,
+            .about-links {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+}

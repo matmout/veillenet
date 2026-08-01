@@ -7,443 +7,287 @@
     ViewData["CanonicalUrl"] = "https://containsharp.com/Training";
 }
 
-<div class="container-fluid">
-    <partial name="_PageHeaderPartial" view-data='@(new ViewDataDictionary(ViewData) { { "Icon", "mortarboard" }, { "HeaderTitle", "Training" }, { "HeaderDescription", "Test your C# and .NET knowledge with random questions" } })' />
+<div class="briefing-stage">
+    <partial name="_PageHeaderPartial" view-data='@(new ViewDataDictionary(ViewData) {
+        { "Icon", "mortarboard" },
+        { "HeaderTitle", "Training" },
+        { "HeaderDescription", "Random C# and .NET interview questions — multiple choice and free text." },
+        { "HeaderTokenColor", "function" }
+    })' />
 
-    <!-- Stats Card -->
-    <div class="row mb-4">
-        <div class="col-lg-8 mx-auto">
-            <div class="card stats-card">
-                <div class="card-body">
-                    <div class="row text-center">
-                        <div class="col-md-3 col-6 mb-2 mb-md-0">
-                            <div class="stat-item">
-                                <i class="bi bi-check-circle stat-icon text-success"></i>
-                                <div class="stat-value">@Model.Session.CorrectAnswers</div>
-                                <div class="stat-label">Correct</div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-6 mb-2 mb-md-0">
-                            <div class="stat-item">
-                                <i class="bi bi-x-circle stat-icon text-danger"></i>
-                                <div class="stat-value">@Model.Session.IncorrectAnswers</div>
-                                <div class="stat-label">Incorrect</div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-6">
-                            <div class="stat-item">
-                                <i class="bi bi-question-circle stat-icon text-info"></i>
-                                <div class="stat-value">@Model.RemainingQuestions</div>
-                                <div class="stat-label">Remaining</div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-6">
-                            <div class="stat-item">
-                                <i class="bi bi-collection stat-icon text-warning"></i>
-                                <div class="stat-value">@Model.TotalQuestions</div>
-                                <div class="stat-label">Total</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <section class="training-stats">
+        <div class="stat-card" data-tone="success">
+            <i class="bi bi-check-circle stat-icon" aria-hidden="true"></i>
+            <div class="stat-value">@Model.Session.CorrectAnswers</div>
+            <div class="stat-label">Correct</div>
         </div>
-    </div>
+        <div class="stat-card" data-tone="error">
+            <i class="bi bi-x-circle stat-icon" aria-hidden="true"></i>
+            <div class="stat-value">@Model.Session.IncorrectAnswers</div>
+            <div class="stat-label">Incorrect</div>
+        </div>
+        <div class="stat-card" data-tone="info">
+            <i class="bi bi-question-circle stat-icon" aria-hidden="true"></i>
+            <div class="stat-value">@Model.RemainingQuestions</div>
+            <div class="stat-label">Remaining</div>
+        </div>
+        <div class="stat-card" data-tone="warn">
+            <i class="bi bi-collection stat-icon" aria-hidden="true"></i>
+            <div class="stat-value">@Model.TotalQuestions</div>
+            <div class="stat-label">Total</div>
+        </div>
+    </section>
 
-    <!-- Question Card -->
     @if (Model.CurrentQuestion != null)
     {
-        <div class="row">
-            <div class="col-lg-8 mx-auto">
-                <div class="card question-card">
-                    <div class="card-header">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">
-                                <i class="bi bi-chat-square-text"></i> Question
-                            </h5>
-                            <span class="badge badge-category ms-2">@Model.CurrentQuestion.Category</span>
+        <article class="content-card training-question" data-token="function">
+            <header class="training-question-head">
+                <span class="content-card-title">
+                    <i class="bi bi-chat-square-text"></i> question
+                </span>
+                <span class="timeline-chip" data-token="function">@Model.CurrentQuestion.Category</span>
+            </header>
+
+            <h2 class="training-question-text">@Model.CurrentQuestion.Text</h2>
+
+            @if (!Model.ShowResult)
+            {
+                <form method="post" asp-page-handler="SubmitAnswer" class="training-form">
+                    <input type="hidden" name="CurrentQuestionId" value="@Model.CurrentQuestion.Id" />
+
+                    @if (Model.CurrentQuestion.Type == QuestionType.MultipleChoice)
+                    {
+                        <div class="training-choices">
+                            @foreach (var choice in Model.CurrentQuestion.Choices)
+                            {
+                                <label class="training-choice">
+                                    <input type="radio" name="UserAnswer" value="@choice" required />
+                                    <span>@choice</span>
+                                </label>
+                            }
                         </div>
+                    }
+                    else
+                    {
+                        <label class="filter-bar-label" for="user-answer">Your answer</label>
+                        <input id="user-answer"
+                               type="text"
+                               class="briefing-cta-input"
+                               name="UserAnswer"
+                               required />
+                    }
+
+                    <div class="content-card-actions">
+                        <button type="submit" class="briefing-cta-submit">
+                            <i class="bi bi-check-lg"></i> Submit
+                        </button>
                     </div>
-                    <div class="card-body">
-                        <h3 class="question-text mb-4">@Model.CurrentQuestion.Text</h3>
+                </form>
+            }
+            else
+            {
+                var resultToken = Model.IsCorrect ? "string" : "preprocessor";
+                <div class="training-result" data-tone="@(Model.IsCorrect ? "ok" : "err")">
+                    <div class="training-result-head">
+                        <i class="bi bi-@(Model.IsCorrect ? "check-circle-fill" : "x-circle-fill")" aria-hidden="true"></i>
+                        <h3>@(Model.IsCorrect ? "Correct answer." : "Incorrect answer.")</h3>
+                    </div>
 
-                        @if (!Model.ShowResult)
-                        {
-                            <form method="post" asp-page-handler="SubmitAnswer">
-                                <input type="hidden" name="CurrentQuestionId" value="@Model.CurrentQuestion.Id" />
-                                @if (Model.CurrentQuestion.Type == QuestionType.MultipleChoice)
-                                {
-                                    <div class="choices-container">
-                                        @foreach (var choice in Model.CurrentQuestion.Choices)
-                                        {
-                                            <label class="choice-item">
-                                                <input type="radio" name="UserAnswer" value="@choice" required />
-                                                <span class="choice-text">@choice</span>
-                                            </label>
-                                        }
-                                    </div>
-                                }
-                                else
-                                {
-                                    <div class="mb-4">
-                                        <label class="form-label">Your answer:</label>
-                                        <input type="text" class="form-control form-control-lg" name="UserAnswer" required />
-                                    </div>
-                                }
+                    @if (!Model.IsCorrect)
+                    {
+                        <div class="training-correct">
+                            <span class="filter-bar-label">expected</span>
+                            <span>@Model.CurrentQuestion.CorrectAnswer</span>
+                        </div>
+                    }
 
-                                <div class="text-center mt-4">
-                                    <button type="submit" class="btn btn-primary btn-lg">
-                                        <i class="bi bi-check-lg"></i> Submit
-                                    </button>
-                                </div>
-                            </form>
-                        }
-                        else
-                        {
-                            <div class="result-container @(Model.IsCorrect ? "result-correct" : "result-incorrect")">
-                                <div class="result-icon">
-                                    @if (Model.IsCorrect)
-                                    {
-                                        <i class="bi bi-check-circle-fill text-success"></i>
-                                    }
-                                    else
-                                    {
-                                        <i class="bi bi-x-circle-fill text-danger"></i>
-                                    }
-                                </div>
-                                <h4 class="result-title">
-                                    @(Model.IsCorrect ? "Great job! Correct answer." : "Oops! Incorrect answer.")
-                                </h4>
-                                
-                                @if (!Model.IsCorrect)
-                                {
-                                    <div class="correct-answer-box">
-                                        <strong>The correct answer was:</strong> @Model.CurrentQuestion.CorrectAnswer
-                                    </div>
-                                }
-
-                                @if (!string.IsNullOrEmpty(Model.CurrentQuestion.Explanation))
-                                {
-                                    <div class="explanation-box">
-                                        <i class="bi bi-lightbulb"></i>
-                                        <strong>Explanation:</strong> @Model.CurrentQuestion.Explanation
-                                    </div>
-                                }
-
-                                <form method="post" asp-page-handler="NextQuestion" class="mt-4">
-                                    <input type="hidden" name="CurrentQuestionId" value="@Model.CurrentQuestion.Id" />
-                                    <button type="submit" class="btn btn-primary btn-lg">
-                                        <i class="bi bi-arrow-right"></i> Next question
-                                    </button>
-                                </form>
+                    @if (!string.IsNullOrEmpty(Model.CurrentQuestion.Explanation))
+                    {
+                        <div class="training-explanation">
+                            <i class="bi bi-lightbulb" aria-hidden="true"></i>
+                            <div>
+                                <span class="filter-bar-label">explanation</span>
+                                <p>@Model.CurrentQuestion.Explanation</p>
                             </div>
-                        }
-                    </div>
+                        </div>
+                    }
+
+                    <form method="post" asp-page-handler="NextQuestion" class="content-card-actions">
+                        <input type="hidden" name="CurrentQuestionId" value="@Model.CurrentQuestion.Id" />
+                        <button type="submit" class="briefing-cta-submit">
+                            <i class="bi bi-arrow-right"></i> Next question
+                        </button>
+                    </form>
                 </div>
-            </div>
-        </div>
+            }
+        </article>
     }
     else
     {
-        <div class="row">
-            <div class="col-lg-8 mx-auto">
-                <div class="card question-card text-center">
-                    <div class="card-body p-5">
-                        <i class="bi bi-trophy completion-icon"></i>
-                        <h2 class="mb-4">Session completed!</h2>
-                        <p class="lead">You have answered all available questions.</p>
-                        <div class="final-score my-4">
-                            <h3>Final score: @Model.Session.CorrectAnswers / @Model.TotalQuestions</h3>
-                            <p class="text-muted">
-                                @{
-                                    var percentage = Model.TotalQuestions > 0 ? (Model.Session.CorrectAnswers * 100.0 / Model.TotalQuestions) : 0;
-                                }
-                                Success rate: @percentage.ToString("F1")%
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        var percentage = Model.TotalQuestions > 0
+            ? (Model.Session.CorrectAnswers * 100.0 / Model.TotalQuestions)
+            : 0;
+
+        <article class="content-card" data-token="string">
+            <span class="content-card-title">
+                <i class="bi bi-trophy"></i> session_complete
+            </span>
+            <h2>You've answered all available questions.</h2>
+            <p>
+                Final score: <strong>@Model.Session.CorrectAnswers / @Model.TotalQuestions</strong>
+                — success rate: <strong>@percentage.ToString("F1")%</strong>.
+            </p>
+        </article>
     }
 
-    <!-- Reset Button -->
-    <div class="row mt-4 mb-4">
-        <div class="col-lg-8 mx-auto text-center">
-            <form method="post" asp-page-handler="ResetSession" class="d-inline">
-                <button type="submit" class="btn btn-outline-warning btn-lg me-3">
-                    <i class="bi bi-arrow-clockwise"></i> New session
-                </button>
-            </form>
-            <a href="/" class="btn btn-outline-primary btn-lg">
-                <i class="bi bi-arrow-left"></i> Back to Dashboard
-            </a>
-        </div>
+    <div class="content-card-actions training-cta">
+        <form method="post" asp-page-handler="ResetSession">
+            <button type="submit" class="output-action">
+                <i class="bi bi-arrow-clockwise"></i> new session
+            </button>
+        </form>
+        <a class="output-action" asp-page="/Index">
+            <i class="bi bi-arrow-left"></i> back to dashboard
+        </a>
     </div>
 </div>
 
-<style>
-    /* Stats Card */
-    .stats-card {
-        background: var(--vs-panel);
-        border: 1px solid var(--vs-border);
-        border-radius: var(--border-radius-lg);
-        box-shadow: var(--card-shadow);
-        transition: var(--transition-base);
-    }
-
-    .stats-card:hover {
-        box-shadow: var(--card-shadow-hover);
-    }
-
-    .stats-card .card-body {
-        padding: 0.75rem 1rem;
-    }
-
-    .stat-item {
-        padding: 0.5rem;
-    }
-
-    .stat-icon {
-        font-size: 1.5rem;
-        margin-bottom: 0.25rem;
-    }
-
-    .stat-value {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: var(--vs-text);
-    }
-
-    .stat-label {
-        font-size: 0.75rem;
-        color: var(--vs-muted);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    /* Question Card */
-    .question-card {
-        background: var(--vs-panel);
-        border: 1px solid var(--vs-border);
-        border-radius: var(--border-radius-lg);
-        box-shadow: var(--card-shadow);
-        transition: var(--transition-base);
-    }
-
-    .question-card .card-header {
-        background: linear-gradient(135deg, #007acc 0%, #005a9e 100%);
-        color: #fff;
-        padding: 1.5rem;
-        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-        border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
-    }
-
-    .question-card .card-body {
-        padding: 2rem;
-    }
-
-    .question-text {
-        color: var(--vs-text);
-        font-size: 1.5rem;
-        font-weight: 500;
-        line-height: 1.6;
-    }
-
-    .badge-category {
-        background: rgba(255, 255, 255, 0.2);
-        color: #fff;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-size: 0.875rem;
-        font-weight: 500;
-    }
-
-    /* Multiple Choice Options */
-    .choices-container {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    .choice-item {
-        display: flex;
-        align-items: center;
-        padding: 1.25rem 1.5rem;
-        background: var(--vs-panel-alt);
-        border: 2px solid var(--vs-border);
-        border-radius: var(--border-radius-base);
-        cursor: pointer;
-        transition: all 0.2s ease;
-        position: relative;
-    }
-
-    .choice-item:hover {
-        background: #3c3c3c;
-        border-color: var(--vs-accent-strong);
-        transform: translateX(5px);
-    }
-
-    .choice-item input[type="radio"] {
-        margin-right: 1rem;
-        width: 20px;
-        height: 20px;
-        cursor: pointer;
-        accent-color: var(--vs-accent-strong);
-    }
-
-    .choice-item input[type="radio"]:checked + .choice-text {
-        color: var(--vs-accent-strong);
-        font-weight: 600;
-    }
-
-    .choice-text {
-        flex: 1;
-        font-size: 1.125rem;
-        color: var(--vs-text);
-    }
-
-    /* Free Text Input */
-    .form-control {
-        background: var(--vs-panel-alt);
-        border: 2px solid var(--vs-border);
-        color: var(--vs-text);
-        padding: 0.75rem 1rem;
-        border-radius: var(--border-radius-base);
-        font-size: 1.125rem;
-    }
-
-    .form-control:focus {
-        background: var(--vs-panel-alt);
-        border-color: var(--vs-accent-strong);
-        color: var(--vs-text);
-        box-shadow: 0 0 0 0.2rem rgba(0, 122, 204, 0.25);
-    }
-
-    .form-label {
-        color: var(--vs-text);
-        font-weight: 500;
-        margin-bottom: 0.5rem;
-    }
-
-    /* Result Container */
-    .result-container {
-        text-align: center;
-        padding: 2rem;
-        border-radius: var(--border-radius-base);
-        background: var(--vs-panel-alt);
-    }
-
-    .result-icon {
-        font-size: 4rem;
-        margin-bottom: 1rem;
-    }
-
-    .result-title {
-        color: var(--vs-text);
-        margin-bottom: 1.5rem;
-    }
-
-    .correct-answer-box {
-        background: rgba(239, 68, 68, 0.1);
-        border: 1px solid var(--vs-red);
-        padding: 1rem;
-        border-radius: var(--border-radius-base);
-        margin-bottom: 1rem;
-        color: var(--vs-text);
-    }
-
-    .explanation-box {
-        background: rgba(106, 159, 181, 0.1);
-        border: 1px solid var(--vs-accent);
-        padding: 1rem;
-        border-radius: var(--border-radius-base);
-        margin-top: 1rem;
-        color: var(--vs-text);
-        text-align: left;
-    }
-
-    .explanation-box i {
-        color: var(--vs-yellow);
-        margin-right: 0.5rem;
-    }
-
-    /* Completion */
-    .completion-icon {
-        font-size: 5rem;
-        color: var(--vs-yellow);
-        margin-bottom: 1rem;
-    }
-
-    .final-score {
-        background: var(--vs-panel-alt);
-        padding: 2rem;
-        border-radius: var(--border-radius-base);
-        border: 2px solid var(--vs-border);
-    }
-
-    .final-score h3 {
-        color: var(--vs-text);
-        margin-bottom: 0.5rem;
-    }
-
-    /* Buttons */
-    .btn-primary {
-        background: linear-gradient(135deg, #007acc 0%, #005a9e 100%);
-        border: none;
-        padding: 0.75rem 2rem;
-        font-weight: 500;
-        transition: var(--transition-base);
-    }
-
-    .btn-primary:hover {
-        background: linear-gradient(135deg, #005a9e 0%, #004578 100%);
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0, 122, 204, 0.3);
-    }
-
-    .btn-outline-warning {
-        border: 2px solid var(--vs-yellow);
-        color: var(--vs-yellow);
-        background: transparent;
-        transition: var(--transition-base);
-    }
-
-    .btn-outline-warning:hover {
-        background: var(--vs-yellow);
-        color: var(--vs-bg);
-        transform: translateY(-2px);
-    }
-
-    .btn-outline-primary {
-        border: 2px solid var(--vs-accent-strong);
-        color: var(--vs-accent-strong);
-        background: transparent;
-        transition: var(--transition-base);
-    }
-
-    .btn-outline-primary:hover {
-        background: var(--vs-accent-strong);
-        color: #fff;
-        transform: translateY(-2px);
-    }
-
-    /* Responsive */
-    @@media (max-width: 768px) {
-        .question-text {
-            font-size: 1.25rem;
+@section Styles {
+    <style>
+        .training-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: var(--space-3);
         }
 
-        .choice-text {
+        .stat-card {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.25rem;
+            padding: var(--space-4);
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card::before {
+            content: "";
+            position: absolute;
+            inset: 0 0 auto 0;
+            height: 2px;
+            background: var(--panel-token, var(--token-keyword));
+            opacity: 0.85;
+        }
+        .stat-card[data-tone="success"] { --panel-token: var(--token-string); }
+        .stat-card[data-tone="error"]   { --panel-token: var(--token-preprocessor); }
+        .stat-card[data-tone="info"]    { --panel-token: var(--token-attribute); }
+        .stat-card[data-tone="warn"]    { --panel-token: var(--token-type); }
+
+        .stat-icon { color: var(--panel-token); font-size: 1.2rem; }
+        .stat-value {
+            font-family: var(--font-mono);
+            font-variant-numeric: tabular-nums;
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1;
+        }
+        .stat-label {
+            font-family: var(--font-mono);
+            font-size: var(--text-xs);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+        }
+
+        .training-question {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+        }
+        .training-question-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: var(--space-3);
+        }
+        .training-question-head .content-card-title { margin: 0; }
+        .training-question-text {
+            margin: 0;
+            font-family: var(--font-ui);
+            font-size: 1.3rem;
+            line-height: 1.5;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .training-form { display: flex; flex-direction: column; gap: var(--space-3); }
+        .training-choices { display: flex; flex-direction: column; gap: var(--space-2); }
+        .training-choice {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3) var(--space-4);
+            background: var(--panel-alt);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: border-color var(--motion-fast), background var(--motion-fast);
+            color: var(--text);
+            font-family: var(--font-ui);
             font-size: 1rem;
         }
-
-        .stat-value {
-            font-size: 1.5rem;
+        .training-choice:hover { border-color: var(--accent); }
+        .training-choice input[type="radio"] {
+            accent-color: var(--accent);
+            width: 16px;
+            height: 16px;
+        }
+        .training-choice:has(input:checked) {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: color-mix(in oklab, var(--accent) 10%, transparent);
         }
 
-        .stat-icon {
-            font-size: 1.5rem;
+        .training-result {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+            padding: var(--space-4);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: var(--panel-alt);
         }
-    }
-</style>
+        .training-result[data-tone="ok"]  { border-color: color-mix(in oklab, var(--token-string) 50%, var(--border)); }
+        .training-result[data-tone="err"] { border-color: color-mix(in oklab, var(--token-preprocessor) 50%, var(--border)); }
+        .training-result-head { display: flex; align-items: center; gap: var(--space-3); }
+        .training-result-head i { font-size: 1.5rem; }
+        .training-result[data-tone="ok"]  .training-result-head i { color: var(--token-string); }
+        .training-result[data-tone="err"] .training-result-head i { color: var(--token-preprocessor); }
+        .training-result-head h3 { margin: 0; font-family: var(--font-ui); font-size: 1.1rem; color: var(--text); }
+
+        .training-correct,
+        .training-explanation {
+            display: flex;
+            gap: var(--space-3);
+            padding: var(--space-3);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--panel);
+        }
+        .training-correct { flex-direction: column; gap: 0.25rem; }
+        .training-correct span:last-child { color: var(--text); font-family: var(--font-mono); }
+        .training-explanation i {
+            color: var(--token-type);
+            font-size: 1rem;
+            line-height: 1.5;
+            flex-shrink: 0;
+        }
+        .training-explanation > div { display: flex; flex-direction: column; gap: 0.25rem; }
+        .training-explanation p { margin: 0; color: var(--text-soft); line-height: 1.55; }
+
+        .training-cta { justify-content: flex-end; }
+    </style>
+}

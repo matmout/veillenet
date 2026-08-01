@@ -130,3 +130,17 @@ secrets.json
 user-secrets.json
 keys/
 /.agents/*
+
+#Ignore thumbnails created by Windows
+#Ignore files built by Visual Studio
+*.exe
+*.bak
+[Bb]in
+[Dd]ebug*/
+*.lib
+obj/
+[Rr]elease*/
+_ReSharper*/
+[Tt]est[Rr]esult*
+#Nuget packages folder
+packages/

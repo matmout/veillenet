@@ -6,49 +6,59 @@
     ViewData["CanonicalUrl"] = "https://containsharp.com/AiSummary";
 }
 
-<div class="container-fluid">
-    <div class="row mb-4">
-        <div class="col-12">
-            <h1 class="h2 mb-2"><i class="bi bi-stars"></i> AI Summary</h1>
-            <p class="text-muted mb-0">Résumés générés par IA à partir des articles des sources officielles.</p>
-        </div>
-    </div>
+<div class="briefing-stage">
+    <partial name="_PageHeaderPartial" view-data='@(new ViewDataDictionary(ViewData) {
+        { "Icon", "stars" },
+        { "HeaderTitle", "AI Summary" },
+        { "HeaderDescription", "Résumés générés par IA à partir des articles des sources officielles." },
+        { "HeaderTokenColor", "type" }
+    })' />
 
-    <div class="row">
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h2 class="h5 mb-0"><i class="bi bi-card-text"></i> Latest summaries</h2>
-                </div>
-                <div class="card-body" style="max-height: 800px; overflow-y: auto;">
-                    @if (Model.Summaries.Any())
-                    {
-                        <div class="list-group list-group-flush">
-                            @foreach (var item in Model.Summaries.OrderByDescending(s => s.PublishedDate))
-                            {
-                                <div class="list-group-item px-0">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-1">
-                                            <a href="@item.Url" target="_blank" rel="noopener noreferrer" class="text-decoration-none">
-                                                @item.Title
-                                            </a>
-                                        </h6>
-                                    </div>
-                                    <div class="mb-2 small" style="white-space: pre-wrap; line-height: 1.6;">@Html.Raw(VeilleNet.Services.HtmlOutputSanitizer.Sanitize(item.Summary))</div>
-                                    <small class="text-muted">
-                                        <i class="bi bi-tag"></i> @item.Source |
-                                        <i class="bi bi-calendar"></i> @item.PublishedDate.ToString("dd MMM yyyy")
-                                    </small>
-                                </div>
-                            }
+    @if (Model.Summaries.Any())
+    {
+        <ol class="timeline-list">
+            @foreach (var item in Model.Summaries.OrderByDescending(s => s.PublishedDate))
+            {
+                <li class="timeline-item">
+                    <span class="timeline-date">
+                        @item.PublishedDate.ToString("dd MMM yyyy",
+                            new System.Globalization.CultureInfo("en-US"))
+                    </span>
+                    <div class="timeline-content">
+                        <h3 class="timeline-title">
+                            <a href="@item.Url" target="_blank" rel="noopener noreferrer">@item.Title</a>
+                        </h3>
+                        <div class="ai-summary-body">
+                            @Html.Raw(VeilleNet.Services.HtmlOutputSanitizer.Sanitize(item.Summary))
                         </div>
-                    }
-                    else
-                    {
-                        <p class="text-muted text-center mb-0">Loading summaries...</p>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
+                    </div>
+                    <span class="timeline-chip" data-token="type">
+                        <i class="bi bi-tag"></i> @item.Source
+                    </span>
+                </li>
+            }
+        </ol>
+    }
+    else
+    {
+        <article class="content-card" data-token="comment">
+            <h2 class="content-card-title">
+                <i class="bi bi-hourglass-split"></i> loading
+            </h2>
+            <p>Loading summaries…</p>
+        </article>
+    }
 </div>
+
+@section Styles {
+    <style>
+        .ai-summary-body {
+            font-family: var(--font-ui);
+            font-size: var(--text-sm);
+            color: var(--text-soft);
+            line-height: 1.65;
+            white-space: pre-wrap;
+        }
+        .ai-summary-body p:last-child { margin-bottom: 0; }
+    </style>
+}

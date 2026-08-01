@@ -1,26 +1,71 @@
-﻿@page
+@page
 @model ErrorModel
 @{
     ViewData["Title"] = "Error";
+    ViewData["Description"] = "An error occurred while processing your request on ContainSharp.";
 }
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
+<div class="briefing-stage">
+    <partial name="_PageHeaderPartial" view-data='@(new ViewDataDictionary(ViewData) {
+        { "Icon", "exclamation-octagon" },
+        { "HeaderTitle", "Error" },
+        { "HeaderDescription", "Something went wrong while processing your request." },
+        { "HeaderTokenColor", "preprocessor" }
+    })' />
 
-@if (Model.ShowRequestId)
-{
-    <p>
-        <strong>Request ID:</strong> <code>@Model.RequestId</code>
-    </p>
+    <article class="content-card" data-token="preprocessor">
+        <h2 class="content-card-title">
+            <i class="bi bi-bug"></i> stack_trace.log
+        </h2>
+        <p>
+            The request could not be completed. The incident has been logged. You can return to the dashboard or
+            try again — if the issue persists, please include the request identifier below when reporting it.
+        </p>
+
+        @if (Model.ShowRequestId)
+        {
+            <dl class="error-meta">
+                <dt>Request ID</dt>
+                <dd><code>@Model.RequestId</code></dd>
+            </dl>
+        }
+
+        <div class="content-card-actions">
+            <a class="output-action" asp-page="/Index">
+                <i class="bi bi-arrow-left"></i> back to dashboard
+            </a>
+        </div>
+    </article>
+</div>
+
+@section Styles {
+    <style>
+        .error-meta {
+            display: grid;
+            grid-template-columns: max-content 1fr;
+            gap: var(--space-2) var(--space-4);
+            margin: var(--space-3) 0 0;
+            padding: var(--space-3);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--panel-alt);
+            font-family: var(--font-mono);
+            font-size: var(--text-sm);
+        }
+        .error-meta dt {
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-size: var(--text-xs);
+            align-self: center;
+        }
+        .error-meta dd {
+            margin: 0;
+            color: var(--text);
+        }
+        .error-meta code {
+            font-family: var(--font-mono);
+            color: var(--token-preprocessor);
+        }
+    </style>
 }
-
-<h3>Development Mode</h3>
-<p>
-    Swapping to the <strong>Development</strong> environment displays detailed information about the error that occurred.
-</p>
-<p>
-    <strong>The Development environment shouldn't be enabled for deployed applications.</strong>
-    It can result in displaying sensitive information from exceptions to end users.
-    For local debugging, enable the <strong>Development</strong> environment by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>
-    and restarting the app.
-</p>

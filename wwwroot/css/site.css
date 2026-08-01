@@ -999,8 +999,6 @@ small, .small {
    Hero spans full width. Subsequent rows alternate 8/4, 12, 7/5, 5/7.
    =========================================================== */
 .briefing-stage {
-  max-width: 1280px;
-  margin: 0 auto;
   padding: var(--space-5) var(--space-5) var(--space-8);
   display: flex;
   flex-direction: column;
@@ -1829,3 +1827,498 @@ a.status-link:focus-visible {
 .news-meta a:hover {
   color: var(--vs-text);
 }}
+
+/* ===========================================================
+   Page header — IDE bandeau shared across non-home pages.
+   Mirrors the .vs-output titlebar (dots + mono filename) on top
+   of a left-aligned, Inter-typeset title block.
+   =========================================================== */
+.page-header {
+  max-width: 1280px;
+  margin: var(--space-4) auto var(--space-5);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  position: relative;
+  --panel-token: var(--token-keyword);
+}
+
+.page-header[data-token="type"]         { --panel-token: var(--token-type); }
+.page-header[data-token="string"]       { --panel-token: var(--token-string); }
+.page-header[data-token="number"]       { --panel-token: var(--token-number); }
+.page-header[data-token="function"]     { --panel-token: var(--token-function); }
+.page-header[data-token="preprocessor"] { --panel-token: var(--token-preprocessor); }
+.page-header[data-token="attribute"]    { --panel-token: var(--token-attribute); }
+
+.page-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--panel-token);
+  opacity: 0.85;
+}
+
+.page-titlebar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  background: var(--panel-alt);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+.page-titlebar .controls { display: flex; gap: 0.35rem; }
+.page-titlebar .dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  display: inline-block; opacity: 0.6;
+}
+.page-titlebar .dot.close { background: var(--token-preprocessor); }
+.page-titlebar .dot.min   { background: var(--token-type); }
+.page-titlebar .dot.max   { background: var(--token-string); }
+
+.page-titlebar .title {
+  color: var(--text);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.page-titlebar .spacer { flex: 1; }
+
+.page-titlebar-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.page-titlebar-meta i {
+  color: var(--panel-token);
+  opacity: 0.9;
+}
+
+.page-header-body {
+  padding: var(--space-5) var(--space-5) var(--space-5);
+}
+
+.page-header-title {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: var(--text-3xl);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  line-height: 1.15;
+}
+
+.page-header-description {
+  margin: var(--space-2) 0 0;
+  font-family: var(--font-ui);
+  color: var(--text-soft);
+  font-size: var(--text-base, 1rem);
+  line-height: 1.55;
+  max-width: 70ch;
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    margin-left: var(--space-3);
+    margin-right: var(--space-3);
+  }
+  .page-titlebar-meta span {
+    display: none;
+  }
+  .page-header-title {
+    font-size: var(--text-2xl);
+  }
+  .page-header-body {
+    padding: var(--space-4);
+  }
+}
+
+/* ===========================================================
+   Content card — generic body card used outside the briefing grid.
+   Mirrors the `.card` + `.card-header` accent pattern but for pages
+   that don't always have a header strip. The token border-top sits
+   directly on the card so headerless variants stay token-coloured.
+   =========================================================== */
+.content-card {
+  position: relative;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  --panel-token: var(--token-keyword);
+  transition: border-color var(--motion-base), box-shadow var(--motion-base);
+}
+
+.content-card[data-token="type"]         { --panel-token: var(--token-type); }
+.content-card[data-token="string"]       { --panel-token: var(--token-string); }
+.content-card[data-token="number"]       { --panel-token: var(--token-number); }
+.content-card[data-token="function"]     { --panel-token: var(--token-function); }
+.content-card[data-token="preprocessor"] { --panel-token: var(--token-preprocessor); }
+.content-card[data-token="attribute"]    { --panel-token: var(--token-attribute); }
+.content-card[data-token="comment"]      { --panel-token: var(--text-muted); }
+
+.content-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--panel-token);
+  opacity: 0.85;
+}
+
+.content-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow);
+}
+
+.content-card-title {
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--panel-token);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.content-card-title .bi {
+  font-size: 1rem;
+}
+
+.content-card > h2:not(.content-card-title),
+.content-card > h3:not(.content-card-title) {
+  margin-top: 0;
+  margin-bottom: var(--space-3);
+  font-family: var(--font-ui);
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.005em;
+}
+
+.content-card > p {
+  color: var(--text-soft);
+  line-height: 1.65;
+  margin: 0 0 var(--space-3);
+}
+
+.content-card > p:last-child {
+  margin-bottom: 0;
+}
+
+.content-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+/* ===========================================================
+   Page prose — long-form readable content (Privacy, About bio).
+   Caps to a comfortable measure, normalises heading rhythm.
+   =========================================================== */
+.page-prose {
+  max-width: 70ch;
+  color: var(--text-soft);
+  line-height: 1.7;
+  font-size: var(--text-base);
+}
+
+.page-prose > * + * { margin-top: var(--space-4); }
+
+.page-prose h2 {
+  font-family: var(--font-ui);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.005em;
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-2);
+}
+
+.page-prose h2:first-child { margin-top: 0; }
+
+.page-prose h3 {
+  font-family: var(--font-ui);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--text);
+  margin-top: var(--space-5);
+  margin-bottom: var(--space-2);
+}
+
+.page-prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: var(--accent-soft);
+  text-underline-offset: 3px;
+  transition: text-decoration-color var(--motion-fast), color var(--motion-fast);
+}
+
+.page-prose a:hover {
+  color: var(--accent-strong);
+  text-decoration-color: var(--accent);
+}
+
+.page-prose ul, .page-prose ol {
+  padding-left: 1.25rem;
+  margin: 0;
+}
+
+.page-prose li + li { margin-top: var(--space-2); }
+
+.page-prose code {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.05em 0.4em;
+  color: var(--text);
+}
+
+/* ===========================================================
+   Filter bar — unified pattern for History/Releases/etc.
+   A single mono row of token-aware inputs + output-action buttons.
+   =========================================================== */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-3) var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background: var(--panel-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: var(--space-5);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+.filter-bar-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 140px;
+  flex: 1 1 auto;
+}
+
+.filter-bar-field.grow { flex: 2 1 220px; }
+
+.filter-bar-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.filter-bar-input,
+.filter-bar-select {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.45rem 0.7rem;
+  transition: border-color var(--motion-fast), box-shadow var(--motion-fast);
+  width: 100%;
+}
+
+.filter-bar-input::placeholder { color: var(--text-muted); }
+
+.filter-bar-input:focus,
+.filter-bar-select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
+.filter-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-left: auto;
+}
+
+/* Pill-style toggles inside a filter bar (used for category filters) */
+.filter-pill {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-soft);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.35rem 0.8rem;
+  cursor: pointer;
+  transition: color var(--motion-fast), border-color var(--motion-fast), background var(--motion-fast);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.filter-pill:hover {
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+
+.filter-pill.is-active,
+.filter-pill[aria-pressed="true"] {
+  color: var(--panel-token, var(--accent));
+  border-color: var(--panel-token, var(--accent));
+  background: color-mix(in oklab, var(--panel-token, var(--accent)) 12%, transparent);
+}
+
+@media (max-width: 768px) {
+  .filter-bar { padding: var(--space-3); gap: var(--space-3); }
+  .filter-bar-field { min-width: 100%; }
+  .filter-bar-actions { margin-left: 0; width: 100%; }
+}
+
+/* ===========================================================
+   Timeline list — for Releases/NewsletterArchive/AiSummary.
+   Mono date in a left rail, content on the right. No centred cards.
+   =========================================================== */
+.timeline-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline-group {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--border);
+  padding: var(--space-4) 0;
+}
+
+.timeline-group:first-child { border-top: none; padding-top: 0; }
+
+.timeline-group-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 var(--space-3);
+}
+
+.timeline-item {
+  display: grid;
+  grid-template-columns: 9rem 1fr auto;
+  gap: var(--space-4);
+  align-items: baseline;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.timeline-item:last-child { border-bottom: none; }
+
+.timeline-date {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.timeline-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.timeline-title {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.35;
+}
+
+.timeline-title a {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--motion-fast);
+}
+
+.timeline-title a:hover { color: var(--accent); }
+
+.timeline-summary {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+}
+
+.timeline-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.timeline-meta i { margin-right: 0.3rem; }
+
+.timeline-aside {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  white-space: nowrap;
+  align-self: flex-start;
+}
+
+.timeline-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid var(--panel-token, var(--border));
+  color: var(--panel-token, var(--text-soft));
+  background: color-mix(in oklab, var(--panel-token, var(--border)) 12%, transparent);
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+}
+
+.timeline-chip[data-token="string"]       { --panel-token: var(--token-string); }
+.timeline-chip[data-token="type"]         { --panel-token: var(--token-type); }
+.timeline-chip[data-token="number"]       { --panel-token: var(--token-number); }
+.timeline-chip[data-token="function"]     { --panel-token: var(--token-function); }
+.timeline-chip[data-token="preprocessor"] { --panel-token: var(--token-preprocessor); }
+.timeline-chip[data-token="attribute"]    { --panel-token: var(--token-attribute); }
+.timeline-chip[data-token="keyword"]      { --panel-token: var(--token-keyword); }
+
+@media (max-width: 768px) {
+  .timeline-item {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+  .timeline-aside { justify-self: flex-start; }
+}
+

@@ -1,60 +1,42 @@
-/* Shared category-card styles — used by Liens.cshtml and MCP.cshtml */
+/* Shared category-card styles — used by Liens.cshtml and MCP.cshtml.
+   Aligned on the new design system: no gradients, no decorated backgrounds.
+   Card hover uses border-color + shadow (no translate). The category color
+   is expressed via --panel-token (top accent + title icon), consistent
+   with .card-header in site.css. */
 
-/* Card hover effect */
 .category-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: border-color var(--motion-base), box-shadow var(--motion-base);
 }
 
 .category-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow);
 }
 
-/* Card header base */
+/* Card header keeps the IDE tab-strip look. The Bootstrap bg-* classes
+   are mapped to tokens in site.css; here we just normalise padding and
+   keep the title legible. */
 .category-card .card-header {
     position: relative;
     overflow: hidden;
+    padding: var(--space-4) var(--space-5);
 }
 
-/* Card header gradients */
-.category-card .card-header.bg-primary {
-    background: linear-gradient(135deg, #007acc 0%, #005a9e 100%) !important;
-    color: #fff !important;
+.category-card .card-header h2 { margin: 0; }
+.category-card .card-header .small,
+.category-card .card-header .category-description {
+    color: var(--text-soft);
+    margin: var(--space-2) 0 0;
+    text-transform: none;
+    letter-spacing: 0;
 }
 
-.category-card .card-header.bg-info {
-    background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%) !important;
-    color: #fff !important;
-}
-
-.category-card .card-header.bg-success {
-    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%) !important;
-    color: #fff !important;
-}
-
-.category-card .card-header.bg-warning {
-    background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%) !important;
-    color: #fff !important;
-}
-
-.category-card .card-header.bg-danger {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
-    color: #fff !important;
-}
-
-.category-card .card-header.bg-secondary {
-    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%) !important;
-    color: #fff !important;
-}
-
-/* Slide-in animation */
-@keyframes categorySlideInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+/* Token-aware accent reinforcement for known Bootstrap color classes.
+   site.css already sets --panel-token; here we just ensure the title
+   icon picks it up even on category headers. */
+.category-card .card-header.bg-primary   { --panel-token: var(--token-keyword); }
+.category-card .card-header.bg-info      { --panel-token: var(--token-attribute); }
+.category-card .card-header.bg-success   { --panel-token: var(--token-string); }
+.category-card .card-header.bg-warning   { --panel-token: var(--token-type); }
+.category-card .card-header.bg-danger    { --panel-token: var(--token-preprocessor); }
+.category-card .card-header.bg-secondary { --panel-token: var(--token-comment); }

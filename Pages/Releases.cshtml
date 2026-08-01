@@ -6,151 +6,87 @@
     ViewData["CanonicalUrl"] = "https://containsharp.com/Releases";
 }
 
-<div class="container-fluid">
-    <div class="row mb-4">
-        <div class="col-12 text-center">
-            <h1 class="display-5 mb-2"><i class="bi bi-tag"></i> Release Notes</h1>
-            <p class="lead text-muted">Latest releases from the .NET ecosystem — aggregated from GitHub</p>
-        </div>
-    </div>
+<div class="briefing-stage">
+    <partial name="_PageHeaderPartial" view-data='@(new ViewDataDictionary(ViewData) {
+        { "Icon", "tag" },
+        { "HeaderTitle", "Release Notes" },
+        { "HeaderDescription", "Latest releases across the .NET ecosystem, aggregated from official GitHub repositories." },
+        { "HeaderTokenColor", "number" }
+    })' />
 
-    <!-- Framework filter -->
-    <div class="row mb-4">
-        <div class="col-12 text-center">
-            <div class="btn-group flex-wrap" role="group" aria-label="Filter by framework">
-                <a asp-page="/Releases" class="btn @(Model.SelectedFramework == null ? "btn-primary" : "btn-outline-primary")">
-                    All
+    <nav class="filter-bar" aria-label="Filter by framework">
+        <span class="filter-bar-label">framework</span>
+        <div class="filter-bar-actions" style="margin-left: 0; flex-wrap: wrap;">
+            <a asp-page="/Releases"
+               class="filter-pill @(Model.SelectedFramework == null ? "is-active" : "")"
+               aria-pressed="@(Model.SelectedFramework == null ? "true" : "false")">
+                all
+            </a>
+            @foreach (var fw in Model.Frameworks)
+            {
+                var active = Model.SelectedFramework == fw;
+                <a asp-page="/Releases" asp-route-framework="@fw"
+                   class="filter-pill @(active ? "is-active" : "")"
+                   aria-pressed="@(active ? "true" : "false")">
+                    @fw
                 </a>
-                @foreach (var fw in Model.Frameworks)
-                {
-                    <a asp-page="/Releases" asp-route-framework="@fw"
-                       class="btn @(Model.SelectedFramework == fw ? "btn-primary" : "btn-outline-primary")">
-                        @fw
-                    </a>
-                }
-            </div>
+            }
         </div>
-    </div>
+    </nav>
 
-    <!-- Timeline -->
     @if (Model.Releases.Any())
     {
-        <div class="row">
-            <div class="col-lg-10 offset-lg-1">
-                <div class="release-timeline">
-                    @{ var lastMonth = ""; }
-                    @foreach (var release in Model.Releases)
-                    {
-                        var month = release.ReleaseDate.ToString("MMMM yyyy");
-                        if (month != lastMonth)
-                        {
-                            lastMonth = month;
-                            <div class="timeline-month">
-                                <span class="badge bg-secondary fs-6">@month</span>
-                            </div>
-                        }
+        <ol class="timeline-list">
+            @{ var lastMonth = ""; }
+            @foreach (var release in Model.Releases)
+            {
+                var month = release.ReleaseDate.ToString("MMMM yyyy",
+                    new System.Globalization.CultureInfo("en-US"));
+                if (month != lastMonth)
+                {
+                    lastMonth = month;
+                    <li class="timeline-group-label">@month.ToLowerInvariant()</li>
+                }
 
-                        var typeBadge = release.Type switch
-                        {
-                            "Stable" => "bg-success",
-                            "RC" => "bg-warning text-dark",
-                            "Preview" => "bg-info text-dark",
-                            _ => "bg-secondary"
-                        };
+                var typeToken = release.Type switch
+                {
+                    "Stable"  => "string",
+                    "RC"      => "type",
+                    "Preview" => "attribute",
+                    _         => "keyword"
+                };
 
-                        <div class="timeline-item">
-                            <div class="timeline-marker"></div>
-                            <div class="timeline-content card shadow-sm mb-3">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <h5 class="mb-0">
-                                            <a href="@release.Url" target="_blank" class="text-decoration-none">
-                                                @release.Title
-                                            </a>
-                                        </h5>
-                                        <span class="badge @typeBadge ms-2 flex-shrink-0">@release.Type</span>
-                                    </div>
-                                    <div class="d-flex gap-3 mb-2">
-                                        <small class="text-muted">
-                                            <i class="bi bi-tag"></i> @release.Version
-                                        </small>
-                                        <small class="text-muted">
-                                            <i class="bi bi-calendar"></i> @release.ReleaseDate.ToString("dd MMM yyyy")
-                                        </small>
-                                    </div>
-                                    @if (!string.IsNullOrEmpty(release.Description))
-                                    {
-                                        <p class="mb-0 small text-muted">@release.Description</p>
-                                    }
-                                </div>
-                            </div>
+                <li class="timeline-item">
+                    <span class="timeline-date">
+                        @release.ReleaseDate.ToString("dd MMM yyyy",
+                            new System.Globalization.CultureInfo("en-US"))
+                    </span>
+                    <div class="timeline-content">
+                        <h3 class="timeline-title">
+                            <a href="@release.Url" target="_blank" rel="noopener">@release.Title</a>
+                        </h3>
+                        <div class="timeline-meta">
+                            <span><i class="bi bi-tag"></i>@release.Version</span>
                         </div>
-                    }
-                </div>
-            </div>
-        </div>
+                        @if (!string.IsNullOrEmpty(release.Description))
+                        {
+                            <p class="timeline-summary">@release.Description</p>
+                        }
+                    </div>
+                    <span class="timeline-chip" data-token="@typeToken">@release.Type</span>
+                </li>
+            }
+        </ol>
     }
     else
     {
-        <div class="row">
-            <div class="col-12 text-center py-5">
-                <i class="bi bi-cloud-slash display-1 text-muted"></i>
-                <p class="text-muted mt-3">No release notes available. GitHub API may be rate-limited — try again later.</p>
-            </div>
-        </div>
+        <article class="content-card" data-token="comment">
+            <h2 class="content-card-title">
+                <i class="bi bi-cloud-slash"></i> no_releases
+            </h2>
+            <p>
+                No release notes available. The GitHub API may be rate-limited — try again later.
+            </p>
+        </article>
     }
 </div>
-
-@section Styles {
-<style>
-    /* Timeline */
-    .release-timeline {
-        position: relative;
-        padding-left: 2rem;
-    }
-
-    .release-timeline::before {
-        content: '';
-        position: absolute;
-        left: 0.75rem;
-        top: 0;
-        bottom: 0;
-        width: 2px;
-        background: linear-gradient(180deg, var(--bs-primary), var(--bs-info));
-    }
-
-    .timeline-month {
-        position: relative;
-        margin: 1.5rem 0 1rem -0.5rem;
-    }
-
-    .timeline-item {
-        position: relative;
-        padding-bottom: 0.5rem;
-    }
-
-    .timeline-marker {
-        position: absolute;
-        left: -1.65rem;
-        top: 1.2rem;
-        width: 12px;
-        height: 12px;
-        background: var(--bs-primary);
-        border: 2px solid var(--bs-body-bg);
-        border-radius: 50%;
-        z-index: 1;
-    }
-
-    .timeline-content {
-        transition: transform 0.2s ease;
-    }
-
-    .timeline-content:hover {
-        transform: translateX(4px);
-    }
-
-    .btn-group .btn {
-        margin: 0.15rem;
-    }
-</style>
-}

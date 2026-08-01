@@ -6,115 +6,210 @@
     ViewData["CanonicalUrl"] = "https://containsharp.com/History";
 }
 
-<style>
-    .history-filter-input {
-        background-color: #0d1b2a;
-        color: #e8f1ff;
-        border: 1px solid #2d3f5f;
-    }
-    .history-filter-input:focus {
-        background-color: #0d1b2a;
-        color: #e8f1ff;
-        border-color: #3b5b8a;
-        box-shadow: 0 0 0 0.1rem rgba(59, 91, 138, 0.4);
-    }
-    .history-filter-input::placeholder {
-        color: #9fb3d1;
-        opacity: 1;
-    }
-    .history-filter-input option {
-        background-color: #0d1b2a;
-        color: #e8f1ff;
-    }
-</style>
+<div class="briefing-stage">
+    <partial name="_PageHeaderPartial" view-data='@(new ViewDataDictionary(ViewData) {
+        { "Icon", "archive" },
+        { "HeaderTitle", "News Archive" },
+        { "HeaderDescription", "Search by keywords, publication date, or publisher across all stored articles." },
+        { "HeaderTokenColor", "keyword" }
+    })' />
 
-<div class="container-fluid">
-    <partial name="_PageHeaderPartial" view-data='@(new ViewDataDictionary(ViewData) { { "Icon", "archive" }, { "HeaderTitle", "News Archive" }, { "HeaderDescription", "Search by keywords, publication date, or publisher across all stored articles." } })' />
-
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-body bg-light">
-                    <div class="row g-3 align-items-end">
-                        <div class="col-lg-4 col-md-6">
-                            <label class="form-label">Keywords</label>
-                            <input id="keyword" type="text" class="form-control history-filter-input" placeholder="e.g. Blazor, Azure, AI">
-                        </div>
-                        <div class="col-lg-2 col-md-3">
-                            <label class="form-label">From</label>
-                            <input id="startDate" type="date" class="form-control history-filter-input" value="@ViewData["DefaultStartDate"]">
-                        </div>
-                        <div class="col-lg-2 col-md-3">
-                            <label class="form-label">To</label>
-                            <input id="endDate" type="date" class="form-control history-filter-input">
-                        </div>
-                        <div class="col-lg-2 col-md-4">
-                            <label class="form-label">Publisher</label>
-                            <select id="publisher" class="form-select history-filter-input">
-                                <option value="">All</option>
-                                @foreach (var src in Model.Sources)
-                                {
-                                    <option value="@src">@src</option>
-                                }
-                            </select>
-                        </div>
-                        <div class="col-lg-2 col-md-4 d-flex gap-2">
-                            <button id="searchBtn" class="btn btn-primary flex-grow-1"><i class="bi bi-search"></i> Search</button>
-                            <button id="resetBtn" class="btn btn-outline-secondary" title="Reset filters"><i class="bi bi-arrow-counterclockwise"></i></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <form class="filter-bar" id="history-filter" onsubmit="return false;" aria-label="Search archived news">
+        <div class="filter-bar-field grow">
+            <label for="keyword" class="filter-bar-label">keywords</label>
+            <input id="keyword" type="text" class="filter-bar-input"
+                   placeholder="e.g. Blazor, Azure, AI" autocomplete="off" />
         </div>
+        <div class="filter-bar-field">
+            <label for="startDate" class="filter-bar-label">from</label>
+            <input id="startDate" type="date" class="filter-bar-input"
+                   value="@ViewData["DefaultStartDate"]" />
+        </div>
+        <div class="filter-bar-field">
+            <label for="endDate" class="filter-bar-label">to</label>
+            <input id="endDate" type="date" class="filter-bar-input" />
+        </div>
+        <div class="filter-bar-field">
+            <label for="publisher" class="filter-bar-label">publisher</label>
+            <select id="publisher" class="filter-bar-select">
+                <option value="">all</option>
+                @foreach (var src in Model.Sources)
+                {
+                    <option value="@src">@src</option>
+                }
+            </select>
+        </div>
+        <div class="filter-bar-actions">
+            <button id="searchBtn" type="submit" class="output-action">
+                <i class="bi bi-search"></i> search
+            </button>
+            <button id="resetBtn" type="reset" class="output-action" title="Reset filters">
+                <i class="bi bi-arrow-counterclockwise"></i>
+            </button>
+        </div>
+    </form>
+
+    <div class="history-summary">
+        <span class="filter-bar-label">results</span>
+        <span class="history-total tabular-nums">
+            total: <strong id="totalCount">@Model.TotalCount</strong>
+        </span>
     </div>
 
-    <div class="row mb-3">
-        <div class="col-12 d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Results</h5>
-            <div class="text-muted small">Total: <span id="totalCount">@Model.TotalCount</span></div>
-        </div>
-    </div>
-
-    <div class="row" id="results">
+    <div class="history-grid" id="results">
         @foreach (var news in Model.InitialNews)
         {
-            <div class="col-lg-6 mb-4">
-                <div class="card shadow-sm h-100">
-                    <div class="card-body">
-                        <div class="d-flex">
-                            <div class="flex-shrink-0 me-3">
-                                <img src="@(!string.IsNullOrEmpty(news.Image) ? news.Image : Url.Content("~/images/newsia.png"))" alt="@news.Title" style="width:90px; height:70px; object-fit:cover; border-radius:6px;" />
+            var thumb = !string.IsNullOrEmpty(news.Image)
+                ? news.Image
+                : Url.Content("~/images/newsia.png");
+            var summary = news.Summary?.Length > 260
+                ? news.Summary.Substring(0, 260) + "…"
+                : news.Summary;
+
+            <article class="content-card history-card" data-token="keyword">
+                <div class="history-card-body">
+                    <img class="history-thumb" src="@thumb" alt="@news.Title" loading="lazy" />
+                    <div class="history-card-content">
+                        <div class="history-card-head">
+                            <h3 class="history-card-title">
+                                <a href="@news.Url" target="_blank" rel="noopener">@news.Title</a>
+                            </h3>
+                            <div class="history-card-badges">
+                                @if (news.HasAiSummary)
+                                {
+                                    <a href="/AiSummary?url=@Uri.EscapeDataString(news.Url)"
+                                       aria-label="Voir le résumé IA : @news.Title"
+                                       class="history-ai-link">
+                                        <img src="~/images/mcp/technologie-ia.png" alt="" />
+                                    </a>
+                                }
+                                <span class="timeline-chip" data-token="attribute">@news.Source</span>
                             </div>
-                            <div class="flex-grow-1">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <h5 class="card-title mb-1"><a href="@news.Url" target="_blank" class="text-decoration-none">@news.Title</a></h5>
-                                    <div class="d-flex align-items-center ms-2" style="gap:6px;">
-                                        @if (news.HasAiSummary)
-                                        {
-                                            <a href="/AiSummary?url=@Uri.EscapeDataString(news.Url)" aria-label="Voir le résumé IA : @news.Title" class="flex-shrink-0">
-                                                <img src="~/images/mcp/technologie-ia.png" alt="AI Summary Available" style="width: 24px; height: 24px;" />
-                                            </a>
-                                        }
-                                        <span class="badge bg-secondary flex-shrink-0">@news.Source</span>
-                                    </div>
-                                </div>
-                                <p class="card-text small text-muted mb-2">@Html.Raw(VeilleNet.Services.HtmlOutputSanitizer.Sanitize(news.Summary.Length > 200 ? news.Summary.Substring(0, news.Summary.Length < 260 ? news.Summary.Length  : 260) + "..." : news.Summary))</p>
-                                <small class="text-muted"><i class="bi bi-calendar"></i> @news.PublishedDate.ToString("dd MMM yyyy")</small>
-                            </div>
+                        </div>
+                        <p class="history-card-summary">
+                            @Html.Raw(VeilleNet.Services.HtmlOutputSanitizer.Sanitize(summary ?? ""))
+                        </p>
+                        <div class="timeline-meta">
+                            <span><i class="bi bi-calendar"></i>@news.PublishedDate.ToString("dd MMM yyyy")</span>
                         </div>
                     </div>
                 </div>
-            </div>
+            </article>
         }
     </div>
 
-    <div class="row mt-2">
-        <div class="col-12 d-flex justify-content-center gap-2">
-            <button id="prevPage" class="btn btn-outline-secondary" disabled>Previous</button>
-            <button id="nextPage" class="btn btn-outline-primary">Next</button>
-        </div>
+    <div class="history-pagination">
+        <button id="prevPage" class="output-action" disabled>
+            <i class="bi bi-arrow-left"></i> previous
+        </button>
+        <button id="nextPage" class="output-action">
+            next <i class="bi bi-arrow-right"></i>
+        </button>
     </div>
 </div>
+
+@section Styles {
+    <style>
+        .history-summary {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: var(--space-3);
+            margin-bottom: var(--space-3);
+            font-family: var(--font-mono);
+            font-size: var(--text-sm);
+            color: var(--text-muted);
+        }
+        .history-total strong {
+            color: var(--text);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .history-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: var(--space-4);
+        }
+
+        .history-card { padding: var(--space-4); }
+        .history-card-body {
+            display: grid;
+            grid-template-columns: 90px 1fr;
+            gap: var(--space-3);
+            align-items: start;
+        }
+        .history-thumb {
+            width: 90px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--panel-alt);
+        }
+        .history-card-content {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+            min-width: 0;
+        }
+        .history-card-head {
+            display: flex;
+            gap: var(--space-2);
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+        .history-card-title {
+            margin: 0;
+            font-family: var(--font-ui);
+            font-size: var(--text-base);
+            font-weight: 600;
+            line-height: 1.3;
+        }
+        .history-card-title a {
+            color: var(--text);
+            text-decoration: none;
+            transition: color var(--motion-fast);
+        }
+        .history-card-title a:hover { color: var(--accent); }
+        .history-card-badges {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            flex-shrink: 0;
+        }
+        .history-ai-link img {
+            width: 22px;
+            height: 22px;
+            display: block;
+        }
+        .history-card-summary {
+            margin: 0;
+            font-size: var(--text-sm);
+            color: var(--text-soft);
+            line-height: 1.55;
+        }
+
+        .history-pagination {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-2);
+            margin-top: var(--space-5);
+        }
+
+        .history-empty,
+        .history-error {
+            grid-column: 1 / -1;
+            padding: var(--space-5);
+            text-align: center;
+            font-family: var(--font-mono);
+            font-size: var(--text-sm);
+            color: var(--text-muted);
+            border: 1px dashed var(--border);
+            border-radius: var(--radius);
+        }
+        .history-error { color: var(--token-preprocessor); border-color: var(--token-preprocessor); }
+    </style>
+}
 
 @section Scripts {
     <script>
@@ -134,35 +229,36 @@
             const pageSize = 20;
             let total = parseInt(totalEl.textContent || '0');
 
+            const escapeHtml = (s) => (s || '').replace(/[&<>"']/g, c => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[c]));
+
             const renderItems = (items) => {
                 if (!items || !items.length) {
-                    resultsEl.innerHTML = '<div class="col-12"><div class="alert alert-info">No articles found.</div></div>';
+                    resultsEl.innerHTML = '<div class="history-empty">No articles found.</div>';
                     return;
                 }
 
+                const fallbackImg = '@Url.Content("~/images/newsia.png")';
+                const aiIcon = '@Url.Content("~/images/mcp/technologie-ia.png")';
+
                 resultsEl.innerHTML = items.map(n => `
-<div class="col-lg-6 mb-4">
-  <div class="card shadow-sm h-100">
-    <div class="card-body">
-      <div class="d-flex">
-        <div class="flex-shrink-0 me-3">
-          <img src="${n.image || '@Url.Content("~/images/newsia.png")'}" alt="${n.title}" style="width:90px; height:70px; object-fit:cover; border-radius:6px;" />
-        </div>
-        <div class="flex-grow-1">
-          <div class="d-flex justify-content-between align-items-start">
-            <h5 class="card-title mb-1"><a href="${n.url}" target="_blank" class="text-decoration-none">${n.title}</a></h5>
-            <div class="d-flex align-items-center ms-2" style="gap:6px;">
-              ${n.hasSummary ? `<a href="/AiSummary?url=${encodeURIComponent(n.url)}" title="View AI Summary" class="flex-shrink-0"><img src="@Url.Content("~/images/mcp/technologie-ia.png")" alt="AI Summary Available" style="width: 24px; height: 24px;" /></a>` : ''}
-              <span class="badge bg-secondary flex-shrink-0">${n.source}</span>
-            </div>
-          </div>
-          <p class="card-text small text-muted mb-2">${n.summary || ''}</p>
-          <small class="text-muted"><i class="bi bi-calendar"></i> ${n.publishedDate}</small>
+<article class="content-card history-card" data-token="keyword">
+  <div class="history-card-body">
+    <img class="history-thumb" src="${escapeHtml(n.image || fallbackImg)}" alt="${escapeHtml(n.title)}" loading="lazy" />
+    <div class="history-card-content">
+      <div class="history-card-head">
+        <h3 class="history-card-title"><a href="${escapeHtml(n.url)}" target="_blank" rel="noopener">${escapeHtml(n.title)}</a></h3>
+        <div class="history-card-badges">
+          ${n.hasSummary ? `<a href="/AiSummary?url=${encodeURIComponent(n.url)}" class="history-ai-link" aria-label="AI summary"><img src="${aiIcon}" alt="" /></a>` : ''}
+          <span class="timeline-chip" data-token="attribute">${escapeHtml(n.source)}</span>
         </div>
       </div>
+      <p class="history-card-summary">${n.summary || ''}</p>
+      <div class="timeline-meta"><span><i class="bi bi-calendar"></i>${escapeHtml(n.publishedDate)}</span></div>
     </div>
   </div>
-</div>`).join('');
+</article>`).join('');
             };
 
             const updatePagingButtons = () => {
@@ -194,7 +290,7 @@
 
             const load = async () => {
                 const url = `?handler=Search&${buildQuery()}`;
-                resultsEl.innerHTML = '<div class="col-12 text-center text-muted"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+                resultsEl.innerHTML = '<div class="history-empty">Loading…</div>';
                 try {
                     const res = await fetch(url);
                     const data = await res.json();
@@ -203,7 +299,7 @@
                     renderItems(data.items || []);
                     updatePagingButtons();
                 } catch (err) {
-                    resultsEl.innerHTML = '<div class="col-12"><div class="alert alert-danger">Error loading results.</div></div>';
+                    resultsEl.innerHTML = '<div class="history-error">Error loading results.</div>';
                 }
             };
 
@@ -219,9 +315,10 @@
             prevBtn.addEventListener('click', () => { if (page > 1) { page--; load(); } });
             nextBtn.addEventListener('click', () => { page++; load(); });
 
-            [keywordEl].forEach(el => el.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); page = 1; load(); } }));
+            keywordEl.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') { e.preventDefault(); page = 1; load(); }
+            });
 
-            // Ensure default start date on initial load
             ensureStartDate();
         })();
     </script>

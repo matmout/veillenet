@@ -5,13 +5,17 @@
         const modalHTML = `
             <div id="ai-modal-overlay" class="ai-modal-overlay" role="dialog" aria-labelledby="ai-modal-title" aria-modal="true">
                 <div class="ai-modal">
-                    <div class="ai-modal-header">
-                        <h2 id="ai-modal-title" class="ai-modal-title">
-                            <i class="bi bi-stars"></i>
-                            <span>AI Summary</span>
-                        </h2>
+                    <div class="ai-modal-titlebar">
+                        <div class="controls">
+                            <span class="dot close"></span>
+                            <span class="dot min"></span>
+                            <span class="dot max"></span>
+                        </div>
+                        <div class="title" id="ai-modal-title">ai_summary.log</div>
+                        <div class="spacer"></div>
+                        <span class="output-meta tabular-nums" id="ai-modal-date"></span>
                         <button class="ai-modal-close" aria-label="Close modal" id="ai-modal-close-btn">
-                            <i class="bi bi-x-lg"></i>
+                            <i class="bi bi-x" aria-hidden="true"></i>
                         </button>
                     </div>
                     <div class="ai-modal-body" id="ai-modal-body">
@@ -42,6 +46,7 @@
         const closeBtn = document.getElementById('ai-modal-close-btn');
         const modalBody = document.getElementById('ai-modal-body');
         const modalMeta = document.getElementById('ai-modal-meta');
+        const modalDate = document.getElementById('ai-modal-date');
 
         // Close modal function
         function closeModal() {
@@ -99,6 +104,7 @@
                 </div>
             `;
             modalMeta.style.display = 'none';
+            if (modalDate) modalDate.textContent = '';
 
             // Fetch AI summary
             fetch(`/api/ai-summary?url=${encodeURIComponent(articleUrl)}`)
@@ -112,13 +118,17 @@
                     if (data.success) {
                         // Display summary
                         modalBody.innerHTML = data.summary || '<p class="text-muted">No summary available.</p>';
-                        
-                        // Display metadata
-                        if (data.title || data.source || data.publishedDate || data.url) {
+
+                        // Date lives in the titlebar (mono, right-aligned)
+                        if (modalDate && data.publishedDate) {
+                            modalDate.textContent = new Date(data.publishedDate).toLocaleDateString();
+                        }
+
+                        // Display metadata (title, source, view original — date excluded, in titlebar)
+                        if (data.title || data.source || data.url) {
                             const metaHTML = `
                                 ${data.title ? `<div class="ai-modal-meta-item"><i class="bi bi-file-text"></i> ${escapeHtml(data.title)}</div>` : ''}
                                 ${data.source ? `<div class="ai-modal-meta-item"><i class="bi bi-tag"></i> ${escapeHtml(data.source)}</div>` : ''}
-                                ${data.publishedDate ? `<div class="ai-modal-meta-item"><i class="bi bi-calendar"></i> ${new Date(data.publishedDate).toLocaleDateString()}</div>` : ''}
                                 ${data.url ? `<div class="ai-modal-meta-item"><i class="bi bi-link-45deg"></i> <a href="${escapeHtml(data.url)}" target="_blank" rel="noopener" class="ai-modal-meta-link">View original</a></div>` : ''}
                             `;
                             modalMeta.innerHTML = metaHTML;

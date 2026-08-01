@@ -6,245 +6,152 @@
     ViewData["CanonicalUrl"] = "https://containsharp.com/Liens";
 }
 
-<div class="container-fluid">
-    <partial name="_PageHeaderPartial" view-data='@(new ViewDataDictionary(ViewData) { { "Icon", "link-45deg" }, { "HeaderTitle", "Useful Links" }, { "HeaderDescription", "Essential resources for C# developers - Organized by category" } })' />
-
-    <!-- Categories Grid -->
-    <div class="row g-4">
-        @foreach (var category in Model.Categories)
-        {
-            <div class="col-lg-6 mb-4">
-                <div class="card h-100 category-card">
-                    <div class="card-header bg-@category.ColorClass">
-                        <h2 class="h4 mb-0">
-                            <i class="@category.Icon"></i> @category.Name
-                        </h2>
-                        <p class="mb-0 mt-2 small text-muted">@category.Description</p>
-                    </div>
-                    <div class="card-body p-0">
-                        @{ 
-                            var orderedLinks = category.Links
-                                .OrderByDescending(l => l.IsRecommended)
-                                .ThenBy(l => l.Name)
-                                .ToList();
-                        }
-
-                        <div class="links-container vs-scroll" style="max-height: 320px; overflow-y: auto;">
-                            @foreach (var link in orderedLinks)
-                            {
-                                <a href="@link.Url" target="_blank" class="link-item">
-                                    <div class="link-icon">
-                                        <i class="@link.Icon"></i>
-                                    </div>
-                                    <div class="link-content">
-                                        <div class="link-name">
-                                            @link.Name
-                                            @if (link.IsRecommended)
-                                            {
-                                                <span class="ms-2" title="Recommended" aria-label="Recommended">
-                                                    <i class="bi bi-star-fill text-warning"></i>
-                                                </span>
-                                            }
-                                            <i class="bi bi-box-arrow-up-right ms-1 external-icon"></i>
-                                        </div>
-                                        <div class="link-description">
-                                            @link.Description
-                                        </div>
-                                    </div>
-                                </a>
-                            }
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
-    </div>
-
-    <!-- Back to Dashboard -->
-    <div class="row mt-5 mb-4">
-        <div class="col-12 text-center">
-            <a href="/" class="btn btn-outline-primary btn-lg">
-                <i class="bi bi-arrow-left"></i> Back to Dashboard
-            </a>
-        </div>
-    </div>
-</div>
-
 @section Styles {
-    <link rel="stylesheet" href="~/css/category-cards.css" />
-}
+    <link rel="stylesheet" href="~/css/category-cards.css" asp-append-version="true" />
+    <style>
+        .liens-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: var(--space-4);
+        }
 
-<style>
-    /* Page-specific card header */
-    .category-card .card-header {
-        padding: 1.25rem;
-        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-    }
+        .links-container {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            max-height: 360px;
+            overflow-y: auto;
+        }
 
-    .category-card .card-header .small {
-        opacity: 0.9;
-        font-size: 0.85rem;
-    }
-
-    /* Links Container */
-    .links-container {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .link-item {
-        display: flex;
-        align-items: flex-start;
-        padding: 1rem 1.25rem;
-        border-bottom: 1px solid var(--vs-border);
-        transition: all 0.2s ease;
-        text-decoration: none;
-        color: var(--vs-text);
-        position: relative;
-        overflow: visible;
-    }
-
-    .link-item:last-child {
-        border-bottom: none;
-    }
-
-    .link-item::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: 0;
-        background: linear-gradient(90deg, rgba(0, 122, 204, 0.1) 0%, transparent 100%);
-        transition: width 0.3s ease;
-    }
-
-    .link-item:hover {
-        background: rgba(0, 122, 204, 0.05);
-        padding-left: 1.5rem;
-    }
-
-    .link-item:hover::before {
-        width: 4px;
-    }
-
-    .link-item:hover .link-name {
-        color: var(--vs-accent-strong);
-    }
-
-    .link-item:hover .external-icon {
-        opacity: 1;
-        transform: translate(2px, -2px);
-    }
-
-    /* Link Icon */
-    .link-icon {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-        border-radius: 8px;
-        background: var(--vs-panel-alt);
-        border: 1px solid var(--vs-border);
-        margin-right: 1rem;
-        flex-shrink: 0;
-        transition: all 0.2s ease;
-    }
-
-    .link-item:hover .link-icon {
-        background: var(--vs-accent-strong);
-        border-color: var(--vs-accent-strong);
-        color: #fff;
-        transform: scale(1.1) rotate(5deg);
-    }
-
-    .link-icon i {
-        font-size: 1.25rem;
-    }
-
-    /* Link Content */
-    .link-content {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .link-name {
-        font-weight: 600;
-        font-size: 1rem;
-        margin-bottom: 0.25rem;
-        transition: color 0.2s ease;
-        display: flex;
-        align-items: center;
-    }
-
-    .link-description {
-        font-size: 0.925rem;
-        color: var(--vs-muted);
-        line-height: 1.6;
-        padding-bottom: 0.25rem;
-        white-space: normal;
-        overflow: visible;
-    }
-
-    .external-icon {
-        font-size: 0.75rem;
-        opacity: 0;
-        transition: all 0.2s ease;
-    }
-
-    /* Responsive adjustments */
-    @@media (max-width: 768px) {
         .link-item {
-            padding: 0.875rem 1rem;
+            display: grid;
+            grid-template-columns: 40px 1fr;
+            gap: var(--space-3);
+            align-items: start;
+            padding: var(--space-3) var(--space-4);
+            border-bottom: 1px solid var(--border);
+            text-decoration: none;
+            color: var(--text);
+            transition: background var(--motion-fast), color var(--motion-fast);
+        }
+        .links-container li:last-child .link-item { border-bottom: none; }
+
+        .link-item:hover {
+            background: color-mix(in oklab, var(--panel-token, var(--accent)) 8%, transparent);
+        }
+        .link-item:hover .link-name { color: var(--panel-token, var(--accent)); }
+        .link-item:hover .external-icon { opacity: 1; }
+        .link-item:hover .link-icon {
+            border-color: var(--panel-token, var(--accent));
+            color: var(--panel-token, var(--accent));
         }
 
         .link-icon {
-            width: 36px;
-            height: 36px;
-            margin-right: 0.75rem;
+            width: 40px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: var(--panel-alt);
+            color: var(--text-soft);
+            transition: border-color var(--motion-fast), color var(--motion-fast);
         }
+        .link-icon i { font-size: 1.1rem; }
 
-        .link-icon i {
-            font-size: 1.1rem;
+        .link-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+            min-width: 0;
         }
 
         .link-name {
+            font-family: var(--font-ui);
+            font-weight: 600;
             font-size: 0.95rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: color var(--motion-fast);
+        }
+
+        .link-star { color: var(--token-type); font-size: 0.8rem; }
+
+        .external-icon {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            opacity: 0;
+            transition: opacity var(--motion-fast);
+            margin-left: auto;
         }
 
         .link-description {
-            font-size: 0.8rem;
+            font-size: var(--text-sm);
+            color: var(--text-muted);
+            line-height: 1.5;
         }
-    }
 
-    /* Animation on page load */
-    .category-card {
-        animation: categorySlideInUp 0.5s ease-out backwards;
-    }
+        .category-card .card-header .small {
+            color: var(--text-soft);
+            font-size: var(--text-sm);
+        }
+    </style>
+}
 
-    /* Individual animation delays */
-    .col-lg-6:nth-child(1) .category-card {
-        animation-delay: 0.1s;
-    }
+<div class="briefing-stage">
+    <partial name="_PageHeaderPartial" view-data='@(new ViewDataDictionary(ViewData) {
+        { "Icon", "link-45deg" },
+        { "HeaderTitle", "Useful Links" },
+        { "HeaderDescription", "Essential resources for C# developers, organised by category." },
+        { "HeaderTokenColor", "keyword" }
+    })' />
 
-    .col-lg-6:nth-child(2) .category-card {
-        animation-delay: 0.2s;
-    }
+    <div class="liens-grid">
+        @foreach (var category in Model.Categories)
+        {
+            <article class="card category-card">
+                <header class="card-header bg-@category.ColorClass">
+                    <h2 class="h4 mb-0">
+                        <i class="@category.Icon"></i> @category.Name
+                    </h2>
+                    <p class="small">@category.Description</p>
+                </header>
+                <div class="card-body p-0">
+                    @{
+                        var orderedLinks = category.Links
+                            .OrderByDescending(l => l.IsRecommended)
+                            .ThenBy(l => l.Name)
+                            .ToList();
+                    }
+                    <ul class="links-container">
+                        @foreach (var link in orderedLinks)
+                        {
+                            <li>
+                                <a href="@link.Url" target="_blank" rel="noopener" class="link-item">
+                                    <span class="link-icon" aria-hidden="true">
+                                        <i class="@link.Icon"></i>
+                                    </span>
+                                    <span class="link-content">
+                                        <span class="link-name">
+                                            @link.Name
+                                            @if (link.IsRecommended)
+                                            {
+                                                <i class="bi bi-star-fill link-star" title="Recommended"></i>
+                                            }
+                                            <i class="bi bi-box-arrow-up-right external-icon"></i>
+                                        </span>
+                                        <span class="link-description">@link.Description</span>
+                                    </span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </article>
+        }
+    </div>
+</div>
 
-    .col-lg-6:nth-child(3) .category-card {
-        animation-delay: 0.3s;
-    }
-
-    .col-lg-6:nth-child(4) .category-card {
-        animation-delay: 0.4s;
-    }
-
-    .col-lg-6:nth-child(5) .category-card {
-        animation-delay: 0.5s;
-    }
-
-    .col-lg-6:nth-child(6) .category-card {
-        animation-delay: 0.6s;
-    }
-</style>

@@ -40,8 +40,8 @@ public class StackOverflowService : IStackOverflowService
         {
             var httpClient = _httpClientFactory.CreateClient();
             httpClient.DefaultRequestHeaders.Add("User-Agent", "VeilleNet/1.0");
-            
-            using var stream = await httpClient.GetStreamAsync(FeedUrl);
+
+            using var stream = await httpClient.GetStreamAsync("https://stackoverflow.com/feeds/tag?tagnames=c%23&sort=newest");//;FeedUrl);
             using var xmlReader = XmlReader.Create(stream);
             
             var feed = SyndicationFeed.Load(xmlReader);
