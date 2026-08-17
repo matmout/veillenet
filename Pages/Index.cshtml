@@ -52,6 +52,8 @@
                 DefaultImageUrl = "/images/newsia.png",
                 ShowAuthor = false,
                 LoadingText = "Loading AI news...",
+                EmptyStateTitle = "No AI news right now",
+                EmptyStateMessage = "Check back soon for the latest AI coding tool updates.",
                 Items = Model.AINews.ToBlockItems()
             })
         </div>
@@ -71,6 +73,8 @@
                 ImageWidth = 120,
                 ImageHeight = 90,
                 LoadingText = "Loading videos...",
+                EmptyStateTitle = "No videos right now",
+                EmptyStateMessage = "Check back soon for new C# video content.",
                 Items = Model.Videos.ToBlockItems()
             })
         </div>
@@ -111,6 +115,8 @@
                 DefaultIconClass = "bi-newspaper",
                 ShowAuthor = true,
                 LoadingText = "Loading posts...",
+                EmptyStateTitle = "No posts right now",
+                EmptyStateMessage = "Check back soon for the latest .NET blog posts.",
                 Items = Model.BlogPosts.ToBlockItems()
             })
         </div>
@@ -124,6 +130,8 @@
                 ShowAuthor = false,
                 SummaryMaxLength = 260,
                 LoadingText = "Loading WinForms news...",
+                EmptyStateTitle = "No WinForms news right now",
+                EmptyStateMessage = "Check back soon for the latest DevExpress WinForms updates.",
                 Items = Model.WinFormNews.ToBlockItems()
             })
         </div>
@@ -145,6 +153,8 @@
                 ShowTags = true,
                 MaxHeight = 600,
                 LoadingText = "Loading StackOverflow questions...",
+                EmptyStateTitle = "No questions right now",
+                EmptyStateMessage = "Check back soon for the latest StackOverflow activity.",
                 Items = Model.StackOverflowQuestions.ToBlockItems()
             })
         </div>
@@ -159,6 +169,8 @@
                 SanitizeHtml = false,
                 MaxHeight = 600,
                 LoadingText = "Loading projects...",
+                EmptyStateTitle = "No trending projects right now",
+                EmptyStateMessage = "Check back soon for trending C# repos on GitHub.",
                 Items = Model.TrendingProjects.ToBlockItems()
             })
         </div>

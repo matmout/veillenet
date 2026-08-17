@@ -12,6 +12,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using VeilleNet.Data;
 using Quartz;
+using Microsoft.Extensions.Http.Resilience;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -124,8 +125,8 @@ builder.Services.AddDbContextFactory<ApplicationDbContext>((serviceProvider, opt
     if (dbOptions.EnableDetailedErrors) options.EnableDetailedErrors();
 });
 
-// Add HttpClient factory
-builder.Services.AddHttpClient();
+// Add HttpClient factory with retry/backoff resilience for external news API calls
+builder.Services.AddHttpClient(string.Empty).AddStandardResilienceHandler();
 
 // Register application services
 builder.Services.AddSingleton<ICacheService, MemoryCacheService>();
