@@ -10,21 +10,32 @@ public sealed class NewsletterSendJob : IJob
 {
     private readonly IAiSummarizationService _aiSummarizationService;
     private readonly IEmailService _emailService;
+    private readonly IConfiguration _configuration;
     private readonly ILogger<NewsletterSendJob> _logger;
 
     public NewsletterSendJob(
         IAiSummarizationService aiSummarizationService,
         IEmailService emailService,
+        IConfiguration configuration,
         ILogger<NewsletterSendJob> logger)
     {
         _aiSummarizationService = aiSummarizationService;
         _emailService = emailService;
+        _configuration = configuration;
         _logger = logger;
     }
 
     public async Task Execute(IJobExecutionContext context)
     {
         var ct = context.CancellationToken;
+
+        // Interrupteur : "Newsletter:SendEnabled" = false dans appsettings
+        // (ou variable d'env Newsletter__SendEnabled=false) pour couper l'envoi.
+        if (!_configuration.GetValue("Newsletter:SendEnabled", true))
+        {
+            _logger.LogInformation("Newsletter send job skipped: Newsletter:SendEnabled is false");
+            return;
+        }
 
         try
         {
