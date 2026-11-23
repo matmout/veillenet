@@ -33,6 +33,7 @@ public class IndexModel : PageModel
     public int ActiveNewsletterSubscribersCount { get; private set; }
     public bool IsRedditEnabled { get; }
     public string? DailyBriefing { get; private set; }
+    public DateOnly? DailyBriefingDate { get; private set; }
 
     public IndexModel(
         IBlogAggregationService blogService,
@@ -88,10 +89,24 @@ public class IndexModel : PageModel
         try
         {
             DailyBriefing = await _dailyBriefingService.GetOrGenerateDailyBriefingAsync();
+            if (!string.IsNullOrWhiteSpace(DailyBriefing))
+            {
+                DailyBriefingDate = DateOnly.FromDateTime(DateTime.UtcNow);
+            }
+            else
+            {
+                // No briefing for today yet: show the most recent one with its own date.
+                var latest = await _dailyBriefingService.GetLatestDailyBriefingAsync();
+                if (latest != null)
+                {
+                    DailyBriefing = latest.Content;
+                    DailyBriefingDate = latest.BriefingDate;
+                }
+            }
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Failed to load daily briefing; falling back to animation.");
+            _logger.LogWarning(ex, "Failed to load daily briefing.");
         }
     }
 

@@ -53,10 +53,20 @@
   --font-mono:    "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --font-display: "Share Tech", "Inter", system-ui, sans-serif;
 
-  /* ---- Motion (ease-out-quart, no bounce) ---- */
-  --motion-fast: 120ms cubic-bezier(0.22, 1, 0.36, 1);
-  --motion-base: 200ms cubic-bezier(0.22, 1, 0.36, 1);
-  --motion-slow: 360ms cubic-bezier(0.22, 1, 0.36, 1);
+  /* ---- Motion ----
+     One ease-out family, no bounce. Exits run at ~75% of the entrance.
+     The IDE only moves when something real happens. */
+  --ease-out-quint:   cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-expo:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-sine: cubic-bezier(0.37, 0, 0.63, 1); /* bounded pulses only */
+  --dur-1: 120ms;  /* instant feedback */
+  --dur-2: 200ms;  /* hover, menus */
+  --dur-3: 280ms;  /* modal, page content */
+  --dur-4: 420ms;  /* panel entrance */
+  --dur-5: 600ms;  /* data viz draw-in */
+  --motion-fast: var(--dur-1) var(--ease-out-quint);
+  --motion-base: var(--dur-2) var(--ease-out-quint);
+  --motion-slow: var(--dur-3) var(--ease-out-quint);
 
   /* ---- Geometry ---- */
   --radius-sm: 4px;
@@ -231,7 +241,7 @@ a:focus-visible {
 /* Skip to main content link (accessibility) */
 .skip-link {
   position: absolute;
-  top: -40px;
+  top: 0;
   left: 0;
   background: var(--vs-accent-strong);
   color: white;
@@ -239,11 +249,12 @@ a:focus-visible {
   text-decoration: none;
   border-radius: 0 0 4px 0;
   z-index: 100;
-  transition: top 0.2s;
+  transform: translateY(-110%);
+  transition: transform var(--motion-fast);
 }
 
 .skip-link:focus {
-  top: 0;
+  transform: none;
   outline: 2px solid white;
   outline-offset: -2px;
 }
@@ -845,27 +856,6 @@ h1, h2, h3, h4, h5, h6 {
   scrollbar-color: var(--border-strong) var(--panel-alt);
 }
 
-/* Animation Classes */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.fade-in-up {
-  animation: fadeInUp 0.6s ease-out;
-}
-
-/* Smooth transitions for dynamic content - use sparingly */
-.card-body.animate-content > * {
-  animation: fadeInUp 0.4s ease-out;
-}
-
 /* Icon styling */
 .bi {
   vertical-align: -0.125em;
@@ -993,6 +983,38 @@ small, .small {
 .output-stream .warn { color: var(--token-type); }
 .output-stream .err  { color: var(--token-preprocessor); }
 .output-stream .dim  { color: var(--text-muted); }
+
+/* Block caret after the last printed line: blinks a few times, then rests visible. */
+.output-caret {
+  display: inline-block;
+  margin-left: 0.15em;
+  color: var(--text-soft);
+  animation: caret-blink 1s linear 6;
+}
+
+@keyframes caret-blink {
+  0%, 49%   { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+/* Dashboard entrance: panels settle in like build output, once per load.
+   fill-mode backwards so no transform persists after the animation. */
+@keyframes panel-in {
+  from { opacity: 0; transform: translateY(8px); }
+}
+
+.briefing-stage > .briefing-hero,
+.briefing-stage > .briefing-row,
+.briefing-stage > .briefing-cta {
+  animation: panel-in var(--dur-4) var(--ease-out-quint) backwards;
+  animation-delay: calc(var(--i, 0) * 60ms);
+}
+
+.briefing-stage > :nth-child(2) { --i: 1; }
+.briefing-stage > :nth-child(3) { --i: 2; }
+.briefing-stage > :nth-child(4) { --i: 3; }
+.briefing-stage > :nth-child(5) { --i: 4; }
+.briefing-stage > :nth-child(n + 6) { --i: 5; }
 
 /* ===========================================================
    Briefing layout — asymmetric grid (replaces uniform col-lg-6)
@@ -1252,14 +1274,17 @@ small, .small {
   background: var(--surface);
 }
 
-.ide-tab.active::after {
-  content: "";
+/* Active tab underline. Rendered only inside the active tab and named for
+   cross-document view transitions, so it slides to the new tab on navigation. */
+.ide-tab-indicator {
   position: absolute;
   left: 0;
   right: 0;
   bottom: -1px;
   height: 2px;
   background: var(--tab-token, var(--token-keyword));
+  pointer-events: none;
+  view-transition-name: tab-indicator;
 }
 
 .ide-tab[data-token="keyword"]      { --tab-token: var(--token-keyword); }
@@ -1286,10 +1311,34 @@ small, .small {
 }
 
 .ide-tab-group { position: relative; display: inline-flex; align-items: stretch; }
-.ide-tab-group:hover .ide-subtabs,
-.ide-tab-group:focus-within .ide-subtabs,
-.ide-tab-group.open .ide-subtabs {
-  display: block;
+
+/* Desktop: the menu fades in from just under the tab. Closing waits 80ms so a
+   diagonal mouse path to the menu doesn't drop it. Mobile keeps the static list. */
+@media (min-width: 769px) {
+  .ide-subtabs {
+    display: block;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-4px);
+    pointer-events: none;
+    transition:
+      opacity var(--dur-1) var(--ease-out-quint) 80ms,
+      transform var(--dur-1) var(--ease-out-quint) 80ms,
+      visibility 0s linear calc(80ms + var(--dur-1));
+  }
+
+  .ide-tab-group:hover .ide-subtabs,
+  .ide-tab-group:focus-within .ide-subtabs,
+  .ide-tab-group.open .ide-subtabs {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+    transition:
+      opacity var(--dur-2) var(--ease-out-quint),
+      transform var(--dur-2) var(--ease-out-quint),
+      visibility 0s;
+  }
 }
 
 .ide-subtab {
@@ -1356,7 +1405,7 @@ small, .small {
     padding: 0 var(--space-4);
   }
 
-  .ide-tab.active::after { display: none; }
+  .ide-tab-indicator { display: none; }
   .ide-tab.active { border-left: 2px solid var(--tab-token, var(--token-keyword)); }
 
   .ide-subtabs {
@@ -1466,55 +1515,6 @@ a.status-link:focus-visible {
   gap: 0.25rem;
   flex-shrink: 0;
   margin-left: 0.5rem;
-}
-
-/* ---- Icon-only nav with label on hover ---- */
-.nav-icon-bar .nav-icon-item {
-  display: inline-flex;
-  align-items: center;
-  white-space: nowrap;
-  overflow: hidden;
-  max-width: 2rem;          /* icon only */
-  transition: max-width 0.25s ease, padding 0.25s ease;
-  padding-right: 0.25rem;
-}
-
-.nav-icon-bar .nav-icon-item:hover,
-.nav-icon-bar .nav-icon-item:focus,
-.nav-icon-bar .nav-icon-item.active {
-  max-width: 10rem;         /* icon + label */
-}
-
-.nav-icon-bar .nav-label {
-  opacity: 0;
-  max-width: 0;
-  overflow: hidden;
-  transition: opacity 0.2s ease 0.05s, max-width 0.25s ease;
-  pointer-events: none;
-  white-space: nowrap;
-}
-
-.nav-icon-bar .nav-icon-item:hover .nav-label,
-.nav-icon-bar .nav-icon-item:focus .nav-label,
-.nav-icon-bar .nav-icon-item.active .nav-label {
-  opacity: 1;
-  max-width: 8rem;
-}
-
-/* Badge NEW: always visible even when collapsed */
-.nav-icon-bar .nav-badge {
-  flex-shrink: 0;
-}
-
-/* On collapsed mobile menu, show labels fully */
-@media (max-width: 991.98px) {
-  .nav-icon-bar .nav-icon-item {
-    max-width: 100% !important;
-  }
-  .nav-icon-bar .nav-label {
-    opacity: 1 !important;
-    max-width: 100% !important;
-  }
 }
 
 /* Ensure in collapsed navbar (mobile) labels and dropdown items are visible and readable */
@@ -1638,7 +1638,6 @@ a.status-link:focus-visible {
   border-radius: 4px;
   position: absolute;
   top: 0;
-  animation: hand-type 0.3s infinite alternate ease-in-out;
 }
 
 .dev-hand.left {
@@ -1667,9 +1666,15 @@ a.status-link:focus-visible {
   to   { transform: translateY(2px); }
 }
 
-/* Au survol : typing frénétique */
-.dev-typer:hover .dev-hand {
-  animation-duration: 0.15s;
+/* Hands rest by default; they type on hover and while the dashboard
+   briefing is being printed (.is-typing, set by site.js). */
+.dev-typer:hover .dev-hand,
+.dev-typer.is-typing .dev-hand {
+  animation: hand-type 0.3s infinite alternate var(--ease-in-out-sine);
+}
+.dev-typer:hover .dev-hand.right,
+.dev-typer.is-typing .dev-hand.right {
+  animation-delay: 0.15s;
 }
 
 .navbar .navbar-toggler {
@@ -2320,3 +2325,85 @@ a.status-link:focus-visible {
   .timeline-aside { justify-self: flex-start; }
 }
 
+
+/* ===========================================================
+   Page transitions (cross-document View Transitions)
+   Switching page = switching file in the editor: the chrome and status
+   bar stay put, only the content fades, the tab underline slides.
+   Progressive enhancement: browsers without support navigate as usual.
+   =========================================================== */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+}
+
+.ide-chrome        { view-transition-name: chrome; }
+.ide-statusbar     { view-transition-name: statusbar; }
+main#main-content  { view-transition-name: content; }
+
+::view-transition-old(chrome),
+::view-transition-new(chrome),
+::view-transition-old(statusbar),
+::view-transition-new(statusbar) {
+  animation: none;
+}
+
+::view-transition-old(content) {
+  animation: vt-fade-out var(--dur-1) var(--ease-out-quint) both;
+}
+
+::view-transition-new(content) {
+  animation: vt-content-in var(--dur-3) var(--ease-out-quint) both;
+}
+
+::view-transition-group(tab-indicator) {
+  animation-duration: var(--dur-3);
+  animation-timing-function: var(--ease-out-quint);
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--dur-2);
+}
+
+@keyframes vt-fade-out {
+  to { opacity: 0; }
+}
+
+@keyframes vt-content-in {
+  from { opacity: 0; transform: translateY(6px); }
+}
+
+/* Theme switch: everything crossfades as one surface (see theme-toggle.js). */
+.theme-switching .ide-chrome,
+.theme-switching .ide-statusbar,
+.theme-switching main#main-content,
+.theme-switching .ide-tab-indicator {
+  view-transition-name: none;
+}
+
+/* ===========================================================
+   Reduced motion: no movement, state changes stay instant.
+   =========================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Loading indicators keep turning (slowly): they convey progress, not decoration. */
+  .ai-modal-loading i,
+  .loader-ring,
+  .loader-ring::before,
+  .loader-ring::after,
+  .spinner-border,
+  .spinner-grow {
+    animation-duration: 2s !important;
+    animation-iteration-count: infinite !important;
+  }
+}

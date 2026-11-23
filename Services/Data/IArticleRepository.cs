@@ -24,5 +24,6 @@ public interface IArticleRepository
 
     // Daily Briefing
     Task<DailyBriefingEntity?> GetDailyBriefingByDateAsync(DateOnly date, CancellationToken cancellationToken = default);
+    Task<DailyBriefingEntity?> GetLatestDailyBriefingAsync(CancellationToken cancellationToken = default);
     Task<DailyBriefingEntity> AddOrUpdateDailyBriefingAsync(DateOnly date, string content, int articleCount, CancellationToken cancellationToken = default);
 }

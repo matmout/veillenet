@@ -19,19 +19,6 @@
     color: #fff;
     font-size: 1.5rem;
     box-shadow: 0 4px 16px rgba(0, 122, 204, 0.35);
-    animation: pulse-icon 3s ease-in-out infinite;
-}
-
-@keyframes pulse-icon {
-
-    0%,
-    100% {
-        box-shadow: 0 4px 16px rgba(0, 122, 204, 0.35);
-    }
-
-    50% {
-        box-shadow: 0 4px 24px rgba(0, 122, 204, 0.55);
-    }
 }
 
 /* ---- Alert Banner ---- */
@@ -299,6 +286,11 @@
     width: 2px;
     background: var(--vs-accent-strong);
     box-shadow: 0 0 8px rgba(0, 122, 204, 0.5);
+    animation: radar-fade-in var(--dur-3) var(--ease-out-quint) 450ms backwards;
+}
+
+@keyframes radar-fade-in {
+    from { opacity: 0; }
 }
 
 /* Glowing dot at top of today line */
@@ -352,10 +344,16 @@
     gap: 0.35rem;
     padding: 0 0.6rem;
     cursor: pointer;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    transition: transform var(--motion-fast), box-shadow var(--motion-fast);
     z-index: 3;
     min-width: 40px;
     overflow: hidden;
+    animation: radar-bar-in var(--dur-5) var(--ease-out-expo) backwards;
+    animation-delay: calc(min(var(--row, 0), 12) * 40ms);
+}
+
+@keyframes radar-bar-in {
+    from { clip-path: inset(0 100% 0 0); }
 }
 
 .timeline-bar:hover {
@@ -393,12 +391,14 @@
 .bar-ending-soon {
     background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
     box-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);
-    animation: pulse-ending 2s ease-in-out infinite;
+    animation: radar-bar-in var(--dur-5) var(--ease-out-expo) backwards,
+               pulse-ending 2s var(--ease-in-out-sine) 2;
+    animation-delay: calc(min(var(--row, 0), 12) * 40ms),
+                     calc(min(var(--row, 0), 12) * 40ms + var(--dur-5));
 }
 
 .bar-ending-soon:hover {
     box-shadow: 0 4px 16px rgba(251, 191, 36, 0.5);
-    animation: none;
 }
 
 @keyframes pulse-ending {
@@ -571,17 +571,12 @@
     box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.35), var(--card-shadow-hover);
 }
 
-.version-card.shake {
-    animation: radar-shake 0.35s ease-in-out;
+.version-card.goto-flash {
+    animation: radar-goto-flash 900ms var(--ease-out-quint);
 }
 
-@keyframes radar-shake {
-    0% { transform: translateX(0); }
-    20% { transform: translateX(-4px); }
-    40% { transform: translateX(4px); }
-    60% { transform: translateX(-3px); }
-    80% { transform: translateX(3px); }
-    100% { transform: translateX(0); }
+@keyframes radar-goto-flash {
+    from { background-color: var(--accent-soft); }
 }
 
 .version-card:hover {
@@ -713,7 +708,7 @@
     align-items: center;
     gap: 0.35rem;
     margin-bottom: 0.65rem;
-    animation: pulse-ending 2s ease-in-out infinite;
+    animation: pulse-ending 2s var(--ease-in-out-sine) 2;
 }
 
 .version-card-features {

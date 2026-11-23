@@ -7,7 +7,13 @@
     ViewData["Description"] = "ContainSharp Dashboard - Your daily C# news hub. Track latest .NET releases, AI coding tools, WinForms updates, official blogs, GitHub trending projects and C# video tutorials.";
     ViewData["CanonicalUrl"] = "https://containsharp.com/";
 
-    var todayLabel = DateTime.UtcNow.ToString("dddd dd MMMM yyyy", new System.Globalization.CultureInfo("en-US")).ToLowerInvariant();
+    var enUs = new System.Globalization.CultureInfo("en-US");
+    var todayLabel = DateTime.UtcNow.ToString("dddd dd MMMM yyyy", enUs).ToLowerInvariant();
+    var today = DateOnly.FromDateTime(DateTime.UtcNow);
+    // Header shows the briefing's own date when it is an older one (fallback).
+    var briefingLabel = Model.DailyBriefingDate is DateOnly bd && bd != today
+        ? bd.ToString("dddd dd MMMM yyyy", enUs).ToLowerInvariant()
+        : todayLabel;
 }
 
 <h1 class="visually-hidden">Daily C# Briefing — @todayLabel</h1>
@@ -24,7 +30,7 @@
                 </div>
                 <div class="title">today_in_60_seconds.log</div>
                 <div class="spacer"></div>
-                <span class="output-meta tabular-nums">@todayLabel</span>
+                <span class="output-meta tabular-nums">@briefingLabel</span>
             </div>
             <div class="output-toolbar">
                 <div class="chip">Show output from: AI Daily Briefing</div>
@@ -219,5 +225,6 @@
 @section Scripts {
     <script>
         window.__dailyBriefing = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.DailyBriefing ?? ""));
+        window.__dailyBriefingDate = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.DailyBriefingDate?.ToString("yyyy-MM-dd") ?? ""));
     </script>
 }

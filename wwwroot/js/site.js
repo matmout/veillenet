@@ -1,148 +1,140 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
-(function () {
-    // Interactive tilt on hover based on mouse position
-    const MAX_ROTATE_DEG = 3; // limit rotation
-    const MAX_TRANSLATE_PX = 6; // slight parallax
-
-    function handleMouseMove(e) {
-        const el = e.currentTarget;
-        const rect = el.getBoundingClientRect();
-        const x = e.clientX - rect.left; // mouse x within element
-        const y = e.clientY - rect.top;  // mouse y within element
-        const cx = rect.width / 2;
-        const cy = rect.height / 2;
-
-        const nx = (x - cx) / cx; // -1..1
-        const ny = (y - cy) / cy; // -1..1
-
-        const rotateY = -nx * MAX_ROTATE_DEG; // tilt left/right
-        const rotateX = ny * MAX_ROTATE_DEG;  // tilt up/down
-        const translateX = nx * MAX_TRANSLATE_PX;
-        const translateY = ny * MAX_TRANSLATE_PX;
-
-        el.style.transform = `translate(${translateX}px, ${translateY}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-    }
-
-    function handleMouseLeave(e) {
-        const el = e.currentTarget;
-        el.style.transform = ""; // reset to CSS default (with transition)
-    }
-
-    function initHoverTilt() {
-        document.querySelectorAll('.hover-tilt').forEach(el => {
-            // Ensure GPU acceleration
-            el.style.willChange = 'transform';
-            el.addEventListener('mousemove', handleMouseMove);
-            el.addEventListener('mouseleave', handleMouseLeave);
-        });
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initHoverTilt);
-    } else {
-        initHoverTilt();
-    }
-})();
-
+﻿// Dashboard hero: "today_in_60_seconds.log".
+// Prints the daily briefing like build output, once per briefing, then stays static.
+// Skippable (click / Escape), replayable (reload button), instant under reduced motion.
 (function () {
   const el = document.getElementById('output-stream');
   if (!el) return;
 
-  const delay = (ms) => new Promise(r => setTimeout(r, ms));
-  const print = async (line, cls = '') => {
-    const div = document.createElement('div');
-    if (cls) div.className = cls;
-    div.textContent = line;
-    el.appendChild(div);
-    el.scrollTop = el.scrollHeight;
-    await delay(60 + Math.random() * 120);
-  };
-
-  const timestamp = () => new Date().toISOString().replace('T', ' ').replace('Z', '');
-
-  const briefingScenario = async (briefing) => {
-    el.innerHTML = '';
-    await print(`[${timestamp()}] Generating AI daily briefing...`, 'dim');
-    await print('');
-
-    // Split briefing into lines and display each as a typed output line
-    const lines = briefing.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-    for (const line of lines) {
-      // Bullet points get a visual highlight, other lines dim
-      const cls = line.startsWith('•') ? 'ok' : 'dim';
-      await print(line, cls);
-      await delay(200 + Math.random() * 300);
-    }
-
-    await print('');
-    await print(`[${timestamp()}] Briefing ready — updated once daily.`, 'dim');
-  };
-
-  const buildScenario = async () => {
-    el.innerHTML = '';
-    await print(`[${timestamp()}] dotnet --info`, 'dim');
-    await print(' .NET SDK: 10.0.x (linux-x64)');
-    await print(' ASP.NET Core: 10.0.x');
-    await print('');
-
-    await print(`[${timestamp()}] dotnet new web -n ContainSharp.Web`, 'dim');
-    await print(' Restoring packages for ContainSharp.Web...');
-    await print(' Restore completed in 0.8 sec', 'ok');
-
-    await print(`[${timestamp()}] dotnet build`, 'dim');
-    await print(' Building ContainSharp.Web -> /src/bin/Debug/net10.0/ContainSharp.Web.dll');
-    await print(' Build succeeded', 'ok');
-
-    await print(`[${timestamp()}] dotnet run`, 'dim');
-    await print(' Now listening on: http://0.0.0.0:8080', 'ok');
-    await print(' Application started. Press Ctrl+C to shut down.', 'ok');
-    await print('');
-
-    await print(`[${timestamp()}] Initializing services...`, 'dim');
-    await print(' Connecting to MemoryCache: OK', 'ok');
-    await print(' Connecting to Redis cache... timeout, retrying', 'warn');
-    await print(' Connecting to Redis cache: OK', 'ok');
-    await print(' HTTP client factory ready', 'ok');
-    await print('');
-
-    await print(`[${timestamp()}] Calling external APIs`, 'dim');
-    await print(' GET https://devblogs.microsoft.com/dotnet/feed/ 200 (124ms)', 'ok');
-    await print(' GET https://github.blog/feed/ 200 (98ms)', 'ok');
-    await print(' GET https://community.devexpress.com/blogs/winforms/rss.aspx 200 (156ms)', 'ok');
-    await print(' GET https://api.github.com/search/repositories?q=language:csharp&sort=stars 200 (312ms)', 'ok');
-    await print('');
-
-    await print(`[${timestamp()}] Background jobs`, 'dim');
-    await print(' Cache refresh scheduled in 60 min', 'dim');
-    await print(' GitHub trending refresh scheduled in 6 hours', 'dim');
-    await delay(800);
-
-    await print(`[${timestamp()}] Shutting down...`, 'warn');
-    await print(' Disposing HttpClientFactory', 'dim');
-    await print(' Stopping web server', 'dim');
-    await print('');
-    await print(' --- Restarting ---', 'warn');
-  };
-
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const SEEN_KEY = 'cs-briefing-seen';
   const briefing = (typeof window.__dailyBriefing === 'string' && window.__dailyBriefing.trim().length > 0)
     ? window.__dailyBriefing
     : null;
+  const briefingDate = typeof window.__dailyBriefingDate === 'string' ? window.__dailyBriefingDate : '';
 
-  if (briefing) {
-    // Show briefing once, then stay static
-    (async () => {
-      try { await briefingScenario(briefing); } catch { }
-    })();
+  const typer = document.querySelector('.dev-typer');
+  const cursorChip = document.getElementById('status-cursor');
+
+  const timestamp = () => new Date().toISOString().replace('T', ' ').replace('Z', '');
+
+  function buildLines() {
+    if (!briefing) {
+      return [{ text: 'No briefing available yet.', cls: 'dim', wait: 0 }];
+    }
+    const bullets = briefing.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    const bulletCount = Math.max(1, bullets.filter(l => l.startsWith('•')).length);
+    // Keep the whole sequence under ~2s whatever the number of bullets.
+    const bulletWait = Math.min(220, Math.round(1600 / bulletCount));
+    // stamp: the [timestamp] prefix is added when the line is printed.
+    const lines = [
+      { text: 'Generating AI daily briefing...', stamp: true, cls: 'dim', wait: 80 },
+      { text: '', cls: '', wait: 80 }
+    ];
+    bullets.forEach(line => {
+      lines.push({ text: line, cls: line.startsWith('•') ? 'ok' : 'dim', wait: bulletWait });
+    });
+    lines.push({ text: '', cls: '', wait: 80 });
+    lines.push({ text: 'Briefing ready, updated once daily.', stamp: true, cls: 'dim', wait: 0 });
+    return lines;
+  }
+
+  function appendLine(line) {
+    const div = document.createElement('div');
+    if (line.cls) div.className = line.cls;
+    div.textContent = line.stamp ? `[${timestamp()}] ${line.text}` : line.text;
+    el.appendChild(div);
+    return div.textContent;
+  }
+
+  function setCursor(lineCount, lastText) {
+    if (!cursorChip) return;
+    cursorChip.textContent = `Ln ${lineCount}, Col ${lastText.length + 1}`;
+  }
+
+  function addCaret() {
+    const rows = Array.from(el.children).filter(d => d.textContent.length > 0);
+    const last = rows[rows.length - 1];
+    if (!last) return;
+    const caret = document.createElement('span');
+    caret.className = 'output-caret';
+    caret.setAttribute('aria-hidden', 'true');
+    caret.textContent = '▍';
+    last.appendChild(caret);
+  }
+
+  let run = null; // { lines, index, timer }
+
+  function finish() {
+    if (run && run.timer) clearTimeout(run.timer);
+    run = null;
+    el.setAttribute('aria-busy', 'false');
+    if (typer) typer.classList.remove('is-typing');
+    if (cursorChip) cursorChip.textContent = 'Ln 1, Col 1';
+    addCaret();
+    el.scrollTop = el.scrollHeight;
+  }
+
+  function renderStatic() {
+    el.innerHTML = '';
+    buildLines().forEach(appendLine);
+    finish();
+  }
+
+  function skip() {
+    if (!run) return;
+    for (let i = run.index; i < run.lines.length; i++) appendLine(run.lines[i]);
+    finish();
+  }
+
+  function step() {
+    if (!run) return;
+    const line = run.lines[run.index];
+    const printed = appendLine(line);
+    run.index++;
+    setCursor(el.children.length, printed);
+    el.scrollTop = el.scrollHeight;
+    if (run.index >= run.lines.length) {
+      finish();
+      return;
+    }
+    run.timer = setTimeout(step, line.wait);
+  }
+
+  function play() {
+    if (run && run.timer) clearTimeout(run.timer);
+    el.innerHTML = '';
+    run = { lines: buildLines(), index: 0, timer: null };
+    el.setAttribute('aria-busy', 'true');
+    if (typer) typer.classList.add('is-typing');
+    step();
+  }
+
+  function markSeen() {
+    try { localStorage.setItem(SEEN_KEY, briefingDate); } catch { /* storage unavailable */ }
+  }
+
+  function alreadySeen() {
+    try { return briefingDate !== '' && localStorage.getItem(SEEN_KEY) === briefingDate; } catch { return false; }
+  }
+
+  // Skip on click in the log or Escape while printing.
+  el.addEventListener('click', skip);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && run) skip();
+  });
+
+  // Reload button replays the sequence.
+  const reloadBtn = document.querySelector('.output-action[data-action="reload"]');
+  if (reloadBtn) {
+    reloadBtn.addEventListener('click', function () {
+      if (reduce || !briefing) renderStatic(); else play();
+    });
+  }
+
+  if (!briefing || reduce || alreadySeen()) {
+    renderStatic();
   } else {
-    // Fallback: loop the build animation
-    (async function loop() {
-      while (true) {
-        try { await buildScenario(); } catch { }
-        await delay(900);
-      }
-    })();
+    play();
+    markSeen();
   }
 })();

@@ -4,6 +4,8 @@
 (function () {
     'use strict';
 
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     // ---- Framework Filter ----
     window.filterFramework = function (framework, btn) {
         // Update active button
@@ -164,12 +166,17 @@
             }
 
             document.querySelectorAll('.version-card.selected').forEach(c => c.classList.remove('selected'));
-            card.classList.add('selected', 'shake');
-            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            card.classList.remove('goto-flash');
+            void card.offsetWidth; // force reflow so the animation restarts
+            card.classList.add('selected', 'goto-flash');
+            card.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
 
-            window.setTimeout(() => {
-                card.classList.remove('shake');
-            }, 400);
+            const clearFlash = () => {
+                card.removeEventListener('animationend', clearFlash);
+                card.classList.remove('goto-flash');
+            };
+            card.addEventListener('animationend', clearFlash);
+            window.setTimeout(clearFlash, 1000);
         });
     });
 

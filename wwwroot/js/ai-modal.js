@@ -1,5 +1,7 @@
 // AI Summary Modal - Fetch and display AI summaries in a popup
 (function() {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     // Create modal HTML structure
     function createModalHTML() {
         const modalHTML = `
@@ -49,9 +51,41 @@
         const modalDate = document.getElementById('ai-modal-date');
 
         // Close modal function
+        let cancelPendingClose = null;
+
+        function finishClose() {
+            overlay.classList.remove('active', 'closing');
+            cancelPendingClose = null;
+        }
+
         function closeModal() {
-            overlay.classList.remove('active');
             document.body.style.overflow = ''; // Re-enable scroll
+            if (cancelPendingClose) return;
+            if (reduce) {
+                overlay.classList.remove('active');
+                return;
+            }
+            overlay.classList.add('closing');
+            let done = false;
+            const run = function() {
+                if (done) return;
+                done = true;
+                overlay.removeEventListener('animationend', onEnd);
+                clearTimeout(timer);
+                finishClose();
+            };
+            const onEnd = function(e) {
+                if (e.target === overlay) run();
+            };
+            const timer = setTimeout(run, 300);
+            overlay.addEventListener('animationend', onEnd);
+            cancelPendingClose = function() {
+                done = true;
+                overlay.removeEventListener('animationend', onEnd);
+                clearTimeout(timer);
+                overlay.classList.remove('closing');
+                cancelPendingClose = null;
+            };
         }
 
         // Close on close button click
@@ -94,6 +128,7 @@
         // Open modal and fetch AI summary
         function openModal(articleUrl) {
             // Show modal with loading state
+            if (cancelPendingClose) cancelPendingClose();
             overlay.classList.add('active');
             document.body.style.overflow = 'hidden'; // Disable scroll
             

@@ -99,6 +99,7 @@
             <div class="ide-tab-group">
                 <a class="ide-tab @(activeNews ? "active" : "")" data-token="string" asp-area="" asp-page="/Index" aria-haspopup="true">
                     news.cs
+                    @if (activeNews) { <span class="ide-tab-indicator" aria-hidden="true"></span> }
                 </a>
                 <div class="ide-subtabs" role="menu">
                     <a class="ide-subtab" asp-area="" asp-page="/Index" role="menuitem"><i class="bi bi-house" aria-hidden="true"></i> Dashboard</a>
@@ -112,6 +113,7 @@
             <div class="ide-tab-group">
                 <a class="ide-tab @(activeCsharp ? "active" : "")" data-token="keyword" asp-area="" asp-page="/Roadmap" aria-haspopup="true">
                     csharp.cs
+                    @if (activeCsharp) { <span class="ide-tab-indicator" aria-hidden="true"></span> }
                 </a>
                 <div class="ide-subtabs" role="menu">
                     <a class="ide-subtab" asp-area="" asp-page="/Roadmap" role="menuitem"><i class="bi bi-signpost-2" aria-hidden="true"></i> Roadmap</a>
@@ -123,6 +125,7 @@
             <div class="ide-tab-group">
                 <a class="ide-tab @(activeAi ? "active" : "")" data-token="type" asp-area="" asp-page="/MCP" aria-haspopup="true">
                     ai.cs
+                    @if (activeAi) { <span class="ide-tab-indicator" aria-hidden="true"></span> }
                 </a>
                 <div class="ide-subtabs" role="menu">
                     <a class="ide-subtab" asp-area="" asp-page="/MCP" role="menuitem"><i class="bi bi-plugin" aria-hidden="true"></i> MCP</a>
@@ -138,6 +141,7 @@
             <div class="ide-tab-group">
                 <a class="ide-tab @(activeNewsletter ? "active" : "")" data-token="comment" asp-area="" asp-page="/NewsletterArchive" aria-haspopup="true">
                     newsletter.cs
+                    @if (activeNewsletter) { <span class="ide-tab-indicator" aria-hidden="true"></span> }
                 </a>
                 <div class="ide-subtabs" role="menu">
                     <a class="ide-subtab" asp-area="" asp-page="/NewsletterArchive" role="menuitem"><i class="bi bi-archive" aria-hidden="true"></i> Archive</a>
@@ -156,7 +160,7 @@
         <div class="ide-statusbar-group ide-statusbar-left">
             <span class="status-chip" aria-label="Cursor position">
                 <i class="bi bi-cursor" aria-hidden="true"></i>
-                <span class="tabular-nums">Ln 1, Col 1</span>
+                <span id="status-cursor" class="tabular-nums">Ln 1, Col 1</span>
             </span>
             <span class="status-chip">UTF-8</span>
             <span class="status-chip">C# 13</span>
@@ -234,7 +238,6 @@
     </script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" defer></script>
     <script src="~/js/site.js" asp-append-version="true" defer></script>
-    <script src="~/js/output-shrink.js" asp-append-version="true" defer></script>
     <script src="~/js/ai-modal.js" asp-append-version="true" defer></script>
     <script src="~/js/theme-toggle.js" asp-append-version="true" defer></script>
 

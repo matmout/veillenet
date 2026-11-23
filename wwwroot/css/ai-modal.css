@@ -6,16 +6,27 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.75);
+    background: oklch(0.12 0.01 250 / 0.72);
     z-index: 9998;
-    backdrop-filter: blur(4px);
-    animation: fadeIn 0.2s ease-out;
 }
 
 .ai-modal-overlay.active {
     display: flex;
     align-items: center;
     justify-content: center;
+    animation: aim-overlay-in var(--dur-2) var(--ease-out-quint);
+}
+
+.ai-modal-overlay.active .ai-modal {
+    animation: aim-modal-in var(--dur-3) var(--ease-out-quint);
+}
+
+.ai-modal-overlay.closing {
+    animation: aim-overlay-out var(--dur-2) var(--ease-out-quint) forwards;
+}
+
+.ai-modal-overlay.closing .ai-modal {
+    animation: aim-modal-out var(--dur-2) var(--ease-out-quint) forwards;
 }
 
 .ai-modal {
@@ -28,7 +39,6 @@
     max-height: 85vh;
     display: flex;
     flex-direction: column;
-    animation: slideDown 0.3s ease-out;
     position: relative;
     overflow: hidden;
     --panel-token: var(--token-keyword);
@@ -238,7 +248,7 @@
 .ai-modal-meta-link {
     color: var(--vs-accent);
     text-decoration: none;
-    transition: color 0.2s;
+    transition: color var(--motion-fast);
 }
 
 .ai-modal-meta-link:hover {
@@ -247,14 +257,20 @@
 }
 
 /* Animations */
-@keyframes fadeIn {
+@keyframes aim-overlay-in {
     from { opacity: 0; }
-    to   { opacity: 1; }
 }
 
-@keyframes slideDown {
-    from { opacity: 0; transform: translateY(-30px) scale(0.95); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
+@keyframes aim-overlay-out {
+    to { opacity: 0; }
+}
+
+@keyframes aim-modal-in {
+    from { opacity: 0; transform: translateY(8px) scale(0.98); }
+}
+
+@keyframes aim-modal-out {
+    to { opacity: 0; transform: translateY(4px) scale(0.98); }
 }
 
 @keyframes spin {

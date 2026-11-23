@@ -10,6 +10,12 @@
         return;
     }
 
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) {
+        document.body.removeAttribute('data-trigger-fireworks');
+        return;
+    }
+
     const canvas = document.getElementById('fireworks-canvas');
     if (!canvas) {
         return;

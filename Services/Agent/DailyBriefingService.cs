@@ -1,6 +1,7 @@
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Options;
 using VeilleNet.Models;
+using VeilleNet.Models.Entities;
 using VeilleNet.Services.Data;
 using VeilleNet.Services.News;
 
@@ -9,6 +10,7 @@ namespace VeilleNet.Services.Agent;
 public interface IDailyBriefingService
 {
     Task<string?> GetOrGenerateDailyBriefingAsync(CancellationToken cancellationToken = default);
+    Task<DailyBriefingEntity?> GetLatestDailyBriefingAsync(CancellationToken cancellationToken = default);
 }
 
 public class DailyBriefingService : IDailyBriefingService
@@ -38,6 +40,9 @@ public class DailyBriefingService : IDailyBriefingService
         _redditOptions = redditOptions.Value;
         _logger = logger;
     }
+
+    public Task<DailyBriefingEntity?> GetLatestDailyBriefingAsync(CancellationToken cancellationToken = default)
+        => _articleRepository.GetLatestDailyBriefingAsync(cancellationToken);
 
     public async Task<string?> GetOrGenerateDailyBriefingAsync(CancellationToken cancellationToken = default)
     {

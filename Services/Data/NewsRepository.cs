@@ -754,6 +754,16 @@ public class NewsRepository : IArticleRepository, IAiSummaryRepository, ISubscri
             nameof(GetDailyBriefingByDateAsync), cancellationToken);
     }
 
+    public async Task<DailyBriefingEntity?> GetLatestDailyBriefingAsync(CancellationToken cancellationToken = default)
+    {
+        return await ExecuteWithContextAsync(async context =>
+                await context.DailyBriefings
+                    .AsNoTracking()
+                    .OrderByDescending(b => b.BriefingDate)
+                    .FirstOrDefaultAsync(cancellationToken),
+            nameof(GetLatestDailyBriefingAsync), cancellationToken);
+    }
+
     public async Task<DailyBriefingEntity> AddOrUpdateDailyBriefingAsync(DateOnly date, string content, int articleCount, CancellationToken cancellationToken = default)
     {
         return await ExecuteWithContextAsync(async context =>

@@ -35,7 +35,18 @@
             const current = html.getAttribute('data-bs-theme') || 'dark';
             const next = current === 'dark' ? 'light' : 'dark';
             localStorage.setItem(STORAGE_KEY, next);
-            applyTheme(next);
+
+            const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (!document.startViewTransition || reduce) {
+                applyTheme(next);
+                return;
+            }
+            // Crossfade the whole page as one surface (.theme-switching drops the
+            // per-region transition names used for page navigation).
+            html.classList.add('theme-switching');
+            const transition = document.startViewTransition(function () { applyTheme(next); });
+            const cleanup = function () { html.classList.remove('theme-switching'); };
+            transition.finished.then(cleanup, cleanup);
         });
     });
 
