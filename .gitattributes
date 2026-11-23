@@ -1,7 +1,10 @@
 # Auto detect text files and perform LF normalization
 * text=auto
 
-# Force Git to treat these as binary (will not be committed even if staged)
+# Treat as binary so diffs/PRs never render secret values as plain text.
+# NOTE: this does NOT prevent the file from being committed — .gitignore
+# (plus `git rm --cached` for files already tracked) is what does that.
 appsettings.json binary
 appsettings.Development.json binary
 appsettings.*.json binary
+appsettings*.EXAMPLE.json -binary text
