@@ -225,13 +225,9 @@ public class AiSummarizationService : IAiSummarizationService
                 processed++;
                 _logger.LogInformation("Backfilling entities for article: {Title}", article.Title);
 
-                var messages = new List<ChatMessage>
-                {
-                    new(ChatRole.System, "You are an expert in .NET and software engineering. Extract 3 to 7 key technologies, frameworks, or concepts mentioned in the provided title and summary as named entities. Respond ONLY with a comma-separated list of entities."),
-                    new(ChatRole.User, $"Title: {article.Title}\nSummary: {article.Summary}")
-                };
-
-                var response = await chatClient.GetResponseAsync(messages, cancellationToken: cancellationToken);
+                var messages = BuildEntityExtractionMessages(article.Title, article.Summary);
+                var chatOptions = new ChatOptions { Temperature = _options.Temperature };
+                var response = await chatClient.GetResponseAsync(messages, chatOptions, cancellationToken);
                 var entities = response.Text?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
 
                 if (entities != null && entities.Any())
@@ -350,34 +346,37 @@ public class AiSummarizationService : IAiSummarizationService
         
         if (content.Length > _options.MaxInputChars)
         {
-            content = content[.._options.MaxInputChars];
+            var cutoff = content.LastIndexOf(' ', _options.MaxInputChars - 1);
+            content = cutoff > 0
+                ? content[..cutoff]
+                : content[.._options.MaxInputChars];
         }
 
         _logger.LogInformation("Summarizing article: {Title} ({Url}) ({Content})", post.Title, post.Url, content);
 
         var messages = new List<ChatMessage>
         {
-            new(ChatRole.System,  @"You are a professional .NET technology watch assistant. 
-    Your goal is to produce a concise, expert-level summary of each article and extract key named entities.\n\n
-    Response format:\n
-    [SUMMARY]\n
-    (The summary following the architecture below)\n
-    [ENTITIES]\n
-    (Comma-separated list of 3-7 key technologies, frameworks, or concepts mentioned)\n\n
-    Summary architecture (must ALWAYS be the same, even if the content changes):\n
-    1) Short context introduction (2–3 sentences) describing the main topic and its relevance to .NET or software engineering.\n
-    2) Key insights: 2-4 bullet points, each starting with a strong verb (e.g., 'Explains', 'Introduces', 'Analyzes', 'Compares', 'Highlights').\n
-    3) Practical impact: 1–2 sentences explaining how this content can influence daily work, architecture decisions, tooling, or learning priorities.\n
-    4) Consistent closing line starting with 'Why it matters:' followed by one sentence that summarizes the strategic importance.\n\n
-    Style and constraints:\n
-    - Language: English only.\n
-    - Tone: professional, concise, factual, no marketing language, no hype.\n
-    - Do not hallucinate; if information is missing or unclear, explicitly say what is uncertain instead of inventing details.\n
-    - Reuse a consistent wording style and structure every day, but adapt the content to the specific article so that the summary itself is not repetitive.\n
-    - Emphasize .NET, C#, IA, cloud, architecture, performance, security, or tooling aspects when relevant.\n
-    - Maximum length: 200 words. Be shorter if the article contains little valuable or novel information.\n
-    - Never include code unless it is essential to understand the point, and keep any code extremely brief.\n"),
-            new(ChatRole.User, $"Titre: {post.Title}\nSource: {post.Source}\nURL: {post.Url}\n\nContenu (extrait):\n{content}\n\nTâche: Résume en 4-6 puces, puis une phrase 'Pourquoi c'est important', et liste les entités.")
+            new(ChatRole.System,
+                "You are a professional .NET technology watch assistant.\n" +
+                "Your goal is to produce a concise, expert-level summary of the article below and extract key named entities.\n\n" +
+                "Response format (always follow exactly):\n" +
+                "[SUMMARY]\n" +
+                "(the summary, following the structure below)\n" +
+                "[ENTITIES]\n" +
+                "(a comma-separated list of 3-7 key technologies, frameworks, or concepts mentioned)\n\n" +
+                "Summary structure:\n" +
+                "1) One-sentence hook introducing the topic and its relevance to .NET or software engineering.\n" +
+                "2) 3-5 bullet points (each on its own line, formatted as \"- \" followed by a strong verb such as \"Explains\", \"Introduces\", \"Analyzes\", \"Compares\", \"Highlights\"), covering the key insights AND their practical impact on daily work, architecture decisions, tooling, or learning priorities.\n" +
+                "3) A closing line starting with \"Why it matters:\" followed by one sentence on the strategic importance.\n\n" +
+                "Style and constraints:\n" +
+                "- Language: English only.\n" +
+                "- Tone: professional, concise, factual. No marketing language, no hype.\n" +
+                "- Do not hallucinate: if information is missing or unclear, say so explicitly instead of inventing details.\n" +
+                "- Keep a consistent tone and structure across articles, but tailor the content to each specific article so summaries don't feel repetitive.\n" +
+                "- Emphasize .NET, C#, AI, cloud, architecture, performance, security, or tooling aspects when relevant.\n" +
+                "- Maximum length: 150 words. Be shorter if the article has little valuable or novel information.\n" +
+                "- Never include code unless essential to understanding the point, and keep any code extremely brief."),
+            new(ChatRole.User, $"Title: {post.Title}\nSource: {post.Source}\nURL: {post.Url}\n\nContent (excerpt):\n{content}\n\nSummarize this article following the format and rules defined above.")
         };
 
         var chatOptions = new ChatOptions
@@ -402,9 +401,14 @@ public class AiSummarizationService : IAiSummarizationService
             return null;
         }
 
-        var parts = responseText.Split("[ENTITIES]", StringSplitOptions.RemoveEmptyEntries);
-        var summaryText = parts[0].Replace("[SUMMARY]", "").Trim();
+        var parts = Regex.Split(responseText, @"\[ENTITIES\]", RegexOptions.IgnoreCase);
+        var summaryText = Regex.Replace(parts[0], @"\[SUMMARY\]", "", RegexOptions.IgnoreCase).Trim();
         var entitiesText = parts.Length > 1 ? parts[1].Trim() : "";
+
+        if (parts.Length == 1)
+        {
+            _logger.LogWarning("Mistral response missing [ENTITIES] marker for {Url}; entities will be empty", post.Url);
+        }
 
         var entities = entitiesText.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
 
@@ -429,6 +433,15 @@ public class AiSummarizationService : IAiSummarizationService
         return result;
     }
 
+    private static List<ChatMessage> BuildEntityExtractionMessages(string? title, string? summary)
+    {
+        return new List<ChatMessage>
+        {
+            new(ChatRole.System, "You are an expert in .NET and software engineering. Extract 3 to 7 key technologies, frameworks, or concepts explicitly mentioned in the provided title and summary. Avoid generic terms like \"software\" or \"technology\". Respond ONLY with a comma-separated list of entities, nothing else."),
+            new(ChatRole.User, $"Title: {title}\nSummary: {summary}")
+        };
+    }
+
     private static string AddHtmlToText(string responseText)
     {
         if (string.IsNullOrWhiteSpace(responseText))
@@ -445,6 +458,42 @@ public class AiSummarizationService : IAiSummarizationService
         // Convert encoded **bold** markers back to <strong>
         // After encoding, ** becomes ** (not changed), so we search on that pattern
         text = Regex.Replace(text, @"\*\*(.+?)\*\*", m => $"<strong>{m.Groups[1].Value}</strong>");
+
+        // Convert consecutive "- " bullet lines into a real <ul><li> list instead of
+        // leaving them as plain dashes separated by <br />
+        var lines = text.Split('\n');
+        var rebuilt = new StringBuilder();
+        var inList = false;
+
+        foreach (var line in lines)
+        {
+            if (line.StartsWith("- "))
+            {
+                if (!inList)
+                {
+                    rebuilt.Append("<ul>");
+                    inList = true;
+                }
+
+                rebuilt.Append("<li>").Append(line[2..]).Append("</li>");
+                continue;
+            }
+
+            if (inList)
+            {
+                rebuilt.Append("</ul>\n");
+                inList = false;
+            }
+
+            rebuilt.Append(line).Append('\n');
+        }
+
+        if (inList)
+        {
+            rebuilt.Append("</ul>");
+        }
+
+        text = rebuilt.ToString().TrimEnd('\n');
 
         // Replace remaining newlines with <br /> for email / HTML
         text = text.Replace("\n\n", "<br /><br />");
