@@ -9,7 +9,6 @@ namespace VeilleNet.Services;
 public interface IFrameworkVersionService
 {
     Task<List<FrameworkVersion>> GetAllVersionsAsync();
-    Task<List<FrameworkVersion>> GetVersionsByFrameworkAsync(string framework);
     List<FrameworkVersion> GetEndingSoonVersions(int monthsThreshold = 6);
     List<string> GetFrameworkNames();
     DateTime GetDataVerifiedAt();
@@ -47,14 +46,6 @@ public class FrameworkVersionService : IFrameworkVersionService
 
     public Task<List<FrameworkVersion>> GetAllVersionsAsync() =>
         Task.FromResult(_versions.ToList());
-
-    public Task<List<FrameworkVersion>> GetVersionsByFrameworkAsync(string framework)
-    {
-        var filtered = _versions
-            .Where(v => v.Framework.Equals(framework, StringComparison.OrdinalIgnoreCase))
-            .ToList();
-        return Task.FromResult(filtered);
-    }
 
     public List<FrameworkVersion> GetEndingSoonVersions(int monthsThreshold = 6)
     {

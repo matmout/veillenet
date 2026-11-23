@@ -9,7 +9,6 @@ public interface INewsletterService
     Task<bool> UnsubscribeAsync(string email, string? reason = null);
     Task<bool> IsSubscribedAsync(string email);
     Task<bool> ConfirmSubscriptionAsync(string token);
-    Task<List<string>> GetAllActiveSubscribersEmailsAsync();
     Task<int> GetActiveSubscribersCountAsync();
     Task IncrementEmailSentAsync(string email);
 }
@@ -111,12 +110,6 @@ public class NewsletterService : INewsletterService
     public async Task<bool> IsSubscribedAsync(string email)
     {
         return await _subscriberRepository.IsSubscribedAsync(email);
-    }
-
-    public async Task<List<string>> GetAllActiveSubscribersEmailsAsync()
-    {
-        var subscribers = await _subscriberRepository.GetActiveSubscribersAsync();
-        return subscribers.Select(s => s.Email).ToList();
     }
 
     public async Task<int> GetActiveSubscribersCountAsync()

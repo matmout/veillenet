@@ -2,7 +2,7 @@ namespace VeilleNet.Models.ViewModels;
 
 /// <summary>
 /// Universal item DTO for _NewsBlockPartial, abstracting all model types
-/// (BaseNews, Video, XPost, StackOverflowQuestion, GitHubProject).
+/// (BaseNews, Video, StackOverflowQuestion, GitHubProject).
 /// </summary>
 public class NewsBlockItem
 {
@@ -60,21 +60,6 @@ public static class NewsBlockItemMapper
             PublishedDate = v.PublishedDate,
             Author = v.Channel,
             Image = v.Thumbnail
-        }).ToList();
-
-    public static List<NewsBlockItem> ToBlockItems(this IEnumerable<XPost> items) =>
-        items.Select(p => new NewsBlockItem
-        {
-            Title = string.Empty, // X Posts don't display titles
-            Url = p.Url,
-            Summary = p.Text,
-            PublishedDate = p.PublishedDate,
-            Author = p.Author,
-            Image = !string.IsNullOrEmpty(p.VideoPreviewImageUrl) ? p.VideoPreviewImageUrl : p.MediaUrl,
-            AvatarUrl = p.ProfileImageUrl,
-            ShowVideoOverlay = !string.IsNullOrEmpty(p.VideoUrl) || !string.IsNullOrEmpty(p.VideoPreviewImageUrl),
-            ExternalLinkText = "View on X",
-            ExternalLinkUrl = p.Url
         }).ToList();
 
     public static List<NewsBlockItem> ToBlockItems(this IEnumerable<RedditPost> items) =>

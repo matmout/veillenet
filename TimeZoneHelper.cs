@@ -39,21 +39,4 @@ public static class TimeZoneHelper
     /// </summary>
     public static TimeZoneInfo GetParisTimeZone() => ParisTimeZone.Value;
 
-    /// <summary>
-    /// Converts a UTC DateTime to Paris local time.
-    /// </summary>
-    public static DateTime ConvertUtcToParis(DateTime utcDateTime)
-    {
-        return TimeZoneInfo.ConvertTimeFromUtc(
-            DateTime.SpecifyKind(utcDateTime, DateTimeKind.Utc),
-            GetParisTimeZone());
-    }
-
-    /// <summary>
-    /// Converts a Paris local DateTime to UTC.
-    /// </summary>
-    public static DateTime ConvertParisToUtc(DateTime parisDateTime)
-    {
-        return TimeZoneInfo.ConvertTimeToUtc(parisDateTime, GetParisTimeZone());
-    }
 }

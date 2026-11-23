@@ -6,7 +6,6 @@ using Amazon.SimpleEmail;
 using VeilleNet.Services.News;
 using VeilleNet.Services.Tools;
 using VeilleNet.Services.Agent;
-using VeilleNet.Services.Tools;
 using Amazon.Runtime;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
@@ -150,7 +149,6 @@ builder.Services.AddScoped<INewsDeduplicationService, NewsDeduplicationService>(
 
 // Data services
 builder.Services.AddScoped<VeilleNet.Services.Data.NewsRepository>();
-builder.Services.AddScoped<VeilleNet.Services.Data.INewsRepository>(sp => sp.GetRequiredService<VeilleNet.Services.Data.NewsRepository>());
 builder.Services.AddScoped<VeilleNet.Services.Data.IArticleRepository>(sp => sp.GetRequiredService<VeilleNet.Services.Data.NewsRepository>());
 builder.Services.AddScoped<VeilleNet.Services.Data.IAiSummaryRepository>(sp => sp.GetRequiredService<VeilleNet.Services.Data.NewsRepository>());
 builder.Services.AddScoped<VeilleNet.Services.Data.ISubscriberRepository>(sp => sp.GetRequiredService<VeilleNet.Services.Data.NewsRepository>());
@@ -298,13 +296,6 @@ app.Use(async (context, next) =>
 
 // Configure status code pages for 404
 app.UseStatusCodePagesWithReExecute("/Error404");
-
-//if (!app.Environment.IsDevelopment())
-//{
-//      app.UseExceptionHandler("/Error404");
-//    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-//    // app.UseHsts();
-//}
 
 // Static files with caching headers
 app.UseStaticFiles(new StaticFileOptions

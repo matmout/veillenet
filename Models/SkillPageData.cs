@@ -3,7 +3,6 @@ namespace VeilleNet.Models;
 public class SkillPageData
 {
     public string ReviewLabel { get; set; } = string.Empty;
-    public string CatalogNote { get; set; } = string.Empty;
     public string ArchitectureNote { get; set; } = string.Empty;
     public List<SkillLifecycleStep> Lifecycle { get; set; } = new();
     public List<SkillArchitecturePattern> Architectures { get; set; } = new();

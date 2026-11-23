@@ -8,7 +8,6 @@ public record NewsSearchResult(List<BaseNews> Items, int TotalCount);
 public interface INewsHistoryService
 {
     Task<NewsSearchResult> SearchAsync(string? keyword, DateTime? startDate, DateTime? endDate, string? source, int page = 1, int pageSize = 20, CancellationToken cancellationToken = default);
-    Task<List<BaseNews>> GetRecentAsync(int count = 20, CancellationToken cancellationToken = default);
     Task<List<string>> GetSourcesAsync(CancellationToken cancellationToken = default);
 }
 
@@ -42,23 +41,6 @@ public class NewsHistoryService : INewsHistoryService
         }
         
         return new NewsSearchResult(mapped, total);
-    }
-
-    public async Task<List<BaseNews>> GetRecentAsync(int count = 20, CancellationToken cancellationToken = default)
-    {
-        var (items, _) = await _articleRepository.SearchNewsArticlesAsync(null, null, null, null, 0, Math.Clamp(count, 1, 200), cancellationToken);
-        var mapped = items.Select(MapToBaseNews).ToList();
-
-        // Enrich with HasAiSummary
-        var urls = mapped.Select(n => n.Url).ToList();
-        var existingSummaries = await _aiSummaryRepository.GetExistingAiSummaryUrlsAsync(urls, cancellationToken);
-        
-        foreach (var news in mapped)
-        {
-            news.HasAiSummary = existingSummaries.Contains(news.Url);
-        }
-
-        return mapped;
     }
 
     public Task<List<string>> GetSourcesAsync(CancellationToken cancellationToken = default)

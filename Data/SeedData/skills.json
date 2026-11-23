@@ -1,6 +1,5 @@
 {
   "reviewLabel": "Reviewed for April 2026",
-  "catalogNote": "This page tracks high-frequency skill patterns rather than one-off marketplace entries. The goal is to capture the reusable skill shapes teams keep shipping across coding, research, orchestration, and delivery agents in April 2026.",
   "architectureNote": "There is no single universal skill package, but the shape repeats across ecosystems: a short manifest or instruction entrypoint, optional scripts or tools, supporting references, and a small amount of test or example material.",
   "lifecycle": [
     {

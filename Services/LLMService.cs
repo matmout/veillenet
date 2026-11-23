@@ -10,7 +10,6 @@ namespace VeilleNet.Services;
 public interface ILLMService
 {
     Task<List<LLM>> GetLatestLLMsAsync();
-    Task<List<LLM>> GetTopLLMsAsync(int count);
 }
 
 /// <summary>
@@ -58,9 +57,4 @@ public class LLMService : ILLMService
         return await Task.FromResult(llms);
     }
 
-    public async Task<List<LLM>> GetTopLLMsAsync(int count)
-    {
-        var allLLMs = await GetLatestLLMsAsync();
-        return allLLMs.Take(count).ToList();
-    }
 }

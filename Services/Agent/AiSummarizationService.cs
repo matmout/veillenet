@@ -16,14 +16,11 @@ public interface IAiSummarizationService
 {
     Task<List<AiContentSummary>> GetLatestBlogSummariesAsync(int count = 10, CancellationToken cancellationToken = default);
     Task<List<AiContentSummary>> GetLatestBlogSummariesFromDatabaseAsync(int count = 10, CancellationToken cancellationToken = default);
-    Task<string?> GetDominantThemeFromRecentNewsAsync(CancellationToken cancellationToken = default);
     Task BackfillEntitiesAsync(CancellationToken cancellationToken = default);
-    Task BackfillKeywordsForLastAiSummarizedNewsOnceAsync(int count = 100, CancellationToken cancellationToken = default);
 }
 
 public class AiSummarizationService : IAiSummarizationService
 {
-    private static int _keywordsBackfillStarted;
     private static int _entitiesBackfillStarted;
     private readonly IBlogAggregationService _blogAggregationService;
     private readonly ICacheService _cacheService;
@@ -31,7 +28,6 @@ public class AiSummarizationService : IAiSummarizationService
     private readonly IMistralChatClientFactory _chatClientFactory;
     private readonly IAINewsService _aiNewsService;
     private readonly IWinFormNewsService _winFormNewsService;
-    private readonly IVideoService _videoService;
     private readonly IArticleRepository _articleRepository;
     private readonly IAiSummaryRepository _aiSummaryRepository;
     private readonly MistralOptions _options;
@@ -46,7 +42,6 @@ public class AiSummarizationService : IAiSummarizationService
         IMistralChatClientFactory chatClientFactory,
         IAINewsService aiNewsService,
         IWinFormNewsService winFormNewsService,
-        IVideoService videoService,
         IArticleRepository articleRepository,
         IAiSummaryRepository aiSummaryRepository,
         IOptions<MistralOptions> options,
@@ -60,7 +55,6 @@ public class AiSummarizationService : IAiSummarizationService
         _chatClientFactory = chatClientFactory;
         _aiNewsService = aiNewsService;
         _winFormNewsService = winFormNewsService;
-        _videoService = videoService;
         _articleRepository = articleRepository;
         _aiSummaryRepository = aiSummaryRepository;
         _options = options.Value;
@@ -69,133 +63,10 @@ public class AiSummarizationService : IAiSummarizationService
         _deduplicationService = deduplicationService;
     }
 
-    public async Task BackfillKeywordsForLastAiSummarizedNewsOnceAsync(int count = 100, CancellationToken cancellationToken = default)
-    {
-        if (Interlocked.Exchange(ref _keywordsBackfillStarted, 1) == 1)
-        {
-            return;
-        }
-
-        _logger.LogInformation("Starting one-shot keyword backfill for last {Count} AI summarized news...", count);
-
-        var chatClient = _chatClientFactory.TryCreate();
-        if (chatClient is null) return;
-
-        var articles = await _articleRepository.GetRecentAiSummarizedNewsArticlesAsync(count, cancellationToken);
-        var skipped = 0;
-        var processed = 0;
-        foreach (var article in articles)
-        {
-            try
-            {
-                if (article.Entities != null && article.Entities.Any())
-                {
-                    skipped++;
-                    continue;
-                }
-
-                processed++;
-
-                var messages = new List<ChatMessage>
-                {
-                    new(ChatRole.System, "You are an expert in .NET and software engineering. Extract 3 to 7 key technologies, frameworks, or concepts mentioned in the provided title and summary as named entities. Respond ONLY with a comma-separated list of entities."),
-                    new(ChatRole.User, $"Title: {article.Title}\nSummary: {article.Summary}")
-                };
-
-                var response = await chatClient.GetResponseAsync(messages, cancellationToken: cancellationToken);
-                var entities = response.Text?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
-
-                // Rate limiting: avoid Mistral API burst
-                await Task.Delay(500, cancellationToken);
-
-                if (entities != null && entities.Any())
-                {
-                    await _articleRepository.AddEntitiesToArticleAsync(article.Id, entities, cancellationToken);
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error backfilling keywords for article: {Id}", article.Id);
-            }
-        }
-
-        _logger.LogInformation("One-shot keyword backfill completed. Processed={Processed} SkippedAlreadyTagged={Skipped}", processed, skipped);
-    }
-
     public async Task<List<AiContentSummary>> GetLatestBlogSummariesFromDatabaseAsync(int count = 10, CancellationToken cancellationToken = default)
     {
         var summaries = await _aiSummaryRepository.GetRecentAiSummariesAsync(count, cancellationToken);
         return summaries.Select(s => s.ToAiContentSummary()).ToList();
-    }
-
-    public async Task<string?> GetDominantThemeFromRecentNewsAsync(CancellationToken cancellationToken = default)
-    {
-        var generationDate = DateOnly.FromDateTime(DateTime.UtcNow);
-        var existingTheme = await _articleRepository.GetDominantThemeByDateAsync(generationDate, cancellationToken);
-        if (existingTheme != null)
-        {
-            return FormatThemeOutput(existingTheme.Theme, existingTheme.Rationale);
-        }
-
-        var sinceDate = DateTime.UtcNow.AddDays(-3);
-        var articles = await _articleRepository.GetRecentNewsArticlesAsync(200, cancellationToken);
-        var recentTitles = articles
-            .Where(a => a.PublishedDate >= sinceDate)
-            .Select(a => a.Title?.Trim())
-            .Where(t => !string.IsNullOrWhiteSpace(t))
-            .ToList();
-
-        if (recentTitles.Count == 0)
-        {
-            return null;
-        }
-
-        var chatClient = _chatClientFactory.TryCreate();
-        if (chatClient is null)
-        {
-            _logger.LogWarning("Chat client not configured; unable to detect dominant theme.");
-            return null;
-        }
-
-        var titlesBuilder = new StringBuilder();
-        for (var i = 0; i < recentTitles.Count; i++)
-        {
-            titlesBuilder.Append(i + 1).Append(". ").AppendLine(recentTitles[i]!);
-        }
-
-        var titlesPayload = titlesBuilder.ToString();
-        var messages = new List<ChatMessage>
-        {
-            new(ChatRole.System, "You are a technology trend analyst. Given multiple software and AI news headlines, identify the single dominant theme tying most of them together. Respond with 'Theme: <short theme>' on the first line and one concise sentence explaining the rationale."),
-            new(ChatRole.User, $"Here are {recentTitles.Count} headlines published within the last 3 days:\n{titlesPayload}\n\nIdentify the theme that appears the most across these headlines.")
-        };
-
-        var chatOptions = new ChatOptions { Temperature = _options.Temperature };
-
-        try
-        {
-            var response = await chatClient.GetResponseAsync(messages, chatOptions, cancellationToken);
-            var parsedTheme = ParseDominantThemeResponse(response.Text);
-
-            if (parsedTheme != null)
-            {
-                await _articleRepository.AddOrUpdateDominantThemeAsync(generationDate, parsedTheme.Value.theme, parsedTheme.Value.rationale, cancellationToken);
-                return FormatThemeOutput(parsedTheme.Value.theme, parsedTheme.Value.rationale);
-            }
-
-            var fallback = response.Text?.Trim();
-            if (!string.IsNullOrWhiteSpace(fallback))
-            {
-                await _articleRepository.AddOrUpdateDominantThemeAsync(generationDate, fallback!, null, cancellationToken);
-            }
-
-            return fallback;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error detecting dominant theme from recent news");
-            return null;
-        }
     }
 
     public async Task<List<AiContentSummary>> GetLatestBlogSummariesAsync(int count = 10, CancellationToken cancellationToken = default)
@@ -604,50 +475,4 @@ public class AiSummarizationService : IAiSummarizationService
         return "AiSummary:" + Convert.ToHexString(hash);
     }
 
-    private static (string theme, string? rationale)? ParseDominantThemeResponse(string? responseText)
-    {
-        if (string.IsNullOrWhiteSpace(responseText))
-        {
-            return null;
-        }
-
-        var normalized = responseText.Trim();
-        var lines = normalized
-            .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-
-        if (lines.Length == 0)
-        {
-            return null;
-        }
-
-        var themeLine = lines[0];
-        if (themeLine.StartsWith("Theme:", StringComparison.OrdinalIgnoreCase))
-        {
-            themeLine = themeLine[6..].Trim();
-        }
-
-        if (string.IsNullOrWhiteSpace(themeLine))
-        {
-            return null;
-        }
-
-        var rationale = lines.Length > 1 ? string.Join(' ', lines.Skip(1)).Trim() : null;
-        if (string.IsNullOrWhiteSpace(rationale))
-        {
-            rationale = null;
-        }
-
-        return (themeLine, rationale);
-    }
-
-    private static string FormatThemeOutput(string theme, string? rationale)
-    {
-        var normalizedTheme = theme.StartsWith("Theme:", StringComparison.OrdinalIgnoreCase)
-            ? theme
-            : $"Theme: {theme}";
-
-        return string.IsNullOrWhiteSpace(rationale)
-            ? normalizedTheme
-            : normalizedTheme + Environment.NewLine + rationale;
-    }
 }

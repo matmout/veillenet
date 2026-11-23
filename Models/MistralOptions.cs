@@ -8,6 +8,5 @@ public class MistralOptions
 
     public int CacheMinutes { get; set; } = 360;
     public int MaxInputChars { get; set; } = 12000;
-    public int MaxOutputTokens { get; set; } = 1350;
     public float Temperature { get; set; } = 0.2f;
 }

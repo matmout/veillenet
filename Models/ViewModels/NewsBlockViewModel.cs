@@ -13,7 +13,6 @@ public class NewsBlockViewModel
     public string TokenColor { get; set; } = string.Empty;
     public string HeaderCssClass { get; set; } = string.Empty;
     /// <summary>Inline CSS style for header (legacy; prefer TokenColor).</summary>
-    public string? HeaderStyle { get; set; }
     /// <summary>Raw HTML for custom header icon (e.g., SVG). When set, <see cref="Icon"/> is ignored.</summary>
     public string? HeaderIconHtml { get; set; }
     /// <summary>Optional badge HTML displayed after the title.</summary>
