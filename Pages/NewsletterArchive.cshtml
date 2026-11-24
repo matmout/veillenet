@@ -112,7 +112,7 @@
     }
     else
     {
-        <div class="archive-empty" role="status">
+        <div class="archive-empty empty-state" role="status">
             <span><span class="fatal">fatal:</span> no newsletters in archive</span>
             <span class="hint"><span class="prompt">$</span> subscribe to start receiving the daily briefing.</span>
         </div>
@@ -133,6 +133,7 @@
 }
 
 @section Scripts {
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" defer></script>
     <script>
         (function () {
             document.querySelectorAll('.commit-row').forEach(function (row) {

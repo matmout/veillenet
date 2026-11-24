@@ -5,7 +5,8 @@
   const el = document.getElementById('output-stream');
   if (!el) return;
 
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Read at the moment of use: the preference can change while the page is open.
+  const reduce = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const SEEN_KEY = 'cs-briefing-seen';
   const briefing = (typeof window.__dailyBriefing === 'string' && window.__dailyBriefing.trim().length > 0)
     ? window.__dailyBriefing
@@ -127,14 +128,49 @@
   const reloadBtn = document.querySelector('.output-action[data-action="reload"]');
   if (reloadBtn) {
     reloadBtn.addEventListener('click', function () {
-      if (reduce || !briefing) renderStatic(); else play();
+      if (reduce() || !briefing) renderStatic(); else play();
     });
   }
 
-  if (!briefing || reduce || alreadySeen()) {
+  if (!briefing || reduce() || alreadySeen()) {
     renderStatic();
   } else {
     play();
     markSeen();
   }
+})();
+
+// Form feedback: bring a server-rendered alert into view, and show a pending
+// state on the submit button of POST forms (restored after a bfcache return).
+(function () {
+  const reduce = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelectorAll('.vs-alert[role="alert"]').forEach(function (alert) {
+    alert.scrollIntoView({ block: 'center', behavior: reduce() ? 'auto' : 'smooth' });
+  });
+
+  document.querySelectorAll('form[method="post" i]').forEach(function (form) {
+    form.addEventListener('submit', function (e) {
+      const btn = form.querySelector('[type="submit"]');
+      if (!btn) return;
+      // Next tick: every submit handler has run by then, so a submission
+      // cancelled by client-side validation (jquery-validate) is left alone,
+      // and the button's own name/value has already been submitted.
+      setTimeout(function () {
+        if (e.defaultPrevented) return;
+        btn.classList.add('is-pending');
+        btn.setAttribute('aria-busy', 'true');
+        btn.disabled = true;
+      }, 0);
+    });
+  });
+
+  window.addEventListener('pageshow', function (e) {
+    if (!e.persisted) return;
+    document.querySelectorAll('.is-pending').forEach(function (btn) {
+      btn.classList.remove('is-pending');
+      btn.removeAttribute('aria-busy');
+      btn.disabled = false;
+    });
+  });
 })();

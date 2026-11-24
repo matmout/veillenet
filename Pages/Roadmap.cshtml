@@ -19,23 +19,23 @@
         { "HeaderTokenColor", "number" }
     })' />
 
-    <section class="roadmap-stats">
-        <div class="stat-card" data-tone="keyword">
+    <section class="stat-grid" aria-label="Roadmap summary">
+        <div class="stat-card" data-token="keyword">
             <i class="bi bi-signpost-split stat-icon" aria-hidden="true"></i>
             <div class="stat-value">@sortedPath.Count</div>
             <div class="stat-label">Steps</div>
         </div>
-        <div class="stat-card" data-tone="string">
+        <div class="stat-card" data-token="string">
             <i class="bi bi-star stat-icon" aria-hidden="true"></i>
             <div class="stat-value">@foundationCount</div>
             <div class="stat-label">Foundation</div>
         </div>
-        <div class="stat-card" data-tone="type">
+        <div class="stat-card" data-token="type">
             <i class="bi bi-rocket stat-icon" aria-hidden="true"></i>
             <div class="stat-value">@advancedCount</div>
             <div class="stat-label">Advanced</div>
         </div>
-        <div class="stat-card" data-tone="function">
+        <div class="stat-card" data-token="function">
             <i class="bi bi-trophy stat-icon" aria-hidden="true"></i>
             <div class="stat-value">@specializationCount</div>
             <div class="stat-label">Specialization</div>
@@ -106,161 +106,8 @@
 </div>
 
 @section Styles {
-    <style>
-        .roadmap-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: var(--space-3);
-        }
-        .roadmap-stats .stat-card {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.25rem;
-            padding: var(--space-4);
-            background: var(--panel);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            position: relative;
-            overflow: hidden;
-        }
-        .roadmap-stats .stat-card::before {
-            content: "";
-            position: absolute;
-            inset: 0 0 auto 0;
-            height: 2px;
-            background: var(--panel-token, var(--token-keyword));
-            opacity: 0.85;
-        }
-        .stat-card[data-tone="keyword"]  { --panel-token: var(--token-keyword); }
-        .stat-card[data-tone="string"]   { --panel-token: var(--token-string); }
-        .stat-card[data-tone="type"]     { --panel-token: var(--token-type); }
-        .stat-card[data-tone="function"] { --panel-token: var(--token-function); }
-
-        .roadmap-stats .stat-icon { color: var(--panel-token); font-size: 1.2rem; }
-        .roadmap-stats .stat-value {
-            font-family: var(--font-mono);
-            font-variant-numeric: tabular-nums;
-            font-size: 1.7rem;
-            font-weight: 700;
-            color: var(--text);
-            line-height: 1;
-        }
-        .roadmap-stats .stat-label {
-            font-family: var(--font-mono);
-            font-size: var(--text-xs);
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: var(--text-muted);
-        }
-
-        .roadmap-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-            gap: var(--space-4);
-        }
-
-        .roadmap-card { display: flex; flex-direction: column; gap: var(--space-3); }
-
-        .roadmap-card-head {
-            display: grid;
-            grid-template-columns: 36px 1fr;
-            gap: var(--space-3);
-            align-items: start;
-        }
-
-        .step-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-            background: color-mix(in oklab, var(--panel-token) 18%, transparent);
-            border: 1px solid var(--panel-token);
-            color: var(--panel-token);
-            border-radius: var(--radius);
-            font-family: var(--font-mono);
-            font-weight: 700;
-            font-size: 0.95rem;
-        }
-
-        .roadmap-title {
-            margin: 0;
-            font-family: var(--font-ui);
-            font-size: 1.05rem;
-            font-weight: 600;
-            color: var(--text);
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-        .roadmap-title i { color: var(--panel-token); }
-
-        .roadmap-description {
-            margin: 0.35rem 0 0;
-            color: var(--text-soft);
-            font-size: var(--text-sm);
-            line-height: 1.55;
-        }
-
-        .roadmap-prereq {
-            margin: 0.35rem 0 0;
-            font-family: var(--font-mono);
-            font-size: var(--text-xs);
-            color: var(--text-muted);
-        }
-
-        .roadmap-children {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-2);
-        }
-
-        .roadmap-child {
-            display: grid;
-            grid-template-columns: 12px 1fr;
-            gap: var(--space-3);
-            align-items: start;
-            padding: var(--space-3);
-            background: var(--panel-alt);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-        }
-
-        .roadmap-child[data-token="foundation"]      { --panel-token: var(--token-string); }
-        .roadmap-child[data-token="advanced"]        { --panel-token: var(--token-type); }
-        .roadmap-child[data-token="specialization"]  { --panel-token: var(--token-function); }
-
-        .roadmap-badge {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-top: 0.4rem;
-            background: var(--panel-token, var(--text-muted));
-        }
-
-        .roadmap-child > div { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
-        .roadmap-child-title {
-            font-family: var(--font-ui);
-            font-weight: 600;
-            color: var(--text);
-            font-size: 0.95rem;
-        }
-        .roadmap-child-desc {
-            font-family: var(--font-ui);
-            font-size: var(--text-sm);
-            color: var(--text-muted);
-            line-height: 1.5;
-        }
-
-        .training-cta-card {
-            text-align: left;
-        }
-    </style>
+    <link rel="stylesheet" href="~/css/pages/stat-cards.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/roadmap.css" asp-append-version="true" />
 }
 
 @functions {

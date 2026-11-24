@@ -1,0 +1,24 @@
+/* /Newsletter/ConfirmSubscription — confirmation card + fireworks overlay */
+
+.confirm-card {
+  max-width: 640px;
+}
+
+.confirm-icon {
+  display: inline-block;
+  animation: panel-in var(--dur-3) var(--ease-out-quint) backwards;
+}
+
+.fireworks-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  display: none;
+}
+
+.confirm-thanks {
+  color: var(--text-muted);
+}

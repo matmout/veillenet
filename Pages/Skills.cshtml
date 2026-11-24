@@ -18,8 +18,8 @@
         { "HeaderTokenColor", "type" }
     })' />
 
-    <div class="row g-4 mb-4">
-        <div class="col-xl-7">
+    <div class="row g-4">
+<div class="col-xl-7">
             <div class="card detail-card h-100">
                 <div class="card-header">
                     <h2 class="h4 mb-0"><i class="bi bi-diagram-3"></i> How a skill works</h2>
@@ -85,12 +85,12 @@
         </div>
     </div>
 
-    <div class="section-intro mb-4">
+    <div class="section-intro">
         <h2 class="h3 mb-2"><i class="bi bi-folder2-open"></i> Typical file architecture</h2>
         <p class="mb-0">@Model.PageData.ArchitectureNote</p>
     </div>
 
-    <div class="row g-4 mb-5">
+    <div class="row g-4">
         @foreach (var architecture in Model.PageData.Architectures)
         {
             <div class="col-lg-6">
@@ -101,14 +101,14 @@
                                 <h3 class="h5 mb-1">@architecture.Ecosystem</h3>
                                 <p class="architecture-description mb-0">@architecture.Description</p>
                             </div>
-                            <span class="architecture-badge">@architecture.PackagingStyle</span>
+                            <span class="chip chip--pill architecture-badge">@architecture.PackagingStyle</span>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="file-pill-row">
                             @foreach (var file in architecture.TypicalFiles)
                             {
-                                <span class="file-pill">@file</span>
+                                <span class="chip chip--pill file-pill">@file</span>
                             }
                         </div>
 
@@ -158,8 +158,8 @@
                                     </div>
                                     <div class="tool-content">
                                         <div class="tool-meta">
-                                            <span class="badge-trust">@skill.Ecosystem</span>
-                                            <span class="badge-access">@skill.PackagingStyle</span>
+                                            <span class="chip chip--upper badge-trust">@skill.Ecosystem</span>
+                                            <span class="chip chip--upper badge-access">@skill.PackagingStyle</span>
                                         </div>
                                         <h3 class="tool-name">@skill.Name</h3>
                                         <p class="tool-description">@skill.Description</p>

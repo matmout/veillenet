@@ -1,0 +1,10 @@
+.ai-summary-body {
+    font-family: var(--font-ui);
+    font-size: var(--text-sm);
+    color: var(--text-soft);
+    line-height: 1.65;
+    white-space: pre-wrap;
+    max-width: var(--measure, 72ch);
+    overflow-wrap: break-word;
+}
+.ai-summary-body p:last-child { margin-bottom: 0; }

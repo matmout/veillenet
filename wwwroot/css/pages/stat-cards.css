@@ -1,0 +1,52 @@
+/* Shared stat cards (Roadmap, Training).
+   Scoped under .stat-card so KnowledgeGraph's own .stat-value / .stat-label stay untouched. */
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr));
+    gap: var(--space-3);
+}
+
+.stat-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    min-width: 0;
+    padding: var(--space-4);
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    position: relative;
+    overflow: hidden;
+}
+.stat-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 2px;
+    background: var(--panel-token, var(--token-keyword));
+    opacity: 0.85;
+}
+.stat-card[data-token="keyword"]      { --panel-token: var(--token-keyword); }
+.stat-card[data-token="string"]       { --panel-token: var(--token-string); }
+.stat-card[data-token="type"]         { --panel-token: var(--token-type); }
+.stat-card[data-token="function"]     { --panel-token: var(--token-function); }
+.stat-card[data-token="preprocessor"] { --panel-token: var(--token-preprocessor); }
+.stat-card[data-token="attribute"]    { --panel-token: var(--token-attribute); }
+
+.stat-card .stat-icon { color: var(--panel-token); font-size: 1.2rem; }
+.stat-card .stat-value {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+}
+.stat-card .stat-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+}

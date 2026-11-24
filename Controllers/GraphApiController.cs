@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using VeilleNet.Services.Data;
 
@@ -44,7 +45,7 @@ public class GraphApiController : ControllerBase
                             url = a.Url,
                             date = a.PublishedDate,
                             source = a.Source,
-                            summary = a.AiSummary?.Summary ?? a.Summary
+                            summary = a.AiSummary?.Summary ?? EncodePlainSummary(a.Summary)
                         }).ToList()
                     });
                 }
@@ -60,7 +61,7 @@ public class GraphApiController : ControllerBase
                             label = article.Title,
                             type = "article",
                             date = article.PublishedDate,
-                            summary = article.AiSummary?.Summary ?? article.Summary,
+                            summary = article.AiSummary?.Summary ?? EncodePlainSummary(article.Summary),
                             source = article.Source,
                             url = article.Url,
                             val = 5
@@ -84,4 +85,9 @@ public class GraphApiController : ControllerBase
             return StatusCode(500, "Internal server error");
         }
     }
+
+    // The AI summary is HTML already sanitised before storage; the fallback feed summary is
+    // plain text (tags stripped then decoded), so encode it before the client injects it as HTML.
+    private static string? EncodePlainSummary(string? summary) =>
+        summary is null ? null : WebUtility.HtmlEncode(summary);
 }

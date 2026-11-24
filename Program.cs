@@ -302,12 +302,13 @@ app.UseStaticFiles(new StaticFileOptions
 {
     OnPrepareResponse = ctx =>
     {
-        // Cache static assets for 1 year in production
+        // Versioned URLs (?v=hash from asp-append-version) are immutable for 1 year;
+        // everything else gets a short cache so edits propagate quickly.
         if (!app.Environment.IsDevelopment())
         {
-            const int durationInSeconds = 60 * 60 * 24 * 30; // 30 days
-            ctx.Context.Response.Headers["Cache-Control"] = $"public,max-age={durationInSeconds}";
-            ctx.Context.Response.Headers["Expires"] = DateTime.UtcNow.AddYears(1).ToString("R");
+            ctx.Context.Response.Headers["Cache-Control"] = ctx.Context.Request.Query.ContainsKey("v")
+                ? "public,max-age=31536000,immutable"
+                : "public,max-age=3600";
         }
     }
 });

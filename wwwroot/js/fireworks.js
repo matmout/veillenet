@@ -1,5 +1,5 @@
 // Fireworks animation for newsletter subscription success
-// Triggers a 4-second fireworks celebration
+// Short celebration (about 2.5 seconds), drawn on a transparent canvas
 
 (function() {
     'use strict';
@@ -23,12 +23,21 @@
 
     const ctx = canvas.getContext('2d');
     canvas.style.display = 'block';
+    canvas.style.opacity = '1';
+    canvas.style.transition = 'opacity var(--dur-3) var(--ease-out-quint)';
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
     const particles = [];
     const fireworks = [];
-    const colors = ['#ff0844', '#ffb700', '#00e5ff', '#00ff88', '#b300ff', '#ff006e'];
+    // Palette comes from the design tokens (oklch strings are valid canvas colours)
+    const rootStyle = getComputedStyle(document.documentElement);
+    const tokenColors = ['--token-string', '--token-keyword', '--token-type', '--token-function', '--token-number']
+        .map(name => rootStyle.getPropertyValue(name).trim())
+        .filter(Boolean);
+    const colors = tokenColors.length ? tokenColors : ['currentColor'];
+    let raf = 0;
+    let running = true;
 
     class Particle {
         constructor(x, y, color) {
@@ -107,8 +116,13 @@
     }
 
     function animate() {
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+        if (!running) return;
+
+        // Fade previous frames toward transparent (never paint an opaque layer over the page)
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.18)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.globalCompositeOperation = 'source-over';
 
         // Update and draw particles
         for (let i = particles.length - 1; i >= 0; i--) {
@@ -130,12 +144,12 @@
             }
         }
 
-        requestAnimationFrame(animate);
+        raf = requestAnimationFrame(animate);
     }
 
     // Launch fireworks at random intervals
     let fireworkCount = 0;
-    const maxFireworks = 20; // Total fireworks during 4 seconds
+    const maxFireworks = 8; // Total fireworks during the run
     
     const fireworkInterval = setInterval(() => {
         if (fireworkCount >= maxFireworks) {
@@ -152,30 +166,24 @@
     // Start animation
     animate();
 
-    // Clean up after 4 seconds
+    function cleanup() {
+        running = false;
+        cancelAnimationFrame(raf);
+        canvas.style.display = 'none';
+        canvas.style.opacity = '1';
+
+        particles.length = 0;
+        fireworks.length = 0;
+
+        document.body.removeAttribute('data-trigger-fireworks');
+    }
+
+    // End the run after 2.5 seconds: CSS fade, then a timeout (not transitionend) so a hidden tab still cleans up
     setTimeout(() => {
         clearInterval(fireworkInterval);
-        
-        // Fade out canvas
-        let fadeAlpha = 1;
-        const fadeInterval = setInterval(() => {
-            fadeAlpha -= 0.05;
-            canvas.style.opacity = fadeAlpha;
-            
-            if (fadeAlpha <= 0) {
-                clearInterval(fadeInterval);
-                canvas.style.display = 'none';
-                canvas.style.opacity = 1;
-                
-                // Clear arrays
-                particles.length = 0;
-                fireworks.length = 0;
-                
-                // Remove trigger attribute
-                document.body.removeAttribute('data-trigger-fireworks');
-            }
-        }, 50);
-    }, 4000);
+        canvas.style.opacity = '0';
+        setTimeout(cleanup, 320);
+    }, 2500);
 
     // Handle window resize
     window.addEventListener('resize', () => {

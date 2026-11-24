@@ -35,36 +35,19 @@
   --shadow-sm: 0 1px 2px rgba(20, 24, 36, 0.06);
   --shadow:    0 2px 8px rgba(20, 24, 36, 0.10);
   --shadow-lg: 0 6px 24px rgba(20, 24, 36, 0.14);
-}
 
-/* Titlebar a bit lighter than panel-alt */
-[data-bs-theme="light"] .ide-titlebar {
-  background: oklch(0.93 0.005 250);
+  /* Chrome: title bar a bit darker than the surface; the status bar keeps its
+     accent fill for identity (white text stays above 6:1). Keep the hex
+     values in theme-toggle.js and the <head> script in sync with --titlebar-bg. */
+  --titlebar-bg:      oklch(0.93 0.005 250);
+  --statusbar-bg:     oklch(0.42 0.18 245);
+  --statusbar-border: oklch(0.36 0.18 245);
 }
 
 /* Output window darker code area in light theme: parchment-ish, not black */
 [data-bs-theme="light"] .output-stream {
   background: oklch(0.96 0.004 250);
   color: oklch(0.22 0.005 250);
-}
-
-/* StackOverflow tag (already uses oklch in dark; restate for light) */
-[data-bs-theme="light"] .stackoverflow-tag {
-  background: oklch(0.50 0.13 220 / 0.10);
-  border-color: oklch(0.50 0.13 220 / 0.40);
-  color: oklch(0.36 0.14 220);
-}
-
-[data-bs-theme="light"] .stackoverflow-tag:hover {
-  background: oklch(0.50 0.13 220 / 0.18);
-  border-color: oklch(0.50 0.13 220 / 0.65);
-  color: oklch(0.24 0.16 220);
-}
-
-/* Status bar: keep colored accent fill in light mode for identity */
-[data-bs-theme="light"] .ide-statusbar {
-  background: oklch(0.42 0.18 245);
-  border-top: 1px solid oklch(0.36 0.18 245);
 }
 
 /* Inline newsletter input background slightly tinted */

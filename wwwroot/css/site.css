@@ -15,7 +15,8 @@
   /* ---- Text ---- */
   --text:          oklch(0.92 0.005 250);     /* identifier */
   --text-soft:     oklch(0.78 0.008 250);
-  --text-muted:    oklch(0.62 0.012 220);     /* comment */
+  --text-muted:    oklch(0.66 0.012 220);     /* comment, >= 4.5:1 on panel-alt/hover */
+  --bs-secondary-color: var(--text-muted);    /* Bootstrap-internal muted text follows the theme */
 
   /* ---- Accent (VS keyword blue) ---- */
   --accent:        oklch(0.65 0.14 245);
@@ -72,6 +73,7 @@
   --radius-sm: 4px;
   --radius:    6px;
   --radius-lg: 10px;
+  --radius-pill: 999px;
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -88,27 +90,49 @@
   --tabbar-h:   40px;
   --statusbar-h: 26px;
 
-  /* ---- Legacy --vs-* aliases (mapped to new tokens) ---- */
-  --vs-bg:            var(--surface);
-  --vs-panel:         var(--panel);
-  --vs-panel-alt:     var(--panel-alt);
-  --vs-border:        var(--border);
-  --vs-text:          var(--text);
-  --vs-muted:         var(--text-muted);
-  --vs-accent:        var(--accent);
-  --vs-accent-strong: var(--accent-strong);
-  --vs-green:         var(--token-string);
-  --vs-yellow:        var(--token-type);
-  --vs-purple:        var(--token-function);
-  --vs-red:           var(--token-preprocessor);
+  /* Sticky header height (title bar + tab bar + 1px border). The mobile
+     override below drops the tab bar, which becomes a sheet. */
+  --chrome-h: calc(var(--titlebar-h) + var(--tabbar-h) + 1px);
 
-  --card-shadow:       var(--shadow);
-  --card-shadow-hover: var(--shadow-lg);
-  --transition-base:   color var(--motion-base), background var(--motion-base), border-color var(--motion-base), box-shadow var(--motion-base);
-  --border-radius-base: var(--radius-lg);
-  --border-radius-lg:   var(--radius-lg);
-  --spacing-base:       var(--space-5);
+  /* ---- Layout ---- */
+  --content-max: 1440px;   /* THE page column width (.briefing-stage) */
+  --measure:     72ch;     /* comfortable line length for prose */
+
+  /* ---- Interactive control heights ---- */
+  --control-h:    36px;
+  --control-h-sm: 28px;
+
+  /* ---- Chrome colours (title bar + status bar), themed ---- */
+  --titlebar-bg:      oklch(0.20 0.005 250);
+  --statusbar-bg:     oklch(0.50 0.16 245);
+  --statusbar-border: oklch(0.44 0.16 245);
+
+  /* ---- Focus ring: colour for outlines, halo for box-shadow ---- */
+  --focus-ring-color: var(--accent-strong);
+  --focus-ring:       0 0 0 4px oklch(0.58 0.16 245 / 0.18);
+
+  /* ---- Composite transition ---- */
+  --transition-base: color var(--motion-base), background var(--motion-base), border-color var(--motion-base), box-shadow var(--motion-base), transform var(--motion-fast);
 }
+
+/* Breakpoint set (media queries cannot read custom properties, so these are
+   the ONLY values used across the CSS and JS):
+     768px      phone / desktop boundary (max-width: 768px) / (min-width: 769px)
+     400px      tiny phone        575.98px   small phone
+     991.98px   tablet            1199.98px  small desktop */
+@media (pointer: coarse) {
+  :root {
+    --control-h:    44px;
+    --control-h-sm: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  :root { --chrome-h: calc(var(--titlebar-h) + 1px); }
+}
+
+:root { color-scheme: dark; }
+:root[data-bs-theme="light"] { color-scheme: light; }
 
 /* ===========================================================
    Typography
@@ -130,13 +154,6 @@ body {
   font-size: var(--text-base);
 }
 
-/* Utility: opt-in display font for wordmark / editorial titles */
-.font-display {
-  font-family: var(--font-display);
-  letter-spacing: 0.01em;
-}
-
-.font-mono,
 code, kbd, samp, pre {
   font-family: var(--font-mono);
 }
@@ -154,133 +171,92 @@ code, kbd, samp, pre {
 
 /* Focus visible for keyboard navigation */
 *:focus-visible {
-  outline: 2px solid var(--vs-accent-strong);
+  outline: 2px solid var(--focus-ring-color);
   outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(0, 122, 204, 0.15);
+  box-shadow: var(--focus-ring);
 }
 
 /* Button focus states */
 .btn:focus,
 .btn:focus-visible {
-  outline: 2px solid var(--vs-accent-strong);
+  outline: 2px solid var(--focus-ring-color);
   outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(0, 122,204, 0.2);
-}
-
-.btn-primary:focus-visible {
-  box-shadow: 0 0 0 4px rgba(0, 122,204, 0.3);
-}
-
-.btn-outline-primary:focus-visible {
-  box-shadow: 0 0 0 4px rgba(0, 122,204, 0.2);
-}
-
-/* Form control focus states */
-.form-control:focus,
-.form-control:focus-visible {
-  background-color: #0d1117;
-  border-color: var(--vs-accent-strong);
-  box-shadow: 0 0 0 3px rgba(0, 122, 204, 0.25);
-  outline: none;
-}
-
-.form-check-input:focus,
-.form-check-input:focus-visible {
-  border-color: var(--vs-accent-strong);
-  box-shadow: 0 0 0 3px rgba(0, 122, 204, 0.25);
-  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
 /* Link focus states */
 a:focus-visible {
-  outline: 2px solid var(--vs-accent-strong);
+  outline: 2px solid var(--focus-ring-color);
   outline-offset: 2px;
   border-radius: 2px;
-  box-shadow: 0 0 0 4px rgba(0, 122, 204, 0.15);
-}
-
-/* Navigation link focus */
-.nav-link:focus-visible {
-  outline: 2px solid var(--vs-accent-strong);
-  outline-offset: -2px;
-  box-shadow: 0 0 0 3px rgba(0, 122, 204, 0.2);
+  box-shadow: var(--focus-ring);
 }
 
 /* Card focus (for interactive cards) */
 .card:focus-visible {
-  outline: 2px solid var(--vs-accent-strong);
+  outline: 2px solid var(--focus-ring-color);
   outline-offset: 2px;
-  box-shadow: var(--card-shadow-hover), 0 0 0 4px rgba(0, 122, 204, 0.15);
+  box-shadow: var(--shadow-lg), var(--focus-ring);
 }
 
 /* List group item focus */
 .list-group-item:focus-visible {
-  outline: 2px solid var(--vs-accent-strong);
+  outline: 2px solid var(--focus-ring-color);
   outline-offset: -2px;
-  background: var(--vs-panel);
-  border-left: 3px solid var(--vs-accent-strong);
+  background: var(--panel);
+  border-left: 3px solid var(--focus-ring-color);
   z-index: 1;
-}
-
-/* Navbar toggler focus */
-.navbar-toggler:focus,
-.navbar-toggler:focus-visible {
-  outline: 2px solid var(--vs-accent-strong);
-  outline-offset: 2px;
-  box-shadow: 0 0 0 3px rgba(0, 122, 204, 0.2);
-  border-color: var(--vs-accent-strong);
 }
 
 /* Badge focus (if interactive) */
 .badge:focus-visible {
-  outline: 2px solid var(--vs-accent-strong);
+  outline: 2px solid var(--focus-ring-color);
   outline-offset: 2px;
-  box-shadow: 0 0 0 3px rgba(0, 122, 204, 0.2);
+  box-shadow: var(--focus-ring);
 }
 
-/* Skip to main content link (accessibility) */
+/* Skip to main content link (accessibility): revealed on focus, above the sticky chrome */
 .skip-link {
-  position: absolute;
-  top: 0;
-  left: 0;
-  background: var(--vs-accent-strong);
-  color: white;
-  padding: 8px 16px;
+  position: fixed;
+  top: var(--space-2);
+  left: var(--space-2);
+  background: var(--accent-strong);
+  color: oklch(0.98 0 0);
+  padding: var(--space-2) var(--space-4);
   text-decoration: none;
-  border-radius: 0 0 4px 0;
-  z-index: 100;
-  transform: translateY(-110%);
+  border-radius: var(--radius-sm);
+  z-index: 1100;
+  transform: translateY(-200%);
   transition: transform var(--motion-fast);
 }
 
 .skip-link:focus {
   transform: none;
-  outline: 2px solid white;
+  outline: 2px solid oklch(0.98 0 0);
   outline-offset: -2px;
 }
 
 html {
   position: relative;
   min-height: 100%;
-  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--chrome-h) + var(--space-3));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+/* Mobile nav sheet open: the page behind does not scroll */
+html.ide-nav-open {
+  overflow: hidden;
 }
 
 body {
   margin: 0;
-  padding-bottom: var(--statusbar-h);
+  padding-bottom: calc(var(--statusbar-h) + env(safe-area-inset-bottom));
   background: var(--surface);
   line-height: 1.6;
   color: var(--text);
-}
-
-/* Enhanced Form Styling */
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
-}
-
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
 }
 
 /* ===========================================================
@@ -308,29 +284,6 @@ body {
   box-shadow: var(--shadow);
 }
 
-/* About-page portrait keeps its playful tilt (scoped, intentional) */
-.about-photo {
-  border-radius: var(--radius);
-  transition: transform var(--motion-base), box-shadow var(--motion-base);
-  will-change: transform;
-}
-
-.about-photo:hover {
-  transform: rotate(-1.2deg) scale(1.03);
-  box-shadow: var(--shadow-lg);
-  filter: none !important;
-  backdrop-filter: none !important;
-}
-
-/* Legacy .hover-tilt: no-op (kept for compat, no transform) */
-.hover-tilt {
-  transition: border-color var(--motion-base), box-shadow var(--motion-base);
-}
-.hover-tilt:hover {
-  border-color: var(--border-strong);
-  box-shadow: var(--shadow);
-}
-
 /* Panel header: a tab strip, not a colored band.
    Token color goes to the top accent (--panel-token, set per panel)
    and to the title text. No gradients, no backgrounds. */
@@ -339,9 +292,9 @@ body {
   border-bottom: 1px solid var(--border);
   padding: var(--space-3) var(--space-4);
   font-family: var(--font-mono);
-  font-size: var(--text-sm);
+  font-size: var(--text-xs);
   font-weight: 500;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   background: var(--panel-alt) !important;
   color: var(--text) !important;
@@ -376,20 +329,37 @@ body {
 .card-header.bg-success  { background: var(--panel-alt) !important; --panel-token: var(--token-string); }
 .card-header.bg-dark     { background: var(--panel-alt) !important; --panel-token: var(--token-comment); }
 
-/* Token utility classes for explicit assignment from Razor. */
-.panel-keyword      { --panel-token: var(--token-keyword); }
-.panel-string       { --panel-token: var(--token-string); }
-.panel-type         { --panel-token: var(--token-type); }
-.panel-number       { --panel-token: var(--token-number); }
-.panel-function     { --panel-token: var(--token-function); }
-.panel-preprocessor { --panel-token: var(--token-preprocessor); }
-.panel-attribute    { --panel-token: var(--token-attribute); }
-
 .card-body {
   padding: 1rem;
 }
 
+/* Shared empty / error state (role="status" in markup). */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  color: var(--text-soft);
+}
+
+.empty-state-title {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text);
+}
+
+.empty-state[data-tone="error"] {
+  border-color: color-mix(in oklab, var(--status-err) 55%, var(--border));
+}
+
+.empty-state[data-tone="error"] .empty-state-title { color: var(--status-err); }
+
 .news-block-empty-state {
+  color: var(--text-soft);
   display: flex;
   gap: var(--space-3);
   align-items: flex-start;
@@ -417,84 +387,34 @@ body {
 }
 
 .news-block-empty-state-title {
-  color: var(--vs-text);
+  color: var(--text);
   font-weight: 600;
 }
 
 .news-block-empty-state-message {
-  color: var(--vs-muted);
+  color: var(--text-muted);
   line-height: 1.6;
 }
 
 /* Newsletter page readability on dark theme */
-.card .form-label,
 .card label,
-.card .lead,
 .card h1,
 .card h2,
 .card h3,
 .card h4,
 .card h5,
 .card h6 {
-  color: var(--vs-text) !important;
+  color: var(--text) !important;
 }
 
 .text-muted {
-  color: var(--vs-muted) !important;
+  color: var(--text-muted) !important;
 }
 
 /* Couleur uniforme pour les listes dans les cartes (� propos, etc.) */
 .card ul,
 .card ul li {
-  color: var(--vs-text) !important;
-}
-
-.form-control {
-  background-color: #111827;
-  color: var(--vs-text);
-  border: 1px solid var(--vs-border);
-}
-
-.form-control::placeholder {
-  color: #a8adb5; /* WCAG AA compliant */
-}
-
-/* Newsletter form input styling */
-input[name="Email"]::placeholder {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-input[name="Email"]:focus::placeholder {
-  color: rgba(255, 255, 255, 0.4);
-}
-
-/* Visual Studio Panel Styles */
-.vs-panel {
-  background: var(--vs-panel);
-  border: 1px solid var(--vs-border);
-  border-radius: var(--border-radius-base);
-  overflow: hidden;
-  box-shadow: var(--card-shadow);
-}
-
-.vs-panel-secondary {
-  background: var(--vs-panel-alt);
-}
-
-.vs-panel-header {
-  background: var(--vs-panel-alt);
-  color: var(--vs-text);
-  padding: 1rem 1.25rem;
-  font-weight: 600;
-  font-size: 1.1rem;
-  border-bottom: 1px solid var(--vs-border);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.vs-panel-body {
-  padding: 1.5rem;
+  color: var(--text) !important;
 }
 
 /* Alerts: full 1px border in the token color, no side-stripe. */
@@ -506,213 +426,46 @@ input[name="Email"]:focus::placeholder {
   align-items: center;
   gap: var(--space-3);
   border: 1px solid;
+  /* One-time entrance when a server-rendered message appears. */
+  animation: panel-in var(--dur-3) var(--ease-out-quint) backwards;
 }
 
-.vs-alert-success {
-  background: oklch(0.72 0.13 145 / 0.08);
-  border-color: oklch(0.72 0.13 145 / 0.40);
-  color: oklch(0.85 0.13 145);
-}
-
-.vs-alert-error {
-  background: oklch(0.65 0.16 25 / 0.08);
-  border-color: oklch(0.65 0.16 25 / 0.42);
-  color: oklch(0.82 0.14 25);
-}
-
+/* Each variant sets --tone; background, border and text derive from it so the
+   alert reads in both themes (text is the tone pulled toward --text). */
+.vs-alert-success,
+.vs-alert-error,
 .vs-alert-info {
-  background: oklch(0.65 0.14 245 / 0.08);
-  border-color: oklch(0.65 0.14 245 / 0.40);
-  color: oklch(0.85 0.10 245);
+  background: color-mix(in oklab, var(--tone) 12%, transparent);
+  border-color: color-mix(in oklab, var(--tone) 45%, transparent);
+  color: color-mix(in oklab, var(--tone) 55%, var(--text));
 }
+
+.vs-alert-success { --tone: var(--token-string); }
+.vs-alert-error   { --tone: var(--token-preprocessor); }
+.vs-alert-info    { --tone: var(--token-keyword); }
 
 .vs-alert-secondary {
-  background: oklch(0.62 0.012 220 / 0.10);
+  background: color-mix(in oklab, var(--text-muted) 12%, transparent);
   border-color: var(--border-strong);
   color: var(--text-soft);
 }
 
-/* VS Info Box */
-.vs-info-box {
-  background: rgba(255, 193, 7, 0.05);
-  border: 1px solid rgba(255, 193, 7, 0.2);
-  border-radius: 6px;
-  padding: 1.25rem;
-  margin-bottom: 1.5rem;
-}
-
-.vs-info-box-title {
-  color: #ffd166;
-  font-weight: 600;
-  margin-bottom: 0.75rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 1rem;
-}
-
-.vs-info-list {
-  color: var(--vs-muted);
-  margin: 0;
-  padding-left: 1.5rem;
-  line-height: 1.8;
-}
-
-.vs-info-list li {
-  margin-bottom: 0.5rem;
-}
-
-.vs-info-note {
-  color: var(--vs-muted);
-  font-size: 0.875rem;
-  margin: 0.75rem 0 0 0;
-  padding-top: 0.75rem;
-  border-top: 1px solid rgba(255, 193, 7, 0.1);
-}
-
-/* VS Form Styles */
-.vs-form-group {
-  margin-bottom: 1.5rem;
-}
-
-.vs-label {
-  display: block;
-  color: var(--vs-text);
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-  font-size: 0.95rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.vs-input {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  background: #111827;
-  border: 1px solid var(--vs-border);
-  border-radius: 6px;
-  color: var(--vs-text);
-  font-size: 1rem;
-  transition: var(--transition-base);
-}
-
-.vs-input:focus {
-  outline: none;
-  border-color: var(--vs-accent-strong);
-  box-shadow: 0 0 0 3px rgba(0, 122, 204, 0.15);
-  background: #0d1117;
-}
-
-.vs-input::placeholder {
-  color: var(--vs-muted);
-}
-
 .vs-error {
   display: block;
-  color: #ef4444;
+  color: color-mix(in oklab, var(--token-preprocessor) 55%, var(--text));
   font-size: 0.875rem;
   margin-top: 0.5rem;
 }
 
-/* VS Form Actions */
-.vs-form-actions {
-  margin-top: 2rem;
-}
-
-/* VS Buttons */
-.vs-button {
-  padding: 0.75rem 2rem;
-  border: none;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: var(--transition-base);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  width: 100%;
-  justify-content: center;
-}
-
-.vs-button-danger {
-  background: var(--token-preprocessor);
-  color: oklch(0.98 0 0);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid oklch(0.55 0.18 25);
-}
-
-.vs-button-danger:hover {
-  background: oklch(0.55 0.18 25);
-  box-shadow: var(--shadow);
-}
-
-.vs-button-danger:active {
-  background: oklch(0.48 0.18 25);
-}
-
-/* VS Feature List */
-.vs-feature-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.vs-feature-list li {
-  display: flex;
-  gap: 1rem;
-  padding: 1rem 0;
-  border-bottom: 1px solid var(--vs-border);
-}
-
-.vs-feature-list li:last-child {
-  border-bottom: none;
-}
-
-.vs-feature-list li i {
-  font-size: 1.5rem;
-  flex-shrink: 0;
-  margin-top: 0.25rem;
-}
-
-.vs-feature-list li div {
-  flex-grow: 1;
-}
-
-.vs-feature-list li strong {
-  display: block;
-  color: var(--vs-text);
-  margin-bottom: 0.25rem;
-  font-size: 1rem;
-}
-
-.vs-feature-list li span {
-  display: block;
-  color: var(--vs-muted);
-  font-size: 0.9rem;
-  line-height: 1.5;
-}
-
-.form-check-input {
-  background-color: #111827;
-  border: 1px solid var(--vs-border);
-}
-
-.form-check-input:checked {
-  background-color: var(--vs-accent-strong);
-  border-color: var(--vs-accent-strong);
-}
-
 .card.bg-light,
 .bg-light {
-  background-color: var(--vs-panel) !important;
+  background-color: var(--panel) !important;
 }
 
 .card-header .h3,
 .card-header .h4,
 .card-header .h5 {
-  color: var(--vs-text) !important;
+  color: var(--text) !important;
 }
 
 /* Modern Button Styling */
@@ -721,44 +474,9 @@ input[name="Email"]:focus::placeholder {
   font-weight: 600;
   padding: 0.5rem 1rem;
   transition: var(--transition-base);
-  border: 1px solid var(--vs-border);
+  border: 1px solid var(--border);
   text-transform: none;
   letter-spacing: 0.3px;
-}
-
-.btn-primary {
-  background: var(--vs-accent-strong);
-  color: #fff;
-  box-shadow: none;
-}
-
-.btn-primary:hover {
-  transform: none;
-  background: #0a84d0;
-}
-
-.btn-outline-primary {
-  border: 1px solid var(--vs-accent-strong);
-  color: var(--vs-accent-strong);
-  background: transparent;
-}
-
-.btn-outline-primary:hover {
-  background: var(--vs-accent-strong);
-  color: #fff;
-  border-color: var(--vs-accent-strong);
-}
-
-.btn-lg {
-  padding: 0.875rem 2rem;
-  font-size: 1.1rem;
-  border-radius: 10px;
-}
-
-.btn-sm {
-  padding: 0.375rem 1rem;
-  font-size: 0.875rem;
-  border-radius: 6px;
 }
 
 /* Badges: solid token color, no gradient. */
@@ -767,20 +485,30 @@ input[name="Email"]:focus::placeholder {
   border-radius: var(--radius-sm);
   font-family: var(--font-mono);
   font-weight: 500;
-  font-size: 0.7rem;
-  letter-spacing: 0.04em;
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   background: var(--panel-alt);
   color: var(--text);
   border: 1px solid var(--border);
 }
 
-.badge.bg-success   { background: oklch(0.72 0.13 145 / 0.18) !important; color: oklch(0.85 0.13 145); border-color: oklch(0.72 0.13 145 / 0.40); }
-.badge.bg-info      { background: oklch(0.72 0.13 200 / 0.18) !important; color: oklch(0.85 0.10 200); border-color: oklch(0.72 0.13 200 / 0.40); }
-.badge.bg-warning   { background: oklch(0.78 0.13 88 / 0.20) !important;  color: oklch(0.85 0.13 88); border-color: oklch(0.78 0.13 88 / 0.45); }
-.badge.bg-primary   { background: var(--accent-soft) !important;          color: oklch(0.85 0.10 245); border-color: oklch(0.65 0.14 245 / 0.40); }
-.badge.bg-secondary { background: oklch(0.40 0.010 250) !important;       color: var(--text-soft);    border-color: var(--border); }
-.badge.bg-danger    { background: oklch(0.65 0.16 25 / 0.18) !important;  color: oklch(0.82 0.14 25); border-color: oklch(0.65 0.16 25 / 0.42); }
+/* Per-variant --tone (same recipe as .vs-alert-*): readable in both themes. */
+.badge.bg-success,
+.badge.bg-info,
+.badge.bg-warning,
+.badge.bg-primary,
+.badge.bg-danger {
+  background: color-mix(in oklab, var(--tone) 12%, transparent) !important;
+  border-color: color-mix(in oklab, var(--tone) 45%, transparent);
+  color: color-mix(in oklab, var(--tone) 55%, var(--text));
+}
+.badge.bg-success { --tone: var(--token-string); }
+.badge.bg-info    { --tone: var(--token-attribute); }
+.badge.bg-warning { --tone: var(--token-type); }
+.badge.bg-primary { --tone: var(--token-keyword); }
+.badge.bg-danger  { --tone: var(--token-preprocessor); }
+.badge.bg-secondary { background: var(--panel-hover) !important; color: var(--text-soft); border-color: var(--border); }
 
 /* List items: no side-stripe; subtle background + border-bottom emphasis. */
 .list-group-item {
@@ -807,13 +535,14 @@ input[name="Email"]:focus::placeholder {
 
 /* Link Styling */
 a {
-  color: var(--vs-accent);
+  color: var(--accent);
   text-decoration: none;
   transition: var(--transition-base);
 }
 
 a:hover {
-  color: var(--vs-accent-strong);
+  /* Pulled toward --text: lighter in dark, darker in light, never below the resting contrast. */
+  color: color-mix(in oklab, var(--accent) 75%, var(--text));
   text-decoration: none;
 }
 
@@ -822,39 +551,11 @@ h1, h2, h3, h4, h5, h6 {
   font-family: inherit;
   font-weight: 700;
   line-height: 1.3;
-  color: var(--vs-text);
+  color: var(--text);
   letter-spacing: -0.25px;
 }
 
-.display-4 {
-  font-weight: 800;
-  color: var(--vs-text);
-}
-
-/* Scrollbar — thin, theme-aware, no gradient. */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--panel-alt);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
-  border-radius: 999px;
-  border: 2px solid var(--panel-alt);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--accent);
-}
-
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--border-strong) var(--panel-alt);
-}
+/* Scrollbars: see scrollbar.css (single source). */
 
 /* Icon styling */
 .bi {
@@ -864,20 +565,12 @@ h1, h2, h3, h4, h5, h6 {
 /* Small text improvements */
 small, .small {
   font-size: 0.875rem;
-  color: #9ca3af; /* WCAG AA: 4.63:1 contrast ratio on #1e1e1e */
-}
-
-.text-muted {
-  color: #9ca3af !important; /* WCAG AA: 4.63:1 contrast ratio on #1e1e1e */
+  color: var(--text-muted);
 }
 
 /* Shadow utilities */
-.shadow-sm {
-  box-shadow: var(--card-shadow) !important;
-}
-
 .box-shadow {
-  box-shadow: var(--card-shadow);
+  box-shadow: var(--shadow);
 }
 
 /* ===========================================================
@@ -948,26 +641,86 @@ small, .small {
   border-radius: var(--radius-sm);
 }
 .output-toolbar .spacer { flex: 1; }
-.output-toolbar .output-action {
+.output-action {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.1rem 0.5rem;
-  background: transparent;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--control-h);
+  padding: 0 var(--space-3);
+  background: var(--panel-alt);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text-soft);
   text-decoration: none;
   cursor: pointer;
   font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  transition: background var(--motion-fast), color var(--motion-fast), border-color var(--motion-fast);
+  font-size: var(--text-sm);
+  line-height: 1.2;
+  transition: color var(--motion-fast), background var(--motion-fast), border-color var(--motion-fast), transform var(--motion-fast);
 }
-.output-toolbar .output-action:hover {
-  background: var(--panel-hover);
+.output-action:hover {
   color: var(--text);
   border-color: var(--border-strong);
 }
+.output-action:focus-visible {
+  outline: 2px solid var(--focus-ring-color);
+  outline-offset: 2px;
+}
+.output-action:disabled,
+.output-action[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+/* Primary fill = the status-bar blue: white text is 5.5:1 (dark) / 7.5:1 (light);
+   --accent-strong alone is 4.0:1 in dark. */
+.output-action[data-variant="primary"] {
+  background: var(--statusbar-bg);
+  border-color: var(--statusbar-bg);
+  color: oklch(0.98 0 0);
+}
+.output-action[data-variant="primary"]:hover {
+  background: var(--statusbar-border);
+  border-color: var(--statusbar-border);
+  color: oklch(0.98 0 0);
+}
+.output-action[data-variant="danger"] {
+  color: var(--status-err);
+  border-color: color-mix(in oklab, var(--status-err) 50%, var(--border));
+  background: color-mix(in oklab, var(--status-err) 10%, var(--panel-alt));
+}
+.output-action[data-variant="danger"]:hover {
+  color: var(--status-err);
+  border-color: var(--status-err);
+}
+/* Dense variant: the dashboard toolbar keeps its compact height. */
+.output-toolbar .output-action {
+  min-height: var(--control-h-sm);
+  font-size: var(--text-xs);
+  padding: 0 var(--space-2);
+  background: transparent;
+}
+.output-toolbar .output-action:hover { background: var(--panel-hover); }
+
+/* Submit buttons waiting for the server: dimmed, inert, with a real progress spinner. */
+.is-pending {
+  opacity: 0.7;
+  pointer-events: none;
+  cursor: progress;
+}
+.is-pending::after {
+  content: "";
+  width: 1em;
+  height: 1em;
+  margin-left: var(--space-2);
+  flex-shrink: 0;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: pending-spin 0.8s linear infinite;
+}
+@keyframes pending-spin { to { transform: rotate(360deg); } }
 
 .output-stream {
   font-family: var(--font-mono);
@@ -980,7 +733,6 @@ small, .small {
   color: oklch(0.85 0.008 250);
 }
 .output-stream .ok   { color: var(--token-string); }
-.output-stream .warn { color: var(--token-type); }
 .output-stream .err  { color: var(--token-preprocessor); }
 .output-stream .dim  { color: var(--text-muted); }
 
@@ -1021,6 +773,9 @@ small, .small {
    Hero spans full width. Subsequent rows alternate 8/4, 12, 7/5, 5/7.
    =========================================================== */
 .briefing-stage {
+  width: 100%;
+  max-width: var(--content-max);
+  margin-inline: auto;
   padding: var(--space-5) var(--space-5) var(--space-8);
   display: flex;
   flex-direction: column;
@@ -1034,15 +789,15 @@ small, .small {
   gap: var(--space-4);
 }
 
-.briefing-row-12  { grid-template-columns: 1fr; }
-.briefing-row-8-4 { grid-template-columns: 2fr 1fr; }
-.briefing-row-7-5 { grid-template-columns: 1.4fr 1fr; }
-.briefing-row-5-7 { grid-template-columns: 1fr 1.4fr; }
+.briefing-row-12  { grid-template-columns: minmax(0, 1fr); }
+.briefing-row-8-4 { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+.briefing-row-7-5 { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); }
+.briefing-row-5-7 { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); }
 
-@media (max-width: 992px) {
+@media (max-width: 991.98px) {
   .briefing-row-8-4,
   .briefing-row-7-5,
-  .briefing-row-5-7 { grid-template-columns: 1fr; }
+  .briefing-row-5-7 { grid-template-columns: minmax(0, 1fr); }
 }
 
 @media (max-width: 768px) {
@@ -1122,7 +877,8 @@ small, .small {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  transition: background var(--motion-fast), color var(--motion-fast);
+  transition: background var(--motion-fast), color var(--motion-fast), transform var(--motion-fast);
+  min-height: var(--control-h);
 }
 
 .briefing-cta-submit:hover {
@@ -1137,7 +893,7 @@ small, .small {
   font-size: var(--text-xs);
 }
 
-@media (max-width: 720px) {
+@media (max-width: 768px) {
   .briefing-cta-meta { margin-left: 0; width: 100%; }
 }
 
@@ -1146,6 +902,8 @@ small, .small {
    Replaces the standard Bootstrap navbar with an editor-style
    two-tier header: titlebar (wordmark + version + global actions)
    and tabbar (categories as editor tabs).
+   Breakpoints used here: 768px (nav: popovers above, sheet below),
+   575.98px and 400px (status bar compaction), 400px (title bar).
    =========================================================== */
 .ide-chrome {
   background: var(--panel-alt);
@@ -1161,8 +919,8 @@ small, .small {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: 0 var(--space-4);
-  background: oklch(0.20 0.005 250);
+  padding: 0 max(var(--space-4), env(safe-area-inset-right)) 0 max(var(--space-4), env(safe-area-inset-left));
+  background: var(--titlebar-bg);
   border-bottom: 1px solid var(--border);
   font-family: var(--font-mono);
   font-size: var(--text-sm);
@@ -1225,7 +983,7 @@ small, .small {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background var(--motion-fast), border-color var(--motion-fast), color var(--motion-fast);
+  transition: background var(--motion-fast), border-color var(--motion-fast), color var(--motion-fast), transform var(--motion-fast);
   text-decoration: none;
   font-size: 0.95rem;
 }
@@ -1287,13 +1045,15 @@ small, .small {
   view-transition-name: tab-indicator;
 }
 
-.ide-tab[data-token="keyword"]      { --tab-token: var(--token-keyword); }
-.ide-tab[data-token="string"]       { --tab-token: var(--token-string); }
-.ide-tab[data-token="type"]         { --tab-token: var(--token-type); }
-.ide-tab[data-token="function"]     { --tab-token: var(--token-function); }
-.ide-tab[data-token="attribute"]    { --tab-token: var(--token-attribute); }
-.ide-tab[data-token="preprocessor"] { --tab-token: var(--token-preprocessor); }
-.ide-tab[data-token="number"]       { --tab-token: var(--token-number); }
+/* The group carries the token too, so its sub-tabs inherit --tab-token. */
+.ide-tab[data-token="keyword"],      .ide-tab-group[data-token="keyword"]      { --tab-token: var(--token-keyword); }
+.ide-tab[data-token="string"],       .ide-tab-group[data-token="string"]       { --tab-token: var(--token-string); }
+.ide-tab[data-token="type"],         .ide-tab-group[data-token="type"]         { --tab-token: var(--token-type); }
+.ide-tab[data-token="function"],     .ide-tab-group[data-token="function"]     { --tab-token: var(--token-function); }
+.ide-tab[data-token="attribute"],    .ide-tab-group[data-token="attribute"]    { --tab-token: var(--token-attribute); }
+.ide-tab[data-token="preprocessor"], .ide-tab-group[data-token="preprocessor"] { --tab-token: var(--token-preprocessor); }
+.ide-tab[data-token="number"],       .ide-tab-group[data-token="number"]       { --tab-token: var(--token-number); }
+.ide-tab[data-token="comment"],      .ide-tab-group[data-token="comment"]      { --tab-token: var(--token-comment); }
 
 /* Subtab popover (replaces Bootstrap dropdown) — flat editor menu. */
 .ide-subtabs {
@@ -1313,7 +1073,8 @@ small, .small {
 .ide-tab-group { position: relative; display: inline-flex; align-items: stretch; }
 
 /* Desktop: the menu fades in from just under the tab. Closing waits 80ms so a
-   diagonal mouse path to the menu doesn't drop it. Mobile keeps the static list. */
+   diagonal mouse path to the menu doesn't drop it. Opens on focus-within and
+   on .open (first tap on touch screens); hover opening is gated below. */
 @media (min-width: 769px) {
   .ide-subtabs {
     display: block;
@@ -1327,7 +1088,6 @@ small, .small {
       visibility 0s linear calc(80ms + var(--dur-1));
   }
 
-  .ide-tab-group:hover .ide-subtabs,
   .ide-tab-group:focus-within .ide-subtabs,
   .ide-tab-group.open .ide-subtabs {
     visibility: visible;
@@ -1341,10 +1101,41 @@ small, .small {
   }
 }
 
+@media (min-width: 769px) and (hover: hover) and (pointer: fine) {
+  .ide-tab-group:hover .ide-subtabs {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+    transition:
+      opacity var(--dur-2) var(--ease-out-quint),
+      transform var(--dur-2) var(--ease-out-quint),
+      visibility 0s;
+  }
+}
+
+/* Escape pressed: closed even while focus stays inside (cleared by site-nav.js
+   on focusout / mouseleave). Must come after the open rules above. */
+@media (min-width: 769px) {
+  .ide-tab-group.dismissed .ide-subtabs,
+  .ide-tab-group.dismissed:focus-within .ide-subtabs,
+  .ide-tab-group.dismissed:hover .ide-subtabs {
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-4px);
+    pointer-events: none;
+    transition:
+      opacity var(--dur-1) var(--ease-out-quint),
+      transform var(--dur-1) var(--ease-out-quint),
+      visibility 0s linear var(--dur-1);
+  }
+}
+
 .ide-subtab {
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  min-height: var(--control-h);
   padding: var(--space-2) var(--space-4);
   font-family: var(--font-mono);
   font-size: var(--text-sm);
@@ -1359,6 +1150,12 @@ small, .small {
   color: var(--text);
 }
 
+.ide-subtab[aria-current="page"] {
+  color: var(--text);
+  background: var(--panel-hover);
+  box-shadow: inset 2px 0 0 var(--tab-token, var(--token-keyword));
+}
+
 .ide-subtab .bi {
   color: var(--tab-token, var(--token-keyword));
   width: 16px;
@@ -1367,10 +1164,12 @@ small, .small {
 
 .ide-subtab .badge {
   margin-left: auto;
+  font-size: var(--text-xs);
 }
 
-/* Mobile: collapse via a single toggle. The toggle reveals
-   the tab list stacked vertically; subtabs stay revealed. */
+/* Mobile: the tab bar becomes a sheet under the title bar, opened by a
+   single toggle (site-nav.js). Groups stack as a header row (the .ide-tab,
+   still a link to the group landing page) followed by its sub-tab rows. */
 .ide-mobile-toggle {
   display: none;
   background: transparent;
@@ -1383,6 +1182,7 @@ small, .small {
   justify-content: center;
   margin-right: var(--space-2);
   cursor: pointer;
+  transition: transform var(--motion-fast);
 }
 
 @media (max-width: 768px) {
@@ -1390,55 +1190,149 @@ small, .small {
 
   .ide-mobile-toggle { display: inline-flex; }
 
+  /* Closed = hidden but animatable (no display toggle): mirrors the desktop popover. */
   .ide-tabbar {
-    display: none;
+    position: fixed;
+    top: calc(var(--titlebar-h) + 1px);
+    left: 0;
+    right: 0;
+    z-index: 1;
     height: auto;
-    flex-direction: column;
-    padding: var(--space-2) 0;
-    border-top: 1px solid var(--border);
+    max-height: calc(100vh - var(--titlebar-h) - 1px - var(--statusbar-h) - env(safe-area-inset-bottom));
+    max-height: calc(100dvh - var(--titlebar-h) - 1px - var(--statusbar-h) - env(safe-area-inset-bottom));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--panel-alt);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
+    padding: var(--space-2) env(safe-area-inset-right) var(--space-2) env(safe-area-inset-left);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+    align-content: start;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-8px);
+    pointer-events: none;
+    transition:
+      opacity var(--dur-1) var(--ease-out-quint),
+      transform var(--dur-1) var(--ease-out-quint),
+      visibility 0s linear var(--dur-1);
   }
 
-  .ide-tabbar.open { display: flex; }
+  .ide-tabbar.open {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+    transition:
+      opacity var(--dur-2) var(--ease-out-quint),
+      transform var(--dur-2) var(--ease-out-quint),
+      visibility 0s;
+  }
+
+  /* Set by site-nav.js just before a navigation so the view-transition
+     snapshot never catches the sheet mid-fade. */
+  .ide-tabbar.ide-tabbar-instant {
+    transition: none;
+  }
+
+  /* Scrim between the sheet and the page. Clicks on it hit .ide-chrome
+     (closed by site-nav.js); closed, it can never intercept anything. */
+  .ide-chrome::after {
+    content: "";
+    position: fixed;
+    top: calc(var(--titlebar-h) + 1px);
+    left: 0;
+    right: 0;
+    bottom: calc(var(--statusbar-h) + env(safe-area-inset-bottom));
+    z-index: 0;
+    background: oklch(0.12 0.01 250 / 0.55);
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity var(--dur-1) var(--ease-out-quint),
+      visibility 0s linear var(--dur-1);
+  }
+
+  html.ide-nav-open .ide-chrome::after {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    transition:
+      opacity var(--dur-2) var(--ease-out-quint),
+      visibility 0s;
+  }
+
+  .ide-tab-group {
+    display: block;
+    padding-bottom: var(--space-2);
+  }
 
   .ide-tab {
-    height: 36px;
+    display: flex;
+    width: 100%;
+    min-height: var(--control-h);
     padding: 0 var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--text-soft);
+    border-left: 2px solid var(--tab-token, var(--token-keyword));
+  }
+
+  .ide-tab.active {
+    background: transparent;
+    color: var(--text);
+  }
+
+  .ide-tab:hover,
+  .ide-tab:focus-visible {
+    background: var(--panel-hover);
   }
 
   .ide-tab-indicator { display: none; }
-  .ide-tab.active { border-left: 2px solid var(--tab-token, var(--token-keyword)); }
 
   .ide-subtabs {
     position: static;
+    display: grid;
+    min-width: 0;
     border: none;
+    border-radius: 0;
     box-shadow: none;
-    padding-left: var(--space-5);
-    display: block;
+    padding: 0;
     background: transparent;
+    z-index: auto;
+  }
+
+  .ide-subtab {
+    padding-block: 0;
+    padding-inline: var(--space-5);
   }
 }
 
 /* ===========================================================
    Status bar (footer)
    Sticky to bottom of viewport. Mono font, 26px tall, accent fill.
+   Compaction: <=575.98px drops the decorative chips and the GitHub
+   label, <=400px also drops the cursor chip.
    =========================================================== */
 .ide-statusbar {
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
-  height: var(--statusbar-h);
+  height: calc(var(--statusbar-h) + env(safe-area-inset-bottom));
   z-index: 1010;
   display: flex;
   align-items: stretch;
   gap: 0;
-  padding: 0 var(--space-3);
-  background: var(--accent-strong);
+  padding: 0 max(var(--space-3), env(safe-area-inset-right)) env(safe-area-inset-bottom) max(var(--space-3), env(safe-area-inset-left));
+  overflow: hidden;
+  background: var(--statusbar-bg);
   color: oklch(0.98 0 0);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   letter-spacing: 0.02em;
-  border-top: 1px solid oklch(0.50 0.16 245);
+  border-top: 1px solid var(--statusbar-border);
 }
 
 .ide-statusbar-group {
@@ -1454,7 +1348,7 @@ small, .small {
   align-items: center;
   gap: var(--space-2);
   padding: 0 var(--space-3);
-  color: oklch(0.98 0 0 / 0.92);
+  color: oklch(0.98 0 0);
   text-decoration: none;
   white-space: nowrap;
   border-left: 1px solid oklch(1 0 0 / 0.16);
@@ -1479,6 +1373,19 @@ a.status-link:focus-visible {
   color: oklch(0.98 0 0);
 }
 
+/* The bar is saturated blue in both themes: a light inset ring stays visible
+   (the global accent ring would be the same colour as the bar). */
+.ide-statusbar :focus-visible {
+  outline: 2px solid oklch(0.98 0 0);
+  outline-offset: -3px;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+a.status-link:focus-visible {
+  background: oklch(1 0 0 / 0.18);
+}
+
 .status-chip .bi {
   font-size: 0.85rem;
   opacity: 0.85;
@@ -1489,72 +1396,21 @@ a.status-link:focus-visible {
   height: 7px;
   border-radius: 50%;
   background: var(--status-ok);
-  box-shadow: 0 0 6px oklch(0.72 0.13 145 / 0.7);
+  box-shadow: 0 0 6px color-mix(in oklab, var(--status-ok) 70%, transparent);
 }
 
-@media (max-width: 720px) {
-  .ide-statusbar { font-size: 0.7rem; padding: 0 var(--space-2); }
+@media (max-width: 575.98px) {
+  .ide-statusbar {
+    padding-left: max(var(--space-2), env(safe-area-inset-left));
+    padding-right: max(var(--space-2), env(safe-area-inset-right));
+  }
   .status-chip { padding: 0 var(--space-2); gap: var(--space-1); }
-  .status-chip-collapse-md { display: none; }
+  .status-chip-hide-sm,
+  .status-label { display: none; }
 }
 
-@media (max-width: 480px) {
-  /* On very small screens, hide the encoding/lang chips to keep room
-     for branch + about + github + status. */
-  .ide-statusbar-left .status-chip:nth-child(2),
-  .ide-statusbar-left .status-chip:nth-child(3),
-  .ide-statusbar-right .status-chip:nth-child(3) {
-    display: none;
-  }
-}
-
-/* ---- Navbar end group (theme toggle + about dev) ---- */
-.navbar-end-group {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  flex-shrink: 0;
-  margin-left: 0.5rem;
-}
-
-/* Ensure in collapsed navbar (mobile) labels and dropdown items are visible and readable */
-@media (max-width: 991.98px) {
-  /* Show inline labels for top-level links */
-  .navbar-collapse .nav-label {
-    opacity: 1 !important;
-    max-width: 100% !important;
-    display: inline-block !important;
-    color: var(--vs-text) !important;
-    margin-left: 0.5rem;
-  }
-
-  /* Make dropdown menus flow as regular list inside collapse */
-  .navbar-collapse .nav-dropdown-menu {
-    position: static !important;
-    float: none !important;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding-left: 0.5rem !important;
-    margin-top: 0 !important;
-  }
-
-  .navbar-collapse .nav-dropdown-item {
-    color: var(--vs-text) !important;
-    padding-left: 0.5rem !important;
-  }
-
-  .navbar-collapse .nav-dropdown-item i {
-    color: var(--vs-accent) !important;
-  }
-
-  /* Ensure the dropdown toggle shows label too */
-  .navbar-collapse .nav-group-toggle .nav-group-label {
-    display: inline-block;
-    color: var(--vs-text) !important;
-    margin-left: 0.5rem;
-    opacity: 1 !important;
-  }
+@media (max-width: 400px) {
+  .status-chip-hide-xs { display: none; }
 }
 
 /* Dev typing animation — sits in the IDE titlebar, scaled to fit. */
@@ -1615,7 +1471,7 @@ a.status-link:focus-visible {
 
 .dev-screen::after {
   content: "</>";
-  font-family: "Fira Code", monospace;
+  font-family: var(--font-mono);
   font-size: 7px;
   color: #2fffd7;
   position: absolute;
@@ -1668,107 +1524,118 @@ a.status-link:focus-visible {
 
 /* Hands rest by default; they type on hover and while the dashboard
    briefing is being printed (.is-typing, set by site.js). */
-.dev-typer:hover .dev-hand,
 .dev-typer.is-typing .dev-hand {
   animation: hand-type 0.3s infinite alternate var(--ease-in-out-sine);
 }
-.dev-typer:hover .dev-hand.right,
 .dev-typer.is-typing .dev-hand.right {
   animation-delay: 0.15s;
 }
 
-.navbar .navbar-toggler {
-  border-color: var(--vs-border);
+/* Hover typing only with a real pointer: on touch it would stick after a tap. */
+@media (hover: hover) and (pointer: fine) {
+  .dev-typer:hover .dev-hand {
+    animation: hand-type 0.3s infinite alternate var(--ease-in-out-sine);
+  }
+  .dev-typer:hover .dev-hand.right {
+    animation-delay: 0.15s;
+  }
 }
 
-.navbar .navbar-toggler-icon {
-  filter: brightness(0) saturate(100%) invert(76%) sepia(7%) saturate(462%) hue-rotate(162deg) brightness(89%) contrast(86%);
+/* Touch: icon buttons stay 36x36 visually (the title bar is 36px tall); the
+   hit area grows to 44x44 through an invisible ::after. */
+@media (pointer: coarse) {
+  .ide-titlebar-actions .btn-icon,
+  .ide-mobile-toggle,
+  .dev-typer {
+    position: relative;
+    width: 36px;
+    height: 36px;
+  }
+  .ide-titlebar-actions .btn-icon::after,
+  .ide-mobile-toggle::after,
+  .dev-typer::after {
+    content: "";
+    position: absolute;
+    inset: -4px;
+  }
 }
 
-.navbar-collapse {
-  background: var(--vs-panel-alt);
+/* Tiny phones: the status bar keeps a GitHub link, the title bar drops its icon. */
+@media (max-width: 400px) {
+  .ide-titlebar {
+    gap: var(--space-2);
+    padding-left: max(var(--space-3), env(safe-area-inset-left));
+    padding-right: max(var(--space-3), env(safe-area-inset-right));
+  }
+  .ide-titlebar-actions { gap: var(--space-1); }
+  .ide-titlebar-actions .ide-titlebar-gh { display: none; }
 }
 
-/* StackOverflow Tags - Visual Studio Style */
-.stackoverflow-tag {
+/* Chip: one tag/badge component. Set --chip-token to tint it (default neutral).
+   Existing tag classes below map onto it by only setting --chip-token. */
+.chip,
+.stackoverflow-tag,
+.timeline-chip {
   display: inline-flex;
   align-items: center;
-  padding: 0.18rem 0.5rem;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  font-weight: 500;
-  border: 1px solid oklch(0.72 0.13 200 / 0.40);
+  gap: var(--space-1);
+  padding: 0.125rem var(--space-2);
+  font: 500 var(--text-xs) / 1.3 var(--font-mono);
   border-radius: var(--radius-sm);
+  white-space: nowrap;
+  color: color-mix(in oklab, var(--chip-token, var(--text-soft)) 75%, var(--text));
+  background: color-mix(in oklab, var(--chip-token, var(--border)) 14%, transparent);
+  border: 1px solid color-mix(in oklab, var(--chip-token, var(--border)) 40%, transparent);
   transition: background var(--motion-fast), border-color var(--motion-fast), color var(--motion-fast);
-  background: oklch(0.72 0.13 200 / 0.10);
-  color: oklch(0.85 0.10 200);
+}
+
+.chip--pill { border-radius: var(--radius-pill); }
+.chip--upper { text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* StackOverflow tags: intentionally lowercase */
+.stackoverflow-tag {
+  --chip-token: var(--token-attribute);
   letter-spacing: 0.04em;
   text-transform: lowercase;
 }
 
 .stackoverflow-tag:hover {
-  background: oklch(0.72 0.13 200 / 0.18);
-  border-color: oklch(0.72 0.13 200 / 0.65);
-  color: oklch(0.92 0.08 200);
+  background: color-mix(in oklab, var(--chip-token) 22%, transparent);
+  border-color: color-mix(in oklab, var(--chip-token) 65%, transparent);
 }
 
 /* --- News blocks shared styles (align on WinForms block) --- */
-.news-list .list-group-item {
-  padding-left: 0 !important;
-  padding-right: 0 !important;
+/* Classes for _NewsBlockPartial / _NewsBlockItemPartial (were inline styles) */
+.news-block-title { font: inherit; letter-spacing: inherit; }
+
+.news-block-body {
+  max-height: var(--block-max, 400px);
+  overflow-y: auto;
 }
 
-.news-item {
-  overflow: visible;
+@media (max-width: 768px) {
+  .news-block-body { max-height: min(var(--block-max, 400px), 60svh); }
 }
 
-.news-thumb {
-  width: 60px;
-  height: 45px;
+.news-item-row { overflow: visible; }
+
+.news-thumb-img {
   object-fit: cover;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
 }
 
-.news-thumb-lg {
-  width: 120px;
-  height: 90px;
-  object-fit: cover;
-  border-radius: 4px;
+.news-thumb-icon { border-radius: var(--radius-sm); }
+
+.news-placeholder-icon {
+  font-size: var(--text-xl);
+  color: var(--text-muted);
 }
 
-.news-thumb-placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(108, 117, 125, 0.1);
-  border-radius: 4px;
-}
-
-.news-thumb-placeholder-lg {
-  width: 120px;
-  height: 90px;
-}
-
-.news-thumb-placeholder-sm {
-  width: 60px;
-  height: 45px;
-}
-
-.news-title {
-  margin-bottom: 0.25rem;
-  font-weight: 600;
-}
-
-.news-title a {
-  color: var(--vs-text) !important;
-}
-
-.news-title a:hover {
-  color: var(--vs-accent-strong) !important;
-}
+.news-ai-icon { width: 24px; height: 24px; }
 
 .news-summary {
   line-height: 1.6;
+  overflow-wrap: break-word;
 }
 
 /* --- News block multi-column grid: keep items uniform --- */
@@ -1818,27 +1685,13 @@ a.status-link:focus-visible {
   overflow-wrap: anywhere;
 }
 
-.news-meta {
-  color: var(--vs-muted) !important;
-}
-
-.news-meta a {
-  color: var(--vs-muted);
-  text-decoration: none;
-}
-
-.news-meta a:hover {
-  color: var(--vs-text);
-}}
-
 /* ===========================================================
    Page header — IDE bandeau shared across non-home pages.
    Mirrors the .vs-output titlebar (dots + mono filename) on top
    of a left-aligned, Inter-typeset title block.
    =========================================================== */
 .page-header {
-  max-width: 1280px;
-  margin: var(--space-4) auto var(--space-5);
+  margin: 0;
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -1886,6 +1739,10 @@ a.status-link:focus-visible {
 .page-titlebar .dot.max   { background: var(--token-string); }
 
 .page-titlebar .title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: var(--text);
   font-weight: 500;
   letter-spacing: 0.02em;
@@ -1894,6 +1751,7 @@ a.status-link:focus-visible {
 .page-titlebar .spacer { flex: 1; }
 
 .page-titlebar-meta {
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
@@ -1931,10 +1789,6 @@ a.status-link:focus-visible {
 }
 
 @media (max-width: 768px) {
-  .page-header {
-    margin-left: var(--space-3);
-    margin-right: var(--space-3);
-  }
   .page-titlebar-meta span {
     display: none;
   }
@@ -1945,6 +1799,14 @@ a.status-link:focus-visible {
     padding: var(--space-4);
   }
 }
+
+@media (max-width: 400px) {
+  .page-titlebar { gap: var(--space-2); }
+  .page-titlebar-meta i { display: none; }
+}
+
+/* Single page gutter: .briefing-stage owns it, not Bootstrap's container-fluid. */
+body > .container-fluid { padding-inline: 0; }
 
 /* ===========================================================
    Content card — generic body card used outside the briefing grid.
@@ -1959,6 +1821,7 @@ a.status-link:focus-visible {
   border-radius: var(--radius-lg);
   padding: var(--space-5);
   overflow: hidden;
+  overflow-wrap: break-word;
   box-shadow: var(--shadow-sm);
   --panel-token: var(--token-keyword);
   transition: border-color var(--motion-base), box-shadow var(--motion-base);
@@ -1991,9 +1854,9 @@ a.status-link:focus-visible {
 .content-card-title {
   margin: 0 0 var(--space-3);
   font-family: var(--font-mono);
-  font-size: var(--text-sm);
+  font-size: var(--text-xs);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   color: var(--panel-token);
   display: flex;
   align-items: center;
@@ -2018,6 +1881,7 @@ a.status-link:focus-visible {
   color: var(--text-soft);
   line-height: 1.65;
   margin: 0 0 var(--space-3);
+  max-width: var(--measure);
 }
 
 .content-card > p:last-child {
@@ -2074,7 +1938,7 @@ a.status-link:focus-visible {
 }
 
 .page-prose a:hover {
-  color: var(--accent-strong);
+  color: color-mix(in oklab, var(--accent) 75%, var(--text));
   text-decoration-color: var(--accent);
 }
 
@@ -2126,7 +1990,7 @@ a.status-link:focus-visible {
 .filter-bar-label {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--text-muted);
 }
@@ -2160,6 +2024,8 @@ a.status-link:focus-visible {
   margin-left: auto;
 }
 
+.filter-bar-actions.is-wrap { margin-left: 0; flex-wrap: wrap; }
+
 /* Pill-style toggles inside a filter bar (used for category filters) */
 .filter-pill {
   font-family: var(--font-mono);
@@ -2167,10 +2033,11 @@ a.status-link:focus-visible {
   color: var(--text-soft);
   background: transparent;
   border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 0.35rem 0.8rem;
+  border-radius: var(--radius-pill);
+  min-height: var(--control-h);
+  padding: 0 var(--space-3);
   cursor: pointer;
-  transition: color var(--motion-fast), border-color var(--motion-fast), background var(--motion-fast);
+  transition: color var(--motion-fast), border-color var(--motion-fast), background var(--motion-fast), transform var(--motion-fast);
   text-decoration: none;
   display: inline-flex;
   align-items: center;
@@ -2183,10 +2050,19 @@ a.status-link:focus-visible {
 }
 
 .filter-pill.is-active,
-.filter-pill[aria-pressed="true"] {
+.filter-pill[aria-pressed="true"],
+.filter-pill[aria-current="page"] {
   color: var(--panel-token, var(--accent));
   border-color: var(--panel-token, var(--accent));
   background: color-mix(in oklab, var(--panel-token, var(--accent)) 12%, transparent);
+}
+
+/* Pressed feedback, one rule for every button-like control. */
+:where(.btn-icon, .ide-mobile-toggle, .briefing-cta-submit, .output-action, .filter-pill, .tool-link, .ai-modal-close, .training-choice) {
+  -webkit-tap-highlight-color: transparent;
+}
+:where(.btn-icon, .ide-mobile-toggle, .briefing-cta-submit, .output-action, .filter-pill, .tool-link, .ai-modal-close, .training-choice):active {
+  transform: scale(0.97);
 }
 
 @media (max-width: 768px) {
@@ -2206,15 +2082,6 @@ a.status-link:focus-visible {
   display: flex;
   flex-direction: column;
 }
-
-.timeline-group {
-  display: flex;
-  flex-direction: column;
-  border-top: 1px solid var(--border);
-  padding: var(--space-4) 0;
-}
-
-.timeline-group:first-child { border-top: none; padding-top: 0; }
 
 .timeline-group-label {
   font-family: var(--font-mono);
@@ -2258,6 +2125,8 @@ a.status-link:focus-visible {
   font-weight: 600;
   color: var(--text);
   line-height: 1.35;
+  max-width: var(--measure);
+  overflow-wrap: anywhere;
 }
 
 .timeline-title a {
@@ -2268,11 +2137,15 @@ a.status-link:focus-visible {
 
 .timeline-title a:hover { color: var(--accent); }
 
+/* Release notes carry raw URLs and identifiers: let them break anywhere
+   instead of pushing the page wider than a phone. */
 .timeline-summary {
   margin: 0;
   color: var(--text-soft);
   font-size: var(--text-sm);
   line-height: 1.55;
+  max-width: var(--measure);
+  overflow-wrap: anywhere;
 }
 
 .timeline-meta {
@@ -2286,26 +2159,12 @@ a.status-link:focus-visible {
 
 .timeline-meta i { margin-right: 0.3rem; }
 
-.timeline-aside {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  color: var(--text-muted);
-  white-space: nowrap;
-  align-self: flex-start;
-}
-
 .timeline-chip {
-  display: inline-flex;
-  align-items: center;
+  --chip-token: var(--panel-token, var(--text-soft));
   gap: 0.35rem;
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  border: 1px solid var(--panel-token, var(--border));
-  color: var(--panel-token, var(--text-soft));
-  background: color-mix(in oklab, var(--panel-token, var(--border)) 12%, transparent);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 0.15rem 0.6rem;
 }
 
@@ -2322,7 +2181,6 @@ a.status-link:focus-visible {
     grid-template-columns: 1fr;
     gap: var(--space-2);
   }
-  .timeline-aside { justify-self: flex-start; }
 }
 
 
@@ -2365,6 +2223,9 @@ main#main-content  { view-transition-name: content; }
   animation-duration: var(--dur-2);
 }
 
+/* Cross-document navigation already animates the content: no panel cascade on top. */
+.vt-nav .briefing-stage > * { animation: none; }
+
 @keyframes vt-fade-out {
   to { opacity: 0; }
 }
@@ -2379,6 +2240,57 @@ main#main-content  { view-transition-name: content; }
 .theme-switching main#main-content,
 .theme-switching .ide-tab-indicator {
   view-transition-name: none;
+}
+
+/* No element transition runs under the crossfade (class lives only for the switch). */
+.theme-switching *,
+.theme-switching *::before,
+.theme-switching *::after {
+  transition: none !important;
+}
+
+/* ===========================================================
+   Forced colors (Windows High Contrast): background-only cues become
+   system-colour borders / outlines.
+   =========================================================== */
+@media (forced-colors: active) {
+  .ide-tab-indicator {
+    background: Highlight;
+    forced-color-adjust: none;
+  }
+
+  .ide-tab.active {
+    border-bottom: 2px solid Highlight;
+  }
+
+  .ide-subtab[aria-current="page"] {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+
+  .status-online .dot {
+    background: CanvasText;
+    forced-color-adjust: none;
+    box-shadow: none;
+  }
+
+  .chip,
+  .stackoverflow-tag,
+  .timeline-chip,
+  .badge {
+    border: 1px solid CanvasText;
+  }
+
+  .filter-pill {
+    border-color: ButtonText;
+  }
+
+  .filter-pill.is-active,
+  .filter-pill[aria-pressed="true"],
+  .filter-pill[aria-current="page"] {
+    border: 2px solid Highlight;
+    color: LinkText;
+  }
 }
 
 /* ===========================================================
@@ -2401,6 +2313,7 @@ main#main-content  { view-transition-name: content; }
   .loader-ring,
   .loader-ring::before,
   .loader-ring::after,
+  .is-pending::after,
   .spinner-border,
   .spinner-grow {
     animation-duration: 2s !important;

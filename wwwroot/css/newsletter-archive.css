@@ -21,6 +21,7 @@
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   color: var(--text-soft);
+  flex-wrap: wrap;
 }
 
 .archive-toolbar .prompt {
@@ -30,6 +31,8 @@
 
 .archive-toolbar .cmd {
   color: var(--text);
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .archive-toolbar .cmd .flag {
@@ -260,6 +263,11 @@
   background: var(--panel-alt);
 }
 
+/* Bootstrap collapse height animation, on the motion tokens (reduced motion handled globally) */
+.commit-preview.collapsing {
+  transition: height var(--dur-3) var(--ease-out-quint);
+}
+
 .commit-preview iframe {
   width: 100%;
   height: 560px;
@@ -308,16 +316,9 @@
 
 /* ----- Empty state: fatal: error ----- */
 .archive-empty {
-  padding: var(--space-5) var(--space-4);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--panel);
+  background: transparent;
   font-family: var(--font-mono);
   font-size: var(--text-sm);
-  color: var(--text-muted);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
 }
 
 .archive-empty .fatal {

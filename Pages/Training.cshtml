@@ -15,23 +15,23 @@
         { "HeaderTokenColor", "function" }
     })' />
 
-    <section class="training-stats">
-        <div class="stat-card" data-tone="success">
+    <section class="stat-grid" aria-label="Session progress">
+        <div class="stat-card" data-token="string">
             <i class="bi bi-check-circle stat-icon" aria-hidden="true"></i>
             <div class="stat-value">@Model.Session.CorrectAnswers</div>
             <div class="stat-label">Correct</div>
         </div>
-        <div class="stat-card" data-tone="error">
+        <div class="stat-card" data-token="preprocessor">
             <i class="bi bi-x-circle stat-icon" aria-hidden="true"></i>
             <div class="stat-value">@Model.Session.IncorrectAnswers</div>
             <div class="stat-label">Incorrect</div>
         </div>
-        <div class="stat-card" data-tone="info">
+        <div class="stat-card" data-token="attribute">
             <i class="bi bi-question-circle stat-icon" aria-hidden="true"></i>
             <div class="stat-value">@Model.RemainingQuestions</div>
             <div class="stat-label">Remaining</div>
         </div>
-        <div class="stat-card" data-tone="warn">
+        <div class="stat-card" data-token="type">
             <i class="bi bi-collection stat-icon" aria-hidden="true"></i>
             <div class="stat-value">@Model.TotalQuestions</div>
             <div class="stat-label">Total</div>
@@ -78,7 +78,7 @@
                     }
 
                     <div class="content-card-actions">
-                        <button type="submit" class="briefing-cta-submit">
+                        <button type="submit" class="output-action" data-variant="primary">
                             <i class="bi bi-check-lg"></i> Submit
                         </button>
                     </div>
@@ -87,7 +87,7 @@
             else
             {
                 var resultToken = Model.IsCorrect ? "string" : "preprocessor";
-                <div class="training-result" data-tone="@(Model.IsCorrect ? "ok" : "err")">
+                <div class="training-result" id="result" tabindex="-1" data-tone="@(Model.IsCorrect ? "ok" : "err")">
                     <div class="training-result-head">
                         <i class="bi bi-@(Model.IsCorrect ? "check-circle-fill" : "x-circle-fill")" aria-hidden="true"></i>
                         <h3>@(Model.IsCorrect ? "Correct answer." : "Incorrect answer.")</h3>
@@ -114,7 +114,7 @@
 
                     <form method="post" asp-page-handler="NextQuestion" class="content-card-actions">
                         <input type="hidden" name="CurrentQuestionId" value="@Model.CurrentQuestion.Id" />
-                        <button type="submit" class="briefing-cta-submit">
+                        <button type="submit" class="output-action" data-variant="primary">
                             <i class="bi bi-arrow-right"></i> Next question
                         </button>
                     </form>
@@ -135,7 +135,7 @@
             <h2>You've answered all available questions.</h2>
             <p>
                 Final score: <strong>@Model.Session.CorrectAnswers / @Model.TotalQuestions</strong>
-                — success rate: <strong>@percentage.ToString("F1")%</strong>.
+                — success rate: <strong>@percentage.ToString("F1", System.Globalization.CultureInfo.InvariantCulture)%</strong>.
             </p>
         </article>
     }
@@ -153,141 +153,10 @@
 </div>
 
 @section Styles {
-    <style>
-        .training-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: var(--space-3);
-        }
+    <link rel="stylesheet" href="~/css/pages/stat-cards.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/training.css" asp-append-version="true" />
+}
 
-        .stat-card {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.25rem;
-            padding: var(--space-4);
-            background: var(--panel);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            position: relative;
-            overflow: hidden;
-        }
-        .stat-card::before {
-            content: "";
-            position: absolute;
-            inset: 0 0 auto 0;
-            height: 2px;
-            background: var(--panel-token, var(--token-keyword));
-            opacity: 0.85;
-        }
-        .stat-card[data-tone="success"] { --panel-token: var(--token-string); }
-        .stat-card[data-tone="error"]   { --panel-token: var(--token-preprocessor); }
-        .stat-card[data-tone="info"]    { --panel-token: var(--token-attribute); }
-        .stat-card[data-tone="warn"]    { --panel-token: var(--token-type); }
-
-        .stat-icon { color: var(--panel-token); font-size: 1.2rem; }
-        .stat-value {
-            font-family: var(--font-mono);
-            font-variant-numeric: tabular-nums;
-            font-size: 1.7rem;
-            font-weight: 700;
-            color: var(--text);
-            line-height: 1;
-        }
-        .stat-label {
-            font-family: var(--font-mono);
-            font-size: var(--text-xs);
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: var(--text-muted);
-        }
-
-        .training-question {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-4);
-        }
-        .training-question-head {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: var(--space-3);
-        }
-        .training-question-head .content-card-title { margin: 0; }
-        .training-question-text {
-            margin: 0;
-            font-family: var(--font-ui);
-            font-size: 1.3rem;
-            line-height: 1.5;
-            color: var(--text);
-            font-weight: 500;
-        }
-
-        .training-form { display: flex; flex-direction: column; gap: var(--space-3); }
-        .training-choices { display: flex; flex-direction: column; gap: var(--space-2); }
-        .training-choice {
-            display: flex;
-            align-items: center;
-            gap: var(--space-3);
-            padding: var(--space-3) var(--space-4);
-            background: var(--panel-alt);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            cursor: pointer;
-            transition: border-color var(--motion-fast), background var(--motion-fast);
-            color: var(--text);
-            font-family: var(--font-ui);
-            font-size: 1rem;
-        }
-        .training-choice:hover { border-color: var(--accent); }
-        .training-choice input[type="radio"] {
-            accent-color: var(--accent);
-            width: 16px;
-            height: 16px;
-        }
-        .training-choice:has(input:checked) {
-            border-color: var(--accent);
-            color: var(--accent);
-            background: color-mix(in oklab, var(--accent) 10%, transparent);
-        }
-
-        .training-result {
-            display: flex;
-            flex-direction: column;
-            gap: var(--space-3);
-            padding: var(--space-4);
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            background: var(--panel-alt);
-        }
-        .training-result[data-tone="ok"]  { border-color: color-mix(in oklab, var(--token-string) 50%, var(--border)); }
-        .training-result[data-tone="err"] { border-color: color-mix(in oklab, var(--token-preprocessor) 50%, var(--border)); }
-        .training-result-head { display: flex; align-items: center; gap: var(--space-3); }
-        .training-result-head i { font-size: 1.5rem; }
-        .training-result[data-tone="ok"]  .training-result-head i { color: var(--token-string); }
-        .training-result[data-tone="err"] .training-result-head i { color: var(--token-preprocessor); }
-        .training-result-head h3 { margin: 0; font-family: var(--font-ui); font-size: 1.1rem; color: var(--text); }
-
-        .training-correct,
-        .training-explanation {
-            display: flex;
-            gap: var(--space-3);
-            padding: var(--space-3);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            background: var(--panel);
-        }
-        .training-correct { flex-direction: column; gap: 0.25rem; }
-        .training-correct span:last-child { color: var(--text); font-family: var(--font-mono); }
-        .training-explanation i {
-            color: var(--token-type);
-            font-size: 1rem;
-            line-height: 1.5;
-            flex-shrink: 0;
-        }
-        .training-explanation > div { display: flex; flex-direction: column; gap: 0.25rem; }
-        .training-explanation p { margin: 0; color: var(--text-soft); line-height: 1.55; }
-
-        .training-cta { justify-content: flex-end; }
-    </style>
+@section Scripts {
+    <script src="~/js/pages/training.js" asp-append-version="true" defer></script>
 }

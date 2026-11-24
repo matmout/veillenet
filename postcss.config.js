@@ -39,6 +39,8 @@ module.exports = {
           /^dropup$/,
           /^dropend$/,
           /^dropstart$/,
+          // Grid columns built from a model value (_NewsBlockPartial)
+          /^col-(sm|md|lg|xl)-(1[0-2]|[1-9])$/,
         ],
         deep: [
           // Keep all rules targeting [data-bs-theme]

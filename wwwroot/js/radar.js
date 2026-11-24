@@ -4,15 +4,34 @@
 (function () {
     'use strict';
 
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Checked when it runs, not once at load
+    const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const canHover = () => window.matchMedia('(hover: hover)').matches;
+
+    const BASE_TOP = 70;
+    const ROW_SPACING = 58;
+    const BOTTOM_PADDING = 40;
+
+    function setCanvasHeight(canvas, rowCount) {
+        const targetHeight = Math.max(260, BASE_TOP + rowCount * ROW_SPACING + BOTTOM_PADDING);
+        canvas.style.height = targetHeight + 'px';
+        canvas.style.minHeight = targetHeight + 'px';
+    }
 
     // ---- Framework Filter ----
-    window.filterFramework = function (framework, btn) {
-        // Update active button
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+    function filterFramework(framework, btn) {
+        // Update the pressed button
+        document.querySelectorAll('.filter-pill').forEach(b => {
+            const on = b === btn;
+            b.classList.toggle('is-active', on);
+            b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
 
         const showAll = framework === 'all';
+
+        // From now on the draw-in and pulses must not replay on re-shown rows
+        document.body.classList.add('radar-filtered');
+        hideTooltip();
 
         // Filter timeline rows
         document.querySelectorAll('.timeline-row').forEach(row => {
@@ -23,33 +42,45 @@
             }
         });
 
-        // Recompute visible row positions
-        const baseTop = 70;
-        const rowSpacing = 58;
-        const bottomPadding = 40;
+        // Recompute visible row slots (CSS slides the rows with a transform)
         let visibleIndex = 0;
         document.querySelectorAll('.timeline-row:not(.hidden-row)').forEach(row => {
-            row.style.top = (baseTop + visibleIndex * rowSpacing) + 'px';
+            row.style.setProperty('--slot', visibleIndex);
             visibleIndex++;
         });
 
-        // Adjust canvas height
+        // Adjust canvas height (animated only after a filter change)
         const canvas = document.getElementById('timeline-canvas');
         if (canvas) {
-            const targetHeight = Math.max(260, baseTop + visibleIndex * rowSpacing + bottomPadding);
-            canvas.style.height = targetHeight + 'px';
-            canvas.style.minHeight = targetHeight + 'px';
+            canvas.classList.add('is-animated');
+            setCanvasHeight(canvas, visibleIndex);
         }
 
-        // Filter version cards
+        // Filter version cards; re-shown cards fade in once
         document.querySelectorAll('.version-card').forEach(card => {
             if (showAll || card.dataset.framework === framework) {
-                card.classList.remove('hidden-card');
+                if (card.classList.contains('hidden-card')) {
+                    card.classList.remove('hidden-card');
+                    card.classList.remove('card-enter');
+                    void card.offsetWidth; // restart the animation
+                    card.classList.add('card-enter');
+                    const clear = () => {
+                        card.removeEventListener('animationend', clear);
+                        card.classList.remove('card-enter');
+                    };
+                    card.addEventListener('animationend', clear);
+                    window.setTimeout(clear, 500);
+                }
             } else {
                 card.classList.add('hidden-card');
+                card.classList.remove('card-enter');
             }
         });
-    };
+    }
+
+    document.querySelectorAll('.filter-pill[data-framework]').forEach(btn => {
+        btn.addEventListener('click', () => filterFramework(btn.dataset.framework, btn));
+    });
 
     // ---- Tooltip ----
     const tooltip = document.getElementById('radar-tooltip');
@@ -68,9 +99,9 @@
 
         tooltipTitle.textContent = bar.dataset.display;
 
-        // Badge
+        // Badge (.chip variants only set --chip-token; an empty chip is hidden by CSS)
         tooltipBadge.textContent = bar.dataset.adoption;
-        tooltipBadge.className = 'tooltip-badge badge-adoption ' + (bar.dataset.adoptionClass || '');
+        tooltipBadge.className = 'chip tooltip-badge ' + (bar.dataset.adoptionClass || '');
 
         tooltipRelease.textContent = bar.dataset.release;
         tooltipEos.textContent = bar.dataset.eos;
@@ -84,7 +115,7 @@
 
         // Adoption row
         tooltipAdoption.textContent = bar.dataset.adoption;
-        tooltipAdoption.className = 'badge-adoption ' + (bar.dataset.adoptionClass || '');
+        tooltipAdoption.className = 'chip ' + (bar.dataset.adoptionClass || '');
 
         // Features
         tooltipFeatures.innerHTML = '';
@@ -93,7 +124,7 @@
             f = f.trim();
             if (f) {
                 const tag = document.createElement('span');
-                tag.className = 'tooltip-feature-tag';
+                tag.className = 'chip';
                 tag.textContent = f;
                 tooltipFeatures.appendChild(tag);
             }
@@ -120,8 +151,9 @@
             tooltipLinks.appendChild(a);
         }
 
-        tooltip.style.display = 'block';
+        // Position first, then fade in (the tooltip is always laid out; only opacity/visibility change)
         positionTooltip(e);
+        tooltip.classList.add('is-visible');
     }
 
     function positionTooltip(e) {
@@ -139,26 +171,50 @@
         if (x < pad) x = pad;
         if (y < pad) y = pad;
 
-        tooltip.style.left = x + 'px';
-        tooltip.style.top = y + 'px';
+        tooltip.style.transform = 'translate3d(' + Math.round(x) + 'px,' + Math.round(y) + 'px,0)';
     }
 
     function hideTooltip() {
-        if (tooltip) tooltip.style.display = 'none';
+        if (tooltip) tooltip.classList.remove('is-visible');
+    }
+
+    // Keyboard focus has no pointer: anchor the tooltip just under the bar
+    function barAnchor(bar) {
+        const r = bar.getBoundingClientRect();
+        return { clientX: r.left + Math.min(r.width, 120) / 2, clientY: r.bottom - 15 };
     }
 
     // Attach events to bars
     document.querySelectorAll('.timeline-bar').forEach(bar => {
         bar.addEventListener('mouseenter', function (e) {
+            // Touch emulates mouseenter before click: the tooltip would stay stuck, and the card has the details
+            if (!canHover()) return;
             showTooltip(this, e);
         });
         bar.addEventListener('mousemove', function (e) {
+            if (!canHover()) return;
             positionTooltip(e);
         });
         bar.addEventListener('mouseleave', hideTooltip);
 
+        // Keyboard: focus shows the tooltip, Enter/Space jumps to the card, Escape dismisses
+        bar.addEventListener('focus', function () {
+            if (this.matches(':focus-visible')) showTooltip(this, barAnchor(this));
+        });
+        bar.addEventListener('blur', hideTooltip);
+        bar.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                hideTooltip();
+            } else if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.click();
+            }
+        });
+
         // Click to select version card
         bar.addEventListener('click', function () {
+            hideTooltip();
+
             const selector = `.version-card[data-framework="${this.dataset.framework}"][data-version="${this.dataset.version}"]`;
             const card = document.querySelector(selector);
             if (!card) {
@@ -169,7 +225,7 @@
             card.classList.remove('goto-flash');
             void card.offsetWidth; // force reflow so the animation restarts
             card.classList.add('selected', 'goto-flash');
-            card.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+            card.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'center' });
 
             const clearFlash = () => {
                 card.removeEventListener('animationend', clearFlash);
@@ -236,12 +292,7 @@
     const rows = document.querySelectorAll('.timeline-row');
     const canvas = document.getElementById('timeline-canvas');
     if (canvas && rows.length > 0) {
-        const baseTop = 70;
-        const rowSpacing = 58;
-        const bottomPadding = 40;
-        const targetHeight = Math.max(260, baseTop + rows.length * rowSpacing + bottomPadding);
-        canvas.style.height = targetHeight + 'px';
-        canvas.style.minHeight = targetHeight + 'px';
+        setCanvasHeight(canvas, rows.length);
     }
 
 })();

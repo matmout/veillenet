@@ -39,11 +39,13 @@ public class HistoryModel : PageModel
 
         var result = await _newsHistoryService.SearchAsync(keyword, effectiveStart, endDate, source, page, pageSize);
 
+        // The client inserts the summary as HTML: sanitise it exactly like the
+        // server-rendered first page does (History.cshtml).
         var items = result.Items.Select(n => new
         {
             title = n.Title,
             url = n.Url,
-            summary = n.Summary,
+            summary = VeilleNet.Services.HtmlOutputSanitizer.Sanitize(n.Summary ?? string.Empty),
             publishedDate = n.PublishedDate.ToString("dd MMM yyyy"),
             source = n.Source,
             image = string.IsNullOrWhiteSpace(n.Image) ? Url.Content("~/images/newsia.png") : n.Image,

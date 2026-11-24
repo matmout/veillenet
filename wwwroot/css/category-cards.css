@@ -5,6 +5,7 @@
    with .card-header in site.css. */
 
 .category-card {
+    min-width: 0;
     transition: border-color var(--motion-base), box-shadow var(--motion-base);
 }
 

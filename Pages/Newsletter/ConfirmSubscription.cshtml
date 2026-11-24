@@ -2,50 +2,57 @@
 @model VeilleNet.Pages.Newsletter.ConfirmSubscriptionModel
 @{
     ViewData["Title"] = "Confirm Subscription";
+
+    var isSuccess = Model.IsConfirmed;
+    var token = isSuccess ? "string" : "preprocessor";
+    var iconClass = isSuccess ? "bi bi-check-circle-fill confirm-icon" : "bi bi-x-octagon";
 }
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow-lg border-0">
-                <div class="card-header bg-primary text-white text-center py-4">
-                    <h1 class="h3 mb-0">Newsletter Subscription</h1>
-                </div>
-                <div class="card-body text-center p-5">
-                    
-                    @if (Model.IsConfirmed)
-                    {
-                        <div class="mb-4">
-                            <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
-                        </div>
-                        <h2 class="h4 text-success mb-3">Subscription Confirmed!</h2>
-                        <p class="lead mb-4">@Model.Message</p>
-                        <p class="text-muted">Thank you for joining the Contain'Sharp community.</p>
-                        <a href="/" class="btn btn-primary btn-lg mt-3">Return to Dashboard</a>
-                    }
-                    else
-                    {
-                        <div class="mb-4">
-                            <i class="bi bi-x-circle-fill text-danger" style="font-size: 5rem;"></i>
-                        </div>
-                        <h2 class="h4 text-danger mb-3">Confirmation Failed</h2>
-                        <p class="lead mb-4">@Model.Message</p>
-                        
-                        <div class="alert alert-warning">
-                             <i class="bi bi-exclamation-triangle me-2"></i>
-                             If you believe this is an error, try subscribing again on the home page.
-                        </div>
-                        
-                        <a href="/" class="btn btn-outline-secondary mt-3">Return to Homepage</a>
-                    }
-                </div>
+<div class="briefing-stage">
+    <partial name="_PageHeaderPartial" view-data='@(new ViewDataDictionary(ViewData) {
+        { "Icon", isSuccess ? "check-circle" : "x-octagon" },
+        { "HeaderTitle", isSuccess ? "Subscription confirmed" : "Confirmation failed" },
+        { "HeaderDescription", isSuccess
+            ? "Your address is now on the daily briefing list."
+            : "The confirmation link could not be validated." },
+        { "HeaderTokenColor", token },
+        { "HeaderFileSlug", "newsletter.confirm" }
+    })' />
+
+    <article class="content-card confirm-card" data-token="@token">
+        <h2 class="content-card-title">
+            <i class="@iconClass" aria-hidden="true"></i> @(isSuccess ? "result.ok" : "result.error")
+        </h2>
+        <p>@Model.Message</p>
+
+        @if (isSuccess)
+        {
+            <p class="confirm-thanks">Thank you for joining the Contain'Sharp community.</p>
+        }
+        else
+        {
+            <div class="vs-alert vs-alert-error" role="alert">
+                <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+                <span>If you believe this is an error, try subscribing again on the home page.</span>
             </div>
+        }
+
+        <div class="content-card-actions">
+            <a class="output-action" href="/">
+                <i class="bi bi-house" aria-hidden="true"></i> back to dashboard
+            </a>
+            @if (!isSuccess)
+            {
+                <a class="output-action" asp-page="/Newsletter">
+                    <i class="bi bi-arrow-repeat" aria-hidden="true"></i> try again
+                </a>
+            }
         </div>
-    </div>
+    </article>
 </div>
 
 <!-- Fireworks Canvas for Success Animation -->
-<canvas id="fireworks-canvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; display: none;"></canvas>
+<canvas id="fireworks-canvas" class="fireworks-canvas" aria-hidden="true"></canvas>
 
 @if (ViewData["TriggerFireworks"] as string == "true")
 {
@@ -55,6 +62,10 @@
     </script>
 }
 
+@section Styles {
+    <link rel="stylesheet" href="~/css/pages/confirm-subscription.css" asp-append-version="true" />
+}
+
 @section Scripts {
-    <script src="~/js/fireworks.js"></script>
+    <script src="~/js/fireworks.js" asp-append-version="true"></script>
 }

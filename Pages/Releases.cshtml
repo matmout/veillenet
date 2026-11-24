@@ -16,10 +16,10 @@
 
     <nav class="filter-bar" aria-label="Filter by framework">
         <span class="filter-bar-label">framework</span>
-        <div class="filter-bar-actions" style="margin-left: 0; flex-wrap: wrap;">
+        <div class="filter-bar-actions is-wrap">
             <a asp-page="/Releases"
                class="filter-pill @(Model.SelectedFramework == null ? "is-active" : "")"
-               aria-pressed="@(Model.SelectedFramework == null ? "true" : "false")">
+               aria-current="@(Model.SelectedFramework == null ? "page" : null)">
                 all
             </a>
             @foreach (var fw in Model.Frameworks)
@@ -27,7 +27,7 @@
                 var active = Model.SelectedFramework == fw;
                 <a asp-page="/Releases" asp-route-framework="@fw"
                    class="filter-pill @(active ? "is-active" : "")"
-                   aria-pressed="@(active ? "true" : "false")">
+                   aria-current="@(active ? "page" : null)">
                     @fw
                 </a>
             }

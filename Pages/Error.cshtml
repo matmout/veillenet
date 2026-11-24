@@ -3,6 +3,11 @@
 @{
     ViewData["Title"] = "Error";
     ViewData["Description"] = "An error occurred while processing your request on ContainSharp.";
+
+    // Retry targets the page that failed when an exception handler re-executed us, else the current path.
+    var retryPath = HttpContext.Features.Get<Microsoft.AspNetCore.Diagnostics.IExceptionHandlerPathFeature>()?.Path
+                    ?? HttpContext.Request.Path.Value
+                    ?? "/";
 }
 
 <div class="briefing-stage">
@@ -31,6 +36,9 @@
         }
 
         <div class="content-card-actions">
+            <a class="output-action" data-variant="primary" href="@retryPath">
+                <i class="bi bi-arrow-clockwise"></i> retry
+            </a>
             <a class="output-action" asp-page="/Index">
                 <i class="bi bi-arrow-left"></i> back to dashboard
             </a>
@@ -39,33 +47,5 @@
 </div>
 
 @section Styles {
-    <style>
-        .error-meta {
-            display: grid;
-            grid-template-columns: max-content 1fr;
-            gap: var(--space-2) var(--space-4);
-            margin: var(--space-3) 0 0;
-            padding: var(--space-3);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            background: var(--panel-alt);
-            font-family: var(--font-mono);
-            font-size: var(--text-sm);
-        }
-        .error-meta dt {
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            font-size: var(--text-xs);
-            align-self: center;
-        }
-        .error-meta dd {
-            margin: 0;
-            color: var(--text);
-        }
-        .error-meta code {
-            font-family: var(--font-mono);
-            color: var(--token-preprocessor);
-        }
-    </style>
+    <link rel="stylesheet" href="~/css/pages/error.css" asp-append-version="true" />
 }

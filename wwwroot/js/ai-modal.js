@@ -1,12 +1,15 @@
 // AI Summary Modal - Fetch and display AI summaries in a popup
 (function() {
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Checked when it runs, not once at load
+    function prefersReducedMotion() {
+        return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    }
 
     // Create modal HTML structure
     function createModalHTML() {
         const modalHTML = `
             <div id="ai-modal-overlay" class="ai-modal-overlay" role="dialog" aria-labelledby="ai-modal-title" aria-modal="true">
-                <div class="ai-modal">
+                <div class="ai-modal" tabindex="-1">
                     <div class="ai-modal-titlebar">
                         <div class="controls">
                             <span class="dot close"></span>
@@ -21,8 +24,8 @@
                         </button>
                     </div>
                     <div class="ai-modal-body" id="ai-modal-body">
-                        <div class="ai-modal-loading">
-                            <i class="bi bi-arrow-repeat"></i>
+                        <div class="ai-modal-loading" role="status" aria-live="polite">
+                            <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
                             <p>Loading AI summary...</p>
                         </div>
                     </div>
@@ -52,17 +55,44 @@
 
         // Close modal function
         let cancelPendingClose = null;
+        let ctrl = null;          // AbortController of the in-flight summary fetch
+        let lastFocus = null;     // element that opened the modal
+        let inerted = [];         // page nodes made inert while the modal is open
+
+        function makePageInert() {
+            if (inerted.length) return;
+            lastFocus = document.activeElement;
+            inerted = Array.from(document.body.children).filter(function(n) {
+                return n !== overlay && n.tagName !== 'SCRIPT';
+            });
+            inerted.forEach(function(n) { n.inert = true; });
+        }
+
+        function restorePage() {
+            inerted.forEach(function(n) { n.inert = false; });
+            inerted = [];
+            if (lastFocus && typeof lastFocus.focus === 'function' && document.contains(lastFocus)) {
+                lastFocus.focus();
+            }
+            lastFocus = null;
+        }
 
         function finishClose() {
             overlay.classList.remove('active', 'closing');
             cancelPendingClose = null;
+            restorePage();
         }
 
         function closeModal() {
             document.body.style.overflow = ''; // Re-enable scroll
             if (cancelPendingClose) return;
-            if (reduce) {
+            if (ctrl) {
+                ctrl.abort();
+                ctrl = null;
+            }
+            if (prefersReducedMotion()) {
                 overlay.classList.remove('active');
+                restorePage();
                 return;
             }
             overlay.classList.add('closing');
@@ -129,12 +159,19 @@
         function openModal(articleUrl) {
             // Show modal with loading state
             if (cancelPendingClose) cancelPendingClose();
+            makePageInert();
             overlay.classList.add('active');
             document.body.style.overflow = 'hidden'; // Disable scroll
-            
+            closeBtn.focus();
+
+            // A newer open supersedes any in-flight request
+            if (ctrl) ctrl.abort();
+            ctrl = new AbortController();
+            const signal = ctrl.signal;
+
             modalBody.innerHTML = `
-                <div class="ai-modal-loading">
-                    <i class="bi bi-arrow-repeat"></i>
+                <div class="ai-modal-loading" role="status" aria-live="polite">
+                    <i class="bi bi-arrow-repeat" aria-hidden="true"></i>
                     <p>Loading AI summary...</p>
                 </div>
             `;
@@ -142,7 +179,7 @@
             if (modalDate) modalDate.textContent = '';
 
             // Fetch AI summary
-            fetch(`/api/ai-summary?url=${encodeURIComponent(articleUrl)}`)
+            fetch(`/api/ai-summary?url=${encodeURIComponent(articleUrl)}`, { signal })
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Failed to fetch AI summary');
@@ -174,6 +211,7 @@
                     }
                 })
                 .catch(error => {
+                    if (error.name === 'AbortError') return;
                     console.error('Error fetching AI summary:', error);
                     modalBody.innerHTML = `
                         <div class="ai-modal-error">

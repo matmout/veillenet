@@ -1,4 +1,5 @@
 @page
+@using System.Globalization
 @using VeilleNet.Models
 @model RadarModel
 @{
@@ -10,13 +11,15 @@
     var timelineStart = new DateTime(2009, 1, 1);
     var timelineEnd = new DateTime(2035, 1, 1);
     var totalDays = (timelineEnd - timelineStart).TotalDays;
+    // Invariant culture: a decimal comma would make the inline CSS invalid
+    string Pct(double value) => value.ToString("0.####", CultureInfo.InvariantCulture);
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/radar.css" asp-append-version="true" />
 }
 
-<div class="container-fluid" id="radar-page">
+<div class="briefing-stage" id="radar-page">
 
     <!-- Header -->
     <partial name="_PageHeaderPartial" view-data='@(new ViewDataDictionary(ViewData) { { "Icon", "broadcast-pin" }, { "HeaderTitle", "Version Radar" }, { "HeaderDescription", ".NET Ecosystem Lifecycle Tracker" } })' />
@@ -24,7 +27,7 @@
     <!-- End-of-Support Alerts -->
     @if (Model.EndingSoonVersions.Any())
     {
-        <div class="alert-banner mb-4" id="eol-alerts">
+        <div class="alert-banner" id="eol-alerts">
             <div class="alert-banner-header">
                 <i class="bi bi-exclamation-triangle-fill"></i>
                 <span>End of Support Approaching</span>
@@ -38,7 +41,7 @@
                         <span class="alert-item-date">
                             <i class="bi bi-calendar-x"></i>
                             @v.EndOfSupportDate.Value.ToString("MMM dd, yyyy")
-                            <span class="badge-days-left">@daysLeft days left</span>
+                            <span class="chip badge-days-left@(daysLeft < 30 ? " is-critical" : "")">@daysLeft days left</span>
                         </span>
                     </div>
                 }
@@ -47,8 +50,8 @@
     }
 
     <!-- Filter Bar -->
-    <div class="filter-bar mb-4" id="filter-bar" role="toolbar" aria-label="Framework filter">
-        <button class="filter-btn active" data-framework="all" onclick="filterFramework('all', this)">
+    <div class="filter-bar" id="filter-bar" role="toolbar" aria-label="Framework filter">
+        <button type="button" class="filter-pill is-active" aria-pressed="true" data-framework="all">
             <i class="bi bi-grid-3x3-gap"></i> All
         </button>
         @foreach (var fw in Model.Frameworks)
@@ -68,14 +71,14 @@
                 "Windows Server" => "bi-hdd-rack",
                 _ => "bi-box"
             };
-            <button class="filter-btn" data-framework="@fw" onclick="filterFramework('@fw', this)">
+            <button type="button" class="filter-pill" aria-pressed="false" data-framework="@fw">
                 <i class="bi @icon"></i> @fw
             </button>
         }
     </div>
 
     <!-- Legend -->
-    <div class="legend-bar mb-4" id="legend">
+    <div class="legend-bar" id="legend">
         <div class="legend-item">
             <span class="legend-dot legend-active"></span>
             <span>Active</span>
@@ -98,13 +101,17 @@
         </div>
         <div class="legend-separator"></div>
         <div class="legend-item">
-            <span class="badge-adoption badge-recommended-sm">Recommended</span>
+            <span class="chip badge-recommended-sm">Recommended</span>
         </div>
         <div class="legend-item">
-            <span class="badge-adoption badge-test-sm">Test Only</span>
+            <span class="chip badge-test-sm">Test Only</span>
         </div>
         <div class="legend-item">
-            <span class="badge-adoption badge-avoid-sm">Avoid</span>
+            <span class="chip badge-avoid-sm">Avoid</span>
+        </div>
+        <div class="timeline-hint">
+            <i class="bi bi-arrow-left-right" aria-hidden="true"></i>
+            <span>Swipe the timeline horizontally</span>
         </div>
     </div>
 
@@ -121,7 +128,7 @@
                 {
                     var yearDate = new DateTime(year, 1, 1);
                     var leftPercent = ((yearDate - timelineStart).TotalDays / totalDays) * 100;
-                    <div class="timeline-year-line" style="left: @leftPercent.ToString("F4")%;">
+                    <div class="timeline-year-line" style="left: @Pct(leftPercent)%;">
                         <span class="timeline-year-label">@year</span>
                     </div>
                 }
@@ -130,7 +137,7 @@
                 @{
                     var todayPercent = ((today - timelineStart).TotalDays / totalDays) * 100;
                 }
-                <div class="timeline-today-marker" style="left: @todayPercent.ToString("F4")%;" id="today-marker">
+                <div class="timeline-today-marker" style="left: @Pct(todayPercent)%;" id="today-marker">
                     <div class="timeline-today-line"></div>
                 </div>
 
@@ -143,7 +150,7 @@
                 }
                 @foreach (var group in groupedVersions)
                 {
-                    <div class="timeline-row" data-framework="@group.Key" style="top: @(70 + rowIndex * 58)px;">
+                    <div class="timeline-row" data-framework="@group.Key" style="--slot: @rowIndex;">
                         <div class="timeline-row-label">@group.Key</div>
                         @foreach (var version in group.OrderBy(v => v.ReleaseDate))
                         {
@@ -198,7 +205,9 @@
                             };
 
                             <div class="timeline-bar @statusClass"
-                                 style="left: @startPercent.ToString("F4")%; width: @widthPercent.ToString("F4")%; --row: @rowIndex;"
+                                 style="left: @Pct(startPercent)%; width: @Pct(widthPercent)%; --row: @rowIndex;"
+                                 tabindex="0" role="button"
+                                 aria-label="@version.DisplayName, @(string.IsNullOrEmpty(supportLabel) ? "" : supportLabel + ", ")ends @supportEndText. Show version details"
                                  data-framework="@version.Framework"
                                  data-version="@version.Version"
                                  data-display="@version.DisplayName"
@@ -227,10 +236,10 @@
     </div>
 
     <!-- Tooltip (hidden, positioned via JS) -->
-    <div class="radar-tooltip" id="radar-tooltip" style="display: none;">
+    <div class="radar-tooltip" id="radar-tooltip" role="tooltip">
         <div class="tooltip-header">
             <span class="tooltip-title" id="tooltip-title"></span>
-            <span class="tooltip-badge" id="tooltip-badge"></span>
+            <span class="chip tooltip-badge" id="tooltip-badge"></span>
         </div>
         <div class="tooltip-body">
             <div class="tooltip-row">
@@ -247,7 +256,7 @@
             </div>
             <div class="tooltip-note" id="tooltip-note" hidden></div>
             <div class="tooltip-row tooltip-adoption-row">
-                <span id="tooltip-adoption"></span>
+                <span class="chip" id="tooltip-adoption"></span>
             </div>
             <div class="tooltip-features" id="tooltip-features"></div>
             <div class="tooltip-links" id="tooltip-links"></div>
@@ -255,7 +264,7 @@
     </div>
 
     <!-- Version Cards Grid -->
-    <h2 class="h4 mt-5 mb-3">
+    <h2 class="h4">
         <i class="bi bi-grid-3x3-gap-fill"></i> Version Details
     </h2>
     <div class="version-cards-grid" id="version-cards">
@@ -308,19 +317,19 @@
                     <div class="version-card-title">
                         <h3 class="h6 mb-0">@version.DisplayName</h3>
                         <div class="version-card-badges">
-                            <span class="badge-type @supportBadge">@version.SupportType</span>
-                            <span class="badge-adoption @adoptionBadge">@adoptionText</span>
+                            <span class="chip badge-type @supportBadge">@version.SupportType</span>
+                            <span class="chip @adoptionBadge">@adoptionText</span>
                         </div>
                     </div>
                 </div>
                 <div class="version-card-body">
                     <div class="version-card-dates">
                         <div class="date-item">
-                            <i class="bi bi-calendar-check text-success"></i>
+                            <i class="bi bi-calendar-check date-icon--ok" aria-hidden="true"></i>
                             <span>@version.ReleaseDate.ToString("MMM dd, yyyy")</span>
                         </div>
                         <div class="date-item">
-                            <i class="bi bi-calendar-x @(version.Status == SupportStatus.EndOfLife ? "text-danger" : version.Status == SupportStatus.EndingSoon ? "text-warning" : "text-muted")"></i>
+                            <i class="bi bi-calendar-x @(version.Status == SupportStatus.EndOfLife ? "date-icon--err" : version.Status == SupportStatus.EndingSoon ? "date-icon--warn" : "date-icon--muted")" aria-hidden="true"></i>
                             <span>@supportEndText</span>
                         </div>
                     </div>
@@ -334,7 +343,7 @@
                     @if (version.Status == SupportStatus.EndingSoon && version.EndOfSupportDate.HasValue)
                     {
                         var daysRemaining = (version.EndOfSupportDate.Value - today).Days;
-                        <div class="eol-countdown">
+                        <div class="chip eol-countdown@(daysRemaining < 30 ? " is-critical" : "")">
                             <i class="bi bi-hourglass-split"></i>
                             <span>@daysRemaining days remaining</span>
                         </div>
@@ -342,7 +351,7 @@
                     <div class="version-card-features">
                         @foreach (var feature in version.KeyFeatures.Split(',', StringSplitOptions.TrimEntries).Take(4))
                         {
-                            <span class="feature-tag">@feature</span>
+                            <span class="chip">@feature</span>
                         }
                     </div>
                     <div class="version-card-links">
@@ -363,5 +372,5 @@
 </div>
 
 @section Scripts {
-    <script src="~/js/radar.js" asp-append-version="true"></script>
+    <script src="~/js/radar.js" asp-append-version="true" defer></script>
 }

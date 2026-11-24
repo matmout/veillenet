@@ -7,8 +7,9 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/category-cards.css" />
+    <link rel="stylesheet" href="~/css/category-cards.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/skills.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pages/mcp.css" asp-append-version="true" />
 }
 
 <div class="briefing-stage">
@@ -44,7 +45,7 @@
                                 <div class="tool-icon-wrapper">
                                     @if (!string.IsNullOrEmpty(tool.ImageUrl))
                                     {
-                                        <img src="@tool.ImageUrl" alt="@tool.Name" class="tool-image" />
+                                        <img src="@tool.ImageUrl" alt="" width="96" height="96" loading="lazy" decoding="async" class="tool-image" />
                                     }
                                     else
                                     {
@@ -53,8 +54,8 @@
                                 </div>
                                 <div class="tool-content">
                                     <div class="tool-meta">
-                                        <span class="badge-trust">@tool.TrustLevel</span>
-                                        <span class="badge-access">@tool.AccessMode</span>
+                                        <span class="chip chip--upper badge-trust">@tool.TrustLevel</span>
+                                        <span class="chip chip--upper badge-access">@tool.AccessMode</span>
                                     </div>
                                     <h3 class="tool-name">@tool.Name</h3>
                                     <p class="tool-description">@tool.Description</p>
@@ -64,7 +65,7 @@
                                     </div>
                                     <a href="@tool.GuideUrl" target="_blank" rel="noopener noreferrer" class="tool-link">
                                         <i class="bi bi-book"></i> Open docs
-                                        <i class="bi bi-box-arrow-up-right" style="margin-left: 0.25rem;"></i>
+                                        <i class="bi bi-box-arrow-up-right tool-link-ext" aria-hidden="true"></i>
                                     </a>
                                 </div>
                             </div>
@@ -75,17 +76,3 @@
         }
     </div>
 </div>
-
-<style>
-    .mcp-categories {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-5);
-    }
-
-    .tool-image {
-        width: 60%;
-        height: 60%;
-        object-fit: contain;
-    }
-</style>

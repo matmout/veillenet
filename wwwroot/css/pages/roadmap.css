@@ -1,0 +1,112 @@
+.roadmap-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+    gap: var(--space-4);
+}
+
+.roadmap-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-width: 0;
+    overflow-wrap: break-word;
+}
+
+.roadmap-card-head {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr);
+    gap: var(--space-3);
+    align-items: start;
+}
+
+.step-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: color-mix(in oklab, var(--panel-token) 18%, transparent);
+    border: 1px solid var(--panel-token);
+    color: var(--panel-token);
+    border-radius: var(--radius);
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.roadmap-title {
+    margin: 0;
+    font-family: var(--font-ui);
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+.roadmap-title i { color: var(--panel-token); }
+
+.roadmap-description {
+    margin: 0.35rem 0 0;
+    color: var(--text-soft);
+    font-size: var(--text-sm);
+    line-height: 1.55;
+}
+
+.roadmap-prereq {
+    margin: 0.35rem 0 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+}
+
+.roadmap-children {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.roadmap-child {
+    display: grid;
+    grid-template-columns: 12px minmax(0, 1fr);
+    gap: var(--space-3);
+    align-items: start;
+    padding: var(--space-3);
+    background: var(--panel-alt);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.roadmap-child[data-token="foundation"]      { --panel-token: var(--token-string); }
+.roadmap-child[data-token="advanced"]        { --panel-token: var(--token-type); }
+.roadmap-child[data-token="specialization"]  { --panel-token: var(--token-function); }
+
+.roadmap-badge {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-top: 0.4rem;
+    background: var(--panel-token, var(--text-muted));
+}
+
+.roadmap-child > div { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+.roadmap-child-title {
+    font-family: var(--font-ui);
+    font-weight: 600;
+    color: var(--text);
+    font-size: var(--text-base);
+}
+.roadmap-child-desc {
+    font-family: var(--font-ui);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+.training-cta-card {
+    text-align: left;
+}

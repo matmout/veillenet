@@ -5,7 +5,7 @@
     var imgH = config.ImageHeight;
 }
 
-<div class="list-group-item px-0" style="overflow: visible;">
+<div class="list-group-item px-0 news-item-row">
     <div class="d-flex w-100 align-items-start">
         @* --- Image / Avatar / Icon fallback --- *@
         @if (!string.IsNullOrEmpty(item.Image))
@@ -22,7 +22,7 @@
                 }
                 else
                 {
-                    <img src="@item.Image" alt="@item.Title" style="width: @(imgW)px; height: @(imgH)px; object-fit: cover; border-radius: 4px;" />
+                    <img src="@item.Image" alt="@item.Title" class="news-thumb-img" style="width: @(imgW)px; height: @(imgH)px;" />
                 }
             </div>
         }
@@ -35,13 +35,13 @@
         else if (!string.IsNullOrEmpty(config.DefaultImageUrl))
         {
             <div class="me-3 flex-shrink-0">
-                <img src="@config.DefaultImageUrl" alt="@item.Title" loading="lazy" style="width: @(imgW)px; height: @(imgH)px; object-fit: cover; border-radius: 4px;" />
+                <img src="@config.DefaultImageUrl" alt="@item.Title" loading="lazy" class="news-thumb-img" style="width: @(imgW)px; height: @(imgH)px;" />
             </div>
         }
         else if (!string.IsNullOrEmpty(config.DefaultIconClass))
         {
-            <div class="me-3 flex-shrink-0 d-flex align-items-center justify-content-center bg-secondary bg-opacity-10" style="width: @(imgW)px; height: @(imgH)px; border-radius: 4px;">
-                <i class="bi @config.DefaultIconClass" style="font-size: 1.5rem; color: #6c757d;"></i>
+            <div class="me-3 flex-shrink-0 d-flex align-items-center justify-content-center bg-secondary bg-opacity-10 news-thumb-icon" style="width: @(imgW)px; height: @(imgH)px;">
+                <i class="bi @config.DefaultIconClass news-placeholder-icon"></i>
             </div>
         }
 
@@ -58,7 +58,7 @@
                     @if (config.ShowAiSummary && item.HasAiSummary)
                     {
                         <a href="/AiSummary?url=@Uri.EscapeDataString(item.Url)" aria-label="Voir le résumé IA : @item.Title" class="ms-2 flex-shrink-0">
-                            <img src="~/images/mcp/technologie-ia.png" alt="AI Summary Available" style="width: 24px; height: 24px;" />
+                            <img src="~/images/mcp/technologie-ia.png" alt="AI Summary Available" class="news-ai-icon" />
                         </a>
                     }
                 </div>
@@ -70,7 +70,7 @@
                     ? item.Summary.Substring(0, config.SummaryMaxLength.Value) + "..."
                     : item.Summary;
 
-                <div class="mb-1 small text-muted ai-summary-content news-summary" style="line-height:1.6;">
+                <div class="mb-1 small text-muted ai-summary-content news-summary">
                     @if (config.SanitizeHtml)
                     {
                         @Html.Raw(VeilleNet.Services.HtmlOutputSanitizer.Sanitize(displaySummary))

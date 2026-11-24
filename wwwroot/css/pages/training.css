@@ -1,0 +1,98 @@
+.training-question {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    min-width: 0;
+}
+.training-question-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-3);
+}
+.training-question-head .content-card-title { margin: 0; }
+.training-question-text {
+    margin: 0;
+    font-family: var(--font-ui);
+    font-size: var(--text-xl);
+    line-height: 1.5;
+    color: var(--text);
+    font-weight: 500;
+    overflow-wrap: break-word;
+}
+
+.training-form { display: flex; flex-direction: column; gap: var(--space-3); }
+.training-choices { display: flex; flex-direction: column; gap: var(--space-2); }
+.training-choice {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background: var(--panel-alt);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: border-color var(--motion-fast), background var(--motion-fast), color var(--motion-fast);
+    color: var(--text);
+    font-family: var(--font-ui);
+    font-size: var(--text-base);
+}
+.training-choice span { min-width: 0; overflow-wrap: break-word; }
+.training-choice:hover { border-color: var(--accent); }
+.training-choice input[type="radio"] {
+    accent-color: var(--accent);
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+.training-choice:has(input:checked) {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: color-mix(in oklab, var(--accent) 10%, transparent);
+}
+
+.training-result {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--panel-alt);
+    /* the verdict lands below the stats on a phone: keep it clear of the sticky header */
+    scroll-margin-top: calc(var(--chrome-h, 0px) + var(--space-3));
+    animation: panel-in var(--dur-3) var(--ease-out-quint) backwards;
+}
+.training-result:focus { outline: none; }
+.training-result[data-tone="ok"]  { border-color: color-mix(in oklab, var(--token-string) 50%, var(--border)); }
+.training-result[data-tone="err"] { border-color: color-mix(in oklab, var(--token-preprocessor) 50%, var(--border)); }
+.training-result-head { display: flex; align-items: center; gap: var(--space-3); }
+.training-result-head i {
+    font-size: 1.5rem;
+    animation: panel-in var(--dur-4) var(--ease-out-quint) var(--dur-1) backwards;
+}
+.training-result[data-tone="ok"]  .training-result-head i { color: var(--token-string); }
+.training-result[data-tone="err"] .training-result-head i { color: var(--token-preprocessor); }
+.training-result-head h3 { margin: 0; font-family: var(--font-ui); font-size: var(--text-lg); color: var(--text); }
+
+.training-correct,
+.training-explanation {
+    display: flex;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--panel);
+}
+.training-correct { flex-direction: column; gap: 0.25rem; overflow-wrap: break-word; }
+.training-correct span:last-child { color: var(--text); font-family: var(--font-mono); }
+.training-explanation i {
+    color: var(--token-type);
+    font-size: 1rem;
+    line-height: 1.5;
+    flex-shrink: 0;
+}
+.training-explanation > div { display: flex; flex-direction: column; gap: 0.25rem; min-width: 0; overflow-wrap: break-word; }
+.training-explanation p { margin: 0; color: var(--text-soft); line-height: 1.55; }
+
+.training-cta { justify-content: flex-end; }

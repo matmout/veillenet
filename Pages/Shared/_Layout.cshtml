@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <!-- Title-bar colour of the active theme (kept in sync by the head script and theme-toggle.js) -->
+    <meta name="theme-color" id="meta-theme" content="#141618" />
     <title>@(ViewData["Title"] != null ? ViewData["Title"] + " - Contain('Sharp')" : "Contain('Sharp') - Your daily dose of C#")</title>
     <meta name="description" content="@(ViewData["Description"] ?? "ContainSharp - Your daily dose of C#. Stay updated with official .NET blogs, releases, GitHub trends, AI tools, and essential resources for C# developers.")" />
     <meta name="keywords" content="C#, .NET, ASP.NET, Visual Studio, GitHub, AI tools, WinForms, development, programming" />
@@ -27,20 +29,22 @@
     <link rel="icon" type="image/svg+xml" href="~/icons/containsharp.svg" />
     <link rel="alternate icon" type="image/png" href="~/icons/containsharp.png" />
     <!-- Preload critical resources for LCP/FCP -->
-    <link rel="preload" href="~/css/site.css" as="style" />
     <link rel="preload" href="~/icons/containsharp.svg" as="image" type="image/svg+xml" />
     <link rel="stylesheet" href="~/css/bootstrap.purged.min.css" asp-append-version="true" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Share+Tech&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Share+Tech&display=swap" rel="stylesheet"></noscript>
     <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/scrollbar.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/ai-modal.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/theme-light.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
-    <!-- Apply saved/preferred theme immediately to prevent FOUC -->
-    <script>(function(){var t=localStorage.getItem('containsharp-theme')||(window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark');document.documentElement.setAttribute('data-bs-theme',t)})();</script>
+    <!-- Apply saved/preferred theme immediately to prevent FOUC; storage may throw (private mode, blocked cookies) -->
+    <script>(function(){var d=document.documentElement,t=null;try{t=localStorage.getItem('containsharp-theme')}catch(e){}if(t!=='light'&&t!=='dark')t=window.matchMedia('(prefers-color-scheme:light)').matches?'light':'dark';d.setAttribute('data-bs-theme',t);var m=document.getElementById('meta-theme');if(m)m.setAttribute('content',t==='light'?'#e5e8eb':'#141618');
+    // Cross-document view transition running: site.css skips the panel entrance cascade (no double motion)
+    addEventListener('pagereveal',function(e){if(e.viewTransition)d.classList.add('vt-nav')})})();</script>
 </head>
 <body>
     <!-- Skip to main content link for keyboard navigation -->
@@ -53,8 +57,10 @@
         var activeCsharp = IsActive("/Roadmap", "/Training", "/Liens");
         var activeAi = IsActive("/MCP", "/LatestLLM", "/Skills", "/AiSummary");
         var activeNewsletter = IsActive("/NewsletterArchive", "/Newsletter");
+        // aria-current="page" only on links to the page being shown (null drops the attribute)
+        string? Current(string page) => IsActive(page) ? "page" : null;
     }
-    <header class="ide-chrome" role="banner">
+    <header class="ide-chrome">
         <!-- Title bar -->
         <div class="ide-titlebar">
             <a class="ide-titlebar-brand" asp-area="" asp-page="/Index" aria-label="ContainSharp - Home">
@@ -68,14 +74,15 @@
                 <span class="tabular-nums">.NET 10</span>
             </span>
             <span class="ide-titlebar-spacer"></span>
-            <button id="ide-mobile-toggle" class="ide-mobile-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="ide-tabbar">
+            <button id="ide-mobile-toggle" class="ide-mobile-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="ide-tabbar">
                 <i class="bi bi-list" aria-hidden="true"></i>
             </button>
             <div class="ide-titlebar-actions">
-                <button id="theme-toggle" class="btn-icon theme-toggle" type="button" title="Toggle dark/light mode" aria-label="Toggle dark/light mode">
-                    <i id="theme-icon" class="bi bi-moon-stars-fill" aria-hidden="true"></i>
+                <!-- The icon shows the theme you switch TO; label and icon are kept in sync by theme-toggle.js -->
+                <button id="theme-toggle" class="btn-icon theme-toggle" type="button" title="Switch to light theme" aria-label="Switch to light theme">
+                    <i id="theme-icon" class="bi bi-sun-fill" aria-hidden="true"></i>
                 </button>
-                <a class="btn-icon" href="https://github.com/matmout/veillenet" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub repository">
+                <a class="btn-icon ide-titlebar-gh" href="https://github.com/matmout/veillenet" target="_blank" rel="noopener noreferrer" title="GitHub repository" aria-label="GitHub repository (opens in new tab)">
                     <i class="bi bi-github" aria-hidden="true"></i>
                 </a>
                 <a class="dev-typer" asp-area="" asp-page="/About" title="About" aria-label="About - Learn more about this site">
@@ -95,148 +102,108 @@
         </div>
 
         <!-- Tab bar (editor tabs) -->
-        <nav class="ide-tabbar" id="ide-tabbar" role="navigation" aria-label="Main navigation">
-            <div class="ide-tab-group">
-                <a class="ide-tab @(activeNews ? "active" : "")" data-token="string" asp-area="" asp-page="/Index" aria-haspopup="true">
+        <!-- Desktop: each tab opens a sub-tab popover (hover, focus, or first tap on touch).
+             Phone (<= 768px): the whole bar becomes a sheet opened by #ide-mobile-toggle.
+             Behaviour lives in wwwroot/js/site-nav.js. -->
+        <nav class="ide-tabbar" id="ide-tabbar" aria-label="Main navigation">
+            <div class="ide-tab-group" data-token="string">
+                <a class="ide-tab @(activeNews ? "active" : "")" data-token="string" asp-area="" asp-page="/Index" aria-controls="ide-subtabs-news" aria-current="@Current("/Index")">
                     news.cs
                     @if (activeNews) { <span class="ide-tab-indicator" aria-hidden="true"></span> }
                 </a>
-                <div class="ide-subtabs" role="menu">
-                    <a class="ide-subtab" asp-area="" asp-page="/Index" role="menuitem"><i class="bi bi-house" aria-hidden="true"></i> Dashboard</a>
-                    <a class="ide-subtab" asp-area="" asp-page="/History" role="menuitem"><i class="bi bi-clock-history" aria-hidden="true"></i> History</a>
-                    <a class="ide-subtab" asp-area="" asp-page="/KnowledgeGraph" role="menuitem"><i class="bi bi-diagram-3" aria-hidden="true"></i> Graph</a>
-                    <a class="ide-subtab" asp-area="" asp-page="/Releases" role="menuitem"><i class="bi bi-tag" aria-hidden="true"></i> Releases</a>
-                    <a class="ide-subtab" asp-area="" asp-page="/Radar" role="menuitem"><i class="bi bi-broadcast-pin" aria-hidden="true"></i> Radar</a>
+                <div class="ide-subtabs" id="ide-subtabs-news">
+                    <a class="ide-subtab" asp-area="" asp-page="/Index" aria-current="@Current("/Index")"><i class="bi bi-house" aria-hidden="true"></i> Dashboard</a>
+                    <a class="ide-subtab" asp-area="" asp-page="/History" aria-current="@Current("/History")"><i class="bi bi-clock-history" aria-hidden="true"></i> History</a>
+                    <a class="ide-subtab" asp-area="" asp-page="/KnowledgeGraph" aria-current="@Current("/KnowledgeGraph")"><i class="bi bi-diagram-3" aria-hidden="true"></i> Graph</a>
+                    <a class="ide-subtab" asp-area="" asp-page="/Releases" aria-current="@Current("/Releases")"><i class="bi bi-tag" aria-hidden="true"></i> Releases</a>
+                    <a class="ide-subtab" asp-area="" asp-page="/Radar" aria-current="@Current("/Radar")"><i class="bi bi-broadcast-pin" aria-hidden="true"></i> Radar</a>
                 </div>
             </div>
 
-            <div class="ide-tab-group">
-                <a class="ide-tab @(activeCsharp ? "active" : "")" data-token="keyword" asp-area="" asp-page="/Roadmap" aria-haspopup="true">
+            <div class="ide-tab-group" data-token="keyword">
+                <a class="ide-tab @(activeCsharp ? "active" : "")" data-token="keyword" asp-area="" asp-page="/Roadmap" aria-controls="ide-subtabs-csharp" aria-current="@Current("/Roadmap")">
                     csharp.cs
                     @if (activeCsharp) { <span class="ide-tab-indicator" aria-hidden="true"></span> }
                 </a>
-                <div class="ide-subtabs" role="menu">
-                    <a class="ide-subtab" asp-area="" asp-page="/Roadmap" role="menuitem"><i class="bi bi-signpost-2" aria-hidden="true"></i> Roadmap</a>
-                    <a class="ide-subtab" asp-area="" asp-page="/Training" role="menuitem"><i class="bi bi-mortarboard" aria-hidden="true"></i> Training</a>
-                    <a class="ide-subtab" asp-area="" asp-page="/Liens" role="menuitem"><i class="bi bi-link-45deg" aria-hidden="true"></i> Links</a>
+                <div class="ide-subtabs" id="ide-subtabs-csharp">
+                    <a class="ide-subtab" asp-area="" asp-page="/Roadmap" aria-current="@Current("/Roadmap")"><i class="bi bi-signpost-2" aria-hidden="true"></i> Roadmap</a>
+                    <a class="ide-subtab" asp-area="" asp-page="/Training" aria-current="@Current("/Training")"><i class="bi bi-mortarboard" aria-hidden="true"></i> Training</a>
+                    <a class="ide-subtab" asp-area="" asp-page="/Liens" aria-current="@Current("/Liens")"><i class="bi bi-link-45deg" aria-hidden="true"></i> Links</a>
                 </div>
             </div>
 
-            <div class="ide-tab-group">
-                <a class="ide-tab @(activeAi ? "active" : "")" data-token="type" asp-area="" asp-page="/MCP" aria-haspopup="true">
+            <div class="ide-tab-group" data-token="type">
+                <a class="ide-tab @(activeAi ? "active" : "")" data-token="type" asp-area="" asp-page="/MCP" aria-controls="ide-subtabs-ai" aria-current="@Current("/MCP")">
                     ai.cs
                     @if (activeAi) { <span class="ide-tab-indicator" aria-hidden="true"></span> }
                 </a>
-                <div class="ide-subtabs" role="menu">
-                    <a class="ide-subtab" asp-area="" asp-page="/MCP" role="menuitem"><i class="bi bi-plugin" aria-hidden="true"></i> MCP</a>
-                    <a class="ide-subtab" asp-area="" asp-page="/LatestLLM" role="menuitem"><i class="bi bi-cpu" aria-hidden="true"></i> LLM</a>
-                    <a class="ide-subtab" asp-area="" asp-page="/Skills" role="menuitem">
+                <div class="ide-subtabs" id="ide-subtabs-ai">
+                    <a class="ide-subtab" asp-area="" asp-page="/MCP" aria-current="@Current("/MCP")"><i class="bi bi-plugin" aria-hidden="true"></i> MCP</a>
+                    <a class="ide-subtab" asp-area="" asp-page="/LatestLLM" aria-current="@Current("/LatestLLM")"><i class="bi bi-cpu" aria-hidden="true"></i> LLM</a>
+                    <a class="ide-subtab" asp-area="" asp-page="/Skills" aria-current="@Current("/Skills")">
                         <i class="bi bi-lightning-charge" aria-hidden="true"></i> Skills
                         <span class="badge bg-warning">NEW</span>
                     </a>
-                    <a class="ide-subtab" asp-area="" asp-page="/AiSummary" role="menuitem"><i class="bi bi-stars" aria-hidden="true"></i> AI Summary</a>
+                    <a class="ide-subtab" asp-area="" asp-page="/AiSummary" aria-current="@Current("/AiSummary")"><i class="bi bi-stars" aria-hidden="true"></i> AI Summary</a>
                 </div>
             </div>
 
-            <div class="ide-tab-group">
-                <a class="ide-tab @(activeNewsletter ? "active" : "")" data-token="comment" asp-area="" asp-page="/NewsletterArchive" aria-haspopup="true">
+            <div class="ide-tab-group" data-token="comment">
+                <a class="ide-tab @(activeNewsletter ? "active" : "")" data-token="comment" asp-area="" asp-page="/NewsletterArchive" aria-controls="ide-subtabs-newsletter" aria-current="@Current("/NewsletterArchive")">
                     newsletter.cs
                     @if (activeNewsletter) { <span class="ide-tab-indicator" aria-hidden="true"></span> }
                 </a>
-                <div class="ide-subtabs" role="menu">
-                    <a class="ide-subtab" asp-area="" asp-page="/NewsletterArchive" role="menuitem"><i class="bi bi-archive" aria-hidden="true"></i> Archive</a>
-                    <a class="ide-subtab" asp-area="" asp-page="/Newsletter" role="menuitem"><i class="bi bi-envelope-slash" aria-hidden="true"></i> Unsubscribe</a>
+                <div class="ide-subtabs" id="ide-subtabs-newsletter">
+                    <a class="ide-subtab" asp-area="" asp-page="/NewsletterArchive" aria-current="@Current("/NewsletterArchive")"><i class="bi bi-archive" aria-hidden="true"></i> Archive</a>
+                    <a class="ide-subtab" asp-area="" asp-page="/Newsletter" aria-current="@Current("/Newsletter")"><i class="bi bi-envelope-slash" aria-hidden="true"></i> Unsubscribe</a>
                 </div>
             </div>
         </nav>
     </header>
     <div class="container-fluid">
-        <main role="main" class="pb-3" id="main-content" tabindex="-1" aria-label="Main content">
+        <main class="pb-3" id="main-content" tabindex="-1">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="ide-statusbar" role="contentinfo" aria-label="Site status">
+    <!-- Status bar. Compaction: <= 575.98px hides the decorative chips and the
+         GitHub label (the icon stays), <= 400px also hides the cursor chip. -->
+    <footer class="ide-statusbar">
         <div class="ide-statusbar-group ide-statusbar-left">
-            <span class="status-chip" aria-label="Cursor position">
+            <span class="status-chip status-chip-hide-xs">
                 <i class="bi bi-cursor" aria-hidden="true"></i>
                 <span id="status-cursor" class="tabular-nums">Ln 1, Col 1</span>
             </span>
-            <span class="status-chip">UTF-8</span>
-            <span class="status-chip">C# 13</span>
-            <span class="status-chip" aria-label="Git branch">
+            <span class="status-chip status-chip-hide-sm">UTF-8</span>
+            <span class="status-chip status-chip-hide-sm">C# 13</span>
+            <span class="status-chip status-chip-hide-sm">
                 <i class="bi bi-git" aria-hidden="true"></i>
                 main
             </span>
         </div>
         <span class="ide-statusbar-spacer"></span>
         <div class="ide-statusbar-group ide-statusbar-right">
-            <a class="status-chip status-link" asp-area="" asp-page="/About">
+            <a class="status-chip status-link" asp-area="" asp-page="/About" aria-current="@Current("/About")">
                 <i class="bi bi-info-circle" aria-hidden="true"></i>
                 About
             </a>
-            <a class="status-chip status-link" asp-area="" asp-page="/Privacy">
+            <a class="status-chip status-link" asp-area="" asp-page="/Privacy" aria-current="@Current("/Privacy")">
                 <i class="bi bi-shield-lock" aria-hidden="true"></i>
                 Privacy
             </a>
-            <a class="status-chip status-link" href="https://github.com/matmout" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile (opens in new tab)">
+            <a class="status-chip status-link" href="https://github.com/matmout" target="_blank" rel="noopener noreferrer" aria-label="matmout on GitHub (opens in new tab)">
                 <i class="bi bi-github" aria-hidden="true"></i>
-                matmout
+                <span class="status-label">matmout</span>
             </a>
-            <span class="status-chip">&copy; 2025&ndash;2026</span>
-            <span class="status-chip status-online" aria-live="polite">
+            <span class="status-chip status-chip-hide-sm">&copy; 2025&ndash;2026</span>
+            <span class="status-chip status-online">
                 <span class="dot" aria-hidden="true"></span>
                 online
             </span>
         </div>
     </footer>
 
-    <script>
-    (function(){
-      var btn = document.getElementById('ide-mobile-toggle');
-      var bar = document.getElementById('ide-tabbar');
-      if (!btn || !bar) return;
-      btn.addEventListener('click', function(){
-        var open = bar.classList.toggle('open');
-        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-      });
-
-      // Desktop: first click/tap on a tab opens its submenu (hover alone
-      // fails on touch screens); a second click navigates to the tab's page.
-      var groups = bar.querySelectorAll('.ide-tab-group');
-      function closeAll(except){
-        groups.forEach(function(g){
-          if (g !== except) {
-            g.classList.remove('open');
-            var t = g.querySelector('.ide-tab');
-            if (t) t.setAttribute('aria-expanded', 'false');
-          }
-        });
-      }
-      groups.forEach(function(group){
-        var tab = group.querySelector('.ide-tab');
-        if (!tab) return;
-        tab.setAttribute('aria-expanded', 'false');
-        tab.addEventListener('click', function(e){
-          // Mobile layout: submenus are always visible, let the link navigate.
-          if (window.matchMedia('(max-width: 768px)').matches) return;
-          if (!group.classList.contains('open')) {
-            e.preventDefault();
-            closeAll(group);
-            group.classList.add('open');
-            tab.setAttribute('aria-expanded', 'true');
-          }
-        });
-      });
-      document.addEventListener('click', function(e){
-        if (!bar.contains(e.target)) closeAll(null);
-      });
-      document.addEventListener('keydown', function(e){
-        if (e.key === 'Escape') closeAll(null);
-      });
-    })();
-    </script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="~/js/site-nav.js" asp-append-version="true" defer></script>
     <script src="~/js/site.js" asp-append-version="true" defer></script>
     <script src="~/js/ai-modal.js" asp-append-version="true" defer></script>
     <script src="~/js/theme-toggle.js" asp-append-version="true" defer></script>

@@ -6,7 +6,7 @@
 
 <div class="card h-100 @tokenClass">
     <div class="card-header @legacyClass">
-        <h2 class="mb-0 d-flex align-items-center gap-2" style="font: inherit; letter-spacing: inherit;">
+        <h2 class="mb-0 d-flex align-items-center gap-2 news-block-title">
             @if (Model.HeaderIconHtml != null)
             {
                 @Html.Raw(Model.HeaderIconHtml)
@@ -22,7 +22,7 @@
             }
         </h2>
     </div>
-    <div class="card-body" style="max-height: @(Model.MaxHeight)px; overflow-y: auto;">
+    <div class="card-body news-block-body" style="--block-max: @(Model.MaxHeight)px;">
         @if (Model.Items.Any())
         {
             @if (Model.ColumnsPerRow > 1)

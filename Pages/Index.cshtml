@@ -182,6 +182,23 @@
         </div>
     </section>
 
+    @* Result of the QuickSubscribe POST: rendered right next to its form (above the CTA), not at the page end. *@
+    @if (!string.IsNullOrEmpty(ViewData["NewsletterMessage"] as string))
+    {
+        var messageType = ViewData["NewsletterMessageType"] as string ?? "info";
+        var alertClass = messageType switch
+        {
+            "success" => "vs-alert-success",
+            "error" => "vs-alert-error",
+            "info" => "vs-alert-info",
+            _ => "vs-alert-secondary"
+        };
+
+        <div class="vs-alert @alertClass" role="alert">
+            @ViewData["NewsletterMessage"]
+        </div>
+    }
+
     <!-- Inline newsletter CTA — thin, single line, no gradient card -->
     <section class="briefing-cta" aria-label="Newsletter subscription">
         <div class="briefing-cta-text">
@@ -204,22 +221,6 @@
             @Model.ActiveNewsletterSubscribersCount.ToString("N0") subscribers
         </span>
     </section>
-
-    @if (!string.IsNullOrEmpty(ViewData["NewsletterMessage"] as string))
-    {
-        var messageType = ViewData["NewsletterMessageType"] as string ?? "info";
-        var alertClass = messageType switch
-        {
-            "success" => "vs-alert-success",
-            "error" => "vs-alert-error",
-            "info" => "vs-alert-info",
-            _ => "vs-alert-secondary"
-        };
-
-        <div class="vs-alert @alertClass" role="alert">
-            @ViewData["NewsletterMessage"]
-        </div>
-    }
 </div>
 
 @section Scripts {
